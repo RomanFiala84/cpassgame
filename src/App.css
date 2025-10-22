@@ -1,0 +1,43 @@
+/* src/App.css */
+
+.App {
+  text-align: center;
+  background-color: #121212; /* match theme BACKGROUND_COLOR */
+  color: #E0E0E0;            /* PRIMARY_TEXT_COLOR */
+  min-height: 100vh;
+}
+
+/* Logo reduced size, no pointer events */
+.App-logo {
+  height: 20vmin;
+  pointer-events: none;
+}
+
+/* Spin animation if motion is allowed */
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: spin 20s linear infinite;
+  }
+}
+
+/* Header styling */
+.App-header {
+  background-color: #1E1E1E; /* CARD_BACKGROUND */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+/* Link styling */
+.App-link {
+  color: #4169E1; /* ACCENT_COLOR_2 */
+  text-decoration: none;
+}
+
+/* Keyframes renamed to spin */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
