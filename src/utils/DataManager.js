@@ -1,6 +1,5 @@
-// src/utils/DataManager.js
-
 import * as XLSX from 'xlsx';
+
 
 class DataManager {
   constructor() {
@@ -8,6 +7,7 @@ class DataManager {
     this.adminUserId = 'RF9846';
     this.cache = new Map();
     this.codes = [];
+
 
     // Clear all data utility bound to instance
     this.clearAllData = () => {
@@ -25,6 +25,7 @@ class DataManager {
       console.log('❌ Všechna data byla smazána.');
     };
   }
+
 
   // ══════════════════════════════════════════════
   // Pevne daný zoznam premenných (schéma)
@@ -56,6 +57,7 @@ class DataManager {
     ];
   }
 
+
   // ══════════════════════════════════════════════
   // Načítanie kódov zo súboru codes.xlsx
   // ══════════════════════════════════════════════
@@ -64,21 +66,24 @@ class DataManager {
     const resp = await fetch('/codes.xlsx');
     const buffer = await resp.arrayBuffer();
     const workbook = XLSX.read(buffer, { type: 'array' });
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const sheet = workbook.Sheets[workbook.SheetNames];
     const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
     this.codes = rows.flat().filter(cell => typeof cell === 'string');
     return this.codes;
   }
+
 
   getUsedCodes() {
     const json = localStorage.getItem('usedCodes');
     return json ? JSON.parse(json) : [];
   }
 
+
   markCodeUsed(code) {
     const used = this.getUsedCodes();
     localStorage.setItem('usedCodes', JSON.stringify([...used, code]));
   }
+
 
   async assignParticipantCode() {
     let code = sessionStorage.getItem('participantCode');
@@ -87,11 +92,12 @@ class DataManager {
     const used = this.getUsedCodes();
     const available = codes.filter(c => !used.includes(c));
     if (!available.length) throw new Error('Žiadne voľné kódy.');
-    code = available[0];
+    code = available;
     this.markCodeUsed(code);
     sessionStorage.setItem('participantCode', code);
     return code;
   }
+
 
   // ══════════════════════════════════════════════
   // Referral kódy
@@ -100,6 +106,7 @@ class DataManager {
     const all = this.getAllParticipantsData();
     return Object.values(all).some(d => d.sharing_code === code);
   }
+
 
   async processReferral(participantCode, referralCode) {
     const all = this.getAllParticipantsData();
@@ -112,15 +119,17 @@ class DataManager {
     await this.saveProgress(refCode, data);
   }
 
+
   // ══════════════════════════════════════════════
   // Odomknutie / uzamknutie misie pre všetkých (batch endpoint)
   // ══════════════════════════════════════════════
   async unlockMissionForAll(missionId) {
     console.log(`🔓 Odomykám misiu ${missionId} pre všetkých...`);
 
+
     // Najprv pošleme batch request na server
     try {
-      await fetch('/.netlify/functions/progress?code=missions-unlock', {
+      await fetch('/api/progress?code=missions-unlock', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ missionId, adminCode: this.adminUserId })
@@ -129,6 +138,7 @@ class DataManager {
     } catch (e) {
       console.warn('Batch unlock na server zlyhal, pokračujem lokálne.');
     }
+
 
     // Lokálna aktualizácia centralStorage
     const all = this.getAllParticipantsData();
@@ -139,6 +149,7 @@ class DataManager {
     localStorage.setItem(this.centralStorageKey, JSON.stringify(all));
     console.log(`✅ Lokálne odomknutá misia ${missionId}`);
 
+
     // Aktualizuj cache len pre existujúcich používateľov, bez clearovania
     this.cache.forEach((data, code) => {
       data[`mission${missionId}_unlocked`] = true;
@@ -147,11 +158,13 @@ class DataManager {
     console.log(`✅ Cache aktualizovaný pre misiu ${missionId}`);
   }
 
+
   async lockMissionForAll(missionId) {
     console.log(`🔒 Zamykám misiu ${missionId} pre všetkých...`);
 
+
     try {
-      await fetch('/.netlify/functions/progress?code=missions-lock', {
+      await fetch('/api/progress?code=missions-lock', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ missionId, adminCode: this.adminUserId })
@@ -161,6 +174,7 @@ class DataManager {
       console.warn('Batch lock na server zlyhal, pokračujem lokálne.');
     }
 
+
     const all = this.getAllParticipantsData();
     Object.values(all).forEach(data => {
       data[`mission${missionId}_unlocked`] = false;
@@ -168,6 +182,7 @@ class DataManager {
     });
     localStorage.setItem(this.centralStorageKey, JSON.stringify(all));
     console.log(`✅ Lokálne zamknutá misia ${missionId}`);
+
 
     // Aktualizuj cache len pre existujúcich používateľov, bez clearovania
     this.cache.forEach((data, code) => {
@@ -177,13 +192,14 @@ class DataManager {
     console.log(`✅ Cache aktualizovaný pre misiu ${missionId}`);
   }
 
+
   // ══════════════════════════════════════════════
   // Synchronizácia všetkých dát zo servera
   // ══════════════════════════════════════════════
   async syncAllFromServer() {
     try {
       console.log('🔄 Synchronizujem dáta zo servera...');
-      const resp = await fetch('/.netlify/functions/progress?code=all');
+      const resp = await fetch('/api/progress?code=all');
       if (resp.ok) {
         const allData = await resp.json();
         localStorage.setItem(this.centralStorageKey, JSON.stringify(allData));
@@ -198,6 +214,7 @@ class DataManager {
     return this.getAllParticipantsData();
   }
 
+
   // ══════════════════════════════════════════════
   // Načítanie progresu používateľa
   // ══════════════════════════════════════════════
@@ -207,8 +224,9 @@ class DataManager {
       return this.cache.get(participantCode);
     }
 
+
     try {
-      const resp = await fetch(`/.netlify/functions/progress?code=${participantCode}`);
+      const resp = await fetch(`/api/progress?code=${participantCode}`);
       if (resp.ok) {
         const data = await resp.json();
         const prog = this.validateAndFixData(data.progress || data, participantCode);
@@ -219,6 +237,7 @@ class DataManager {
       console.warn('Server nedostupný, používam localStorage.');
     }
 
+
     const saved = localStorage.getItem(`fullProgress_${participantCode}`);
     if (saved) {
       const data = JSON.parse(saved);
@@ -228,6 +247,7 @@ class DataManager {
       return prog;
     }
 
+
     const central = this.getAllParticipantsData();
     if (central[participantCode]) {
       const prog = this.validateAndFixData(central[participantCode], participantCode);
@@ -235,12 +255,14 @@ class DataManager {
       return prog;
     }
 
+
     return this.createNewUserRecord(participantCode);
   }
 
+
   async syncToServer(participantCode, data) {
     try {
-      await fetch(`/.netlify/functions/progress?code=${participantCode}`, {
+      await fetch(`/api/progress?code=${participantCode}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -249,6 +271,7 @@ class DataManager {
       console.warn('Sync na server zlyhal.');
     }
   }
+
 
   validateAndFixData(data, participantCode) {
     data.participant_code = participantCode;
@@ -269,6 +292,7 @@ class DataManager {
     data.timestamp_last_update = new Date().toISOString();
     return data;
   }
+
 
   getDefaultFields() {
     return {
@@ -294,6 +318,7 @@ class DataManager {
     };
   }
 
+
   createNewUserRecord(participantCode) {
     const defaults = this.getDefaultFields();
     const rec = {
@@ -306,6 +331,7 @@ class DataManager {
     this.saveProgress(participantCode, rec);
     return rec;
   }
+
 
   generatePersistentSharingCode(participantCode) {
     const existing = this.getSharingCode(participantCode);
@@ -324,6 +350,7 @@ class DataManager {
     return code;
   }
 
+
   hashCode(str) {
     let h = 0;
     for (const c of str) {
@@ -333,12 +360,14 @@ class DataManager {
     return Math.abs(h);
   }
 
+
   getSharingCode(participantCode) {
     const prog =
       this.cache.get(participantCode) ||
       JSON.parse(localStorage.getItem(`fullProgress_${participantCode}`) || '{}');
     return prog.sharing_code || null;
   }
+
 
   async saveProgress(participantCode, data) {
     data.timestamp_last_update = new Date().toISOString();
@@ -348,11 +377,13 @@ class DataManager {
     await this.syncToServer(participantCode, data);
   }
 
+
   async loadComponentData(participantCode, componentKey) {
     if (!participantCode) return {};
     const prog = await this.loadUserProgress(participantCode);
     return prog ? prog[`${componentKey}_data`] || {} : {};
   }
+
 
   async saveComponentData(participantCode, componentKey, data) {
     if (!participantCode) return;
@@ -361,15 +392,18 @@ class DataManager {
     await this.saveProgress(participantCode, prog);
   }
 
+
   saveToCentralStorage(participantCode, data) {
     const all = this.getAllParticipantsData();
     all[participantCode] = data;
     localStorage.setItem(this.centralStorageKey, JSON.stringify(all));
   }
 
+
   getAllParticipantsData() {
     return JSON.parse(localStorage.getItem(this.centralStorageKey) || '{}');
   }
+
 
   // ══════════════════════════════════════════════
   // Optimalizovaný export CSV podľa pevnej schémy
@@ -379,6 +413,7 @@ class DataManager {
     const codes = Object.keys(all);
     if (!codes.length) return alert('Žiadni účastníci');
 
+
     const variables = this.getVariableList();
     const rows = codes.map(code => {
       const rec = all[code];
@@ -387,10 +422,12 @@ class DataManager {
         .join(',');
     });
 
+
     const header = variables.join(',');
     const csvContent = [header, ...rows].join('\n');
     this.downloadCSV(csvContent);
   }
+
 
   // ══════════════════════════════════════════════
   // Optimalizovaný export XLSX podľa pevnej schémy
@@ -408,6 +445,7 @@ class DataManager {
     XLSX.writeFile(wb, `export_${Date.now()}.xlsx`);
   }
 
+
   // Pomocná metóda pre stiahnutie CSV
   downloadCSV(content) {
     const blob = new Blob([content], { type: 'text/csv' });
@@ -417,9 +455,11 @@ class DataManager {
     link.click();
   }
 
+
   isAdmin(code) {
     return code === this.adminUserId;
   }
+
 
   _cacheAndStore(participantCode, data) {
     this.cache.set(participantCode, data);
@@ -427,6 +467,7 @@ class DataManager {
     this.saveToCentralStorage(participantCode, data);
   }
 }
+
 
 const dataManager = new DataManager();
 export default dataManager;
