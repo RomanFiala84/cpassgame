@@ -8,10 +8,22 @@ let db;
 
 exports.handler = async (event) => {
   try {
+    // ✅ CHECK na MONGO_URI
+    if (!uri) {
+      console.error('❌ MONGO_URI nie je nastavená!');
+      return {
+        statusCode: 500,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ error: 'MONGO_URI not configured' })
+      };
+    }
+
     if (!client) {
+      console.log('🔌 Pripájam sa na MongoDB...');
       client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
       await client.connect();
       db = client.db('conspiracy');
+      console.log('✅ MongoDB pripojené');
     }
     const col = db.collection('participants');
 
@@ -148,6 +160,7 @@ exports.handler = async (event) => {
     console.error('❌ Serverová chyba:', error);
     return {
       statusCode: 500,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: 'Internal Server Error', message: error.message })
     };
   }
