@@ -1,3 +1,5 @@
+// src/utils/DataManager.js - KOMPLETNÁ OPRAVENÁ VERZIA S MISSION FIX
+
 import * as XLSX from 'xlsx';
 
 class DataManager {
@@ -111,18 +113,17 @@ class DataManager {
       console.warn('Batch unlock na server zlyhal, pokračujem lokálne.');
     }
 
-    const all = this.getAllParticipantsData();
-    Object.values(all).forEach(data => {
-      data[`mission${missionId}_unlocked`] = true;
-      data.timestamp_last_update = new Date().toISOString();
-    });
-    localStorage.setItem(this.centralStorageKey, JSON.stringify(all));
-    console.log(`✅ Lokálne odomknutá misia ${missionId}`);
+    // OPRAVA: Synchronizuj najnovšie dáta zo servera!
+    await this.syncAllFromServer();
 
+    
+    // Aktualizuj všetkých users v cache
     this.cache.forEach((data, code) => {
       data[`mission${missionId}_unlocked`] = true;
       data.timestamp_last_update = new Date().toISOString();
     });
+    
+    console.log(`✅ Lokálne odomknutá misia ${missionId}`);
     console.log(`✅ Cache aktualizovaný pre misiu ${missionId}`);
   }
 
@@ -139,18 +140,17 @@ class DataManager {
       console.warn('Batch lock na server zlyhal, pokračujem lokálne.');
     }
 
-    const all = this.getAllParticipantsData();
-    Object.values(all).forEach(data => {
-      data[`mission${missionId}_unlocked`] = false;
-      data.timestamp_last_update = new Date().toISOString();
-    });
-    localStorage.setItem(this.centralStorageKey, JSON.stringify(all));
-    console.log(`✅ Lokálne zamknutá misia ${missionId}`);
-
+    // OPRAVA: Synchronizuj najnovšie dáta zo servera!
+    await this.syncAllFromServer();
+;
+    
+    // Aktualizuj všetkých users v cache
     this.cache.forEach((data, code) => {
       data[`mission${missionId}_unlocked`] = false;
       data.timestamp_last_update = new Date().toISOString();
     });
+    
+    console.log(`✅ Lokálne zamknutá misia ${missionId}`);
     console.log(`✅ Cache aktualizovaný pre misiu ${missionId}`);
   }
 
@@ -159,7 +159,6 @@ class DataManager {
       console.log('🔄 Synchronizujem dáta zo servera...');
       const resp = await fetch('/api/progress?code=all');
       
-      // OPRAVA #1: Kontrola HTTP status
       if (!resp.ok) {
         console.warn('⚠️ Server vrátil chybu:', resp.status);
         return this.getAllParticipantsData();
@@ -184,7 +183,6 @@ class DataManager {
     try {
       const resp = await fetch(`/api/progress?code=${participantCode}`);
       
-      // OPRAVA #2: Kontrola HTTP status (nie len network error)
       if (!resp.ok) {
         console.warn(`Server error ${resp.status}: ${resp.statusText}`);
         throw new Error(`HTTP ${resp.status}`);
@@ -198,14 +196,12 @@ class DataManager {
       console.warn('Server nedostupný, používam localStorage:', error.message);
     }
 
-    // Fallback 1: localStorage
     const saved = localStorage.getItem(`fullProgress_${participantCode}`);
     if (saved) {
       try {
         const data = JSON.parse(saved);
         const prog = this.validateAndFixData(data, participantCode);
         this.cache.set(participantCode, prog);
-        // Try async sync in background
         this.syncToServer(participantCode, prog).catch(e => 
           console.warn('Background sync failed:', e)
         );
@@ -215,7 +211,6 @@ class DataManager {
       }
     }
 
-    // Fallback 2: centrálne storage
     const central = this.getAllParticipantsData();
     if (central[participantCode]) {
       const prog = this.validateAndFixData(central[participantCode], participantCode);
@@ -223,7 +218,6 @@ class DataManager {
       return prog;
     }
 
-    // Fallback 3: nový záznam
     return this.createNewUserRecord(participantCode);
   }
 
@@ -235,7 +229,6 @@ class DataManager {
         body: JSON.stringify(data)
       });
 
-      // OPRAVA #3: Kontrola HTTP status
       if (!resp.ok) {
         console.warn(`Sync failed for ${participantCode}: HTTP ${resp.status}`);
         return false;
