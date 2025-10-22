@@ -1,5 +1,3 @@
-// src/utils/DataManager.js - KOMPLETNÁ OPRAVENÁ VERZIA S MISSION FIX
-
 import * as XLSX from 'xlsx';
 
 class DataManager {
@@ -115,9 +113,15 @@ class DataManager {
 
     // OPRAVA: Synchronizuj najnovšie dáta zo servera!
     await this.syncAllFromServer();
-
     
-    // Aktualizuj všetkých users v cache
+    // OPRAVA: Aktualizuj cache a localStorage pre VŠETKÝCH users
+    const allData = this.getAllParticipantsData();
+    Object.entries(allData).forEach(([code, data]) => {
+      data[`mission${missionId}_unlocked`] = true;
+      data.timestamp_last_update = new Date().toISOString();
+      localStorage.setItem(`fullProgress_${code}`, JSON.stringify(data));
+    });
+    
     this.cache.forEach((data, code) => {
       data[`mission${missionId}_unlocked`] = true;
       data.timestamp_last_update = new Date().toISOString();
@@ -142,9 +146,15 @@ class DataManager {
 
     // OPRAVA: Synchronizuj najnovšie dáta zo servera!
     await this.syncAllFromServer();
-;
     
-    // Aktualizuj všetkých users v cache
+    // OPRAVA: Aktualizuj cache a localStorage pre VŠETKÝCH users
+    const allData = this.getAllParticipantsData();
+    Object.entries(allData).forEach(([code, data]) => {
+      data[`mission${missionId}_unlocked`] = false;
+      data.timestamp_last_update = new Date().toISOString();
+      localStorage.setItem(`fullProgress_${code}`, JSON.stringify(data));
+    });
+    
     this.cache.forEach((data, code) => {
       data[`mission${missionId}_unlocked`] = false;
       data.timestamp_last_update = new Date().toISOString();

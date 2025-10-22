@@ -1,5 +1,3 @@
-// src/contexts/UserStatsContext.js - KOMPLETNÁ VERZIA
-
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import DataManager from '../utils/DataManager';
 
@@ -111,9 +109,14 @@ export const UserStatsProvider = ({ children }) => {
     return () => window.removeEventListener('storage', handleStorage);
   }, [dataManager.centralStorageKey, loadUserStats]);
 
+  // OPRAVA: Keď sa zmení userId, vyčisti cache a localStorage
   useEffect(() => {
     if (!userId || isLoadingRef.current) return;
 
+    // Vyčisti cache pre starého usera
+    dataManager.cache.clear();
+
+    // Načítaj nového usera
     loadUserStats();
 
     const interval = setInterval(() => {
@@ -121,7 +124,7 @@ export const UserStatsProvider = ({ children }) => {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [userId, loadUserStats]);
+  }, [userId, loadUserStats, dataManager]);
 
   useEffect(() => {
     if (userId && !isLoadingRef.current) {
