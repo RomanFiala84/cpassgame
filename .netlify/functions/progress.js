@@ -63,6 +63,27 @@ const createNewParticipant = (code) => {
     level: 1,
     createdAt: new Date(),
     updatedAt: new Date(),
+    // ✅ OPRAVENÉ: Všetky mission polia
+    mission0_unlocked: false,
+    mission0_completed: false,
+    mission1_unlocked: false,
+    mission1_completed: false,
+    mission2_unlocked: false,
+    mission2_completed: false,
+    mission3_unlocked: false,
+    mission3_completed: false,
+    // Ďalšie potrebné polia
+    user_stats_points: 0,
+    user_stats_level: 1,
+    referrals_count: 0,
+    instruction_completed: false,
+    intro_completed: false,
+    mainmenu_visits: 0,
+    session_count: 1,
+    total_time_spent: 0,
+    current_progress_step: 'instruction',
+    timestamp_start: new Date().toISOString(),
+    timestamp_last_update: new Date().toISOString()
   };
 };
 
@@ -172,16 +193,31 @@ exports.handler = async (event) => {
           }
 
           const missionField = `mission${data.missionId}_unlocked`;
+          
+          // ✅ OPRAVENÉ: Pridané detailné logovanie
+          console.log(`📊 Pred update - kontrolujem počet záznamov`);
+          const countBefore = await col.countDocuments({});
+          console.log(`📊 Celkový počet používateľov: ${countBefore}`);
+          
           const result = await col.updateMany(
             {},
             { $set: { [missionField]: !lock, updatedAt: new Date() } }
           );
 
           console.log(`✓ ${lock ? 'Zamknutá' : 'Odomknutá'} misia ${data.missionId} (${result.modifiedCount} účastníkov)`);
+          
+          // ✅ NOVÉ: Overenie že sa update naozaj uložil
+          const countAfter = await col.countDocuments({ [missionField]: !lock });
+          console.log(`📊 Počet používateľov s ${missionField}=${!lock}: ${countAfter}`);
+          
           return {
             statusCode: 200,
             headers: getCorsHeaders(),
-            body: JSON.stringify({ modifiedCount: result.modifiedCount }),
+            body: JSON.stringify({ 
+              modifiedCount: result.modifiedCount,
+              totalUsers: countBefore,
+              usersWithUnlock: countAfter
+            }),
           };
         }
 
@@ -193,6 +229,7 @@ exports.handler = async (event) => {
 
         const { participant_code, ...dataToUpdate } = data;
 
+        // ✅ OPRAVENÉ: Pridané default mission polia pri upsert
         await col.updateOne(
           { participant_code: code },
           {
@@ -200,6 +237,21 @@ exports.handler = async (event) => {
               participant_code: code,
               group_assignment: group,
               createdAt: new Date(),
+              // ✅ PRIDANÉ: Default mission polia
+              mission0_unlocked: false,
+              mission0_completed: false,
+              mission1_unlocked: false,
+              mission1_completed: false,
+              mission2_unlocked: false,
+              mission2_completed: false,
+              mission3_unlocked: false,
+              mission3_completed: false,
+              points: 0,
+              level: 1,
+              completedSections: [],
+              user_stats_points: 0,
+              user_stats_level: 1,
+              referrals_count: 0,
             },
             $set: {
               ...dataToUpdate,
