@@ -1,4 +1,4 @@
-// src/components/main/MainMenu.js - OPRAVENÁ VERZIA
+// src/components/main/MainMenu.js - S PRIDANOU SHARING SEKCIOU
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -52,6 +52,93 @@ const StatValue = styled.div`
 const StatLabel = styled.div`
   font-size: 12px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+`;
+
+// ✅ NOVÉ - SHARING SECTION
+const SharingSection = styled.div`
+  background: linear-gradient(135deg, ${p => p.theme.ACCENT_COLOR}22, ${p => p.theme.ACCENT_COLOR_2}22);
+  border: 2px solid ${p => p.theme.ACCENT_COLOR};
+  border-radius: 12px;
+  padding: 20px;
+  margin: 0 0 30px 0;
+  text-align: center;
+`;
+
+const SharingTitle = styled.h3`
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  margin-bottom: 8px;
+  font-size: 18px;
+  font-weight: 700;
+`;
+
+const SharingCodeDisplay = styled.div`
+  background: ${p => p.theme.CARD_BACKGROUND};
+  border: 2px dashed ${p => p.theme.ACCENT_COLOR};
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+`;
+
+const SharingCode = styled.code`
+  font-size: 32px;
+  font-weight: bold;
+  letter-spacing: 4px;
+  color: ${p => p.theme.ACCENT_COLOR};
+  font-family: 'Courier New', monospace;
+`;
+
+const SharingInfo = styled.p`
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 14px;
+  margin: 12px 0;
+  line-height: 1.6;
+`;
+
+const CopyButton = styled.button`
+  background: ${p => p.theme.ACCENT_COLOR};
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+`;
+
+const ReferralStats = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 16px;
+`;
+
+const ReferralStat = styled.div`
+  text-align: center;
+`;
+
+const ReferralStatValue = styled.div`
+  font-size: 24px;
+  font-weight: bold;
+  color: ${p => p.theme.ACCENT_COLOR};
+`;
+
+const ReferralStatLabel = styled.div`
+  font-size: 12px;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  margin-top: 4px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 `;
@@ -198,9 +285,10 @@ const MainMenu = () => {
   const [missions, setMissions] = useState([]);
   const [modal, setModal] = useState({ open: false, type: '' });
   const [isUpdating, setIsUpdating] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false); // ✅ NOVÉ
+  const [userProgress, setUserProgress] = useState(null); // ✅ NOVÉ
   const isAdmin = dataManager.isAdmin(userId);
 
-  // ✅ OPRAVA: Jeden unified useEffect pre polling s kratším intervalom
   useEffect(() => {
     if (!userId) return;
 
@@ -209,6 +297,7 @@ const MainMenu = () => {
         const central = dataManager.getAllParticipantsData();
         const p = central[userId] || {};
         setMissions(makeMissionList(p));
+        setUserProgress(p); // ✅ NOVÉ
       }
     };
 
@@ -218,17 +307,18 @@ const MainMenu = () => {
         const central = dataManager.getAllParticipantsData();
         const p = central[userId] || {};
         setMissions(makeMissionList(p));
+        setUserProgress(p); // ✅ NOVÉ
       } catch (error) {
         console.warn('Sync failed, using local data:', error);
         const central = dataManager.getAllParticipantsData();
         const p = central[userId] || {};
         setMissions(makeMissionList(p));
+        setUserProgress(p); // ✅ NOVÉ
       }
     };
 
     load();
 
-    // ✅ OPRAVA: Kratší interval pre rýchlejší refresh (2s namiesto 5s)
     const interval = setInterval(load, 2000);
     window.addEventListener('storage', handleStorage);
 
@@ -250,11 +340,13 @@ const MainMenu = () => {
         try {
           const p = await dataManager.loadUserProgress(userId);
           setMissions(makeMissionList(p));
+          setUserProgress(p); // ✅ NOVÉ
         } catch (error) {
           console.warn('Failed to load initial data:', error);
           const central = dataManager.getAllParticipantsData();
           const p = central[userId] || {};
           setMissions(makeMissionList(p));
+          setUserProgress(p); // ✅ NOVÉ
         }
       };
       loadInitial();
@@ -274,7 +366,15 @@ const MainMenu = () => {
     }
   };
 
-  // ✅ OPRAVA: Vylepšený handleUnlock s okamžitým refresh a feedback
+  // ✅ NOVÁ FUNKCIA - Kopírovanie sharing kódu
+  const handleCopyCode = () => {
+    if (userProgress?.sharing_code) {
+      navigator.clipboard.writeText(userProgress.sharing_code);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    }
+  };
+
   const handleUnlock = async (id) => {
     if (isUpdating) return;
     
@@ -283,11 +383,11 @@ const MainMenu = () => {
       console.log(`🔓 Odomykám misiu ${id}...`);
       await dataManager.unlockMissionForAll(id);
       
-      // Okamžitý refresh dát
       await dataManager.syncAllFromServer();
       const central = dataManager.getAllParticipantsData();
       const p = central[userId] || {};
       setMissions(makeMissionList(p));
+      setUserProgress(p); // ✅ NOVÉ
       
       alert(`✅ Misia ${id} bola odomknutá pre všetkých používateľov`);
     } catch (error) {
@@ -298,7 +398,6 @@ const MainMenu = () => {
     }
   };
 
-  // ✅ OPRAVA: Vylepšený handleLock s okamžitým refresh a feedback
   const handleLock = async (id) => {
     if (isUpdating) return;
     
@@ -307,11 +406,11 @@ const MainMenu = () => {
       console.log(`🔒 Zamykám misiu ${id}...`);
       await dataManager.lockMissionForAll(id);
       
-      // Okamžitý refresh dát
       await dataManager.syncAllFromServer();
       const central = dataManager.getAllParticipantsData();
       const p = central[userId] || {};
       setMissions(makeMissionList(p));
+      setUserProgress(p); // ✅ NOVÉ
       
       alert(`✅ Misia ${id} bola zamknutá pre všetkých používateľov`);
     } catch (error) {
@@ -346,6 +445,42 @@ const MainMenu = () => {
             </StatItem>
           </StatsCard>
         </Header>
+
+        {/* ✅ NOVÁ SEKCIA - SHARING */}
+        <SharingSection>
+          <SharingTitle>🎁 Zdieľajte a získajte body!</SharingTitle>
+          
+          <SharingCodeDisplay>
+            <div style={{ fontSize: 14, color: '#888', marginBottom: 8 }}>
+              Váš zdieľací kód:
+            </div>
+            <SharingCode>
+              {userProgress?.sharing_code || 'Načítavam...'}
+            </SharingCode>
+          </SharingCodeDisplay>
+          
+          <CopyButton onClick={handleCopyCode}>
+            {copySuccess ? '✅ Skopírované!' : '📋 Kopírovať kód'}
+          </CopyButton>
+          
+          <SharingInfo>
+            Zdieľajte tento kód s priateľmi!<br/>
+            Za každého nového používateľa získate <strong>+10 bodov</strong> 🎉
+          </SharingInfo>
+          
+          {userProgress?.referrals_count > 0 && (
+            <ReferralStats>
+              <ReferralStat>
+                <ReferralStatValue>{userProgress.referrals_count}</ReferralStatValue>
+                <ReferralStatLabel>Odporúčaní</ReferralStatLabel>
+              </ReferralStat>
+              <ReferralStat>
+                <ReferralStatValue>{userProgress.referrals_count * 10}</ReferralStatValue>
+                <ReferralStatLabel>Získaných bodov</ReferralStatLabel>
+              </ReferralStat>
+            </ReferralStats>
+          )}
+        </SharingSection>
 
         <MissionsGrid>
           {missions.map(m => (

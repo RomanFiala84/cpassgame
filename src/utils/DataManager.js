@@ -5,18 +5,16 @@ class DataManager {
     this.centralStorageKey = 'allParticipantsData';
     this.adminUserId = 'RF9846';
     this.cache = new Map();
-    this.codes = [];
-    this.allParticipantsCache = null; // ✅ NOVÉ - cache pre všetkých používateľov
+    this.allParticipantsCache = null;
 
     this.clearAllData = () => {
       this.cache.clear();
-      this.allParticipantsCache = null; // ✅ NOVÉ
+      this.allParticipantsCache = null;
       Object.keys(localStorage)
         .filter(
           key =>
             key.startsWith('fullProgress_') ||
-            key === this.centralStorageKey ||
-            key === 'usedCodes'
+            key === this.centralStorageKey
         )
         .forEach(key => localStorage.removeItem(key));
       sessionStorage.removeItem('participantCode');
@@ -52,52 +50,45 @@ class DataManager {
     ];
   }
 
-  async loadCodes() {
-    if (this.codes.length) return this.codes;
-    const resp = await fetch('/codes.xlsx');
-    const buffer = await resp.arrayBuffer();
-    const workbook = XLSX.read(buffer, { type: 'array' });
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-    this.codes = rows.flat().filter(cell => typeof cell === 'string');
-    return this.codes;
-  }
-
-  getUsedCodes() {
-    const json = localStorage.getItem('usedCodes');
-    return json ? JSON.parse(json) : [];
-  }
-
-  markCodeUsed(code) {
-    const used = this.getUsedCodes();
-    localStorage.setItem('usedCodes', JSON.stringify([...used, code]));
-  }
-
-  async assignParticipantCode() {
-    let code = sessionStorage.getItem('participantCode');
-    if (code) return code;
-    const codes = await this.loadCodes();
-    const used = this.getUsedCodes();
-    const available = codes.filter(c => !used.includes(c));
-    if (!available.length) throw new Error('Žiadne voľné kódy.');
-    code = available[0];
-    this.markCodeUsed(code);
-    sessionStorage.setItem('participantCode', code);
-    return code;
-  }
-
   async validateReferralCode(code) {
     const all = this.getAllParticipantsData();
     return Object.values(all).some(d => d.sharing_code === code);
   }
 
+  async validateSharingCode(code) {
+    const all = this.getAllParticipantsData();
+    return Object.values(all).some(d => d.sharing_code === code.toUpperCase());
+  }
+
   async processReferral(participantCode, referralCode) {
     const all = this.getAllParticipantsData();
+    
     const entry = Object.entries(all).find(([_, d]) => d.sharing_code === referralCode);
-    if (!entry) return;
-    const [refCode, data] = entry;
-    data.referrals_count = (data.referrals_count || 0) + 1;
-    await this.saveProgress(refCode, data);
+    if (!entry) {
+      console.warn(`⚠️ Referral kód ${referralCode} neexistuje`);
+      return;
+    }
+    
+    const [refCode, refData] = entry;
+    
+    if (refCode === participantCode) {
+      console.warn(`⚠️ Nemôžeš použiť svoj vlastný referral kód`);
+      return;
+    }
+    
+    refData.referrals_count = (refData.referrals_count || 0) + 1;
+    refData.user_stats_points = (refData.user_stats_points || 0) + 10;
+    
+    await this.saveProgress(refCode, refData);
+    
+    console.log(`✅ Referral bonus: ${refCode} získal +10 bodov (celkom: ${refData.referrals_count} referralov)`);
+    
+    return {
+      success: true,
+      referrerCode: refCode,
+      referrerPoints: refData.user_stats_points,
+      referrerCount: refData.referrals_count
+    };
   }
 
   async unlockMissionForAll(missionId) {
@@ -118,7 +109,7 @@ class DataManager {
       const result = await response.json();
       console.log(`✅ Batch unlock ${missionId} na serveri (${result.modifiedCount} používateľov)`);
 
-      await this.fetchAllParticipantsData(); // ✅ OPRAVENÉ
+      await this.fetchAllParticipantsData();
       this.cache.clear();
       
       window.dispatchEvent(new StorageEvent('storage', {
@@ -154,7 +145,7 @@ class DataManager {
       const result = await response.json();
       console.log(`✅ Batch lock ${missionId} na serveri (${result.modifiedCount} používateľov)`);
 
-      await this.fetchAllParticipantsData(); // ✅ OPRAVENÉ
+      await this.fetchAllParticipantsData();
       this.cache.clear();
       
       window.dispatchEvent(new StorageEvent('storage', {
@@ -172,7 +163,6 @@ class DataManager {
     }
   }
 
-  // ✅ NOVÁ METÓDA - Fetch všetkých používateľov z backendu
   async fetchAllParticipantsData() {
     try {
       console.log('📥 Načítavam všetkých používateľov z backendu...');
@@ -185,13 +175,9 @@ class DataManager {
       
       const allData = await resp.json();
       
-      // ✅ Ulož do cache
       this.allParticipantsCache = allData;
-      
-      // Ulož aj do localStorage
       localStorage.setItem(this.centralStorageKey, JSON.stringify(allData));
       
-      // Ulož každého používateľa samostatne
       Object.entries(allData).forEach(([code, data]) => {
         localStorage.setItem(`fullProgress_${code}`, JSON.stringify(data));
       });
@@ -205,7 +191,6 @@ class DataManager {
     }
   }
 
-  // ✅ ALIAS pre spätnu kompatibilitu
   async syncAllFromServer() {
     return await this.fetchAllParticipantsData();
   }
@@ -336,7 +321,7 @@ class DataManager {
       mission2_unlocked: false,
       mission3_completed: false,
       mission3_unlocked: false,
-      responses: {} // ✅ PRIDANÉ
+      responses: {}
     };
   }
 
@@ -356,17 +341,24 @@ class DataManager {
   generatePersistentSharingCode(participantCode) {
     const existing = this.getSharingCode(participantCode);
     if (existing) return existing;
+    
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let hash = this.hashCode(participantCode + 'SALT2025');
+    let hash = this.hashCode(participantCode + 'SALT2025' + Date.now());
     let code = '';
-    for (let i = 0; i < 4; i++) {
+    
+    for (let i = 0; i < 6; i++) {
       hash = (hash * 9301 + 49297) % 233280;
       code += chars[hash % chars.length];
     }
+    
     const used = Object.values(this.getAllParticipantsData()).map(d => d.sharing_code);
+    
     while (used.includes(code)) {
-      code = code.slice(0, -1) + chars[Math.floor(Math.random() * chars.length)];
+      const randomChar = chars[Math.floor(Math.random() * chars.length)];
+      code = code.slice(0, -1) + randomChar;
     }
+    
+    console.log(`✅ Vygenerovaný sharing code pre ${participantCode}: ${code}`);
     return code;
   }
 
@@ -411,13 +403,11 @@ class DataManager {
     const all = this.getAllParticipantsData();
     all[participantCode] = data;
     localStorage.setItem(this.centralStorageKey, JSON.stringify(all));
-    // ✅ Aktualizuj aj cache
     if (this.allParticipantsCache) {
       this.allParticipantsCache[participantCode] = data;
     }
   }
 
-  // ✅ OPRAVENÉ - používa cache ak existuje
   getAllParticipantsData() {
     if (this.allParticipantsCache) {
       return this.allParticipantsCache;

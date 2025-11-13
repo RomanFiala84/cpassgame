@@ -1,4 +1,5 @@
 // src/components/Instruction.js
+// KOMPLETNÁ VERZIA s validáciou ABCDMM a referral kódmi
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -33,7 +34,7 @@ const Title = styled.h1`
 const InstructionText = styled.div`
   font-size: 18px;
   line-height: 1.6;
-  max-width: 600px;
+  max-width: 700px;
   margin-bottom: 30px;
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   text-align: center;
@@ -55,7 +56,7 @@ const CodeBox = styled.div`
   border-radius: 12px;
   margin-bottom: 20px;
   width: 100%;
-  max-width: 430px;
+  max-width: 600px;
   border: 2px solid ${p => (p.hasError ? 'red' : '#ccc')};
 `;
 
@@ -87,6 +88,8 @@ const Input = styled.input`
   color: #fff;
   margin-bottom: 12px;
   font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 
   &:focus {
     outline: none;
@@ -113,6 +116,38 @@ const Note = styled.div`
   margin-top: 6px;
 `;
 
+const InfoBox = styled.div`
+  background: ${p => p.theme.HOVER_OVERLAY};
+  border-left: 4px solid ${p => p.theme.ACCENT_COLOR};
+  padding: 16px;
+  margin-bottom: 20px;
+  max-width: 600px;
+  width: 100%;
+  border-radius: 8px;
+`;
+
+const InfoTitle = styled.div`
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 16px;
+`;
+
+const InfoText = styled.div`
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 14px;
+  line-height: 1.6;
+`;
+
+const ExampleCode = styled.code`
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  color: ${p => p.theme.ACCENT_COLOR};
+  font-weight: 600;
+`;
+
 export default function Instruction() {
   const navigate = useNavigate();
   const { login, dataManager } = useUserStats();
@@ -123,19 +158,49 @@ export default function Instruction() {
   const [consentGiven, setConsentGiven] = useState(false);
   const [errors, setErrors] = useState({});
 
+  const validateParticipantCode = (code) => {
+    const upperCode = code.toUpperCase().trim();
+    
+    if (upperCode === 'RF9846') {
+      return { valid: true, type: 'admin' };
+    }
+    
+    const testPattern = /^TEST([0-5][0-9]|60)$/;
+    if (testPattern.test(upperCode)) {
+      return { valid: true, type: 'test' };
+    }
+    
+    const participantPattern = /^[A-Z]{4}(0[1-9]|1[0-2])$/;
+    if (participantPattern.test(upperCode)) {
+      return { valid: true, type: 'participant' };
+    }
+    
+    return { valid: false, type: null };
+  };
+
   const validate = async () => {
     const e = {};
-    if (!consentGiven) e.consent = 'Musíte súhlasiť s účasťou.';
-    if (!/^[A-Z0-9]{4,10}$/.test(participantCode))
-      e.participant = 'Kód musí byť 4–10 veľkých písmen alebo číslic.';
+    
+    if (!consentGiven) {
+      e.consent = 'Musíte súhlasiť s účasťou.';
+    }
+    
+    const codeValidation = validateParticipantCode(participantCode);
+    if (!codeValidation.valid) {
+      e.participant = 'Neplatný formát kódu. Použite formát: 4 písmená + mesiac (napr. RMIL11), TEST01-TEST60, alebo RF9846';
+    }
+    
     if (hasReferral) {
-      if (!/^[A-Z0-9]{4}$/.test(referralCode)) {
-        e.referral = 'Referral kód musí mať presne 4 znaky.';
+      if (!/^[A-Z0-9]{6}$/.test(referralCode)) {
+        e.referral = 'Referral kód musí mať presne 6 znakov (písmená a čísla).';
       } else {
         const valid = await dataManager.validateReferralCode(referralCode);
-        if (!valid) e.referral = 'Referral kód neexistuje.';
+        if (!valid) {
+          e.referral = 'Tento referral kód neexistuje v systéme.';
+        }
       }
     }
+    
     return e;
   };
 
@@ -144,23 +209,21 @@ export default function Instruction() {
     setErrors(e);
     if (Object.keys(e).length) return;
 
+    const codeValidation = validateParticipantCode(participantCode);
+    
+    sessionStorage.setItem('participantCode', participantCode.toUpperCase());
+    
     if (hasReferral) {
-      await dataManager.processReferral(participantCode, referralCode);
+      await dataManager.processReferral(participantCode.toUpperCase(), referralCode);
     }
-    await login(participantCode);
-    navigate('/intro');
-  };
-
-  const generateNewCode = () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const nums = '0123456789';
-    let code = '';
-    for (let i = 0; i < 6; i++) {
-      code += i < 2 || i >= 4
-        ? chars[Math.floor(Math.random() * chars.length)]
-        : nums[Math.floor(Math.random() * nums.length)];
+    
+    await login(participantCode.toUpperCase());
+    
+    if (codeValidation.type === 'admin') {
+      navigate('/admin');
+    } else {
+      navigate('/intro');
     }
-    setParticipantCode(code);
   };
 
   return (
@@ -168,8 +231,26 @@ export default function Instruction() {
       <Container>
         <Title>🔑 Conspiracy Pass – Prihlásenie</Title>
         <InstructionText>
-          Zadajte svoj kód účastníka, prípadne referral kód, a súhlaste s účasťou.
+          Zadajte svoj kód účastníka podľa inštrukcií nižšie, prípadne referral kód, a súhlaste s účasťou.
         </InstructionText>
+
+        <InfoBox>
+          <InfoTitle>ℹ️ Formát prihlasovacieho kódu</InfoTitle>
+          <InfoText>
+            Váš kód sa skladá z:<br/>
+            • <strong>1. písmeno</strong> mena<br/>
+            • <strong>3. písmeno</strong> mena<br/>
+            • <strong>2. písmeno</strong> priezviska<br/>
+            • <strong>4. písmeno</strong> priezviska<br/>
+            • <strong>Mesiac narodenia</strong> (2 číslice: 01-12)<br/>
+            <br/>
+            <strong>Príklad:</strong> Pre <strong>Roman Milanko</strong> narodený v <strong>novembri</strong>:<br/>
+            → <ExampleCode>RMIL11</ExampleCode>
+            <br/><br/>
+            <strong>Testovacie účty:</strong> TEST01, TEST02, ... TEST60<br/>
+            <strong>Admin:</strong> RF9846
+          </InfoText>
+        </InfoBox>
 
         <ConsentBox hasError={!!errors.consent} id="consent-box">
           <CheckboxContainer>
@@ -188,24 +269,20 @@ export default function Instruction() {
 
         <CodeBox hasError={!!errors.participant}>
           <InputLabel htmlFor="participantCode">Kód účastníka*</InputLabel>
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <Input
-              id="participantCode"
-              type="text"
-              value={participantCode}
-              onChange={e => {
-                setParticipantCode(e.target.value.toUpperCase());
-                setErrors(prev => ({ ...prev, participant: null }));
-              }}
-              placeholder="AB12XY"
-              hasError={!!errors.participant}
-              maxLength={10}
-              style={{ flex: 1 }}
-            />
-            <StyledButton onClick={generateNewCode}>🎲 Generovať</StyledButton>
-          </div>
+          <Input
+            id="participantCode"
+            type="text"
+            value={participantCode}
+            onChange={e => {
+              setParticipantCode(e.target.value.toUpperCase());
+              setErrors(prev => ({ ...prev, participant: null }));
+            }}
+            placeholder="RMIL11"
+            hasError={!!errors.participant}
+            maxLength={6}
+          />
           {errors.participant && <ErrorText>{errors.participant}</ErrorText>}
-          <Note>Ak nemáte kód, kliknite na "Generovať"</Note>
+          <Note>Zadajte kód podľa inštrukcií vyššie (všetky písmená VEĽKÉ)</Note>
         </CodeBox>
 
         <CheckboxContainer>
@@ -214,7 +291,7 @@ export default function Instruction() {
             checked={hasReferral}
             onChange={e => setHasReferral(e.target.checked)}
           />
-          <label>Mám referral kód</label>
+          <label>Mám referral kód od priateľa</label>
         </CheckboxContainer>
 
         {hasReferral && (
@@ -228,12 +305,12 @@ export default function Instruction() {
                 setReferralCode(e.target.value.toUpperCase());
                 setErrors(prev => ({ ...prev, referral: null }));
               }}
-              placeholder="XY12"
+              placeholder="ABC123"
               hasError={!!errors.referral}
-              maxLength={4}
+              maxLength={6}
             />
             {errors.referral && <ErrorText>{errors.referral}</ErrorText>}
-            <Note>Získajte bonusové body s referral kódom</Note>
+            <Note>Váš priateľ dostane +10 bodov za odporúčanie! 🎁</Note>
           </CodeBox>
         )}
 
