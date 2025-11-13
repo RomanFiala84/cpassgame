@@ -1,5 +1,5 @@
-// src/components/Instruction.js
-// KOMPLETNÁ VERZIA s validáciou ABCDMM a referral kódmi
+// src/components/main/Instruction.js
+// KOMPLETNÁ VERZIA s validáciou ABCDMM a referral kódmi + OCHRANA PROTI ZNEUŽITIU
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -95,6 +95,11 @@ const Input = styled.input`
     outline: none;
     border-color: ${props => props.theme.ACCENT_COLOR};
   }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 const ErrorText = styled.div`
@@ -118,7 +123,7 @@ const Note = styled.div`
 
 const InfoBox = styled.div`
   background: ${p => p.theme.HOVER_OVERLAY};
-  border-left: 4px solid ${p => p.theme.ACCENT_COLOR};
+  border-left: 4px solid ${p => p.hasError ? '#ff6b6b' : p.theme.ACCENT_COLOR};
   padding: 16px;
   margin-bottom: 20px;
   max-width: 600px;
@@ -157,6 +162,9 @@ export default function Instruction() {
   const [hasReferral, setHasReferral] = useState(false);
   const [consentGiven, setConsentGiven] = useState(false);
   const [errors, setErrors] = useState({});
+  const [referralAlreadyUsed, setReferralAlreadyUsed] = useState(false); // ✅ NOVÉ
+  const [isLoading, setIsLoading] = useState(false); // ✅ NOVÉ
+  const [isCheckingCode, setIsCheckingCode] = useState(false); // ✅ NOVÉ
 
   const validateParticipantCode = (code) => {
     const upperCode = code.toUpperCase().trim();
@@ -178,6 +186,33 @@ export default function Instruction() {
     return { valid: false, type: null };
   };
 
+  // ✅ NOVÁ FUNKCIA - Kontrola, či používateľ už zadal referral kód
+  const checkReferralStatus = async (userCode) => {
+    if (!userCode || userCode.length !== 6) return false;
+    
+    try {
+      setIsCheckingCode(true);
+      const userData = await dataManager.loadUserProgress(userCode);
+      
+      // Ak used_referral_code existuje a nie je prázdne, používateľ už kód zadal
+      if (userData?.used_referral_code) {
+        console.log(`⚠️ Používateľ ${userCode} už použil referral kód: ${userData.used_referral_code}`);
+        setReferralAlreadyUsed(true);
+        setHasReferral(false); // ✅ Automaticky zruš checkbox
+        return true;
+      }
+      
+      setReferralAlreadyUsed(false);
+      return false;
+    } catch (error) {
+      console.warn('Could not check referral status:', error);
+      return false;
+    } finally {
+      setIsCheckingCode(false);
+    }
+  };
+
+  // ✅ UPRAVENÁ VALIDÁCIA
   const validate = async () => {
     const e = {};
     
@@ -190,13 +225,27 @@ export default function Instruction() {
       e.participant = 'Neplatný formát kódu. Použite formát: 4 písmená + mesiac (napr. RMIL11), TEST01-TEST60, alebo RF9846';
     }
     
+    // ✅ NOVÉ - Kontrola referral kódu
     if (hasReferral) {
-      if (!/^[A-Z0-9]{6}$/.test(referralCode)) {
+      // Kontrola, či používateľ už nepoužil kód
+      if (referralAlreadyUsed) {
+        e.referral = 'Už ste použili referral kód. Nemôžete ho zadať znova.';
+      }
+      // Kontrola formátu
+      else if (!referralCode || !/^[A-Z0-9]{6}$/.test(referralCode.trim())) {
         e.referral = 'Referral kód musí mať presne 6 znakov (písmená a čísla).';
-      } else {
-        const valid = await dataManager.validateReferralCode(referralCode);
+      }
+      // Kontrola existencie v systéme
+      else {
+        const valid = await dataManager.validateReferralCode(referralCode.trim().toUpperCase());
         if (!valid) {
           e.referral = 'Tento referral kód neexistuje v systéme.';
+        } else {
+          // ✅ NOVÉ - Kontrola, či používateľ nepoužíva vlastný kód
+          const userSharingCode = await dataManager.getUserSharingCode(participantCode.toUpperCase());
+          if (userSharingCode && userSharingCode === referralCode.trim().toUpperCase()) {
+            e.referral = '❌ Nemôžete použiť svoj vlastný zdieľací kód!';
+          }
         }
       }
     }
@@ -204,20 +253,36 @@ export default function Instruction() {
     return e;
   };
 
+  // ✅ UPRAVENÁ FUNKCIA handleStart
   const handleStart = async () => {
+    setIsLoading(true);
     const e = await validate();
     setErrors(e);
-    if (Object.keys(e).length) return;
+    
+    if (Object.keys(e).length) {
+      setIsLoading(false);
+      return;
+    }
 
     const codeValidation = validateParticipantCode(participantCode);
+    const upperCode = participantCode.toUpperCase();
     
-    sessionStorage.setItem('participantCode', participantCode.toUpperCase());
+    sessionStorage.setItem('participantCode', upperCode);
     
-    if (hasReferral) {
-      await dataManager.processReferral(participantCode.toUpperCase(), referralCode);
+    // ✅ UPRAVENÉ - Process referral iba ak používateľ ešte nepoužil kód
+    if (hasReferral && !referralAlreadyUsed && referralCode.trim()) {
+      try {
+        await dataManager.processReferral(upperCode, referralCode.trim().toUpperCase());
+      } catch (error) {
+        console.error('Referral processing error:', error);
+        setErrors({ referral: 'Chyba pri spracovaní referral kódu. Skúste znova.' });
+        setIsLoading(false);
+        return;
+      }
     }
     
-    await login(participantCode.toUpperCase());
+    await login(upperCode);
+    setIsLoading(false);
     
     if (codeValidation.type === 'admin') {
       navigate('/admin');
@@ -273,28 +338,61 @@ export default function Instruction() {
             id="participantCode"
             type="text"
             value={participantCode}
-            onChange={e => {
-              setParticipantCode(e.target.value.toUpperCase());
-              setErrors(prev => ({ ...prev, participant: null }));
+            onChange={async (e) => {
+              const newCode = e.target.value.toUpperCase();
+              setParticipantCode(newCode);
+              setErrors(prev => ({ ...prev, participant: null, referral: null }));
+              
+              // ✅ NOVÉ - Automatická kontrola pri zmene kódu
+              if (newCode.length === 6) {
+                await checkReferralStatus(newCode);
+              } else {
+                setReferralAlreadyUsed(false);
+              }
             }}
             placeholder="RMIL11"
             hasError={!!errors.participant}
             maxLength={6}
+            disabled={isLoading}
           />
           {errors.participant && <ErrorText>{errors.participant}</ErrorText>}
-          <Note>Zadajte kód podľa inštrukcií vyššie (všetky písmená VEĽKÉ)</Note>
+          {isCheckingCode && <Note>Kontrolujem referral status...</Note>}
+          {!isCheckingCode && <Note>Zadajte kód podľa inštrukcií vyššie (všetky písmená VEĽKÉ)</Note>}
         </CodeBox>
 
+        {/* ✅ UPRAVENÝ CHECKBOX - Zakázaný, ak používateľ už použil kód */}
         <CheckboxContainer>
           <Checkbox
             type="checkbox"
             checked={hasReferral}
-            onChange={e => setHasReferral(e.target.checked)}
+            onChange={e => {
+              if (!referralAlreadyUsed) {
+                setHasReferral(e.target.checked);
+                setErrors(prev => ({ ...prev, referral: null }));
+              }
+            }}
+            disabled={referralAlreadyUsed || isLoading}
           />
-          <label>Mám referral kód od priateľa</label>
+          <label style={{ 
+            color: referralAlreadyUsed ? '#888' : 'inherit',
+            textDecoration: referralAlreadyUsed ? 'line-through' : 'none'
+          }}>
+            Mám referral kód od priateľa
+          </label>
         </CheckboxContainer>
 
-        {hasReferral && (
+        {/* ✅ NOVÉ - Upozornenie ak už bol kód použitý */}
+        {referralAlreadyUsed && (
+          <InfoBox hasError>
+            <InfoTitle>⚠️ Referral kód už bol použitý</InfoTitle>
+            <InfoText>
+              Už ste zadali referral kód pri predošlom prihlásení. 
+              Každý používateľ môže použiť referral kód <strong>iba raz</strong>.
+            </InfoText>
+          </InfoBox>
+        )}
+
+        {hasReferral && !referralAlreadyUsed && (
           <CodeBox hasError={!!errors.referral}>
             <InputLabel htmlFor="referralCode">Referral kód</InputLabel>
             <Input
@@ -308,6 +406,7 @@ export default function Instruction() {
               placeholder="ABC123"
               hasError={!!errors.referral}
               maxLength={6}
+              disabled={isLoading}
             />
             {errors.referral && <ErrorText>{errors.referral}</ErrorText>}
             <Note>Váš priateľ dostane +10 bodov za odporúčanie! 🎁</Note>
@@ -315,8 +414,8 @@ export default function Instruction() {
         )}
 
         <ButtonContainer>
-          <StyledButton accent onClick={handleStart}>
-            Prihlásiť sa
+          <StyledButton accent onClick={handleStart} disabled={isLoading || isCheckingCode}>
+            {isLoading ? '⏳ Načítavam...' : 'Prihlásiť sa'}
           </StyledButton>
         </ButtonContainer>
       </Container>

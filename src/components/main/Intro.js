@@ -1,10 +1,11 @@
-// src/components/Intro.js
+// src/components/main/Intro.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Layout from '../../styles/Layout';
 import StyledButton from '../../styles/StyledButton';
 import { useUserStats } from '../../contexts/UserStatsContext';
+import DetectiveBackground from '../shared/DetectiveBackground';
 
 const Container = styled.div`
   padding: 40px;
@@ -14,77 +15,199 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 `;
 
-const Title = styled.h2`
-  font-size: 28px;
+const Title = styled.h1`
+  font-size: 32px;
   margin-bottom: 20px;
   color: ${props => props.theme.ACCENT_COLOR};
+  text-align: center;
+  
+  @media (max-width: 768px) {
+    font-size: 28px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 24px;
+  }
+`;
+
+const Subtitle = styled.h2`
+  font-size: 20px;
+  margin-bottom: 30px;
+  color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+  text-align: center;
+  font-weight: 600;
+  
+  @media (max-width: 480px) {
+    font-size: 18px;
+  }
 `;
 
 const Text = styled.p`
   font-size: 18px;
-  line-height: 1.6;
-  margin-bottom: 30px;
+  line-height: 1.8;
+  margin-bottom: 24px;
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
+  text-align: center;
+  max-width: 600px;
+  
+  @media (max-width: 480px) {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+`;
+
+const GroupCard = styled.div`
+  background: ${p => p.theme.CARD_BACKGROUND};
+  border: 3px solid ${p => p.theme.ACCENT_COLOR};
+  border-radius: 12px;
+  padding: 24px 40px;
+  margin: 30px 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  
+  @media (max-width: 480px) {
+    padding: 20px 30px;
+  }
+`;
+
+const GroupLabel = styled.div`
+  font-size: 14px;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
   text-align: center;
 `;
 
-const CodeDisplay = styled.div`
-  background: ${p => p.theme.CARD_BACKGROUND};
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  padding: 15px;
-  border-radius: 8px;
-  font-family: monospace;
-  margin-bottom: 30px;
-  width: 100%;
-  max-width: 300px;
+const GroupValue = styled.div`
+  font-size: 36px;
+  font-weight: 700;
+  color: ${p => p.theme.ACCENT_COLOR};
   text-align: center;
-  border: 2px solid ${p => p.theme.ACCENT_COLOR};
+  font-family: monospace;
+  
+  @media (max-width: 480px) {
+    font-size: 28px;
+  }
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
   gap: 20px;
+  margin-top: 30px;
+  
+  @media (max-width: 480px) {
+    flex-direction: column;
+    width: 100%;
+    
+    button {
+      width: 100%;
+    }
+  }
+`;
+
+const IntroSection = styled.div`
+  background: ${p => p.theme.CARD_BACKGROUND};
+  border: 1px solid ${p => p.theme.BORDER_COLOR};
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 30px;
+  
+  @media (max-width: 480px) {
+    padding: 20px;
+  }
+`;
+
+const WelcomeText = styled.div`
+  font-size: 16px;
+  line-height: 1.7;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  margin-bottom: 16px;
+  
+  strong {
+    color: ${p => p.theme.ACCENT_COLOR};
+    font-weight: 600;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 15px;
+  }
 `;
 
 const Intro = () => {
   const navigate = useNavigate();
   const { dataManager, userId } = useUserStats();
   const [groupCode, setGroupCode] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
+  // ✅ OPRAVENÉ - správne dependencies
   useEffect(() => {
-    if (userId) {
-      dataManager.loadUserProgress(userId).then(prog => {
-        setGroupCode(prog.group_assignment);
-      });
-    }
+    const loadGroup = async () => {
+      if (userId) {
+        try {
+          const prog = await dataManager.loadUserProgress(userId);
+          setGroupCode(prog.group_assignment || '0');
+        } catch (error) {
+          console.error('Error loading user progress:', error);
+          setGroupCode('0');
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+    
+    loadGroup();
   }, [userId, dataManager]);
 
   const handleContinue = () => {
-    const next = '/mainmenu';
-    navigate(next);
+    navigate('/mainmenu');
   };
 
   return (
     <Layout>
-      <Container>
-        <Title>Úvod do výskumu</Title>
-        <Text>
-          Vitajte späť! Vaša skupina je:
-        </Text>
-        <CodeDisplay>
-          Skupina {groupCode}
-        </CodeDisplay>
-        <Text>
-          V tejto časti vám poskytneme kontext a pokyny pre nasledujúce misie.
-        </Text>
-        <ButtonContainer>
-          <StyledButton accent onClick={handleContinue}>
-            Pokračovať na menu
-          </StyledButton>
-        </ButtonContainer>
-      </Container>
+      <DetectiveBackground opacity={0.1}>
+        <Container>
+          <Title>🔍 Vitajte v Conspiracy Pass!</Title>
+          
+          <IntroSection>
+            <WelcomeText>
+              Vitajte, <strong>mladý detektíve</strong>! Ja som detektív Conan a budem vašim 
+              sprievodcom na ceste odhaľovania pravdy a boja proti dezinformáciám.
+            </WelcomeText>
+            <WelcomeText>
+              Spoločne s mojím verným nemeckým ovčiakom preskúmame záhadné prípady 
+              a naučíme sa rozpoznávať <strong>manipuláciu a konšpiračné teórie</strong>.
+            </WelcomeText>
+          </IntroSection>
+
+          <Subtitle>Vaše priradenie</Subtitle>
+          
+          {isLoading ? (
+            <GroupCard>
+              <GroupLabel>Načítavam...</GroupLabel>
+              <GroupValue>⏳</GroupValue>
+            </GroupCard>
+          ) : (
+            <GroupCard>
+              <GroupLabel>Vaša výskumná skupina</GroupLabel>
+              <GroupValue>Skupina {groupCode}</GroupValue>
+            </GroupCard>
+          )}
+          
+          <Text>
+            Ste pripravení vydať sa na dobrodružstvo plné tajomstiev a odhaľovania pravdy? 
+            Vaše detektívne schopnosti budú testované v rôznych misiách.
+          </Text>
+
+          <ButtonContainer>
+            <StyledButton accent onClick={handleContinue} disabled={isLoading}>
+              {isLoading ? 'Načítavam...' : '🚀 Začať výcvik'}
+            </StyledButton>
+          </ButtonContainer>
+        </Container>
+      </DetectiveBackground>
     </Layout>
   );
 };

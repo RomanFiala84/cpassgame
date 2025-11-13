@@ -1,5 +1,5 @@
 // src/components/missions/mission0/Questionnaire0.js
-// OPRAVENÁ VERZIA s ResponseManager
+// OPRAVENÁ VERZIA s ResponseManager + DetectiveTip
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +8,7 @@ import Layout from '../../../styles/Layout';
 import StyledButton from '../../../styles/StyledButton';
 import { useUserStats } from '../../../contexts/UserStatsContext';
 import { getResponseManager } from '../../../utils/ResponseManager';
+import DetectiveTip from '../../shared/DetectiveTip';
 
 const Container = styled.div`
   padding: 20px;
@@ -77,13 +78,22 @@ const ProgressIndicator = styled.div`
   margin-top: 16px;
 `;
 
-// Definícia otázok
+// ✅ Definícia otázok
 const QUESTIONS = [
   { id: 'vek', text: 'Vek:', type: 'number' },
   { id: 'povolanie', text: 'Povolanie:', type: 'text' },
   { id: 'vzdelanie', text: 'Najvyššie dosiahnuté vzdelanie:', type: 'text' },
   { id: 'zaujem_konspiracie', text: 'Máte záujem o konšpiračné teórie?', type: 'text' }
 ];
+
+// ✅ Tipy od detektíva - jeden všeobecný tip pre celý dotazník
+const DETECTIVE_TIP = `
+  🎯 <strong>Vitajte v prvom dotazníku, detektíve!</strong><br/><br/>
+  Tento dotazník nám pomôže lepšie spoznať vás a prispôsobiť ďalšie misie.<br/><br/>
+  <em>Dôležité:</em> Nie sú žiadne správne alebo nesprávne odpovede - odpovedajte podľa 
+  vášho najlepšieho vedomia a buďte úprimní. Všetky údaje zostanú <strong>anonymné</strong> 
+  a budú použité len na výskumné účely. 🔍
+`;
 
 const COMPONENT_ID = 'mission0_questionnaire';
 
@@ -97,7 +107,7 @@ export default function Questionnaire0() {
   const [startTime] = useState(Date.now());
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Načítaj uložené odpovede
+  // ✅ Načítaj uložené odpovede
   useEffect(() => {
     const loadSaved = async () => {
       if (!userId) return;
@@ -109,23 +119,28 @@ export default function Questionnaire0() {
     loadSaved();
   }, [userId, responseManager]);
 
-  // Handler pre zmenu odpovede s auto-save
+  // ✅ Handler pre zmenu odpovede s auto-save
   const handleChange = async (questionId, value) => {
     setAnswers(prev => ({
       ...prev,
       [questionId]: value
     }));
     setError('');
+    
     // Auto-save do DB
-    await responseManager.saveAnswer(
-      userId,
-      COMPONENT_ID,
-      questionId,
-      value
-    );
+    try {
+      await responseManager.saveAnswer(
+        userId,
+        COMPONENT_ID,
+        questionId,
+        value
+      );
+    } catch (error) {
+      console.warn('Auto-save failed:', error);
+    }
   };
 
-  // Validácia - všetky otázky vyplnené?
+  // ✅ Validácia - všetky otázky vyplnené?
   const isComplete = () => {
     return QUESTIONS.every(q => {
       const answer = answers[q.id];
@@ -133,15 +148,18 @@ export default function Questionnaire0() {
     });
   };
 
-  // Submit
+  // ✅ Submit
   const handleNext = async () => {
     if (!isComplete()) {
       setError('Prosím odpovedzte na všetky otázky.');
       return;
     }
+    
     setIsSubmitting(true);
     try {
       const timeSpent = Math.floor((Date.now() - startTime) / 1000);
+      
+      // Ulož všetky odpovede
       await responseManager.saveMultipleAnswers(
         userId,
         COMPONENT_ID,
@@ -152,15 +170,21 @@ export default function Questionnaire0() {
           completed_at: new Date().toISOString()
         }
       );
+      
+      // Pridaj body
       await addPoints(10, 'questionnaire0');
+      
       // Označ misiu 0 ako dokončenú
       const progress = await dataManager.loadUserProgress(userId);
       progress.mission0_completed = true;
       await dataManager.saveProgress(userId, progress);
+      
+      // Naviguj na outro
       navigate('/mission0/outro');
+      
     } catch (error) {
       console.error('Error submitting questionnaire:', error);
-      setError('Chyba pri ukladaní odpovedí. Skús to znova.');
+      setError('Chyba pri ukladaní odpovedí. Skúste to znova.');
     } finally {
       setIsSubmitting(false);
     }
@@ -171,6 +195,7 @@ export default function Questionnaire0() {
       <Container>
         <Card>
           <Title>Dotazník 0 – Demografia</Title>
+          
           {QUESTIONS.map((question) => (
             <QuestionCard key={question.id}>
               <Question>{question.text}</Question>
@@ -182,7 +207,9 @@ export default function Questionnaire0() {
               />
             </QuestionCard>
           ))}
+          
           {error && <ErrorText>{error}</ErrorText>}
+          
           <ButtonContainer>
             <StyledButton 
               accent 
@@ -192,10 +219,21 @@ export default function Questionnaire0() {
               {isSubmitting ? 'Ukladám...' : 'Pokračovať'}
             </StyledButton>
           </ButtonContainer>
+          
           <ProgressIndicator>
             Vyplnené: {Object.keys(answers).filter(k => answers[k] && answers[k] !== '').length} / {QUESTIONS.length}
           </ProgressIndicator>
         </Card>
+
+        {/* ✅ DetectiveTip - automaticky sa otvorí pri načítaní */}
+        <DetectiveTip 
+          tip={DETECTIVE_TIP}
+          detectiveName="Detektív Conan"
+          autoOpen={true}
+          autoOpenDelay={800}
+          autoClose={false}  // Neuzavrie sa automaticky - dôležitá informácia
+          showBadge={true}
+        />
       </Container>
     </Layout>
   );

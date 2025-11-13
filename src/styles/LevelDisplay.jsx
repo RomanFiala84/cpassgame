@@ -6,7 +6,7 @@ import { useUserStats } from '../contexts/UserStatsContext';
 
 const Container = styled.div`
   position: fixed;
-  top: 10%;
+  top: 20%;
   right: 0;
   transform: translateY(-10%);
   background: ${props => props.theme.CARD_BACKGROUND};

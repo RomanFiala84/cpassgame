@@ -1,5 +1,5 @@
 // src/utils/DataManager.js
-// OPRAVA: správne URL pre Netlify Functions
+// OPRAVA: správne URL pre Netlify Functions + OCHRANA PROTI ZNEUŽITIU REFERRAL KÓDOV
 
 import * as XLSX from 'xlsx';
 
@@ -10,7 +10,6 @@ class DataManager {
     this.cache = new Map();
     this.allParticipantsCache = null;
     
-    // ✅ NOVÉ - API base URL
     this.apiBase = '/.netlify/functions/progress';
 
     this.clearAllData = () => {
@@ -35,6 +34,8 @@ class DataManager {
       'group_assignment',
       'sharing_code',
       'referral_code',
+      'used_referral_code', // ✅ NOVÉ
+      'referred_by', // ✅ NOVÉ
       'timestamp_start',
       'timestamp_last_update',
       'session_count',
@@ -44,6 +45,7 @@ class DataManager {
       'user_stats_points',
       'user_stats_level',
       'referrals_count',
+      'referred_users', // ✅ NOVÉ
       'mainmenu_visits',
       'mission0_unlocked',
       'mission0_completed',
@@ -58,7 +60,7 @@ class DataManager {
 
   async validateReferralCode(code) {
     const all = this.getAllParticipantsData();
-    return Object.values(all).some(d => d.sharing_code === code);
+    return Object.values(all).some(d => d.sharing_code === code.toUpperCase());
   }
 
   async validateSharingCode(code) {
@@ -66,38 +68,84 @@ class DataManager {
     return Object.values(all).some(d => d.sharing_code === code.toUpperCase());
   }
 
-  async processReferral(participantCode, referralCode) {
-    const all = this.getAllParticipantsData();
-    
-    const entry = Object.entries(all).find(([_, d]) => d.sharing_code === referralCode);
-    if (!entry) {
-      console.warn(`⚠️ Referral kód ${referralCode} neexistuje`);
-      return;
+  // ✅ NOVÁ FUNKCIA - Získanie sharing kódu používateľa
+  async getUserSharingCode(userId) {
+    try {
+      const userData = await this.loadUserProgress(userId);
+      return userData?.sharing_code || null;
+    } catch (error) {
+      console.error('Error getting sharing code:', error);
+      return null;
     }
-    
-    const [refCode, refData] = entry;
-    
-    if (refCode === participantCode) {
-      console.warn(`⚠️ Nemôžeš použiť svoj vlastný referral kód`);
-      return;
-    }
-    
-    refData.referrals_count = (refData.referrals_count || 0) + 1;
-    refData.user_stats_points = (refData.user_stats_points || 0) + 10;
-    
-    await this.saveProgress(refCode, refData);
-    
-    console.log(`✅ Referral bonus: ${refCode} získal +10 bodov (celkom: ${refData.referrals_count} referralov)`);
-    
-    return {
-      success: true,
-      referrerCode: refCode,
-      referrerPoints: refData.user_stats_points,
-      referrerCount: refData.referrals_count
-    };
   }
 
-  // ✅ OPRAVA: správna URL
+  // ✅ UPRAVENÁ FUNKCIA - S OCHRANOU PROTI ZNEUŽITIU
+  async processReferral(participantCode, referralCode) {
+    try {
+      console.log(`🎁 Processing referral: ${participantCode} → ${referralCode}`);
+      
+      const all = this.getAllParticipantsData();
+      
+      // 1. Načítaj dáta nového používateľa
+      const newUserData = await this.loadUserProgress(participantCode);
+      
+      // 2. ✅ NOVÉ - Skontroluj, či používateľ už nepoužil referral kód
+      if (newUserData?.used_referral_code) {
+        console.warn(`⚠️ Používateľ ${participantCode} už použil referral kód: ${newUserData.used_referral_code}`);
+        throw new Error('Tento používateľ už použil referral kód');
+      }
+      
+      // 3. Nájdi používateľa, ktorý má tento sharing_code
+      const entry = Object.entries(all).find(([_, d]) => d.sharing_code === referralCode.toUpperCase());
+      
+      if (!entry) {
+        console.warn(`⚠️ Referral kód ${referralCode} neexistuje`);
+        throw new Error('Neplatný referral kód');
+      }
+      
+      const [refCode, refData] = entry;
+      
+      // 4. ✅ NOVÉ - Zabráň použitiu vlastného kódu
+      if (refCode === participantCode) {
+        console.warn(`⚠️ ${participantCode} sa pokúsil použiť svoj vlastný referral kód`);
+        throw new Error('Nemôžete použiť svoj vlastný zdieľací kód');
+      }
+      
+      // 5. Pridaj +10 bodov referrerovi
+      refData.referrals_count = (refData.referrals_count || 0) + 1;
+      refData.user_stats_points = (refData.user_stats_points || 0) + 10;
+      refData.referred_users = refData.referred_users || [];
+      
+      // ✅ NOVÉ - Zabráň duplikátnym záznamom
+      if (!refData.referred_users.includes(participantCode)) {
+        refData.referred_users.push(participantCode);
+      }
+      
+      // 6. ✅ NOVÉ - Označ nového používateľa, že už použil kód
+      newUserData.used_referral_code = referralCode.toUpperCase();
+      newUserData.referred_by = refCode;
+      newUserData.referral_code = referralCode.toUpperCase(); // Pre kompatibilitu
+      
+      // 7. Ulož zmeny
+      await this.saveProgress(refCode, refData);
+      await this.saveProgress(participantCode, newUserData);
+      
+      console.log(`✅ Referral processed: ${refCode} získal +10 bodov (celkom: ${refData.referrals_count} referralov)`);
+      console.log(`✅ ${participantCode} označený ako referral použitý`);
+      
+      return {
+        success: true,
+        referrerCode: refCode,
+        referrerPoints: refData.user_stats_points,
+        referrerCount: refData.referrals_count
+      };
+      
+    } catch (error) {
+      console.error('❌ Error processing referral:', error);
+      throw error;
+    }
+  }
+
   async unlockMissionForAll(missionId) {
     console.log(`🔓 Odomykám misiu ${missionId} pre všetkých...`);
     
@@ -134,7 +182,6 @@ class DataManager {
     }
   }
 
-  // ✅ OPRAVA: správna URL
   async lockMissionForAll(missionId) {
     console.log(`🔒 Zamykám misiu ${missionId} pre všetkých...`);
     
@@ -171,7 +218,6 @@ class DataManager {
     }
   }
 
-  // ✅ OPRAVA: správna URL
   async fetchAllParticipantsData() {
     try {
       console.log('📥 Načítavam všetkých používateľov z backendu...');
@@ -204,7 +250,6 @@ class DataManager {
     return await this.fetchAllParticipantsData();
   }
 
-  // ✅ OPRAVA: správna URL
   async loadUserProgress(participantCode) {
     if (!participantCode) return null;
     if (this.cache.has(participantCode)) {
@@ -268,7 +313,6 @@ class DataManager {
     return rec;
   }
 
-  // ✅ OPRAVA: správna URL
   async syncToServer(participantCode, data) {
     try {
       const resp = await fetch(`${this.apiBase}?code=${participantCode}`, {
@@ -323,6 +367,9 @@ class DataManager {
       user_stats_level: 1,
       completedSections: [],
       referrals_count: 0,
+      referred_users: [], // ✅ NOVÉ
+      used_referral_code: null, // ✅ NOVÉ
+      referred_by: null, // ✅ NOVÉ
       mainmenu_visits: 0,
       mission0_completed: false,
       mission0_unlocked: false,
