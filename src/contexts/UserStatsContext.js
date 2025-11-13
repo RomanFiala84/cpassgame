@@ -1,5 +1,5 @@
 // src/contexts/UserStatsContext.js
-// UPRAVENÁ VERZIA - Bodovanie za misie + bonus za zdieľanie
+// FINÁLNA VERZIA - Optimalizovaný refresh a zabezpečenie proti reset bodov
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import DataManager from '../utils/DataManager';
@@ -12,15 +12,16 @@ export const UserStatsProvider = ({ children }) => {
   const [userStats, setUserStats] = useState({
     level: 1,
     points: 0,
-    missionPoints: 0,        // ✅ NOVÉ - body len za misie (max 100)
-    bonusPoints: 0,          // ✅ body za zdieľanie (neobmedzené)
-    totalPoints: 0,          // ✅ NOVÉ - celkový súčet všetkých bodov
-    completedMissions: [],   // ✅ ZMENENÉ z completedSections
+    missionPoints: 0,
+    bonusPoints: 0,
+    totalPoints: 0,
+    completedMissions: [],
     referrals: 0
   });
 
   const intervalRef = useRef(null);
   const isLoadingRef = useRef(false);
+  const lastLoadedUserIdRef = useRef(null); // ✅ NOVÉ - sledovanie posledného načítaného userId
 
   const login = useCallback(async (id) => {
     sessionStorage.setItem('participantCode', id);
@@ -34,6 +35,7 @@ export const UserStatsProvider = ({ children }) => {
   const logout = useCallback(() => {
     sessionStorage.removeItem('participantCode');
     setUserId(null);
+    lastLoadedUserIdRef.current = null; // ✅ RESET
     setUserStats({
       level: 1,
       points: 0,
@@ -82,15 +84,14 @@ export const UserStatsProvider = ({ children }) => {
       const progress = await dataManager.loadUserProgress(userId);
       if (progress) {
         const missionPoints = progress.user_stats_mission_points || 0;
-        const bonusPoints = (progress.referrals_count || 0) * 10; // ✅ 10 bodov za zdieľanie
+        const bonusPoints = (progress.referrals_count || 0) * 10;
         const totalPoints = missionPoints + bonusPoints;
         
-        // ✅ Level je max 5, počíta sa len z mission points (max 100)
         const level = Math.min(Math.floor(missionPoints / 25) + 1, 5);
 
         const updatedStats = {
           level: level,
-          points: progress.user_stats_points || 0, // ✅ Zachované pre kompatibilitu
+          points: totalPoints, // ✅ ZMENENÉ - synchronizované s totalPoints
           missionPoints: missionPoints,
           bonusPoints: bonusPoints,
           totalPoints: totalPoints,
@@ -98,24 +99,37 @@ export const UserStatsProvider = ({ children }) => {
           completedMissions: Array.isArray(progress.completedMissions) ? progress.completedMissions : []
         };
 
-        setUserStats(updatedStats);
-        console.log(`✅ Stats načítané pre ${userId}:`, updatedStats);
+        // ✅ NOVÉ - Aktualizuj len ak sa userId zmenil alebo je to prvé načítanie
+        if (lastLoadedUserIdRef.current !== userId || userStats.totalPoints === 0) {
+          setUserStats(updatedStats);
+          lastLoadedUserIdRef.current = userId;
+          console.log(`✅ Stats načítané pre ${userId}:`, updatedStats);
+        } else {
+          // ✅ Tichý update - len ak sa body zmenili
+          if (userStats.totalPoints !== totalPoints) {
+            setUserStats(updatedStats);
+            console.log(`✅ Stats aktualizované pre ${userId}:`, updatedStats);
+          }
+        }
       }
     } catch (error) {
       console.error('❌ Chyba pri načítaní stats:', error);
-      setUserStats({
-        level: 1,
-        points: 0,
-        missionPoints: 0,
-        bonusPoints: 0,
-        totalPoints: 0,
-        completedMissions: [],
-        referrals: 0
-      });
+      // ✅ NOVÉ - Nereset stats pri chybe, ponechaj existujúce
+      if (userStats.totalPoints === 0) {
+        setUserStats({
+          level: 1,
+          points: 0,
+          missionPoints: 0,
+          bonusPoints: 0,
+          totalPoints: 0,
+          completedMissions: [],
+          referrals: 0
+        });
+      }
     } finally {
       isLoadingRef.current = false;
     }
-  }, [userId, dataManager]);
+  }, [userId, dataManager, userStats.totalPoints]);
 
   useEffect(() => {
     const handleStorage = (e) => {
@@ -127,26 +141,29 @@ export const UserStatsProvider = ({ children }) => {
     return () => window.removeEventListener('storage', handleStorage);
   }, [dataManager.centralStorageKey, loadUserStats]);
 
+  // ✅ VYLEPŠENÉ - Načítaj stats len pri zmene userId
   useEffect(() => {
     if (!userId || isLoadingRef.current) return;
 
-    dataManager.cache.clear();
-    loadUserStats();
+    // ✅ Ak je to nový userId, clear cache
+    if (lastLoadedUserIdRef.current !== userId) {
+      dataManager.cache.clear();
+      loadUserStats();
+    }
 
     const interval = setInterval(() => {
       loadUserStats();
-    }, 5000);
+    }, 10000); // ✅ ZMENENÉ - Interval každých 10s namiesto 5s
 
     return () => clearInterval(interval);
   }, [userId, loadUserStats, dataManager]);
 
   useEffect(() => {
-    if (userId && !isLoadingRef.current) {
+    if (userId && !isLoadingRef.current && lastLoadedUserIdRef.current !== userId) {
       loadUserStats();
     }
   }, [loadUserStats, userId]);
 
-  // ✅ NOVÁ FUNKCIA - Pridanie bodov za misiu (25 bodov)
   const addMissionPoints = useCallback(async (missionId) => {
     if (!userId) {
       console.warn('❌ Nie je userId pre pridanie bodov za misiu');
@@ -158,17 +175,14 @@ export const UserStatsProvider = ({ children }) => {
     try {
       const progress = await dataManager.loadUserProgress(userId);
 
-      // Skontroluj, či misia už nebola dokončená
       if (progress.completedMissions && progress.completedMissions.includes(missionId)) {
         console.log(`⚠️ Misia ${missionId} už bola dokončená pre ${userId}`);
         return false;
       }
 
-      // Pridaj 25 bodov za misiu (max 100)
       const currentMissionPoints = progress.user_stats_mission_points || 0;
       const newMissionPoints = Math.min(currentMissionPoints + 25, 100);
       
-      // Level sa počíta z mission points (každých 25 bodov = 1 level, max 5)
       const newLevel = Math.min(Math.floor(newMissionPoints / 25) + 1, 5);
       
       const newCompletedMissions = [...(progress.completedMissions || []), missionId];
@@ -178,7 +192,7 @@ export const UserStatsProvider = ({ children }) => {
 
       const newStats = {
         level: newLevel,
-        points: progress.user_stats_points || 0,
+        points: totalPoints, // ✅ SYNCHRONIZOVANÉ
         missionPoints: newMissionPoints,
         bonusPoints: bonusPoints,
         totalPoints: totalPoints,
@@ -190,6 +204,7 @@ export const UserStatsProvider = ({ children }) => {
         ...progress,
         user_stats_mission_points: newMissionPoints,
         user_stats_level: newLevel,
+        user_stats_points: totalPoints, // ✅ PRIDANÉ - synchronizuj aj staré pole
         completedMissions: newCompletedMissions,
         [`${missionId}_completed`]: true
       };
@@ -205,7 +220,6 @@ export const UserStatsProvider = ({ children }) => {
     }
   }, [userId, dataManager]);
 
-  // ✅ UPRAVENÁ FUNKCIA - Pridanie bodov za zdieľací kód (10 bodov, neobmedzené)
   const addReferralPoints = useCallback(async () => {
     if (!userId) {
       console.warn('❌ Nie je userId pre pridanie referral bodov');
@@ -217,7 +231,6 @@ export const UserStatsProvider = ({ children }) => {
     try {
       const progress = await dataManager.loadUserProgress(userId);
 
-      // Zvýš počet referralov
       const newReferralsCount = (progress.referrals_count || 0) + 1;
       const bonusPoints = newReferralsCount * 10;
 
@@ -227,7 +240,7 @@ export const UserStatsProvider = ({ children }) => {
 
       const newStats = {
         level: level,
-        points: progress.user_stats_points || 0,
+        points: totalPoints, // ✅ SYNCHRONIZOVANÉ
         missionPoints: missionPoints,
         bonusPoints: bonusPoints,
         totalPoints: totalPoints,
@@ -237,7 +250,8 @@ export const UserStatsProvider = ({ children }) => {
 
       const updatedProgress = {
         ...progress,
-        referrals_count: newReferralsCount
+        referrals_count: newReferralsCount,
+        user_stats_points: totalPoints // ✅ PRIDANÉ
       };
 
       await dataManager.saveProgress(userId, updatedProgress);
@@ -251,11 +265,9 @@ export const UserStatsProvider = ({ children }) => {
     }
   }, [userId, dataManager]);
 
-  // ✅ ZACHOVANÉ pre spätnosť - ale už deprecated
   const addPoints = useCallback(async (amount, sectionId) => {
     console.warn('⚠️ addPoints je deprecated - používaj addMissionPoints alebo addReferralPoints');
     
-    // Pre spätnosť nechaj fungovať
     if (sectionId && sectionId.includes('mission')) {
       return await addMissionPoints(sectionId);
     }
@@ -265,21 +277,23 @@ export const UserStatsProvider = ({ children }) => {
 
   const refreshUserStats = useCallback(async () => {
     if (userId) {
+      console.log('🔄 Manuálny refresh stats pre:', userId);
       await loadUserStats();
     }
   }, [userId, loadUserStats]);
 
   const clearAllData = useCallback(() => {
     dataManager.clearAllData();
+    lastLoadedUserIdRef.current = null; // ✅ RESET
   }, [dataManager]);
 
   return (
     <UserStatsContext.Provider
       value={{
         userStats,
-        addPoints,              // ✅ Deprecated, ale zachované
-        addMissionPoints,       // ✅ NOVÉ - použiť pre misie
-        addReferralPoints,      // ✅ NOVÉ - použiť pre zdieľanie
+        addPoints,
+        addMissionPoints,
+        addReferralPoints,
         refreshUserStats,
         dataManager,
         userId,

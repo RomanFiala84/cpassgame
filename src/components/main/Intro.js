@@ -1,11 +1,13 @@
 // src/components/main/Intro.js
+// S VEĽKÝM DETECTIVE TIP
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Layout from '../../styles/Layout';
 import StyledButton from '../../styles/StyledButton';
 import { useUserStats } from '../../contexts/UserStatsContext';
-import DetectiveBackground from '../shared/DetectiveBackground';
+import DetectiveTipLarge from '../shared/DetectiveTipLarge'; // ✅ ZMENENÉ
 
 const Container = styled.div`
   padding: 40px;
@@ -108,41 +110,12 @@ const ButtonContainer = styled.div`
   }
 `;
 
-const IntroSection = styled.div`
-  background: ${p => p.theme.CARD_BACKGROUND};
-  border: 1px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 12px;
-  padding: 30px;
-  margin-bottom: 30px;
-  
-  @media (max-width: 480px) {
-    padding: 20px;
-  }
-`;
-
-const WelcomeText = styled.div`
-  font-size: 16px;
-  line-height: 1.7;
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  margin-bottom: 16px;
-  
-  strong {
-    color: ${p => p.theme.ACCENT_COLOR};
-    font-weight: 600;
-  }
-  
-  @media (max-width: 480px) {
-    font-size: 15px;
-  }
-`;
-
 const Intro = () => {
   const navigate = useNavigate();
   const { dataManager, userId } = useUserStats();
   const [groupCode, setGroupCode] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
-  // ✅ OPRAVENÉ - správne dependencies
   useEffect(() => {
     const loadGroup = async () => {
       if (userId) {
@@ -167,47 +140,50 @@ const Intro = () => {
 
   return (
     <Layout>
-      <DetectiveBackground opacity={0.1}>
-        <Container>
-          <Title>🔍 Vitajte v Conspiracy Pass!</Title>
-          
-          <IntroSection>
-            <WelcomeText>
-              Vitajte, <strong>mladý detektíve</strong>! Ja som detektív Conan a budem vašim 
-              sprievodcom na ceste odhaľovania pravdy a boja proti dezinformáciám.
-            </WelcomeText>
-            <WelcomeText>
-              Spoločne s mojím verným nemeckým ovčiakom preskúmame záhadné prípady 
-              a naučíme sa rozpoznávať <strong>manipuláciu a konšpiračné teórie</strong>.
-            </WelcomeText>
-          </IntroSection>
+      <Container>
+        <Title>🔍 Vitajte v Conspiracy Pass!</Title>
+        
+        <Subtitle>Vaše priradenie</Subtitle>
+        
+        {isLoading ? (
+          <GroupCard>
+            <GroupLabel>Načítavam...</GroupLabel>
+            <GroupValue>⏳</GroupValue>
+          </GroupCard>
+        ) : (
+          <GroupCard>
+            <GroupLabel>Vaša výskumná skupina</GroupLabel>
+            <GroupValue>Skupina {groupCode}</GroupValue>
+          </GroupCard>
+        )}
+        
+        <Text>
+          Ste pripravení vydať sa na dobrodružstvo plné tajomstiev a odhaľovania pravdy? 
+          Vaše detektívne schopnosti budú testované v rôznych misiách.
+        </Text>
 
-          <Subtitle>Vaše priradenie</Subtitle>
-          
-          {isLoading ? (
-            <GroupCard>
-              <GroupLabel>Načítavam...</GroupLabel>
-              <GroupValue>⏳</GroupValue>
-            </GroupCard>
-          ) : (
-            <GroupCard>
-              <GroupLabel>Vaša výskumná skupina</GroupLabel>
-              <GroupValue>Skupina {groupCode}</GroupValue>
-            </GroupCard>
-          )}
-          
-          <Text>
-            Ste pripravení vydať sa na dobrodružstvo plné tajomstiev a odhaľovania pravdy? 
-            Vaše detektívne schopnosti budú testované v rôznych misiách.
-          </Text>
+        <ButtonContainer>
+          <StyledButton accent onClick={handleContinue} disabled={isLoading}>
+            {isLoading ? 'Načítavam...' : '🚀 Začať výcvik'}
+          </StyledButton>
+        </ButtonContainer>
 
-          <ButtonContainer>
-            <StyledButton accent onClick={handleContinue} disabled={isLoading}>
-              {isLoading ? 'Načítavam...' : '🚀 Začať výcvik'}
-            </StyledButton>
-          </ButtonContainer>
-        </Container>
-      </DetectiveBackground>
+        {/* ✅ VEĽKÝ DETECTIVE TIP S OBRÁZKOM */}
+        <DetectiveTipLarge
+          detectiveName="Detektív Conan"
+          imageUrl="/images/detective.png"
+          tip={`
+            <p>Vitajte, <strong>mladý detektíve</strong>!</p>
+            <p>Ja som detektív Conan a budem vašim sprievodcom na ceste odhaľovania pravdy a boja proti dezinformáciám.</p>
+            <p>Spoločne s mojím verným nemeckým ovčiakom preskúmame záhadné prípady a naučíme sa rozpoznávať <strong>manipuláciu a konšpiračné teórie</strong>.</p>
+            <p><em>Pripravte sa na detektívne dobrodružstvo! 🕵️</em></p>
+          `}
+          buttonText="🚀 Začať výcvik!"
+          autoOpen={true}
+          autoOpenDelay={500}
+          autoClose={false}
+        />
+      </Container>
     </Layout>
   );
 };
