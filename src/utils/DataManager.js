@@ -1,5 +1,5 @@
 // src/utils/DataManager.js
-// OPRAVA: správne URL pre Netlify Functions + OCHRANA PROTI ZNEUŽITIU REFERRAL KÓDOV + NOVÝ BODOVÝ SYSTÉM
+// FINÁLNA VERZIA - Všetky funkcie zachované + optimalizácia
 
 import * as XLSX from 'xlsx';
 
@@ -43,11 +43,11 @@ class DataManager {
       'instruction_completed',
       'intro_completed',
       'user_stats_points',
-      'user_stats_mission_points', // ✅ NOVÉ
+      'user_stats_mission_points',
       'user_stats_level',
       'referrals_count',
       'referred_users',
-      'completedMissions', // ✅ ZMENENÉ z completedSections
+      'completedMissions',
       'mainmenu_visits',
       'mission0_unlocked',
       'mission0_completed',
@@ -57,7 +57,7 @@ class DataManager {
       'mission2_completed',
       'mission3_unlocked',
       'mission3_completed',
-      'all_missions_completed' // ✅ NOVÉ
+      'all_missions_completed'
     ];
   }
 
@@ -81,20 +81,24 @@ class DataManager {
     }
   }
 
-  // ✅ UPRAVENÁ FUNKCIA - S NOVÝM BODOVÝM SYSTÉMOM
+  // ✅ OPRAVENÁ FUNKCIA - Lepšia ochrana proti zneužitiu
   async processReferral(participantCode, referralCode) {
     try {
       console.log(`🎁 Processing referral: ${participantCode} → ${referralCode}`);
       
+      // ✅ 1. Načítaj aktuálne dáta
+      await this.syncAllFromServer();
       const all = this.getAllParticipantsData();
       
       const newUserData = await this.loadUserProgress(participantCode);
       
+      // ✅ 2. Skontroluj, či používateľ už nepoužil referral kód
       if (newUserData?.used_referral_code) {
         console.warn(`⚠️ Používateľ ${participantCode} už použil referral kód: ${newUserData.used_referral_code}`);
         throw new Error('Tento používateľ už použil referral kód');
       }
       
+      // ✅ 3. Nájdi referrera
       const entry = Object.entries(all).find(([_, d]) => d.sharing_code === referralCode.toUpperCase());
       
       if (!entry) {
@@ -104,23 +108,29 @@ class DataManager {
       
       const [refCode, refData] = entry;
       
+      // ✅ 4. Zabráň použitiu vlastného kódu
       if (refCode === participantCode) {
         console.warn(`⚠️ ${participantCode} sa pokúsil použiť svoj vlastný referral kód`);
         throw new Error('Nemôžete použiť svoj vlastný zdieľací kód');
       }
       
-      // ✅ NOVÝ BODOVÝ SYSTÉM - už sa nepridávajú body tu, ale cez addReferralPoints v contexte
-      refData.referrals_count = (refData.referrals_count || 0) + 1;
+      // ✅ 5. NOVÉ - Zabráň duplicitným záznamom v referred_users
       refData.referred_users = refData.referred_users || [];
-      
-      if (!refData.referred_users.includes(participantCode)) {
-        refData.referred_users.push(participantCode);
+      if (refData.referred_users.includes(participantCode)) {
+        console.warn(`⚠️ ${participantCode} už bol pridaný do referred_users pre ${refCode}`);
+        throw new Error('Tento referral už bol spracovaný');
       }
       
+      // ✅ 6. Aktualizuj referrera (bez bodov - pridajú sa cez context)
+      refData.referrals_count = (refData.referrals_count || 0) + 1;
+      refData.referred_users.push(participantCode);
+      
+      // ✅ 7. Aktualizuj nového používateľa
       newUserData.used_referral_code = referralCode.toUpperCase();
       newUserData.referred_by = refCode;
       newUserData.referral_code = referralCode.toUpperCase();
       
+      // ✅ 8. Ulož obe zmeny
       await this.saveProgress(refCode, refData);
       await this.saveProgress(participantCode, newUserData);
       
@@ -357,10 +367,10 @@ class DataManager {
       instruction_completed: false,
       intro_completed: false,
       user_stats_points: 0,
-      user_stats_mission_points: 0, // ✅ NOVÉ
+      user_stats_mission_points: 0,
       user_stats_level: 1,
-      completedSections: [], // ✅ Zachované pre kompatibilitu
-      completedMissions: [], // ✅ NOVÉ
+      completedSections: [],
+      completedMissions: [],
       referrals_count: 0,
       referred_users: [],
       used_referral_code: null,
@@ -374,7 +384,7 @@ class DataManager {
       mission2_unlocked: false,
       mission3_completed: false,
       mission3_unlocked: false,
-      all_missions_completed: false, // ✅ NOVÉ
+      all_missions_completed: false,
       responses: {}
     };
   }

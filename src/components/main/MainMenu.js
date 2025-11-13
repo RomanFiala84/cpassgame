@@ -1,128 +1,179 @@
-// src/components/main/MainMenu.js - S PRIDANOU SHARING SEKCIOU
+// src/components/main/MainMenu.js
+// FINÁLNA VERZIA - Použitie StyledButton, lepší layout, optimalizácia
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Layout from '../../styles/Layout';
+import StyledButton from '../../styles/StyledButton';
 import { useUserStats } from '../../contexts/UserStatsContext';
 
 const Container = styled.div`
   padding: 20px;
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    padding: 15px;
+  }
 `;
 
 const Header = styled.div`
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 30px;
+  }
 `;
 
 const Title = styled.h1`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
   margin-bottom: 8px;
+  
+  @media (max-width: 768px) {
+    font-size: 28px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 24px;
+  }
 `;
 
 const Subtitle = styled.p`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 14px;
+  font-size: 16px;
+  margin-bottom: 20px;
+  
+  @media (max-width: 480px) {
+    font-size: 14px;
+  }
 `;
 
 const StatsCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
-  border: 1px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 8px;
-  padding: 16px;
+  border: 2px solid ${p => p.theme.ACCENT_COLOR}44;
+  border-radius: 12px;
+  padding: 20px;
   display: flex;
   justify-content: space-around;
-  margin-bottom: 30px;
+  gap: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  
+  @media (max-width: 480px) {
+    flex-direction: column;
+    gap: 16px;
+  }
 `;
 
 const StatItem = styled.div`
   text-align: center;
+  flex: 1;
 `;
 
 const StatValue = styled.div`
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
+  margin-bottom: 4px;
+  
+  @media (max-width: 768px) {
+    font-size: 28px;
+  }
 `;
 
 const StatLabel = styled.div`
   font-size: 12px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
+  font-weight: 600;
 `;
 
-// ✅ NOVÉ - SHARING SECTION
 const SharingSection = styled.div`
-  background: linear-gradient(135deg, ${p => p.theme.ACCENT_COLOR}22, ${p => p.theme.ACCENT_COLOR_2}22);
+  background: linear-gradient(135deg, 
+    ${p => p.theme.ACCENT_COLOR}22, 
+    ${p => p.theme.ACCENT_COLOR_2}22
+  );
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
-  border-radius: 12px;
-  padding: 20px;
-  margin: 0 0 30px 0;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 40px;
   text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  
+  @media (max-width: 768px) {
+    padding: 20px;
+    margin-bottom: 30px;
+  }
 `;
 
 const SharingTitle = styled.h3`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  margin-bottom: 8px;
-  font-size: 18px;
+  margin-bottom: 16px;
+  font-size: 20px;
   font-weight: 700;
+  
+  @media (max-width: 480px) {
+    font-size: 18px;
+  }
 `;
 
 const SharingCodeDisplay = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px dashed ${p => p.theme.ACCENT_COLOR};
-  border-radius: 8px;
-  padding: 16px;
+  border-radius: 12px;
+  padding: 20px;
   margin: 16px 0;
 `;
 
+const SharingCodeLabel = styled.div`
+  font-size: 14px;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  margin-bottom: 12px;
+`;
+
 const SharingCode = styled.code`
-  font-size: 32px;
+  font-size: 36px;
   font-weight: bold;
-  letter-spacing: 4px;
+  letter-spacing: 6px;
   color: ${p => p.theme.ACCENT_COLOR};
   font-family: 'Courier New', monospace;
+  
+  @media (max-width: 768px) {
+    font-size: 32px;
+    letter-spacing: 4px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 28px;
+    letter-spacing: 3px;
+  }
 `;
 
 const SharingInfo = styled.p`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   font-size: 14px;
-  margin: 12px 0;
+  margin: 16px 0;
   line-height: 1.6;
-`;
-
-const CopyButton = styled.button`
-  background: ${p => p.theme.ACCENT_COLOR};
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-bottom: 12px;
-  transition: all 0.2s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    opacity: 0.9;
-  }
-
-  &:active {
-    transform: translateY(0);
+  
+  strong {
+    color: ${p => p.theme.ACCENT_COLOR};
+    font-weight: 600;
   }
 `;
 
 const ReferralStats = styled.div`
   display: flex;
   justify-content: center;
-  gap: 24px;
-  margin-top: 16px;
+  gap: 32px;
+  margin-top: 20px;
+  
+  @media (max-width: 480px) {
+    gap: 20px;
+  }
 `;
 
 const ReferralStat = styled.div`
@@ -130,13 +181,17 @@ const ReferralStat = styled.div`
 `;
 
 const ReferralStatValue = styled.div`
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
   color: ${p => p.theme.ACCENT_COLOR};
+  
+  @media (max-width: 768px) {
+    font-size: 24px;
+  }
 `;
 
 const ReferralStatLabel = styled.div`
-  font-size: 12px;
+  font-size: 11px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   margin-top: 4px;
   text-transform: uppercase;
@@ -147,23 +202,33 @@ const MissionsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const MissionCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
-  border: 1px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 8px;
-  padding: 16px;
+  border: 2px solid ${p => p.locked ? p.theme.BORDER_COLOR : p.theme.ACCENT_COLOR}44;
+  border-radius: 12px;
+  padding: 20px;
   text-align: center;
   position: relative;
   cursor: ${p => p.locked ? 'not-allowed' : 'pointer'};
-  opacity: ${p => p.locked ? 0.5 : 1};
+  opacity: ${p => p.locked ? 0.6 : 1};
   transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 
   &:hover {
-    transform: ${p => p.locked ? 'none' : 'translateY(-2px)'};
+    transform: ${p => p.locked ? 'none' : 'translateY(-4px)'};
     border-color: ${p => p.locked ? p.theme.BORDER_COLOR : p.theme.ACCENT_COLOR};
+    box-shadow: ${p => p.locked ? '0 2px 8px rgba(0,0,0,0.1)' : `0 8px 20px ${p.theme.ACCENT_COLOR}33`};
   }
 `;
 
@@ -173,19 +238,22 @@ const MissionNumber = styled.div`
   margin-bottom: 8px;
   font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 1px;
 `;
 
 const MissionTitle = styled.h3`
-  font-size: 16px;
+  font-size: 18px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  font-weight: 600;
 `;
 
 const MissionStatus = styled.div`
-  font-size: 12px;
-  color: ${p => p.completed ? p.theme.ACCENT_COLOR_3 : p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 13px;
+  color: ${p => p.completed ? p.theme.SUCCESS_COLOR || p.theme.ACCENT_COLOR_3 : p.theme.SECONDARY_TEXT_COLOR};
   font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 `;
 
 const AdminButtons = styled.div`
@@ -197,13 +265,19 @@ const AdminButtons = styled.div`
 `;
 
 const AdminButton = styled.button`
-  background: ${p => p.unlock ? p.theme.ACCENT_COLOR_3 : p.theme.ACCENT_COLOR_2};
+  background: ${p => p.$unlock ? p.theme.SUCCESS_COLOR || '#10b981' : p.theme.ACCENT_COLOR};
   color: #fff;
   border: none;
-  border-radius: 4px;
-  padding: 4px 6px;
+  border-radius: 6px;
+  padding: 6px 8px;
   font-size: 10px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover:not(:disabled) {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
   
   &:disabled {
     opacity: 0.5;
@@ -214,27 +288,15 @@ const AdminButton = styled.button`
 const ButtonGroup = styled.div`
   display: flex;
   justify-content: center;
-  gap: 16px;
-  margin-top: 20px;
+  gap: 12px;
   flex-wrap: wrap;
-`;
-
-const IconButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: ${p => p.theme.CARD_BACKGROUND};
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  border: 1px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: ${p => p.theme.HOVER_OVERLAY};
-    transform: translateY(-1px);
+  
+  @media (max-width: 480px) {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
   }
 `;
 
@@ -242,23 +304,38 @@ const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0,0,0,0.5);
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  padding: 20px;
 `;
 
 const ModalContent = styled.div`
   position: relative;
   background: ${p => p.theme.CARD_BACKGROUND};
-  border-radius: 8px;
-  padding: 24px;
-  max-width: 400px;
+  border: 2px solid ${p => p.theme.ACCENT_COLOR};
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 500px;
   width: 100%;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  
+  h3 {
+    color: ${p => p.theme.ACCENT_COLOR};
+    margin-bottom: 16px;
+    font-size: 24px;
+  }
+  
+  p {
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
 `;
 
 const CloseButton = styled.button`
@@ -268,8 +345,21 @@ const CloseButton = styled.button`
   background: transparent;
   border: none;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 18px;
+  font-size: 24px;
   cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: ${p => p.theme.BORDER_COLOR};
+    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+    transform: rotate(90deg);
+  }
 `;
 
 const makeMissionList = (p) => [
@@ -285,73 +375,47 @@ const MainMenu = () => {
   const [missions, setMissions] = useState([]);
   const [modal, setModal] = useState({ open: false, type: '' });
   const [isUpdating, setIsUpdating] = useState(false);
-  const [copySuccess, setCopySuccess] = useState(false); // ✅ NOVÉ
-  const [userProgress, setUserProgress] = useState(null); // ✅ NOVÉ
+  const [copySuccess, setCopySuccess] = useState(false);
+  const [userProgress, setUserProgress] = useState(null);
   const isAdmin = dataManager.isAdmin(userId);
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) {
+      navigate('/instruction');
+      return;
+    }
 
-    const handleStorage = (e) => {
-      if (e.key === dataManager.centralStorageKey) {
-        const central = dataManager.getAllParticipantsData();
-        const p = central[userId] || {};
-        setMissions(makeMissionList(p));
-        setUserProgress(p); // ✅ NOVÉ
-      }
-    };
-
-    const load = async () => {
+    const loadData = async () => {
       try {
         await dataManager.syncAllFromServer();
         const central = dataManager.getAllParticipantsData();
         const p = central[userId] || {};
         setMissions(makeMissionList(p));
-        setUserProgress(p); // ✅ NOVÉ
+        setUserProgress(p);
       } catch (error) {
         console.warn('Sync failed, using local data:', error);
         const central = dataManager.getAllParticipantsData();
         const p = central[userId] || {};
         setMissions(makeMissionList(p));
-        setUserProgress(p); // ✅ NOVÉ
+        setUserProgress(p);
       }
     };
 
-    load();
+    loadData();
+    const interval = setInterval(loadData, 5000);
 
-    const interval = setInterval(load, 2000);
+    const handleStorage = (e) => {
+      if (e.key === dataManager.centralStorageKey) {
+        loadData();
+      }
+    };
     window.addEventListener('storage', handleStorage);
 
     return () => {
       clearInterval(interval);
       window.removeEventListener('storage', handleStorage);
     };
-  }, [dataManager, userId]);
-
-  useEffect(() => {
-    if (!userId) {
-      navigate('/instruction');
-    }
-  }, [userId, navigate]);
-
-  useEffect(() => {
-    if (userId) {
-      const loadInitial = async () => {
-        try {
-          const p = await dataManager.loadUserProgress(userId);
-          setMissions(makeMissionList(p));
-          setUserProgress(p); // ✅ NOVÉ
-        } catch (error) {
-          console.warn('Failed to load initial data:', error);
-          const central = dataManager.getAllParticipantsData();
-          const p = central[userId] || {};
-          setMissions(makeMissionList(p));
-          setUserProgress(p); // ✅ NOVÉ
-        }
-      };
-      loadInitial();
-    }
-  }, [dataManager, userId]);
+  }, [dataManager, userId, navigate]);
 
   const handleMissionClick = (m) => {
     if (!m.locked) navigate(m.route);
@@ -366,7 +430,6 @@ const MainMenu = () => {
     }
   };
 
-  // ✅ NOVÁ FUNKCIA - Kopírovanie sharing kódu
   const handleCopyCode = () => {
     if (userProgress?.sharing_code) {
       navigator.clipboard.writeText(userProgress.sharing_code);
@@ -380,19 +443,15 @@ const MainMenu = () => {
     
     setIsUpdating(true);
     try {
-      console.log(`🔓 Odomykám misiu ${id}...`);
       await dataManager.unlockMissionForAll(id);
-      
       await dataManager.syncAllFromServer();
       const central = dataManager.getAllParticipantsData();
       const p = central[userId] || {};
       setMissions(makeMissionList(p));
-      setUserProgress(p); // ✅ NOVÉ
-      
-      alert(`✅ Misia ${id} bola odomknutá pre všetkých používateľov`);
+      setUserProgress(p);
+      alert(`✅ Misia ${id} bola odomknutá`);
     } catch (error) {
-      console.error('Unlock error:', error);
-      alert(`❌ Chyba pri odomykaní misie: ${error.message}`);
+      alert(`❌ Chyba: ${error.message}`);
     } finally {
       setIsUpdating(false);
     }
@@ -403,19 +462,15 @@ const MainMenu = () => {
     
     setIsUpdating(true);
     try {
-      console.log(`🔒 Zamykám misiu ${id}...`);
       await dataManager.lockMissionForAll(id);
-      
       await dataManager.syncAllFromServer();
       const central = dataManager.getAllParticipantsData();
       const p = central[userId] || {};
       setMissions(makeMissionList(p));
-      setUserProgress(p); // ✅ NOVÉ
-      
-      alert(`✅ Misia ${id} bola zamknutá pre všetkých používateľov`);
+      setUserProgress(p);
+      alert(`✅ Misia ${id} bola zamknutá`);
     } catch (error) {
-      console.error('Lock error:', error);
-      alert(`❌ Chyba pri zamykaní misie: ${error.message}`);
+      alert(`❌ Chyba: ${error.message}`);
     } finally {
       setIsUpdating(false);
     }
@@ -432,36 +487,38 @@ const MainMenu = () => {
     <Layout>
       <Container>
         <Header>
-          <Title>Conspiracy Pass</Title>
+          <Title>🕵️ Conspiracy Pass</Title>
           <Subtitle>Staňte sa detektívom a odhaľte pravdu</Subtitle>
           <StatsCard>
             <StatItem>
-              <StatValue>{userStats.points}</StatValue>
-              <StatLabel>Body</StatLabel>
+              <StatValue>{userStats.totalPoints || 0}</StatValue>
+              <StatLabel>Celkové body</StatLabel>
             </StatItem>
             <StatItem>
               <StatValue>{missions.filter(m => m.completed).length}/4</StatValue>
-              <StatLabel>Dokončené</StatLabel>
+              <StatLabel>Dokončené misie</StatLabel>
             </StatItem>
           </StatsCard>
         </Header>
 
-        {/* ✅ NOVÁ SEKCIA - SHARING */}
+        {/* Sharing Section */}
         <SharingSection>
           <SharingTitle>🎁 Zdieľajte a získajte body!</SharingTitle>
           
           <SharingCodeDisplay>
-            <div style={{ fontSize: 14, color: '#888', marginBottom: 8 }}>
-              Váš zdieľací kód:
-            </div>
+            <SharingCodeLabel>Váš zdieľací kód:</SharingCodeLabel>
             <SharingCode>
-              {userProgress?.sharing_code || 'Načítavam...'}
+              {userProgress?.sharing_code || '━━━━━━'}
             </SharingCode>
           </SharingCodeDisplay>
           
-          <CopyButton onClick={handleCopyCode}>
+          <StyledButton 
+            variant="accent"
+            onClick={handleCopyCode}
+            style={{ marginBottom: '12px' }}
+          >
             {copySuccess ? '✅ Skopírované!' : '📋 Kopírovať kód'}
-          </CopyButton>
+          </StyledButton>
           
           <SharingInfo>
             Zdieľajte tento kód s priateľmi!<br/>
@@ -475,13 +532,14 @@ const MainMenu = () => {
                 <ReferralStatLabel>Odporúčaní</ReferralStatLabel>
               </ReferralStat>
               <ReferralStat>
-                <ReferralStatValue>{userProgress.referrals_count * 10}</ReferralStatValue>
-                <ReferralStatLabel>Získaných bodov</ReferralStatLabel>
+                <ReferralStatValue>+{userProgress.referrals_count * 10}</ReferralStatValue>
+                <ReferralStatLabel>Bonus bodov</ReferralStatLabel>
               </ReferralStat>
             </ReferralStats>
           )}
         </SharingSection>
 
+        {/* Missions */}
         <MissionsGrid>
           {missions.map(m => (
             <MissionCard
@@ -493,7 +551,7 @@ const MainMenu = () => {
               {isAdmin && (
                 <AdminButtons>
                   <AdminButton
-                    unlock
+                    $unlock
                     disabled={isUpdating}
                     onClick={e => {
                       e.stopPropagation();
@@ -522,28 +580,47 @@ const MainMenu = () => {
           ))}
         </MissionsGrid>
 
+        {/* Navigation Buttons */}
         <ButtonGroup>
-          <IconButton onClick={() => openModal('help')}>❓ Pomoc</IconButton>
-          <IconButton onClick={() => openModal('contest')}>🎁 Súťaž o ceny</IconButton>
-          {isAdmin && <IconButton onClick={handleExport}>📤 Exportovať dáta</IconButton>}
-          {isAdmin && <IconButton onClick={() => navigate('/admin')}>⚙️ Admin</IconButton>}
-          <IconButton onClick={handleLogout}>🔒 Odhlásiť sa</IconButton>
+          <StyledButton variant="ghost" size="small" onClick={() => openModal('help')}>
+            ❓ Pomoc
+          </StyledButton>
+          <StyledButton variant="ghost" size="small" onClick={() => openModal('contest')}>
+            🎁 Súťaž
+          </StyledButton>
+          {isAdmin && (
+            <>
+              <StyledButton variant="outline" size="small" onClick={handleExport}>
+                📤 Export
+              </StyledButton>
+              <StyledButton variant="accent" size="small" onClick={() => navigate('/admin')}>
+                ⚙️ Admin
+              </StyledButton>
+            </>
+          )}
+          <StyledButton variant="danger" size="small" onClick={handleLogout}>
+            🔒 Odhlásiť
+          </StyledButton>
         </ButtonGroup>
 
+        {/* Modal */}
         {modal.open && (
           <ModalOverlay onClick={closeModal}>
             <ModalContent onClick={e => e.stopPropagation()}>
               <CloseButton onClick={closeModal}>×</CloseButton>
               {modal.type === 'help' && (
                 <>
-                  <h3>Pomoc</h3>
+                  <h3>❓ Pomoc</h3>
                   <p>Kontakt: support@example.com</p>
+                  <p>V prípade problémov nás neváhajte kontaktovať.</p>
                 </>
               )}
               {modal.type === 'contest' && (
                 <>
-                  <h3>Súťaž o ceny</h3>
-                  <p>1.p.: iPad; 2.p.: slúchadlá; 3.p.: poukážka 50€</p>
+                  <h3>🎁 Súťaž o ceny</h3>
+                  <p><strong>1. miesto:</strong> iPad</p>
+                  <p><strong>2. miesto:</strong> Bezdrôtové slúchadlá</p>
+                  <p><strong>3. miesto:</strong> Poukážka 50€</p>
                 </>
               )}
             </ModalContent>

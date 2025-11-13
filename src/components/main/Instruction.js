@@ -1,5 +1,5 @@
 // src/components/main/Instruction.js
-// KOMPLETNÁ VERZIA s validáciou ABCDMM a referral kódmi + OCHRANA PROTI ZNEUŽITIU
+// OPRAVENÁ VERZIA - Odstránený nepoužitý LoadingSpinner
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,144 +13,214 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px;
+  padding: 40px 20px;
   min-height: 100vh;
+  
+  @media (max-width: 768px) {
+    padding: 30px 15px;
+  }
 `;
 
 const Title = styled.h1`
-  font-size: 32px;
+  font-size: 36px;
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 16px;
   background: linear-gradient(
-    45deg,
+    135deg,
     ${props => props.theme.ACCENT_COLOR},
     ${props => props.theme.ACCENT_COLOR_2}
   );
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  
+  @media (max-width: 768px) {
+    font-size: 28px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 24px;
+  }
 `;
 
-const InstructionText = styled.div`
+const Subtitle = styled.p`
   font-size: 18px;
   line-height: 1.6;
   max-width: 700px;
-  margin-bottom: 30px;
+  margin-bottom: 32px;
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   text-align: center;
+  
+  @media (max-width: 768px) {
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
 `;
 
-const ConsentBox = styled.div`
-  background-color: ${p => p.theme.CARD_BACKGROUND};
-  padding: 20px;
-  border-radius: 12px;
+const FormCard = styled.div`
+  background: ${p => p.theme.CARD_BACKGROUND};
+  border: 2px solid ${p => p.$hasError ? '#ef4444' : p.theme.BORDER_COLOR};
+  border-radius: 16px;
+  padding: 24px;
   margin-bottom: 20px;
   width: 100%;
   max-width: 600px;
-  border: 2px solid ${p => (p.hasError ? 'red' : '#ccc')};
-`;
-
-const CodeBox = styled.div`
-  background-color: ${p => p.theme.CARD_BACKGROUND};
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-  width: 100%;
-  max-width: 600px;
-  border: 2px solid ${p => (p.hasError ? 'red' : '#ccc')};
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: ${p => p.$hasError ? '#ef4444' : p.theme.ACCENT_COLOR}66;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 20px;
+  }
 `;
 
 const CheckboxContainer = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 12px;
+  gap: 12px;
+  cursor: ${p => p.$disabled ? 'not-allowed' : 'pointer'};
+  
+  label {
+    cursor: ${p => p.$disabled ? 'not-allowed' : 'pointer'};
+    color: ${p => p.$disabled ? p.theme.SECONDARY_TEXT_COLOR : p.theme.PRIMARY_TEXT_COLOR};
+    text-decoration: ${p => p.$disabled ? 'line-through' : 'none'};
+    opacity: ${p => p.$disabled ? 0.6 : 1};
+    user-select: none;
+    font-size: 15px;
+  }
 `;
 
 const Checkbox = styled.input`
-  margin-right: 10px;
-  transform: scale(1.12);
+  width: 20px;
+  height: 20px;
+  cursor: ${p => p.disabled ? 'not-allowed' : 'pointer'};
+  accent-color: ${p => p.theme.ACCENT_COLOR};
 `;
 
 const InputLabel = styled.label`
   display: block;
-  font-weight: bold;
-  margin-bottom: 8px;
+  font-weight: 600;
+  margin-bottom: 10px;
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+  font-size: 15px;
 `;
 
 const Input = styled.input`
   width: 100%;
-  padding: 12px;
-  border: 2px solid ${props => (props.hasError ? 'red' : props.theme.BORDER_COLOR)};
-  border-radius: 8px;
-  font-size: 17px;
-  background-color: ${props => props.theme.INPUT_BACKGROUND};
-  color: #fff;
-  margin-bottom: 12px;
+  padding: 14px 16px;
+  border: 2px solid ${props => props.$hasError ? '#ef4444' : props.theme.BORDER_COLOR};
+  border-radius: 10px;
+  font-size: 16px;
+  background: ${props => props.theme.INPUT_BACKGROUND};
+  color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   font-family: inherit;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  font-weight: 600;
+  transition: all 0.2s ease;
 
   &:focus {
     outline: none;
-    border-color: ${props => props.theme.ACCENT_COLOR};
+    border-color: ${props => props.$hasError ? '#ef4444' : props.theme.ACCENT_COLOR};
+    box-shadow: 0 0 0 3px ${props => props.$hasError ? '#ef444422' : `${props.theme.ACCENT_COLOR}22`};
   }
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    background: ${props => props.theme.BORDER_COLOR};
+  }
+  
+  &::placeholder {
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: normal;
+    opacity: 0.5;
   }
 `;
 
 const ErrorText = styled.div`
-  color: red;
-  font-size: 14px;
+  color: #ef4444;
+  font-size: 13px;
   margin-top: 8px;
-  text-align: center;
-`;
-
-const ButtonContainer = styled.div`
+  font-weight: 500;
   display: flex;
-  justify-content: center;
-  gap: 20px;
+  align-items: center;
+  gap: 6px;
+  
+  &::before {
+    content: '⚠️';
+  }
 `;
 
 const Note = styled.div`
-  font-size: 13px;
-  color: #888;
-  margin-top: 6px;
+  font-size: 12px;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  margin-top: 8px;
+  line-height: 1.5;
 `;
 
 const InfoBox = styled.div`
-  background: ${p => p.theme.HOVER_OVERLAY};
-  border-left: 4px solid ${p => p.hasError ? '#ff6b6b' : p.theme.ACCENT_COLOR};
-  padding: 16px;
-  margin-bottom: 20px;
+  background: ${p => p.$hasError ? '#ef444411' : `${p.theme.ACCENT_COLOR}11`};
+  border-left: 4px solid ${p => p.$hasError ? '#ef4444' : p.theme.ACCENT_COLOR};
+  padding: 20px;
+  margin-bottom: 24px;
   max-width: 600px;
   width: 100%;
-  border-radius: 8px;
+  border-radius: 12px;
+  
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
 `;
 
 const InfoTitle = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-weight: 600;
-  margin-bottom: 8px;
+  font-weight: 700;
+  margin-bottom: 12px;
   font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 `;
 
 const InfoText = styled.div`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   font-size: 14px;
-  line-height: 1.6;
+  line-height: 1.8;
+  
+  strong {
+    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+    font-weight: 600;
+  }
 `;
 
 const ExampleCode = styled.code`
-  background: rgba(255, 255, 255, 0.1);
-  padding: 4px 8px;
-  border-radius: 4px;
+  background: ${p => p.theme.INPUT_BACKGROUND};
+  padding: 4px 10px;
+  border-radius: 6px;
   font-family: 'Courier New', monospace;
   color: ${p => p.theme.ACCENT_COLOR};
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 1px;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+  
+  @media (max-width: 480px) {
+    flex-direction: column;
+    width: 100%;
+    max-width: 600px;
+  }
 `;
 
 export default function Instruction() {
@@ -162,9 +232,9 @@ export default function Instruction() {
   const [hasReferral, setHasReferral] = useState(false);
   const [consentGiven, setConsentGiven] = useState(false);
   const [errors, setErrors] = useState({});
-  const [referralAlreadyUsed, setReferralAlreadyUsed] = useState(false); // ✅ NOVÉ
-  const [isLoading, setIsLoading] = useState(false); // ✅ NOVÉ
-  const [isCheckingCode, setIsCheckingCode] = useState(false); // ✅ NOVÉ
+  const [referralAlreadyUsed, setReferralAlreadyUsed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isCheckingCode, setIsCheckingCode] = useState(false);
 
   const validateParticipantCode = (code) => {
     const upperCode = code.toUpperCase().trim();
@@ -186,7 +256,6 @@ export default function Instruction() {
     return { valid: false, type: null };
   };
 
-  // ✅ NOVÁ FUNKCIA - Kontrola, či používateľ už zadal referral kód
   const checkReferralStatus = async (userCode) => {
     if (!userCode || userCode.length !== 6) return false;
     
@@ -194,11 +263,10 @@ export default function Instruction() {
       setIsCheckingCode(true);
       const userData = await dataManager.loadUserProgress(userCode);
       
-      // Ak used_referral_code existuje a nie je prázdne, používateľ už kód zadal
       if (userData?.used_referral_code) {
-        console.log(`⚠️ Používateľ ${userCode} už použil referral kód: ${userData.used_referral_code}`);
+        console.log(`⚠️ Používateľ ${userCode} už použil referral kód`);
         setReferralAlreadyUsed(true);
-        setHasReferral(false); // ✅ Automaticky zruš checkbox
+        setHasReferral(false);
         return true;
       }
       
@@ -212,7 +280,6 @@ export default function Instruction() {
     }
   };
 
-  // ✅ UPRAVENÁ VALIDÁCIA
   const validate = async () => {
     const e = {};
     
@@ -222,29 +289,22 @@ export default function Instruction() {
     
     const codeValidation = validateParticipantCode(participantCode);
     if (!codeValidation.valid) {
-      e.participant = 'Neplatný formát kódu. Použite formát: 4 písmená + mesiac (napr. RMIL11), TEST01-TEST60, alebo RF9846';
+      e.participant = 'Neplatný formát kódu. Použite formát ABCDMM, TEST01-TEST60, alebo RF9846';
     }
     
-    // ✅ NOVÉ - Kontrola referral kódu
     if (hasReferral) {
-      // Kontrola, či používateľ už nepoužil kód
       if (referralAlreadyUsed) {
         e.referral = 'Už ste použili referral kód. Nemôžete ho zadať znova.';
-      }
-      // Kontrola formátu
-      else if (!referralCode || !/^[A-Z0-9]{6}$/.test(referralCode.trim())) {
-        e.referral = 'Referral kód musí mať presne 6 znakov (písmená a čísla).';
-      }
-      // Kontrola existencie v systéme
-      else {
+      } else if (!referralCode || !/^[A-Z0-9]{6}$/.test(referralCode.trim())) {
+        e.referral = 'Referral kód musí mať presne 6 znakov.';
+      } else {
         const valid = await dataManager.validateReferralCode(referralCode.trim().toUpperCase());
         if (!valid) {
           e.referral = 'Tento referral kód neexistuje v systéme.';
         } else {
-          // ✅ NOVÉ - Kontrola, či používateľ nepoužíva vlastný kód
           const userSharingCode = await dataManager.getUserSharingCode(participantCode.toUpperCase());
           if (userSharingCode && userSharingCode === referralCode.trim().toUpperCase()) {
-            e.referral = '❌ Nemôžete použiť svoj vlastný zdieľací kód!';
+            e.referral = 'Nemôžete použiť svoj vlastný zdieľací kód!';
           }
         }
       }
@@ -253,7 +313,6 @@ export default function Instruction() {
     return e;
   };
 
-  // ✅ UPRAVENÁ FUNKCIA handleStart
   const handleStart = async () => {
     setIsLoading(true);
     const e = await validate();
@@ -269,7 +328,6 @@ export default function Instruction() {
     
     sessionStorage.setItem('participantCode', upperCode);
     
-    // ✅ UPRAVENÉ - Process referral iba ak používateľ ešte nepoužil kód
     if (hasReferral && !referralAlreadyUsed && referralCode.trim()) {
       try {
         await dataManager.processReferral(upperCode, referralCode.trim().toUpperCase());
@@ -294,10 +352,10 @@ export default function Instruction() {
   return (
     <Layout>
       <Container>
-        <Title>🔑 Conspiracy Pass – Prihlásenie</Title>
-        <InstructionText>
-          Zadajte svoj kód účastníka podľa inštrukcií nižšie, prípadne referral kód, a súhlaste s účasťou.
-        </InstructionText>
+        <Title>🔑 Conspiracy Pass</Title>
+        <Subtitle>
+          Zadajte svoj kód účastníka a prípadne referral kód od priateľa
+        </Subtitle>
 
         <InfoBox>
           <InfoTitle>ℹ️ Formát prihlasovacieho kódu</InfoTitle>
@@ -312,12 +370,11 @@ export default function Instruction() {
             <strong>Príklad:</strong> Pre <strong>Roman Milanko</strong> narodený v <strong>novembri</strong>:<br/>
             → <ExampleCode>RMIL11</ExampleCode>
             <br/><br/>
-            <strong>Testovacie účty:</strong> TEST01, TEST02, ... TEST60<br/>
-            <strong>Admin:</strong> RF9846
+            <strong>Testovacie účty:</strong> TEST01-TEST60 • <strong>Admin:</strong> RF9846
           </InfoText>
         </InfoBox>
 
-        <ConsentBox hasError={!!errors.consent} id="consent-box">
+        <FormCard $hasError={!!errors.consent}>
           <CheckboxContainer>
             <Checkbox
               type="checkbox"
@@ -327,13 +384,13 @@ export default function Instruction() {
                 setErrors(prev => ({ ...prev, consent: null }));
               }}
             />
-            <label>Súhlasím s účasťou</label>
+            <label>Súhlasím s účasťou v prieskume</label>
           </CheckboxContainer>
           {errors.consent && <ErrorText>{errors.consent}</ErrorText>}
-        </ConsentBox>
+        </FormCard>
 
-        <CodeBox hasError={!!errors.participant}>
-          <InputLabel htmlFor="participantCode">Kód účastníka*</InputLabel>
+        <FormCard $hasError={!!errors.participant}>
+          <InputLabel htmlFor="participantCode">Kód účastníka *</InputLabel>
           <Input
             id="participantCode"
             type="text"
@@ -343,25 +400,23 @@ export default function Instruction() {
               setParticipantCode(newCode);
               setErrors(prev => ({ ...prev, participant: null, referral: null }));
               
-              // ✅ NOVÉ - Automatická kontrola pri zmene kódu
               if (newCode.length === 6) {
                 await checkReferralStatus(newCode);
               } else {
                 setReferralAlreadyUsed(false);
               }
             }}
-            placeholder="RMIL11"
-            hasError={!!errors.participant}
+            placeholder="napr. RMIL11"
+            $hasError={!!errors.participant}
             maxLength={6}
             disabled={isLoading}
           />
           {errors.participant && <ErrorText>{errors.participant}</ErrorText>}
-          {isCheckingCode && <Note>Kontrolujem referral status...</Note>}
-          {!isCheckingCode && <Note>Zadajte kód podľa inštrukcií vyššie (všetky písmená VEĽKÉ)</Note>}
-        </CodeBox>
+          {isCheckingCode && <Note>🔄 Kontrolujem referral status...</Note>}
+          {!isCheckingCode && <Note>Zadajte kód podľa inštrukcií vyššie</Note>}
+        </FormCard>
 
-        {/* ✅ UPRAVENÝ CHECKBOX - Zakázaný, ak používateľ už použil kód */}
-        <CheckboxContainer>
+        <CheckboxContainer $disabled={referralAlreadyUsed || isLoading}>
           <Checkbox
             type="checkbox"
             checked={hasReferral}
@@ -373,17 +428,13 @@ export default function Instruction() {
             }}
             disabled={referralAlreadyUsed || isLoading}
           />
-          <label style={{ 
-            color: referralAlreadyUsed ? '#888' : 'inherit',
-            textDecoration: referralAlreadyUsed ? 'line-through' : 'none'
-          }}>
+          <label>
             Mám referral kód od priateľa
           </label>
         </CheckboxContainer>
 
-        {/* ✅ NOVÉ - Upozornenie ak už bol kód použitý */}
         {referralAlreadyUsed && (
-          <InfoBox hasError>
+          <InfoBox $hasError>
             <InfoTitle>⚠️ Referral kód už bol použitý</InfoTitle>
             <InfoText>
               Už ste zadali referral kód pri predošlom prihlásení. 
@@ -393,7 +444,7 @@ export default function Instruction() {
         )}
 
         {hasReferral && !referralAlreadyUsed && (
-          <CodeBox hasError={!!errors.referral}>
+          <FormCard $hasError={!!errors.referral}>
             <InputLabel htmlFor="referralCode">Referral kód</InputLabel>
             <Input
               id="referralCode"
@@ -403,19 +454,28 @@ export default function Instruction() {
                 setReferralCode(e.target.value.toUpperCase());
                 setErrors(prev => ({ ...prev, referral: null }));
               }}
-              placeholder="ABC123"
-              hasError={!!errors.referral}
+              placeholder="napr. ABC123"
+              $hasError={!!errors.referral}
               maxLength={6}
               disabled={isLoading}
             />
             {errors.referral && <ErrorText>{errors.referral}</ErrorText>}
-            <Note>Váš priateľ dostane +10 bodov za odporúčanie! 🎁</Note>
-          </CodeBox>
+            <Note>🎁 Váš priateľ dostane +10 bodov za odporúčanie!</Note>
+          </FormCard>
         )}
 
         <ButtonContainer>
-          <StyledButton accent onClick={handleStart} disabled={isLoading || isCheckingCode}>
-            {isLoading ? '⏳ Načítavam...' : 'Prihlásiť sa'}
+          {/* ✅ StyledButton má built-in loading state - nepotrebuje LoadingSpinner */}
+          <StyledButton 
+            variant="accent"
+            size="large"
+            fullWidth
+            loading={isLoading}
+            disabled={isLoading || isCheckingCode}
+            onClick={handleStart}
+          >
+            {/* Text sa zobrazí len keď nie je loading (loading prop automaticky skryje text) */}
+            → Prihlásiť sa
           </StyledButton>
         </ButtonContainer>
       </Container>

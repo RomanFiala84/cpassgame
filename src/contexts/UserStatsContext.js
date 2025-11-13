@@ -1,5 +1,5 @@
 // src/contexts/UserStatsContext.js
-// FINÁLNA VERZIA - Optimalizovaný refresh a zabezpečenie proti reset bodov
+// FINÁLNA OPRAVENÁ VERZIA - Fix infinite loop + zachované všetky funkcie
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import DataManager from '../utils/DataManager';
@@ -21,7 +21,7 @@ export const UserStatsProvider = ({ children }) => {
 
   const intervalRef = useRef(null);
   const isLoadingRef = useRef(false);
-  const lastLoadedUserIdRef = useRef(null); // ✅ NOVÉ - sledovanie posledného načítaného userId
+  const lastLoadedUserIdRef = useRef(null);
 
   const login = useCallback(async (id) => {
     sessionStorage.setItem('participantCode', id);
@@ -35,7 +35,7 @@ export const UserStatsProvider = ({ children }) => {
   const logout = useCallback(() => {
     sessionStorage.removeItem('participantCode');
     setUserId(null);
-    lastLoadedUserIdRef.current = null; // ✅ RESET
+    lastLoadedUserIdRef.current = null;
     setUserStats({
       level: 1,
       points: 0,
@@ -73,6 +73,7 @@ export const UserStatsProvider = ({ children }) => {
     };
   }, [userId, logout]);
 
+  // ✅ OPRAVENÉ - odstránená závislosť userStats.totalPoints ktorá spôsobovala infinite loop
   const loadUserStats = useCallback(async () => {
     if (!userId || isLoadingRef.current) return;
 
@@ -91,7 +92,7 @@ export const UserStatsProvider = ({ children }) => {
 
         const updatedStats = {
           level: level,
-          points: totalPoints, // ✅ ZMENENÉ - synchronizované s totalPoints
+          points: totalPoints,
           missionPoints: missionPoints,
           bonusPoints: bonusPoints,
           totalPoints: totalPoints,
@@ -99,37 +100,46 @@ export const UserStatsProvider = ({ children }) => {
           completedMissions: Array.isArray(progress.completedMissions) ? progress.completedMissions : []
         };
 
-        // ✅ NOVÉ - Aktualizuj len ak sa userId zmenil alebo je to prvé načítanie
-        if (lastLoadedUserIdRef.current !== userId || userStats.totalPoints === 0) {
+        // ✅ OPRAVENÉ - použiť ref namiesto state pre porovnanie
+        const isNewUser = lastLoadedUserIdRef.current !== userId;
+        const isFirstLoad = lastLoadedUserIdRef.current === null;
+        
+        if (isNewUser || isFirstLoad) {
           setUserStats(updatedStats);
           lastLoadedUserIdRef.current = userId;
           console.log(`✅ Stats načítané pre ${userId}:`, updatedStats);
         } else {
-          // ✅ Tichý update - len ak sa body zmenili
-          if (userStats.totalPoints !== totalPoints) {
-            setUserStats(updatedStats);
-            console.log(`✅ Stats aktualizované pre ${userId}:`, updatedStats);
-          }
+          // ✅ Použiť callback form aby sme mali aktuálny state
+          setUserStats(prevStats => {
+            if (prevStats.totalPoints !== totalPoints) {
+              console.log(`✅ Stats aktualizované pre ${userId}:`, updatedStats);
+              return updatedStats;
+            }
+            return prevStats; // Bez zmeny
+          });
         }
       }
     } catch (error) {
       console.error('❌ Chyba pri načítaní stats:', error);
-      // ✅ NOVÉ - Nereset stats pri chybe, ponechaj existujúce
-      if (userStats.totalPoints === 0) {
-        setUserStats({
-          level: 1,
-          points: 0,
-          missionPoints: 0,
-          bonusPoints: 0,
-          totalPoints: 0,
-          completedMissions: [],
-          referrals: 0
-        });
-      }
+      // ✅ Použiť callback form
+      setUserStats(prevStats => {
+        if (prevStats.totalPoints === 0) {
+          return {
+            level: 1,
+            points: 0,
+            missionPoints: 0,
+            bonusPoints: 0,
+            totalPoints: 0,
+            completedMissions: [],
+            referrals: 0
+          };
+        }
+        return prevStats;
+      });
     } finally {
       isLoadingRef.current = false;
     }
-  }, [userId, dataManager, userStats.totalPoints]);
+  }, [userId, dataManager]); // ✅ OPRAVENÉ - odstránená userStats.totalPoints dependency
 
   useEffect(() => {
     const handleStorage = (e) => {
@@ -141,11 +151,9 @@ export const UserStatsProvider = ({ children }) => {
     return () => window.removeEventListener('storage', handleStorage);
   }, [dataManager.centralStorageKey, loadUserStats]);
 
-  // ✅ VYLEPŠENÉ - Načítaj stats len pri zmene userId
   useEffect(() => {
     if (!userId || isLoadingRef.current) return;
 
-    // ✅ Ak je to nový userId, clear cache
     if (lastLoadedUserIdRef.current !== userId) {
       dataManager.cache.clear();
       loadUserStats();
@@ -153,7 +161,7 @@ export const UserStatsProvider = ({ children }) => {
 
     const interval = setInterval(() => {
       loadUserStats();
-    }, 10000); // ✅ ZMENENÉ - Interval každých 10s namiesto 5s
+    }, 10000);
 
     return () => clearInterval(interval);
   }, [userId, loadUserStats, dataManager]);
@@ -192,7 +200,7 @@ export const UserStatsProvider = ({ children }) => {
 
       const newStats = {
         level: newLevel,
-        points: totalPoints, // ✅ SYNCHRONIZOVANÉ
+        points: totalPoints,
         missionPoints: newMissionPoints,
         bonusPoints: bonusPoints,
         totalPoints: totalPoints,
@@ -204,7 +212,7 @@ export const UserStatsProvider = ({ children }) => {
         ...progress,
         user_stats_mission_points: newMissionPoints,
         user_stats_level: newLevel,
-        user_stats_points: totalPoints, // ✅ PRIDANÉ - synchronizuj aj staré pole
+        user_stats_points: totalPoints,
         completedMissions: newCompletedMissions,
         [`${missionId}_completed`]: true
       };
@@ -240,7 +248,7 @@ export const UserStatsProvider = ({ children }) => {
 
       const newStats = {
         level: level,
-        points: totalPoints, // ✅ SYNCHRONIZOVANÉ
+        points: totalPoints,
         missionPoints: missionPoints,
         bonusPoints: bonusPoints,
         totalPoints: totalPoints,
@@ -251,7 +259,7 @@ export const UserStatsProvider = ({ children }) => {
       const updatedProgress = {
         ...progress,
         referrals_count: newReferralsCount,
-        user_stats_points: totalPoints // ✅ PRIDANÉ
+        user_stats_points: totalPoints
       };
 
       await dataManager.saveProgress(userId, updatedProgress);
@@ -284,7 +292,7 @@ export const UserStatsProvider = ({ children }) => {
 
   const clearAllData = useCallback(() => {
     dataManager.clearAllData();
-    lastLoadedUserIdRef.current = null; // ✅ RESET
+    lastLoadedUserIdRef.current = null;
   }, [dataManager]);
 
   return (

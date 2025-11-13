@@ -1,5 +1,5 @@
 // src/components/admin/AdminPanel.js
-// OPRAVENÁ VERZIA - fix useEffect dependencies
+// OPTIMALIZOVANÁ VERZIA - Lepší dizajn, responzívne, nové button varianty
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -11,86 +11,261 @@ import * as XLSX from 'xlsx';
 
 const Container = styled.div`
   padding: 20px;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    padding: 15px;
+  }
+`;
+
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
 `;
 
 const Title = styled.h1`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  margin-bottom: 24px;
+  font-size: 32px;
+  margin: 0;
+  
+  @media (max-width: 768px) {
+    font-size: 24px;
+  }
+`;
+
+const RefreshButton = styled(StyledButton)`
+  @media (max-width: 480px) {
+    width: 100%;
+  }
+`;
+
+const GridLayout = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const Section = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
-  border: 1px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 20px;
+  border: 2px solid ${p => p.theme.BORDER_COLOR};
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: ${p => p.theme.ACCENT_COLOR}44;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  
+  @media (max-width: 768px) {
+    padding: 20px;
+  }
 `;
 
 const SectionTitle = styled.h2`
   color: ${p => p.theme.ACCENT_COLOR};
-  margin-bottom: 16px;
-  font-size: 18px;
+  margin-bottom: 20px;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-top: 16px;
+  
+  @media (max-width: 480px) {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
+  }
 `;
 
 const InfoText = styled.p`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   font-size: 14px;
+  line-height: 1.6;
 `;
 
 const StatsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 12px;
-  margin-top: 16px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const StatCard = styled.div`
-  background: ${p => p.theme.HOVER_OVERLAY};
-  padding: 12px;
-  border-radius: 4px;
+  background: linear-gradient(135deg, 
+    ${p => p.theme.ACCENT_COLOR}22, 
+    ${p => p.theme.ACCENT_COLOR_2}22
+  );
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid ${p => p.theme.ACCENT_COLOR}44;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px ${p => p.theme.ACCENT_COLOR}33;
+  }
 `;
 
 const StatLabel = styled.div`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   font-size: 12px;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 `;
 
 const StatValue = styled.div`
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 20px;
-  font-weight: 600;
+  color: ${p => p.theme.ACCENT_COLOR};
+  font-size: 28px;
+  font-weight: 700;
+  
+  @media (max-width: 768px) {
+    font-size: 24px;
+  }
+`;
+
+const TableWrapper = styled.div`
+  overflow-x: auto;
+  margin-top: 16px;
+  border-radius: 8px;
+  border: 1px solid ${p => p.theme.BORDER_COLOR};
 `;
 
 const UserTable = styled.table`
   width: 100%;
-  margin-top: 10px;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: 13px;
+  min-width: 800px;
 `;
 
 const Th = styled.th`
-  padding: 8px;
+  padding: 12px 8px;
   background: ${p => p.theme.ACCENT_COLOR};
   color: #FFFFFF;
-  border: 1px solid ${p => p.theme.BORDER_COLOR};
   text-align: left;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 `;
 
 const Td = styled.td`
-  padding: 8px;
-  border: 1px solid ${p => p.theme.BORDER_COLOR};
+  padding: 10px 8px;
+  border-bottom: 1px solid ${p => p.theme.BORDER_COLOR};
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  
+  &:first-child {
+    font-weight: 600;
+    color: ${p => p.theme.ACCENT_COLOR};
+  }
+`;
+
+const MissionRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: ${p => p.theme.INPUT_BACKGROUND}44;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+`;
+
+const MissionLabel = styled.div`
+  font-weight: 600;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const MissionButtons = styled.div`
+  display: flex;
+  gap: 8px;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    
+    button {
+      flex: 1;
+    }
+  }
+`;
+
+const DangerSection = styled(Section)`
+  border-color: ${p => p.theme.ERROR_COLOR || '#ef4444'};
+  background: ${p => `${p.theme.ERROR_COLOR || '#ef4444'}11`};
+`;
+
+const LoadingOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+`;
+
+const LoadingSpinner = styled.div`
+  text-align: center;
+  color: white;
+  font-size: 18px;
+  
+  &::before {
+    content: '⏳';
+    display: block;
+    font-size: 48px;
+    margin-bottom: 16px;
+    animation: spin 2s linear infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
 `;
 
 const AdminPanel = () => {
@@ -112,7 +287,6 @@ const AdminPanel = () => {
   const [loading, setLoading] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
 
-  // ✅ OPRAVA: useCallback pre loadStats
   const loadStats = useCallback(async () => {
     setLoading(true);
     await dataManager.fetchAllParticipantsData();
@@ -133,7 +307,6 @@ const AdminPanel = () => {
     setLoading(false);
   }, [dataManager]);
 
-  // ✅ OPRAVA: pridaný loadStats do dependencies
   useEffect(() => {
     if (!dataManager.isAdmin(userId)) {
       navigate('/');
@@ -146,13 +319,9 @@ const AdminPanel = () => {
     setIsExporting(true);
     
     try {
-      console.log('📥 Načítavam všetkých používateľov...');
       await dataManager.fetchAllParticipantsData();
-      
       const allData = dataManager.getAllParticipantsData();
       const participants = Object.values(allData);
-
-      console.log(`📊 Exportujem ${participants.length} používateľov`);
 
       if (participants.length === 0) {
         alert('Žiadne dáta na export');
@@ -179,8 +348,6 @@ const AdminPanel = () => {
         }
       });
 
-      console.log(`📋 Komponenty: ${Array.from(allComponentIds).join(', ')}`);
-
       const rows = participants.map(p => {
         const row = {
           participant_code: p.participant_code || '',
@@ -190,6 +357,7 @@ const AdminPanel = () => {
           timestamp_start: p.timestamp_start || '',
           timestamp_last_update: p.timestamp_last_update || '',
           user_stats_points: p.user_stats_points || 0,
+          user_stats_mission_points: p.user_stats_mission_points || 0,
           user_stats_level: p.user_stats_level || 1,
           referrals_count: p.referrals_count || 0,
           mission0_completed: p.mission0_completed || false,
@@ -214,13 +382,6 @@ const AdminPanel = () => {
               row[`${componentId}__completed_at`] = componentData.metadata.completed_at || '';
               row[`${componentId}__time_spent_seconds`] = componentData.metadata.time_spent_seconds || '';
               row[`${componentId}__device`] = componentData.metadata.device || '';
-            }
-          } else {
-            const questionIds = questionIdsByComponent[componentId];
-            if (questionIds) {
-              questionIds.forEach(qId => {
-                row[`${componentId}__${qId}`] = '';
-              });
             }
           }
         });
@@ -247,7 +408,6 @@ const AdminPanel = () => {
       const filename = `conspiracy_export_${new Date().toISOString().slice(0, 10)}.xlsx`;
       XLSX.writeFile(wb, filename);
       
-      console.log(`✅ Export úspešný: ${rows.length} účastníkov, ${allComponentIds.size} komponentov`);
       alert(`✅ Export úspešný!\n\n${rows.length} účastníkov\n${allComponentIds.size} komponentov`);
       
     } catch (error) {
@@ -262,10 +422,10 @@ const AdminPanel = () => {
     if (!window.confirm(`Odomknúť misiu ${missionId} pre všetkých?`)) return;
     try {
       await dataManager.unlockMissionForAll(missionId);
-      alert(`Misia ${missionId} odomknutá!`);
+      alert(`✅ Misia ${missionId} odomknutá!`);
       await loadStats();
     } catch (error) {
-      alert(`Chyba: ${error.message}`);
+      alert(`❌ Chyba: ${error.message}`);
     }
   };
 
@@ -273,10 +433,10 @@ const AdminPanel = () => {
     if (!window.confirm(`Zamknúť misiu ${missionId} pre všetkých?`)) return;
     try {
       await dataManager.lockMissionForAll(missionId);
-      alert(`Misia ${missionId} zamknutá!`);
+      alert(`✅ Misia ${missionId} zamknutá!`);
       await loadStats();
     } catch (error) {
-      alert(`Chyba: ${error.message}`);
+      alert(`❌ Chyba: ${error.message}`);
     }
   };
 
@@ -285,7 +445,6 @@ const AdminPanel = () => {
     if (!window.confirm('Ste si istý? Všetky dáta budú natrvalo vymazané!')) return;
 
     try {
-      // ✅ OPRAVA: správna URL
       const response = await fetch('/.netlify/functions/progress?code=all', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
@@ -298,153 +457,178 @@ const AdminPanel = () => {
         await loadStats();
       } else {
         const errorData = await response.json();
-        alert(`Chyba pri mazaní dát: ${errorData.error || response.statusText}`);
+        alert(`❌ Chyba: ${errorData.error || response.statusText}`);
       }
     } catch (error) {
-      alert(`Chyba: ${error.message}`);
+      alert(`❌ Chyba: ${error.message}`);
     }
   };
+
+  if (loading && allUsers.length === 0) {
+    return (
+      <Layout>
+        <LoadingOverlay>
+          <LoadingSpinner>
+            Načítavam admin panel...
+          </LoadingSpinner>
+        </LoadingOverlay>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
       <Container>
-        <Title>Admin Panel</Title>
+        <Header>
+          <Title>⚙️ Admin Panel</Title>
+          <RefreshButton variant="accent" size="small" onClick={loadStats}>
+            🔄 Obnoviť dáta
+          </RefreshButton>
+        </Header>
 
         {/* Štatistiky */}
         <Section>
-          <SectionTitle>📊 Štatistiky</SectionTitle>
-          {loading ? (
-            <InfoText>Načítavam dáta...</InfoText>
-          ) : (
-            <StatsGrid>
-              <StatCard>
-                <StatLabel>Celkom účastníkov</StatLabel>
-                <StatValue>{stats.total}</StatValue>
-              </StatCard>
-              <StatCard>
-                <StatLabel>Skupina 0 (Control)</StatLabel>
-                <StatValue>{stats.group0}</StatValue>
-              </StatCard>
-              <StatCard>
-                <StatLabel>Skupina 1 (Intervention)</StatLabel>
-                <StatValue>{stats.group1}</StatValue>
-              </StatCard>
-              <StatCard>
-                <StatLabel>Skupina 2 (Prevention)</StatLabel>
-                <StatValue>{stats.group2}</StatValue>
-              </StatCard>
-              <StatCard>
-                <StatLabel>Mission 0 Complete</StatLabel>
-                <StatValue>{stats.mission0Complete}</StatValue>
-              </StatCard>
-              <StatCard>
-                <StatLabel>Mission 1 Complete</StatLabel>
-                <StatValue>{stats.mission1Complete}</StatValue>
-              </StatCard>
-              <StatCard>
-                <StatLabel>Mission 2 Complete</StatLabel>
-                <StatValue>{stats.mission2Complete}</StatValue>
-              </StatCard>
-              <StatCard>
-                <StatLabel>Mission 3 Complete</StatLabel>
-                <StatValue>{stats.mission3Complete}</StatValue>
-              </StatCard>
-            </StatsGrid>
-          )}
+          <SectionTitle>📊 Prehľad štatistík</SectionTitle>
+          <StatsGrid>
+            <StatCard>
+              <StatLabel>Celkom účastníkov</StatLabel>
+              <StatValue>{stats.total}</StatValue>
+            </StatCard>
+            <StatCard>
+              <StatLabel>Skupina 0</StatLabel>
+              <StatValue>{stats.group0}</StatValue>
+            </StatCard>
+            <StatCard>
+              <StatLabel>Skupina 1</StatLabel>
+              <StatValue>{stats.group1}</StatValue>
+            </StatCard>
+            <StatCard>
+              <StatLabel>Skupina 2</StatLabel>
+              <StatValue>{stats.group2}</StatValue>
+            </StatCard>
+            <StatCard>
+              <StatLabel>Misia 0</StatLabel>
+              <StatValue>{stats.mission0Complete}</StatValue>
+            </StatCard>
+            <StatCard>
+              <StatLabel>Misia 1</StatLabel>
+              <StatValue>{stats.mission1Complete}</StatValue>
+            </StatCard>
+            <StatCard>
+              <StatLabel>Misia 2</StatLabel>
+              <StatValue>{stats.mission2Complete}</StatValue>
+            </StatCard>
+            <StatCard>
+              <StatLabel>Misia 3</StatLabel>
+              <StatValue>{stats.mission3Complete}</StatValue>
+            </StatCard>
+          </StatsGrid>
         </Section>
 
-        {/* Prehľad používateľov */}
+        <GridLayout>
+          {/* Export */}
+          <Section>
+            <SectionTitle>💾 Export dát</SectionTitle>
+            <InfoText>
+              Export obsahuje všetky odpovede, metadata a progress zo všetkých účastníkov.
+            </InfoText>
+            <StyledButton 
+              variant="success"
+              fullWidth
+              loading={isExporting}
+              onClick={handleExportExcel}
+            >
+              {isExporting ? 'Exportujem...' : '📥 Export do Excel'}
+            </StyledButton>
+          </Section>
+
+          {/* Správa misií */}
+          <Section>
+            <SectionTitle>🔓 Správa misií</SectionTitle>
+            <InfoText>Odomknúť/zamknúť misie pre všetkých.</InfoText>
+            {[0, 1, 2, 3].map(missionId => (
+              <MissionRow key={missionId}>
+                <MissionLabel>
+                  🎯 Misia {missionId}
+                </MissionLabel>
+                <MissionButtons>
+                  <StyledButton 
+                    variant="success"
+                    size="small"
+                    onClick={() => handleUnlockMission(missionId)}
+                  >
+                    🔓 Odomknúť
+                  </StyledButton>
+                  <StyledButton 
+                    variant="outline"
+                    size="small"
+                    onClick={() => handleLockMission(missionId)}
+                  >
+                    🔒 Zamknúť
+                  </StyledButton>
+                </MissionButtons>
+              </MissionRow>
+            ))}
+          </Section>
+        </GridLayout>
+
+        {/* Používatelia */}
         <Section>
-          <SectionTitle>👥 Prehľad účastníkov</SectionTitle>
-          {loading ? (
-            <InfoText>Načítavam používateľov...</InfoText>
-          ) : allUsers.length === 0 ? (
+          <SectionTitle>👥 Zoznam účastníkov ({allUsers.length})</SectionTitle>
+          {allUsers.length === 0 ? (
             <InfoText>Žiadni účastníci v databáze.</InfoText>
           ) : (
-            <UserTable>
-              <thead>
-                <tr>
-                  <Th>Kód</Th>
-                  <Th>Skupina</Th>
-                  <Th>Body</Th>
-                  <Th>M0</Th>
-                  <Th>M1</Th>
-                  <Th>M2</Th>
-                  <Th>M3</Th>
-                  <Th>Registrovaný</Th>
-                  <Th>Posledná aktivita</Th>
-                </tr>
-              </thead>
-              <tbody>
-                {allUsers.map(u => (
-                  <tr key={u.participant_code}>
-                    <Td>{u.participant_code}</Td>
-                    <Td>{u.group_assignment}</Td>
-                    <Td>{u.user_stats_points || 0}</Td>
-                    <Td>{u.mission0_completed ? '✔' : '-'}</Td>
-                    <Td>{u.mission1_completed ? '✔' : '-'}</Td>
-                    <Td>{u.mission2_completed ? '✔' : '-'}</Td>
-                    <Td>{u.mission3_completed ? '✔' : '-'}</Td>
-                    <Td>{u.timestamp_start?.slice(0, 10)}</Td>
-                    <Td>{u.timestamp_last_update?.slice(0, 16)?.replace('T', ' ')}</Td>
+            <TableWrapper>
+              <UserTable>
+                <thead>
+                  <tr>
+                    <Th>Kód</Th>
+                    <Th>Skupina</Th>
+                    <Th>Body</Th>
+                    <Th>M0</Th>
+                    <Th>M1</Th>
+                    <Th>M2</Th>
+                    <Th>M3</Th>
+                    <Th>Registrovaný</Th>
+                    <Th>Posledná aktivita</Th>
                   </tr>
-                ))}
-              </tbody>
-            </UserTable>
+                </thead>
+                <tbody>
+                  {allUsers.map(u => (
+                    <tr key={u.participant_code}>
+                      <Td>{u.participant_code}</Td>
+                      <Td>{u.group_assignment}</Td>
+                      <Td>{u.user_stats_points || 0}</Td>
+                      <Td>{u.mission0_completed ? '✔' : '–'}</Td>
+                      <Td>{u.mission1_completed ? '✔' : '–'}</Td>
+                      <Td>{u.mission2_completed ? '✔' : '–'}</Td>
+                      <Td>{u.mission3_completed ? '✔' : '–'}</Td>
+                      <Td>{u.timestamp_start?.slice(0, 10)}</Td>
+                      <Td>{u.timestamp_last_update?.slice(0, 16)?.replace('T', ' ')}</Td>
+                    </tr>
+                  ))}
+                </tbody>
+              </UserTable>
+            </TableWrapper>
           )}
-        </Section>
-
-        {/* Export */}
-        <Section>
-          <SectionTitle>💾 Export dát</SectionTitle>
-          <InfoText>
-            Export obsahuje všetky odpovede, metadata a progress informácie zo všetkých účastníkov.
-          </InfoText>
-          <ButtonGroup>
-            <StyledButton 
-              accent 
-              onClick={handleExportExcel}
-              disabled={isExporting}
-            >
-              {isExporting ? '⏳ Exportujem...' : '📥 Export do Excel (.xlsx)'}
-            </StyledButton>
-          </ButtonGroup>
-        </Section>
-
-        {/* Misie */}
-        <Section>
-          <SectionTitle>🔓 Správa misií</SectionTitle>
-          <InfoText>Odomknúť/zamknúť misie pre všetkých účastníkov.</InfoText>
-
-          {[0, 1, 2, 3].map(missionId => (
-            <ButtonGroup key={missionId}>
-              <StyledButton onClick={() => handleUnlockMission(missionId)}>
-                🔓 Odomknúť misiu {missionId}
-              </StyledButton>
-              <StyledButton onClick={() => handleLockMission(missionId)}>
-                🔒 Zamknúť misiu {missionId}
-              </StyledButton>
-            </ButtonGroup>
-          ))}
         </Section>
 
         {/* Danger Zone */}
-        <Section>
-          <SectionTitle style={{ color: '#d9534f' }}>⚠️ Danger Zone</SectionTitle>
-          <InfoText>Tieto akcie sú nevratné!</InfoText>
-          <ButtonGroup>
-            <StyledButton 
-              onClick={handleDeleteAll}
-              style={{ background: '#d9534f' }}
-            >
-              🗑️ Vymazať všetkých účastníkov
-            </StyledButton>
-          </ButtonGroup>
-        </Section>
+        <DangerSection>
+          <SectionTitle style={{ color: '#ef4444' }}>⚠️ Danger Zone</SectionTitle>
+          <InfoText>Tieto akcie sú nevratné a vymažú všetky dáta!</InfoText>
+          <StyledButton 
+            variant="danger"
+            fullWidth
+            onClick={handleDeleteAll}
+          >
+            🗑️ Vymazať všetkých účastníkov
+          </StyledButton>
+        </DangerSection>
 
         {/* Navigácia */}
         <ButtonGroup>
-          <StyledButton onClick={() => navigate('/mainmenu')}>
+          <StyledButton variant="ghost" onClick={() => navigate('/mainmenu')}>
             ← Späť na hlavné menu
           </StyledButton>
         </ButtonGroup>
