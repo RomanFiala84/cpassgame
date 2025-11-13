@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { useUserStats } from '../contexts/UserStatsContext';
+import { useUserStats } from '../../contexts/UserStatsContext';
 
 const Wrapper = styled.div`
   position: fixed;
