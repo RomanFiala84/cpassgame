@@ -1,7 +1,7 @@
 // src/components/admin/AdminPanel.js
-// KOMPLETNÁ VERZIA - všetky funkcie vrátane delete a návrat
+// OPRAVENÁ VERZIA - fix useEffect dependencies
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Layout from '../../styles/Layout';
@@ -112,7 +112,8 @@ const AdminPanel = () => {
   const [loading, setLoading] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
 
-  const loadStats = async () => {
+  // ✅ OPRAVA: useCallback pre loadStats
+  const loadStats = useCallback(async () => {
     setLoading(true);
     await dataManager.fetchAllParticipantsData();
     const all = dataManager.getAllParticipantsData();
@@ -130,15 +131,16 @@ const AdminPanel = () => {
       mission3Complete: participants.filter(p => p.mission3_completed).length
     });
     setLoading(false);
-  };
+  }, [dataManager]);
 
+  // ✅ OPRAVA: pridaný loadStats do dependencies
   useEffect(() => {
     if (!dataManager.isAdmin(userId)) {
       navigate('/');
       return;
     }
     loadStats();
-  }, [userId, dataManager, navigate]);
+  }, [userId, dataManager, navigate, loadStats]);
 
   const handleExportExcel = async () => {
     setIsExporting(true);
@@ -189,6 +191,7 @@ const AdminPanel = () => {
           timestamp_last_update: p.timestamp_last_update || '',
           user_stats_points: p.user_stats_points || 0,
           user_stats_level: p.user_stats_level || 1,
+          referrals_count: p.referrals_count || 0,
           mission0_completed: p.mission0_completed || false,
           mission1_completed: p.mission1_completed || false,
           mission2_completed: p.mission2_completed || false,
