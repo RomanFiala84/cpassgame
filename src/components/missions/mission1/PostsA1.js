@@ -1,13 +1,16 @@
 // src/components/missions/mission1/PostsA1.js
-// UPRAVENÁ VERZIA s ResponseManager a time tracking
+// UPRAVENÁ VERZIA s ResponseManager, time tracking a HOVER TRACKING
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Layout from '../../../styles/Layout';
 import StyledButton from '../../../styles/StyledButton';
 import { useUserStats } from '../../../contexts/UserStatsContext';
 import { getResponseManager } from '../../../utils/ResponseManager';
+import { useHoverTracking } from '../../../hooks/useHoverTracking';
+import { generateVisualization } from '../../../utils/visualizationGenerator';
+import { sendTrackingData } from '../../../utils/trackingApi';
 
 const Container = styled.div`
   padding: 20px;
@@ -162,7 +165,6 @@ const ProgressIndicator = styled.div`
   margin-top: 16px;
 `;
 
-// Definícia príspevkov - ľahko sa pridávajú/odoberajú
 const POSTS = [
   { id: 'post_a1_1', username: 'user1', content: 'Obsah príspevku A1-1.', image: null },
   { id: 'post_a1_2', username: 'user2', content: 'Obsah príspevku A1-2.', image: '/img/a1-2.jpg' },
@@ -176,6 +178,12 @@ const PostsA1 = () => {
   const { dataManager, userId } = useUserStats();
   const responseManager = getResponseManager(dataManager);
   
+  const { containerRef, trackingData } = useHoverTracking(
+    'postsA1_mission1',
+    'post',
+    userId
+  );
+  
   const [ratings, setRatings] = useState({});
   const [errors, setErrors] = useState({});
   const [startTime] = useState(Date.now());
@@ -183,7 +191,6 @@ const PostsA1 = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const refs = useRef({});
 
-  // Načítaj uložené hodnotenia
   useEffect(() => {
     const loadSaved = async () => {
       if (!userId) return;
@@ -197,7 +204,6 @@ const PostsA1 = () => {
     loadSaved();
   }, [userId, responseManager]);
 
-  // Tracking času na každom príspevku
   useEffect(() => {
     POSTS.forEach(post => {
       if (!postStartTimes[post.id]) {
@@ -206,15 +212,12 @@ const PostsA1 = () => {
     });
   }, [postStartTimes]);
 
-  // Handler pre rating s auto-save
   const handleRating = async (postId, value) => {
     setRatings(prev => ({ ...prev, [postId]: value }));
     setErrors(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
     
-    // Vypočítaj čas strávený na tomto príspevku
     const timeOnPost = Math.floor((Date.now() - postStartTimes[postId]) / 1000);
     
-    // Auto-save
     await responseManager.saveAnswer(
       userId,
       COMPONENT_ID,
@@ -224,18 +227,81 @@ const PostsA1 = () => {
     );
   };
 
-  // Validácia
   const isComplete = () => {
     return POSTS.every(post => ratings[post.id] !== undefined && ratings[post.id] !== null);
   };
 
-  // Submit
+  const handleSendTracking = useCallback(async () => {
+    if (
+      !userId ||
+      !trackingData.mousePositions ||
+      trackingData.mousePositions.length < 10 ||
+      trackingData.totalHoverTime < 2000
+    ) {
+      console.log('⏭️ Skipping tracking - insufficient data');
+      return;
+    }
+
+    try {
+      const container = containerRef.current;
+      if (!container) return;
+
+      console.log('📊 Generating visualization...');
+      
+      const visualization = generateVisualization(
+        trackingData,
+        container.offsetWidth,
+        container.offsetHeight
+      );
+
+      if (!visualization) {
+        console.log('⚠️ No visualization generated');
+        return;
+      }
+
+      console.log('📤 Sending tracking data...');
+
+      const dataToSend = {
+        userId: userId,
+        contentId: 'postsA1_mission1',
+        contentType: 'post',
+        hoverMetrics: {
+          totalHoverTime: trackingData.totalHoverTime,
+          hoverStartTime: trackingData.hoverStartTime ? new Date(trackingData.hoverStartTime).toISOString() : null,
+          hoverEndTime: new Date().toISOString(),
+        },
+        mousePositions: trackingData.mousePositions,
+        containerDimensions: {
+          width: container.offsetWidth,
+          height: container.offsetHeight,
+        },
+        visualization: visualization,
+      };
+
+      const result = await sendTrackingData(dataToSend);
+      console.log('✅ Tracking data sent successfully:', result);
+
+    } catch (error) {
+      console.error('❌ Failed to send tracking data:', error);
+    }
+  }, [userId, trackingData, containerRef]);
+
+  useEffect(() => {
+    return () => {
+      setTimeout(() => {
+        handleSendTracking();
+      }, 100);
+    };
+  }, [handleSendTracking]);
+
   const handleContinue = async () => {
     const missing = POSTS.filter(post => !ratings[post.id]);
     
     if (missing.length) {
       const newErrors = {};
-      missing.forEach(post => newErrors[post.id] = true);
+      missing.forEach(post => {
+        newErrors[post.id] = true;
+      });
       setErrors(newErrors);
       refs.current[missing[0].id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
@@ -244,16 +310,13 @@ const PostsA1 = () => {
     setIsSubmitting(true);
     
     try {
-      // Celkový čas strávený
       const totalTime = Math.floor((Date.now() - startTime) / 1000);
       
-      // Časy na jednotlivých príspevkoch
       const postTimes = {};
       POSTS.forEach(post => {
         postTimes[`time_on_${post.id}`] = Math.floor((Date.now() - postStartTimes[post.id]) / 1000);
       });
       
-      // Ulož všetky hodnotenia s metadata
       await responseManager.saveMultipleAnswers(
         userId,
         COMPONENT_ID,
@@ -267,9 +330,6 @@ const PostsA1 = () => {
         }
       );
       
-
-      
-      // Navigácia podľa skupiny
       const progress = await dataManager.loadUserProgress(userId);
       const group = progress.group_assignment;
       
@@ -289,13 +349,13 @@ const PostsA1 = () => {
 
   return (
     <Layout>
-      <Container>
+      <Container ref={containerRef}>
         <Title>Hodnotenie príspevkov A</Title>
         <PostsGrid>
           {POSTS.map(post => (
             <PostCard 
               key={post.id} 
-              ref={el => refs.current[post.id] = el} 
+              ref={el => { refs.current[post.id] = el; }}
               hasError={errors[post.id]}
             >
               <PostHeader>
@@ -342,6 +402,24 @@ const PostsA1 = () => {
         <ProgressIndicator>
           Ohodnotené: {Object.keys(ratings).length} / {POSTS.length}
         </ProgressIndicator>
+
+        {process.env.NODE_ENV === 'development' && trackingData.isTracking && (
+          <div style={{
+            position: 'fixed',
+            bottom: 20,
+            right: 20,
+            background: 'rgba(74, 144, 226, 0.95)',
+            color: 'white',
+            padding: '10px 16px',
+            borderRadius: 8,
+            fontSize: 13,
+            fontWeight: 600,
+            zIndex: 9999,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          }}>
+            🎯 Tracking: {trackingData.mousePositions.length} points | {(trackingData.totalHoverTime / 1000).toFixed(1)}s
+          </div>
+        )}
       </Container>
     </Layout>
   );

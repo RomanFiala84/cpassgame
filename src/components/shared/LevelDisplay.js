@@ -1,5 +1,5 @@
 // src/components/shared/LevelDisplay.js
-// HORIZONTÁLNA LIŠTA - Všetko v jednom riadku
+// FINÁLNA VERZIA - Kompaktný úzky vertikálny panel
 
 import React from 'react';
 import styled from 'styled-components';
@@ -9,67 +9,39 @@ const Wrapper = styled.div`
   position: fixed;
   top: 20px;
   left: 20px;
-  right: 20px;
+  width: 180px;
   z-index: 1200;
   background: ${p => p.theme.CARD_BACKGROUND};
-  border: 3px solid ${p => p.theme.ACCENT_COLOR};
-  border-radius: 16px;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.2);
-  padding: 16px 24px;
+  border: 2px solid ${p => p.theme.ACCENT_COLOR};
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  padding: 16px 12px;
   display: flex;
-  align-items: center;
-  gap: 32px;
+  flex-direction: column;
+  gap: 10px;
   
   @media (max-width: 1024px) {
-    gap: 24px;
-    padding: 14px 20px;
+    width: 160px;
+    padding: 14px 10px;
+    gap: 8px;
   }
   
   @media (max-width: 768px) {
-    flex-wrap: wrap;
-    gap: 16px;
-    padding: 12px 16px;
+    width: calc(100% - 40px);
   }
   
   @media (max-width: 480px) {
-    flex-direction: column;
-    gap: 12px;
     padding: 12px;
   }
 `;
 
-const Section = styled.div`
+const LevelSection = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding-right: ${p => p.$divider ? '32px' : '0'};
-  border-right: ${p => p.$divider ? `2px solid ${p.theme.BORDER_COLOR}` : 'none'};
-  
-  @media (max-width: 1024px) {
-    padding-right: ${p => p.$divider ? '24px' : '0'};
-  }
-  
-  @media (max-width: 768px) {
-    padding-right: ${p => p.$divider ? '16px' : '0'};
-    gap: 8px;
-  }
-  
-  @media (max-width: 480px) {
-    border-right: none;
-    border-bottom: ${p => p.$divider ? `2px solid ${p.theme.BORDER_COLOR}` : 'none'};
-    padding-right: 0;
-    padding-bottom: ${p => p.$divider ? '12px' : '0'};
-    width: 100%;
-    justify-content: space-between;
-  }
-`;
-
-const LevelSection = styled(Section)`
-  min-width: 100px;
-  
-  @media (max-width: 480px) {
-    min-width: auto;
-  }
+  gap: 8px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid ${p => p.theme.BORDER_COLOR};
 `;
 
 const LevelIcon = styled.div`
@@ -79,118 +51,89 @@ const LevelIcon = styled.div`
     ${p => p.theme.ACCENT_COLOR}, 
     ${p => p.theme.ACCENT_COLOR_2}
   );
-  border-radius: 12px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
   color: white;
-  box-shadow: 0 4px 12px ${p => p.theme.ACCENT_COLOR}44;
-  
-  @media (max-width: 768px) {
-    width: 44px;
-    height: 44px;
-    font-size: 24px;
-  }
+  box-shadow: 0 3px 8px ${p => p.theme.ACCENT_COLOR}44;
 `;
 
 const LevelInfo = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 2px;
 `;
 
 const LevelLabel = styled.div`
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 600;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   text-transform: uppercase;
-  letter-spacing: 1px;
-  line-height: 1;
-  margin-bottom: 4px;
+  letter-spacing: 0.5px;
 `;
 
 const LevelValue = styled.div`
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
-  line-height: 1;
-  
-  @media (max-width: 768px) {
-    font-size: 18px;
-  }
 `;
 
 const StatItem = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 80px;
-  
-  @media (max-width: 768px) {
-    min-width: 70px;
-  }
-  
-  @media (max-width: 480px) {
-    min-width: auto;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-  }
+  text-align: center;
+  gap: 4px;
+  padding: 8px 0;
+  border-bottom: ${p => p.$last ? 'none' : `1px solid ${p.theme.BORDER_COLOR}22`};
 `;
 
 const StatLabel = styled.div`
-  font-size: 11px;
+  font-size: 9px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 4px;
-  text-align: center;
-  
-  @media (max-width: 480px) {
-    margin-bottom: 0;
-    text-align: left;
-  }
+  letter-spacing: 0.3px;
 `;
 
 const StatValue = styled.div`
-  font-size: ${p => p.$large ? '22px' : '18px'};
+  font-size: ${p => p.$large ? '24px' : '18px'};
   font-weight: 700;
   color: ${p => p.$highlight ? p.theme.ACCENT_COLOR : p.theme.PRIMARY_TEXT_COLOR};
   line-height: 1;
-  
-  @media (max-width: 768px) {
-    font-size: ${p => p.$large ? '20px' : '16px'};
-  }
 `;
 
 const ProgressSection = styled.div`
-  flex: 1;
-  min-width: 180px;
-  
-  @media (max-width: 480px) {
-    width: 100%;
-    min-width: auto;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding-top: 6px;
 `;
 
-const ProgressLabel = styled.div`
-  font-size: 11px;
+const ProgressLabelText = styled.div`
+  font-size: 9px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  margin-bottom: 6px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  letter-spacing: 0.3px;
+`;
+
+const ProgressValue = styled.div`
+  font-size: 14px;
+  font-weight: 700;
+  color: ${p => p.theme.ACCENT_COLOR};
 `;
 
 const ProgressBar = styled.div`
-  height: 12px;
+  width: 100%;
+  height: 10px;
   background: ${p => p.theme.BORDER_COLOR};
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
   position: relative;
 `;
@@ -202,7 +145,7 @@ const Progress = styled.div`
     ${p => p.theme.ACCENT_COLOR}, 
     ${p => p.theme.ACCENT_COLOR_2}
   );
-  border-radius: 8px;
+  border-radius: 6px;
   transition: width 0.4s ease;
   position: relative;
   
@@ -242,7 +185,7 @@ const LevelDisplay = () => {
   return (
     <Wrapper>
       {/* Level */}
-      <LevelSection $divider>
+      <LevelSection>
         <LevelIcon>{level}</LevelIcon>
         <LevelInfo>
           <LevelLabel>Level</LevelLabel>
@@ -250,38 +193,34 @@ const LevelDisplay = () => {
         </LevelInfo>
       </LevelSection>
 
-      {/* Points */}
-      <Section $divider>
-        <StatItem>
-          <StatLabel>Misie</StatLabel>
-          <StatValue $highlight>{mission}</StatValue>
-        </StatItem>
-        
-        <StatItem>
-          <StatLabel>Bonus</StatLabel>
-          <StatValue>{bonus}</StatValue>
-        </StatItem>
-        
-        <StatItem>
-          <StatLabel>Referrals</StatLabel>
-          <StatValue>{referrals}</StatValue>
-        </StatItem>
-      </Section>
+      {/* Misie */}
+      <StatItem>
+        <StatLabel>Misie</StatLabel>
+        <StatValue $highlight>{mission}</StatValue>
+      </StatItem>
 
-      {/* Total */}
-      <Section $divider>
-        <StatItem>
-          <StatLabel>Spolu</StatLabel>
-          <StatValue $large $highlight>{total}</StatValue>
-        </StatItem>
-      </Section>
+      {/* Bonus */}
+      <StatItem>
+        <StatLabel>Bonus</StatLabel>
+        <StatValue>{bonus}</StatValue>
+      </StatItem>
+
+      {/* Referrals */}
+      <StatItem>
+        <StatLabel>Referrals</StatLabel>
+        <StatValue>{referrals}</StatValue>
+      </StatItem>
+
+      {/* Celkové body */}
+      <StatItem $last>
+        <StatLabel>Spolu</StatLabel>
+        <StatValue $large $highlight>{total}</StatValue>
+      </StatItem>
 
       {/* Progress */}
       <ProgressSection>
-        <ProgressLabel>
-          <span>Progress</span>
-          <span>{mission}/100</span>
-        </ProgressLabel>
+        <ProgressLabelText>Progress</ProgressLabelText>
+        <ProgressValue>{mission}/100</ProgressValue>
         <ProgressBar>
           <Progress $progress={progress} />
         </ProgressBar>

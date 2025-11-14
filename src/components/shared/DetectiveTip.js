@@ -1,4 +1,6 @@
 // src/components/shared/DetectiveTip.js
+// FINÁLNA VERZIA - Opravené prebliknutie
+
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 
@@ -6,8 +8,8 @@ const TipButton = styled.button`
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 70px;
-  height: 70px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   background: linear-gradient(135deg, 
     ${p => p.theme.ACCENT_COLOR}, 
@@ -105,7 +107,7 @@ const TipBubble = styled.div`
   padding: 20px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   z-index: 998;
-  animation: ${p => p.isClosing ? 'slideOut' : 'slideIn'} 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  animation: ${p => p.$isClosing ? 'slideOut' : 'slideIn'} 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   
   @keyframes slideIn {
     from {
@@ -262,7 +264,7 @@ const ProgressBar = styled.div`
 const ProgressFill = styled.div`
   height: 100%;
   background: ${p => p.theme.ACCENT_COLOR};
-  animation: progress ${p => p.duration}s linear;
+  animation: progress ${p => p.$duration}s linear;
   
   @keyframes progress {
     from { width: 100%; }
@@ -270,32 +272,6 @@ const ProgressFill = styled.div`
   }
 `;
 
-/**
- * DetectiveTip - Vyskakovací tip od detektíva
- * 
- * Použitie:
- * <DetectiveTip 
- *   tip="Pozor! Tento príspevok obsahuje emocionálny jazyk."
- *   detectiveName="Detektív Conan"
- *   autoOpen={true}
- *   autoOpenDelay={500}
- *   autoClose={false}
- *   autoCloseDelay={8000}
- *   showBadge={true}
- * />
- * 
- * Props:
- * - tip: Text tipu (podporuje HTML tagy <strong>, <em>)
- * - detectiveName: Meno detektíva (default: "Detektív Conan")
- * - autoOpen: Automaticky otvoriť pri načítaní (default: false)
- * - autoOpenDelay: Oneskorenie pred otvorením v ms (default: 500)
- * - autoClose: Automaticky zatvoriť po čase (default: false)
- * - autoCloseDelay: Čas pred zatvorením v ms (default: 8000)
- * - showBadge: Ukáže červený badge na buttone (default: false)
- * - position: 'right' alebo 'left' (default: 'right')
- * - onOpen: Callback funkcia pri otvorení
- * - onClose: Callback funkcia pri zatvorení
- */
 const DetectiveTip = ({ 
   tip, 
   detectiveName = "Detektív Conan", 
@@ -312,17 +288,15 @@ const DetectiveTip = ({
   const [isClosing, setIsClosing] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  // ✅ handleClose musí byť definovaný PRED useEffect
   const handleClose = useCallback(() => {
     setIsClosing(true);
     setTimeout(() => {
-      setIsOpen(false);
       setIsClosing(false);
+      setIsOpen(false);
       if (onClose) onClose();
     }, 400);
   }, [onClose]);
 
-  // ✅ Automatické otvorenie pri načítaní
   useEffect(() => {
     if (autoOpen) {
       const timer = setTimeout(() => {
@@ -334,7 +308,6 @@ const DetectiveTip = ({
     }
   }, [autoOpen, autoOpenDelay, onOpen]);
 
-  // ✅ Automatické zatvorenie po čase
   useEffect(() => {
     if (isOpen && autoClose) {
       const timer = setTimeout(() => {
@@ -384,8 +357,8 @@ const DetectiveTip = ({
         {showBadge && !isOpen && <Badge>!</Badge>}
       </TipButton>
       
-      {isOpen && (
-        <TipBubble style={bubbleStyle} isClosing={isClosing}>
+      {(isOpen || isClosing) && (
+        <TipBubble style={bubbleStyle} $isClosing={isClosing}>
           <TipHeader>
             {!imageError ? (
               <DetectiveAvatar 
@@ -408,7 +381,7 @@ const DetectiveTip = ({
           
           {autoClose && (
             <ProgressBar>
-              <ProgressFill duration={autoCloseDelay / 1000} />
+              <ProgressFill $duration={autoCloseDelay / 1000} />
             </ProgressBar>
           )}
         </TipBubble>

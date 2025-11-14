@@ -1,4 +1,6 @@
 // src/components/shared/PageTransition.js
+// FINÁLNA VERZIA - Neovplyvňuje fixed elementy (modály)
+
 import { motion } from 'framer-motion';
 
 const pageVariants = {
@@ -31,6 +33,10 @@ export const PageTransition = ({ children }) => {
       initial="initial"
       animate="animate"
       exit="exit"
+      style={{ 
+        position: 'relative',
+        zIndex: 1
+      }}
     >
       {children}
     </motion.div>

@@ -1,5 +1,5 @@
 // src/components/shared/DetectiveTipLarge.js
-// VEĽKÁ VERZIA - S buttonom + veľkým obrázkom pri otvorení
+// FINÁLNA VERZIA - Opravené prebliknutie + object-fit: cover
 
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
@@ -8,8 +8,8 @@ const TipButton = styled.button`
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 70px;
-  height: 70px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   background: linear-gradient(135deg, 
     ${p => p.theme.ACCENT_COLOR}, 
@@ -96,7 +96,6 @@ const Badge = styled.div`
   }
 `;
 
-// ✅ VEĽKÝ MODAL namiesto malého bubble
 const Overlay = styled.div`
   position: fixed;
   top: 0;
@@ -110,7 +109,7 @@ const Overlay = styled.div`
   justify-content: center;
   z-index: 1000;
   padding: 20px;
-  animation: ${p => p.isClosing ? 'fadeOut' : 'fadeIn'} 0.3s ease;
+  animation: ${p => p.$isClosing ? 'fadeOut' : 'fadeIn'} 0.3s ease;
   
   @keyframes fadeIn {
     from { opacity: 0; }
@@ -127,14 +126,14 @@ const ModalContainer = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 3px solid ${p => p.theme.ACCENT_COLOR};
   border-radius: 20px;
-  max-width: 600px;
+  max-width: 900px;
   width: 100%;
   max-height: 90vh;
   overflow: hidden;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-  animation: ${p => p.isClosing ? 'slideOut' : 'slideIn'} 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  animation: ${p => p.$isClosing ? 'slideOut' : 'slideIn'} 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   
   @keyframes slideIn {
     from {
@@ -160,6 +159,7 @@ const ModalContainer = styled.div`
   
   @media (max-width: 768px) {
     max-width: 90%;
+    flex-direction: column;
   }
   
   @media (max-width: 480px) {
@@ -168,19 +168,44 @@ const ModalContainer = styled.div`
   }
 `;
 
-// ✅ VEĽKÝ obrázok namiesto malého avatara
+const ContentContainer = styled.div`
+  width: 50%;
+  padding: 30px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  order: 1;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 24px;
+    order: 2;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 20px;
+  }
+`;
+
 const DetectiveImageContainer = styled.div`
   position: relative;
-  width: 100%;
-  height: 250px;
+  width: 50%;
+  min-height: 500px;
   background: linear-gradient(135deg, 
     ${p => p.theme.ACCENT_COLOR}33, 
     ${p => p.theme.ACCENT_COLOR_2}33
   );
   overflow: hidden;
+  order: 2;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    min-height: 250px;
+    order: 1;
+  }
   
   @media (max-width: 480px) {
-    height: 200px;
+    min-height: 200px;
   }
 `;
 
@@ -201,15 +226,6 @@ const DetectiveImageFallback = styled.div`
   
   @media (max-width: 480px) {
     font-size: 80px;
-  }
-`;
-
-const ContentContainer = styled.div`
-  padding: 30px;
-  overflow-y: auto;
-  
-  @media (max-width: 480px) {
-    padding: 20px;
   }
 `;
 
@@ -259,6 +275,7 @@ const TipText = styled.div`
   font-size: 16px;
   line-height: 1.8;
   margin-bottom: 20px;
+  flex: 1;
   
   @media (max-width: 480px) {
     font-size: 15px;
@@ -306,19 +323,6 @@ const ActionButton = styled.button`
   }
 `;
 
-/**
- * DetectiveTipLarge - Tip s veľkým obrázkom detektíva
- * 
- * Použitie:
- * <DetectiveTipLarge 
- *   tip="<p>Vitajte, <strong>mladý detektíve</strong>!</p>"
- *   detectiveName="Detektív Conan"
- *   imageUrl="/images/detective.png"
- *   buttonText="Rozumiem!"
- *   autoOpen={true}
- *   showBadge={true}
- * />
- */
 const DetectiveTipLarge = ({
   tip,
   detectiveName = "Detektív Conan",
@@ -342,13 +346,12 @@ const DetectiveTipLarge = ({
   const handleClose = useCallback(() => {
     setIsClosing(true);
     setTimeout(() => {
-      setIsOpen(false);
       setIsClosing(false);
+      setIsOpen(false);
       if (onClose) onClose();
     }, 400);
   }, [onClose]);
 
-  // Auto-open
   useEffect(() => {
     if (autoOpen) {
       const timer = setTimeout(() => {
@@ -359,7 +362,6 @@ const DetectiveTipLarge = ({
     }
   }, [autoOpen, autoOpenDelay, onOpen]);
 
-  // Auto-close
   useEffect(() => {
     if (isOpen && autoClose) {
       const timer = setTimeout(() => {
@@ -398,7 +400,6 @@ const DetectiveTipLarge = ({
 
   return (
     <>
-      {/* ✅ Button v rohu (ako DetectiveTip) */}
       <TipButton 
         onClick={handleToggle} 
         title="Tip od detektíva"
@@ -417,22 +418,9 @@ const DetectiveTipLarge = ({
         {showBadge && !isOpen && <Badge>!</Badge>}
       </TipButton>
       
-      {/* ✅ VEĽKÝ modal s obrázkom (ako DetectiveTipLarge) */}
-      {isOpen && (
-        <Overlay isClosing={isClosing} onClick={handleOverlayClick}>
-          <ModalContainer isClosing={isClosing}>
-            <DetectiveImageContainer>
-              {!imageError ? (
-                <DetectiveImage 
-                  src={imageUrl}
-                  alt={detectiveName}
-                  onError={handleImageError}
-                />
-              ) : (
-                <DetectiveImageFallback>🕵️</DetectiveImageFallback>
-              )}
-            </DetectiveImageContainer>
-            
+      {(isOpen || isClosing) && (
+        <Overlay $isClosing={isClosing} onClick={handleOverlayClick}>
+          <ModalContainer $isClosing={isClosing}>
             <ContentContainer>
               <Header>
                 <DetectiveName>{detectiveName}</DetectiveName>
@@ -447,6 +435,18 @@ const DetectiveTipLarge = ({
                 {buttonText}
               </ActionButton>
             </ContentContainer>
+            
+            <DetectiveImageContainer>
+              {!imageError ? (
+                <DetectiveImage 
+                  src={imageUrl}
+                  alt={detectiveName}
+                  onError={handleImageError}
+                />
+              ) : (
+                <DetectiveImageFallback>🕵️</DetectiveImageFallback>
+              )}
+            </DetectiveImageContainer>
           </ModalContainer>
         </Overlay>
       )}
