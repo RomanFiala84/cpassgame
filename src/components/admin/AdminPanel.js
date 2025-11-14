@@ -554,7 +554,7 @@ const AdminPanel = () => {
     if (!window.confirm('Ste si istý? Všetky dáta budú natrvalo vymazané!')) return;
 
     try {
-      const response = await fetch('/.netlify/functions/progress?code=all', {
+      const response = await fetch('/api/progress?code=all', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ adminCode: 'RF9846' })

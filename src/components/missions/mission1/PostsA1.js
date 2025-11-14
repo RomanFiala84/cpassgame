@@ -1,5 +1,5 @@
 // src/components/missions/mission1/PostsA1.js
-// UPRAVENÁ VERZIA - tracking sa posiela IBA RAZ pri unmount
+// UPRAVENÁ VERZIA - tracking IBA pri kliknutí "Pokračovať"
 
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
@@ -268,6 +268,12 @@ const PostsA1 = () => {
       return;
     }
 
+    // Preskočiť ak je mobile
+    if (trackingData.isMobile) {
+      console.log('📱 Skipping tracking - mobile device');
+      return;
+    }
+
     if (
       !userId ||
       !trackingData.mousePositions ||
@@ -327,13 +333,8 @@ const PostsA1 = () => {
   }, [userId, trackingData, containerRef]);
 
 
-  // ✅ OPRAVA - pošli tracking iba pri unmount (opustení stránky)
-  useEffect(() => {
-    return () => {
-      // Pošli tracking pri unmount
-      sendTracking();
-    };
-  }, [sendTracking]);
+  // ❌ VYMAZANÉ - žiadny useEffect pre unmount!
+  // Tracking sa posiela IBA pri kliknutí "Pokračovať"
 
 
   const handleContinue = async () => {
@@ -372,7 +373,8 @@ const PostsA1 = () => {
         }
       );
       
-      // ✅ Pošli tracking pred navigáciou
+      // ✅ KRITICKÉ - Pošli tracking TERAZ (pred navigáciou)
+      console.log('📊 Sending final tracking data...');
       await sendTracking();
       
       const progress = await dataManager.loadUserProgress(userId);
