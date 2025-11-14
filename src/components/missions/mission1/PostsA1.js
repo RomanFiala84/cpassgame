@@ -1,5 +1,5 @@
 // src/components/missions/mission1/PostsA1.js
-// UPRAVENÁ VERZIA - tracking IBA pri kliknutí "Pokračovať"
+// UPRAVENÁ VERZIA - tracking IBA pri kliknutí "Pokračovať" + ZNÍŽENÉ LIMITY
 
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
@@ -260,7 +260,7 @@ const PostsA1 = () => {
   };
 
 
-  // ✅ OPRAVA - pošli tracking iba raz
+  // ✅ OPRAVA - pošli tracking iba raz + ZNÍŽENÉ LIMITY
   const sendTracking = useCallback(async () => {
     // Zabráň viacnásobnému posielaniu
     if (trackingSentRef.current) {
@@ -274,13 +274,26 @@ const PostsA1 = () => {
       return;
     }
 
+    // ✅ DEBUG LOG
+    console.log('📊 Tracking check:', {
+      userId: userId,
+      mousePositionsCount: trackingData.mousePositions?.length || 0,
+      totalHoverTime: trackingData.totalHoverTime,
+      isMobile: trackingData.isMobile
+    });
+
+    // ✅ ZNÍŽENÉ LIMITY: 10 → 3 bodov, 2000ms → 500ms
     if (
       !userId ||
       !trackingData.mousePositions ||
-      trackingData.mousePositions.length < 10 ||
-      trackingData.totalHoverTime < 2000
+      trackingData.mousePositions.length < 3 ||
+      trackingData.totalHoverTime < 500
     ) {
-      console.log('⏭️ Skipping tracking - insufficient data');
+      console.log('⏭️ Skipping tracking - insufficient data', {
+        hasUserId: !!userId,
+        positionsCount: trackingData.mousePositions?.length || 0,
+        hoverTime: trackingData.totalHoverTime
+      });
       return;
     }
 
@@ -346,7 +359,8 @@ const PostsA1 = () => {
         newErrors[post.id] = true;
       });
       setErrors(newErrors);
-      refs.current[missing.id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // ✅ OPRAVA: missing[0].id namiesto missing.id
+      refs.current[missing[0].id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
     
