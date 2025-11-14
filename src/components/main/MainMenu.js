@@ -1,5 +1,5 @@
 // src/components/main/MainMenu.js
-// VERZIA s možnosťou kopírovania linku s automatickým kódom
+// VERZIA s DetectiveTipLarge namiesto export tlačidla
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import Layout from '../../styles/Layout';
 import StyledButton from '../../styles/StyledButton';
 import { useUserStats } from '../../contexts/UserStatsContext';
+import DetectiveTipLarge from '../shared/DetectiveTipLarge';
 
 const Container = styled.div`
   padding: 20px;
@@ -300,7 +301,6 @@ const SharingCode = styled.code`
   }
 `;
 
-// ✅ NOVÉ - Styled komponenty pre link
 const LinkDisplay = styled.div`
   background: ${p => p.theme.INPUT_BACKGROUND};
   border: 2px solid ${p => p.theme.BORDER_COLOR};
@@ -508,23 +508,12 @@ const MainMenu = () => {
     if (!m.locked) navigate(m.route);
   };
 
-  const handleExport = () => {
-    try {
-      dataManager.exportAllParticipantsCSV();
-    } catch (error) {
-      console.error('Export error:', error);
-      alert('❌ Chyba pri exportovaní dáta.');
-    }
-  };
-
-  // ✅ NOVÁ FUNKCIA - Generovanie linku s referral kódom
   const generateReferralLink = () => {
     const baseUrl = window.location.origin;
     const referralCode = userProgress?.sharing_code;
     return `${baseUrl}/?ref=${referralCode}`;
   };
 
-  // ✅ UPRAVENÉ - Kopírovanie kódu
   const handleCopyCode = () => {
     if (userProgress?.sharing_code) {
       navigator.clipboard.writeText(userProgress.sharing_code);
@@ -533,7 +522,6 @@ const MainMenu = () => {
     }
   };
 
-  // ✅ NOVÁ FUNKCIA - Kopírovanie linku
   const handleCopyLink = () => {
     const link = generateReferralLink();
     navigator.clipboard.writeText(link);
@@ -585,6 +573,20 @@ const MainMenu = () => {
     logout();
     navigate('/instruction');
   };
+
+  // ✅ NOVÝ - Príbeh a inštrukcie pre DetectiveTip
+  const detectiveStory = `
+    <p>Vitajte, <strong>detektíve</strong>! 🕵️</p>
+    
+    <p>Svet je plný <em>tajomstiev a záhad</em>, ktoré čakajú na odhalenie. Vaša úloha je preskúmať informácie, rozlíšiť pravdu od lži a stať sa majstrom v <strong>kritickém myslení</strong>.</p>
+    
+    <p><strong>Ako to funguje?</strong></p>
+    <p>• Dokončením každej misie získate <strong>25 bodov</strong><br/>
+    • Zdieľajte svoj kód s priateľmi a získajte <strong>+10 bodov</strong> za každého<br/>
+    • Odomknite ďalšie misie a posúvajte sa vyššie v rankingu</p>
+    
+    <p>Pripravení? <strong>Začnime pátrať!</strong> 🔍</p>
+  `;
 
   return (
     <Layout>
@@ -656,21 +658,15 @@ const MainMenu = () => {
             🎁 Súťaž
           </StyledButton>
           {isAdmin && (
-            <>
-              <StyledButton variant="outline" size="small" onClick={handleExport}>
-                📤 Export
-              </StyledButton>
-              <StyledButton variant="accent" size="small" onClick={() => navigate('/admin')}>
-                ⚙️ Admin
-              </StyledButton>
-            </>
+            <StyledButton variant="accent" size="small" onClick={() => navigate('/admin')}>
+              ⚙️ Admin
+            </StyledButton>
           )}
           <StyledButton variant="danger" size="small" onClick={handleLogout}>
             🔒 Odhlásiť
           </StyledButton>
         </ButtonGroup>
 
-        {/* ✅ UPRAVENÁ Sharing Section s linkom */}
         <SharingSection>
           <SharingTitle>🎁 Zdieľajte a získajte body!</SharingTitle>
           
@@ -681,13 +677,11 @@ const MainMenu = () => {
             </SharingCode>
           </SharingCodeDisplay>
           
-          {/* ✅ NOVÉ - Link s automatickým kódom */}
           <LinkDisplay>
             <LinkLabel>🔗 Link s automatickým kódom:</LinkLabel>
             <LinkText>{generateReferralLink()}</LinkText>
           </LinkDisplay>
           
-          {/* ✅ NOVÉ - Dve tlačidlá na kopírovanie */}
           <ShareButtonsGroup>
             <StyledButton 
               variant="accent"
@@ -721,6 +715,18 @@ const MainMenu = () => {
             </ReferralStats>
           )}
         </SharingSection>
+
+        {/* ✅ NOVÉ - DetectiveTipLarge namiesto Export tlačidla */}
+        <DetectiveTipLarge
+          tip={detectiveStory}
+          detectiveName="Detektív Conan"
+          imageUrl="/images/detective.png"
+          iconUrl="/images/detective-icon.png"
+          buttonText="Rozumiem, poďme pátrať! 🔍"
+          autoOpen={false}
+          showBadge={true}
+          position="right"
+        />
 
         {modal.open && (
           <ModalOverlay onClick={closeModal}>
