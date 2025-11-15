@@ -1,5 +1,5 @@
 // src/components/admin/TrackingViewer.js
-// OPRAVENÁ VERZIA - Full-page tracking support
+// OPRAVENÁ VERZIA - Originálne rozmery (bez scalingu)
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -99,23 +99,24 @@ const MetaInfo = styled.div`
 const HeatmapContainer = styled.div`
   position: relative;
   width: 100%;
-  max-width: 1000px;
+  max-width: 100%;
   margin: 20px auto;
   border: 2px solid ${p => p.theme.BORDER_COLOR};
   border-radius: 8px;
-  overflow: hidden;
+  overflow: auto;
   background: #ffffff;
 `;
 
 const CanvasWrapper = styled.div`
   position: relative;
   width: 100%;
+  overflow: auto;
 `;
 
 const HeatmapCanvas = styled.canvas`
-  width: 100%;
-  height: auto;
   display: block;
+  max-width: 100%;
+  height: auto;
 `;
 
 const LoadingText = styled.div`
@@ -284,50 +285,34 @@ const TrackingViewer = () => {
     loadTrackingData();
   }, [selectedComponent]);
 
-  // ✅ OPRAVENÁ FUNKCIA - Full-page heatmap
+  // ✅ OPRAVENÁ FUNKCIA - Originálne rozmery (1:1)
   const drawHeatmap = (positions, containerDims) => {
     const canvas = canvasRef.current;
     if (!canvas || !positions || positions.length === 0) return;
 
     const ctx = canvas.getContext('2d');
     
-    // ✅ Použiť full dimensions
+    // ✅ Použiť ORIGINÁLNE rozmery (bez scalingu)
     const fullWidth = containerDims?.width || 1000;
     const fullHeight = containerDims?.height || 2000;
     
-    // ✅ Aspect ratio
-    const aspectRatio = fullHeight / fullWidth;
-    const targetWidth = 1000;
-    const targetHeight = Math.round(targetWidth * aspectRatio);
-    
-    canvas.width = targetWidth;
-    canvas.height = targetHeight;
+    canvas.width = fullWidth;
+    canvas.height = fullHeight;
 
     // Vyčistiť canvas - biely background
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, targetWidth, targetHeight);
+    ctx.fillRect(0, 0, fullWidth, fullHeight);
 
-    console.log('🎨 Drawing full-page heatmap:', {
+    console.log('🎨 Drawing heatmap in ORIGINAL resolution:', {
       positionsCount: positions.length,
-      canvasSize: `${targetWidth}x${targetHeight}`,
-      fullSize: `${fullWidth}x${fullHeight}`
+      canvasSize: `${fullWidth}x${fullHeight}`,
     });
 
-    // ✅ Vytvor heatmap pomocą absolute pozícií
+    // ✅ Nakresli heatmap body v originálnych pozíciách (1:1)
     positions.forEach((pos) => {
-      let x, y;
-      
-      // ✅ Preferuj absolute pozície
-      if (pos.x !== undefined && pos.y !== undefined) {
-        x = (pos.x / fullWidth) * targetWidth;
-        y = (pos.y / fullHeight) * targetHeight;
-      } else if (pos.xPercent !== undefined && pos.yPercent !== undefined) {
-        // Fallback: percentuálne
-        x = (pos.xPercent / 100) * targetWidth;
-        y = (pos.yPercent / 100) * targetHeight;
-      } else {
-        return;
-      }
+      // Použiť priamo pos.x a pos.y (bez scalingu)
+      const x = pos.x;
+      const y = pos.y;
 
       // Gradient pre každý bod
       const gradient = ctx.createRadialGradient(x, y, 0, x, y, 25);
@@ -340,7 +325,7 @@ const TrackingViewer = () => {
       ctx.fillRect(x - 25, y - 25, 50, 50);
     });
 
-    console.log('✅ Full-page heatmap drawn successfully');
+    console.log('✅ Heatmap drawn in original resolution (1:1)');
   };
 
   const handleDownloadHeatmap = () => {
@@ -441,9 +426,9 @@ const TrackingViewer = () => {
             </Section>
 
             <Section>
-              <h2>🎨 Agregovaná Full-Page Heatmap</h2>
+              <h2>🎨 Agregovaná Heatmap (Originálne rozmery)</h2>
               <p style={{ fontSize: '14px', color: '#666', marginBottom: '16px' }}>
-                Heatmap vytvorená z {trackingData?.totalPositions?.toLocaleString() || 0} mouse pozícií od {trackingData?.usersCount || 0} používateľov (vrátane scrollu)
+                Heatmap v originálnom rozlíšení z {trackingData?.totalPositions?.toLocaleString() || 0} pozícií od {trackingData?.usersCount || 0} používateľov
               </p>
               <HeatmapContainer>
                 <CanvasWrapper>
@@ -453,7 +438,7 @@ const TrackingViewer = () => {
               
               <ButtonGroup>
                 <StyledButton variant="success" onClick={handleDownloadHeatmap}>
-                  💾 Stiahnuť Live Heatmap
+                  💾 Stiahnuť Heatmap
                 </StyledButton>
                 <StyledButton variant="outline" onClick={() => setSelectedComponent(null)}>
                   ← Späť na zoznam
@@ -465,7 +450,7 @@ const TrackingViewer = () => {
               <Section>
                 <h2>🖼️ Cloudinary Vizualizácie ({getCloudinaryImages().length})</h2>
                 <p style={{ fontSize: '14px', color: '#666', marginBottom: '16px' }}>
-                  Individuálne full-page heatmap obrázky uložené v Cloudinary (kliknutím zväčšite)
+                  Individuálne heatmap obrázky uložené v Cloudinary (originálne rozmery)
                 </p>
                 <CloudinaryImageGrid>
                   {getCloudinaryImages().map((url, idx) => (
