@@ -1,11 +1,11 @@
 // src/utils/visualizationGenerator.js
-// FINÁLNA VERZIA - Ukladá v ORIGINÁLNOM rozlíšení (bez scalingu)
+// FINÁLNA OPRAVA - Zachytí VŠETOK scrollovateľný obsah
 
 import html2canvas from 'html2canvas';
 
 /**
- * Generuje vizualizáciu v ORIGINÁLNOM rozlíšení
- * ✅ Žiadny scaling - tracking pozície presne sedia
+ * Generuje vizualizáciu CELÉHO scrollovateľného obsahu
+ * ✅ Funguje aj s grid layoutom a scrollom
  */
 export const generateVisualization = async (trackingData, width, height, containerElement) => {
   if (!trackingData.mousePositions || trackingData.mousePositions.length < 5) {
@@ -14,29 +14,37 @@ export const generateVisualization = async (trackingData, width, height, contain
   }
 
   try {
-    // ✅ Použiť ORIGINÁLNE rozmery (bez downscalingu)
+    // ✅ Získaj skutočnú výšku celého obsahu
     const fullWidth = containerElement.scrollWidth;
     const fullHeight = containerElement.scrollHeight;
     
-    console.log('📸 Creating screenshot in ORIGINAL resolution:', {
-      original: `${fullWidth}x${fullHeight}px`,
+    console.log('📸 Creating FULL screenshot:', {
+      scrollDimensions: `${fullWidth}x${fullHeight}px`,
+      viewportDimensions: `${width}x${height}px`,
     });
     
-    // ✅ Temporarily expand container
-    const originalHeight = containerElement.style.height;
-    const originalOverflow = containerElement.style.overflow;
-    const originalMaxHeight = containerElement.style.maxHeight;
+    // ✅ KĽÚČOVÁ ZMENA - Scroll na začiatok pred screenshotom
+    const originalScrollTop = containerElement.scrollTop;
+    containerElement.scrollTop = 0;
     
-    containerElement.style.height = 'auto';
-    containerElement.style.maxHeight = 'none';
+    // ✅ Dočasne odstráň overflow a maxHeight
+    const originalStyle = {
+      overflow: containerElement.style.overflow,
+      maxHeight: containerElement.style.maxHeight,
+      height: containerElement.style.height,
+    };
+    
     containerElement.style.overflow = 'visible';
+    containerElement.style.maxHeight = 'none';
+    containerElement.style.height = 'auto';
     
-    // ✅ FULL CONTENT SCREENSHOT v originálnom rozlíšení
-    console.log('📸 Capturing FULL content...');
+    // ✅ Počkaj na rerender
+    await new Promise(resolve => setTimeout(resolve, 100));
     
+    // ✅ Screenshot CELÉHO obsahu
     const screenshotCanvas = await html2canvas(containerElement, {
       backgroundColor: '#ffffff',
-      scale: 1, // ✅ Bez upscalingu
+      scale: 1,
       logging: false,
       useCORS: true,
       allowTaint: true,
@@ -44,45 +52,49 @@ export const generateVisualization = async (trackingData, width, height, contain
       scrollY: 0,
       width: fullWidth,
       height: fullHeight,
-      windowWidth: document.documentElement.scrollWidth,
-      windowHeight: document.documentElement.scrollHeight,
+      windowWidth: fullWidth,
+      windowHeight: fullHeight,
     });
     
-    // ✅ Restore original styles
-    containerElement.style.height = originalHeight;
-    containerElement.style.overflow = originalOverflow;
-    containerElement.style.maxHeight = originalMaxHeight;
+    // ✅ Vráť pôvodné štýly
+    containerElement.style.overflow = originalStyle.overflow;
+    containerElement.style.maxHeight = originalStyle.maxHeight;
+    containerElement.style.height = originalStyle.height;
+    containerElement.scrollTop = originalScrollTop;
 
-    // ✅ Použiť ORIGINÁLNE rozmery (bez scalingu)
+    // ✅ Vytvor finálny canvas
     const finalCanvas = document.createElement('canvas');
     finalCanvas.width = fullWidth;
     finalCanvas.height = fullHeight;
     const ctx = finalCanvas.getContext('2d');
 
-    // ✅ Nakresli screenshot (1:1, bez scalingu)
+    // Nakresli screenshot
     ctx.drawImage(screenshotCanvas, 0, 0, fullWidth, fullHeight);
 
-    // Semi-transparent overlay
+    // Overlay
     ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
     ctx.fillRect(0, 0, fullWidth, fullHeight);
 
     const positions = trackingData.mousePositions;
 
-    // HEATMAP
-    console.log('🔥 Generating heatmap...');
+    // Heatmap
     const heatmapData = generateHeatmapData(positions, fullWidth, fullHeight);
-    drawHeatmap(ctx, heatmapData, fullWidth, fullHeight);
+    drawHeatmap(ctx, heatmapData);
 
-    // Trajektória
-    drawTrajectory(ctx, positions, fullWidth, fullHeight);
+    // Trajectory
+    drawTrajectory(ctx, positions);
 
     // Markers
-    drawMarkers(ctx, positions, fullWidth, fullHeight);
+    drawMarkers(ctx, positions);
 
     // Info panel
     drawInfoPanel(ctx, trackingData, fullWidth, fullHeight);
 
-    console.log('✅ Screenshot + heatmap generated in ORIGINAL resolution');
+    console.log('✅ Full screenshot created:', {
+      finalSize: `${fullWidth}x${fullHeight}px`,
+      positions: positions.length
+    });
+    
     return finalCanvas.toDataURL('image/jpeg', 0.85);
 
   } catch (error) {
@@ -91,10 +103,7 @@ export const generateVisualization = async (trackingData, width, height, contain
   }
 };
 
-/**
- * Trajektória - ✅ Bez scalingu (1:1)
- */
-function drawTrajectory(ctx, positions, width, height) {
+function drawTrajectory(ctx, positions) {
   ctx.beginPath();
   ctx.strokeStyle = 'rgba(74, 144, 226, 0.6)';
   ctx.lineWidth = 2.5;
@@ -103,11 +112,9 @@ function drawTrajectory(ctx, positions, width, height) {
   ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
   ctx.shadowBlur = 4;
 
-  const firstPos = positions[0];
-  ctx.moveTo(firstPos.x, firstPos.y);
-
-  positions.forEach((pos, index) => {
-    if (index === 0) return;
+  ctx.moveTo(positions[0].x, positions[0].y);
+  positions.forEach((pos, idx) => {
+    if (idx === 0) return;
     ctx.lineTo(pos.x, pos.y);
   });
 
@@ -116,46 +123,36 @@ function drawTrajectory(ctx, positions, width, height) {
   ctx.shadowBlur = 0;
 }
 
-/**
- * Markers - ✅ Bez scalingu (1:1)
- */
-function drawMarkers(ctx, positions, width, height) {
-  const firstPos = positions[0];
+function drawMarkers(ctx, positions) {
+  const first = positions[0];
+  const last = positions[positions.length - 1];
   
+  // START
   ctx.beginPath();
-  ctx.arc(firstPos.x, firstPos.y, 12, 0, 2 * Math.PI);
+  ctx.arc(first.x, first.y, 12, 0, 2 * Math.PI);
   ctx.fillStyle = '#00C853';
   ctx.fill();
   ctx.strokeStyle = '#fff';
   ctx.lineWidth = 4;
   ctx.stroke();
-
   ctx.fillStyle = '#fff';
   ctx.font = 'bold 11px Arial';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('START', firstPos.x, firstPos.y);
+  ctx.fillText('START', first.x, first.y);
 
-  const lastPos = positions[positions.length - 1];
-  
+  // END
   ctx.beginPath();
-  ctx.arc(lastPos.x, lastPos.y, 12, 0, 2 * Math.PI);
+  ctx.arc(last.x, last.y, 12, 0, 2 * Math.PI);
   ctx.fillStyle = '#E53935';
   ctx.fill();
   ctx.strokeStyle = '#fff';
   ctx.lineWidth = 4;
   ctx.stroke();
-
   ctx.fillStyle = '#fff';
-  ctx.font = 'bold 11px Arial';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('END', lastPos.x, lastPos.y);
+  ctx.fillText('END', last.x, last.y);
 }
 
-/**
- * Info panel
- */
 function drawInfoPanel(ctx, trackingData, width, height) {
   const padding = 20;
   const panelWidth = 300;
@@ -163,12 +160,10 @@ function drawInfoPanel(ctx, trackingData, width, height) {
   const panelX = width - panelWidth - padding;
   const panelY = height - panelHeight - padding;
 
-  // Background
   ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
   ctx.roundRect(panelX, panelY, panelWidth, panelHeight, 12);
   ctx.fill();
 
-  // Border
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
   ctx.lineWidth = 1;
   ctx.stroke();
@@ -190,9 +185,6 @@ function drawInfoPanel(ctx, trackingData, width, height) {
   ctx.fillText(`📐 ${width}×${height}px`, panelX + 15, panelY + 105);
 }
 
-/**
- * Heatmap generation - ✅ Bez scalingu
- */
 function generateHeatmapData(positions, width, height) {
   const gridSize = 25;
   const cols = Math.ceil(width / gridSize);
@@ -224,13 +216,10 @@ function generateHeatmapData(positions, width, height) {
     });
   }
   
-  return { heatmap, gridSize, cols, rows, maxValue };
+  return { heatmap, gridSize, cols, rows };
 }
 
-/**
- * Draw heatmap
- */
-function drawHeatmap(ctx, heatmapData, width, height) {
+function drawHeatmap(ctx, heatmapData) {
   const { heatmap, gridSize } = heatmapData;
   
   heatmap.forEach((row, r) => {
@@ -240,7 +229,6 @@ function drawHeatmap(ctx, heatmapData, width, height) {
         const y = r * gridSize;
         
         const color = getHeatmapColor(intensity);
-        
         ctx.fillStyle = color;
         ctx.fillRect(x, y, gridSize, gridSize);
       }
@@ -248,26 +236,18 @@ function drawHeatmap(ctx, heatmapData, width, height) {
   });
 }
 
-/**
- * Heatmap color
- */
 function getHeatmapColor(intensity) {
   if (intensity < 0.25) {
-    const alpha = 0.3 + (intensity * 0.8);
-    return `rgba(0, 120, 255, ${alpha})`;
+    return `rgba(0, 120, 255, ${0.3 + intensity * 0.8})`;
   } else if (intensity < 0.5) {
-    const alpha = 0.4 + (intensity * 0.9);
-    return `rgba(0, 200, 150, ${alpha})`;
+    return `rgba(0, 200, 150, ${0.4 + intensity * 0.9})`;
   } else if (intensity < 0.75) {
-    const alpha = 0.5 + (intensity * 0.9);
-    return `rgba(255, 200, 0, ${alpha})`;
+    return `rgba(255, 200, 0, ${0.5 + intensity * 0.9})`;
   } else {
-    const alpha = 0.6 + (intensity * 0.9);
-    return `rgba(255, 50, 0, ${alpha})`;
+    return `rgba(255, 50, 0, ${0.6 + intensity * 0.9})`;
   }
 }
 
-// Helper
 CanvasRenderingContext2D.prototype.roundRect = function (x, y, width, height, radius) {
   this.beginPath();
   this.moveTo(x + radius, y);
