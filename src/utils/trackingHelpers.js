@@ -46,7 +46,7 @@ export const fetchTrackingData = async (filters = {}) => {
 };
 
 /**
- * ✅ NOVÁ FUNKCIA - Uloží tracking + vygeneruje a uploaduje heatmap
+ * ✅ UPRAVENÁ VERZIA - Uloží tracking + vygeneruje a uploaduje heatmap (JSON namiesto FormData)
  */
 export const saveTrackingWithVisualization = async (trackingData, containerElement) => {
   try {
@@ -79,17 +79,20 @@ export const saveTrackingWithVisualization = async (trackingData, containerEleme
       return { success: true, tracking: trackingResult };
     }
 
-    // 3. Upload do Cloudinary
-    const formData = new FormData();
-    formData.append('image', visualization.blob, `heatmap_${trackingData.contentId}_${Date.now()}.png`);
-    formData.append('contentId', trackingData.contentId);
-    formData.append('contentType', trackingData.contentType);
-    formData.append('userId', trackingData.userId);
-    formData.append('trackingId', trackingResult.trackingId || 'unknown');
+    // 3. Konvertuj Blob na base64
+    const base64Image = await blobToBase64(visualization.blob);
 
+    // 4. Upload do Cloudinary (JSON namiesto FormData)
     const cloudinaryResponse = await fetch('/api/upload-heatmap', {
       method: 'POST',
-      body: formData,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        imageBase64: base64Image,
+        contentId: trackingData.contentId,
+        contentType: trackingData.contentType,
+        userId: trackingData.userId,
+        trackingId: trackingResult.trackingId || 'unknown',
+      }),
     });
 
     if (!cloudinaryResponse.ok) {
@@ -100,7 +103,7 @@ export const saveTrackingWithVisualization = async (trackingData, containerEleme
     const cloudinaryResult = await cloudinaryResponse.json();
     console.log('✅ Heatmap uploaded to Cloudinary:', cloudinaryResult.data?.url);
 
-    // 4. Aktualizuj tracking záznam s Cloudinary URL
+    // 5. Aktualizuj tracking záznam s Cloudinary URL
     await fetch('/api/update-tracking-cloudinary', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -124,3 +127,15 @@ export const saveTrackingWithVisualization = async (trackingData, containerEleme
     throw error;
   }
 };
+
+/**
+ * Helper: Konvertuje Blob na base64 string
+ */
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
