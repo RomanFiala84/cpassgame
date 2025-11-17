@@ -9,8 +9,7 @@ import StyledButton from '../../../styles/StyledButton';
 import { useUserStats } from '../../../contexts/UserStatsContext';
 import { getResponseManager } from '../../../utils/ResponseManager';
 import { useHoverTracking } from '../../../hooks/useHoverTracking';
-import { generateVisualization } from '../../../utils/visualizationGenerator';
-import { sendTrackingData } from '../../../utils/trackingApi';
+import { saveTrackingWithVisualization } from '../../../utils/trackingHelpers';
 
 const Container = styled.div`
   padding: 20px;
@@ -222,14 +221,12 @@ const PostsB2 = () => {
 
   const isComplete = () => POSTS.every(post => ratings[post.id] !== undefined && ratings[post.id] !== null);
 
-  // ✅ OPRAVA: Použiť getFinalData()
   const sendTracking = useCallback(async () => {
     if (trackingSentRef.current) {
       console.log('⏭️ Tracking already sent, skipping');
       return;
     }
 
-    // ✅ Získaj finálne sync dáta
     const finalData = getFinalData();
 
     if (finalData.isMobile) {
@@ -237,16 +234,10 @@ const PostsB2 = () => {
       return;
     }
 
-    console.log('📊 Tracking check:', {
-      userId: userId,
-      mousePositionsCount: finalData.mousePositions?.length || 0,
-      totalHoverTime: finalData.totalHoverTime,
-    });
-
     if (
       !userId ||
       !finalData.mousePositions ||
-      finalData.mousePositions.length < 3 ||
+      finalData.mousePositions.length < 5 ||
       finalData.totalHoverTime < 500
     ) {
       console.log('⏭️ Skipping tracking - insufficient data');
@@ -254,49 +245,12 @@ const PostsB2 = () => {
     }
 
     try {
-      const container = containerRef.current;
-      if (!container) return;
-
-      console.log('📊 Generating visualization...');
-      
-      const visualization = await generateVisualization(
-        finalData,  // ← Použiť finalData!
-        container.offsetWidth,
-        container.offsetHeight,
-        container
-      );
-
-      if (!visualization) {
-        console.log('⚠️ No visualization generated');
-        return;
-      }
-
-      console.log('📤 Sending tracking data...');
-
-      const dataToSend = {
-        userId: userId,
-        contentId: 'postsB2_mission2',
-        contentType: 'post',
-        hoverMetrics: {
-          totalHoverTime: finalData.totalHoverTime,
-          hoverStartTime: finalData.hoverStartTime ? new Date(finalData.hoverStartTime).toISOString() : null,
-          hoverEndTime: new Date().toISOString(),
-        },
-        mousePositions: finalData.mousePositions,
-        containerDimensions: {
-          width: container.offsetWidth,
-          height: container.offsetHeight,
-        },
-        visualization: visualization,
-      };
-
-      const result = await sendTrackingData(dataToSend);
-      console.log('✅ Tracking data sent successfully:', result);
-      
+      console.log('📊 Saving tracking with visualization...');
+      await saveTrackingWithVisualization(finalData, containerRef.current);
+      console.log('✅ Tracking saved successfully');
       trackingSentRef.current = true;
-
     } catch (error) {
-      console.error('❌ Failed to send tracking data:', error);
+      console.error('❌ Failed to save tracking:', error);
     }
   }, [userId, getFinalData, containerRef]);
 
