@@ -1,5 +1,5 @@
 // src/components/admin/TrackingViewer.js
-// OPRAVENÁ VERZIA - Originálne rozmery (bez scalingu)
+// OPTIMALIZOVANÁ VERZIA - Batch rendering + Offscreen Canvas + Agregácia
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -126,6 +126,22 @@ const LoadingText = styled.div`
   font-size: 16px;
 `;
 
+const ProgressBar = styled.div`
+  width: 100%;
+  height: 4px;
+  background: ${p => p.theme.BORDER_COLOR};
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 16px;
+`;
+
+const ProgressFill = styled.div`
+  height: 100%;
+  background: ${p => p.theme.ACCENT_COLOR};
+  width: ${p => p.progress}%;
+  transition: width 0.3s ease;
+`;
+
 const StatsRow = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -229,15 +245,30 @@ const CloseButton = styled.button`
   }
 `;
 
+const PerformanceInfo = styled.div`
+  font-size: 12px;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  margin-top: 12px;
+  padding: 12px;
+  background: ${p => p.theme.ACCENT_COLOR}11;
+  border-radius: 6px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+`;
+
 const TrackingViewer = () => {
   const navigate = useNavigate();
   const canvasRef = useRef(null);
+  const offscreenCanvasRef = useRef(null);
   
   const [components, setComponents] = useState([]);
   const [selectedComponent, setSelectedComponent] = useState(null);
   const [trackingData, setTrackingData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [modalImage, setModalImage] = useState(null);
+  const [renderProgress, setRenderProgress] = useState(0);
+  const [performanceMetrics, setPerformanceMetrics] = useState(null);
 
   // Načítať zoznam komponentov
   useEffect(() => {
@@ -265,6 +296,7 @@ const TrackingViewer = () => {
 
     const loadTrackingData = async () => {
       setLoading(true);
+      setRenderProgress(0);
       try {
         const response = await fetch(
           `/api/get-tracking-by-component?contentId=${selectedComponent.contentId}&contentType=${selectedComponent.contentType}`
@@ -273,7 +305,15 @@ const TrackingViewer = () => {
         
         if (data.success) {
           setTrackingData(data.data);
-          drawHeatmap(data.data.aggregatedPositions, data.data.containerDimensions);
+          setRenderProgress(50);
+          
+          // Agreguj dáta pred renderovaním
+          const aggregatedData = aggregatePositions(data.data.aggregatedPositions);
+          setRenderProgress(75);
+          
+          // Vykresli optimalizovanú heatmap
+          await drawHeatmapOptimized(aggregatedData, data.data.containerDimensions);
+          setRenderProgress(100);
         }
       } catch (error) {
         console.error('Error loading tracking data:', error);
@@ -285,14 +325,41 @@ const TrackingViewer = () => {
     loadTrackingData();
   }, [selectedComponent]);
 
-  // ✅ OPRAVENÁ FUNKCIA - Originálne rozmery (1:1)
-  const drawHeatmap = (positions, containerDims) => {
+  // ✅ NOVÁ FUNKCIA - Agregácia dát pre zníženie počtu bodov
+  const aggregatePositions = (positions, gridSize = 10) => {
+    if (!positions || positions.length === 0) return [];
+    
+    const startTime = performance.now();
+    const grid = new Map();
+    
+    positions.forEach(pos => {
+      const gridX = Math.floor(pos.x / gridSize) * gridSize;
+      const gridY = Math.floor(pos.y / gridSize) * gridSize;
+      const key = `${gridX},${gridY}`;
+      
+      if (!grid.has(key)) {
+        grid.set(key, { x: gridX + gridSize / 2, y: gridY + gridSize / 2, count: 0 });
+      }
+      grid.get(key).count++;
+    });
+    
+    const aggregated = Array.from(grid.values());
+    const endTime = performance.now();
+    
+    console.log(`📊 Aggregation: ${positions.length} → ${aggregated.length} points in ${(endTime - startTime).toFixed(2)}ms`);
+    
+    return aggregated;
+  };
+
+  // ✅ OPTIMALIZOVANÁ FUNKCIA - Batch rendering + Offscreen Canvas
+  const drawHeatmapOptimized = async (positions, containerDims) => {
     const canvas = canvasRef.current;
     if (!canvas || !positions || positions.length === 0) return;
 
-    const ctx = canvas.getContext('2d');
+    const startTime = performance.now();
+    const ctx = canvas.getContext('2d', { alpha: false });
     
-    // ✅ Použiť ORIGINÁLNE rozmery (bez scalingu)
+    // Nastavenie rozmerov
     const fullWidth = containerDims?.width || 1000;
     const fullHeight = containerDims?.height || 2000;
     
@@ -303,29 +370,67 @@ const TrackingViewer = () => {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, fullWidth, fullHeight);
 
-    console.log('🎨 Drawing heatmap in ORIGINAL resolution:', {
+    console.log('🎨 Drawing optimized heatmap:', {
       positionsCount: positions.length,
       canvasSize: `${fullWidth}x${fullHeight}`,
     });
 
-    // ✅ Nakresli heatmap body v originálnych pozíciách (1:1)
-    positions.forEach((pos) => {
-      // Použiť priamo pos.x a pos.y (bez scalingu)
-      const x = pos.x;
-      const y = pos.y;
-
-      // Gradient pre každý bod
-      const gradient = ctx.createRadialGradient(x, y, 0, x, y, 25);
-      gradient.addColorStop(0, 'rgba(255, 0, 0, 0.4)');
-      gradient.addColorStop(0.4, 'rgba(255, 165, 0, 0.2)');
-      gradient.addColorStop(0.7, 'rgba(255, 255, 0, 0.1)');
+    // ✅ OFFSCREEN CANVAS - Vytvor gradient template raz
+    if (!offscreenCanvasRef.current) {
+      const offscreenCanvas = document.createElement('canvas');
+      offscreenCanvas.width = 50;
+      offscreenCanvas.height = 50;
+      const offscreenCtx = offscreenCanvas.getContext('2d');
+      
+      const gradient = offscreenCtx.createRadialGradient(25, 25, 0, 25, 25, 25);
+      gradient.addColorStop(0, 'rgba(255, 0, 0, 0.6)');
+      gradient.addColorStop(0.4, 'rgba(255, 165, 0, 0.4)');
+      gradient.addColorStop(0.7, 'rgba(255, 255, 0, 0.2)');
       gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      
+      offscreenCtx.fillStyle = gradient;
+      offscreenCtx.fillRect(0, 0, 50, 50);
+      
+      offscreenCanvasRef.current = offscreenCanvas;
+    }
 
-      ctx.fillStyle = gradient;
-      ctx.fillRect(x - 25, y - 25, 50, 50);
+    // ✅ BATCH RENDERING - Vykresli všetky body naraz
+    ctx.save();
+    ctx.globalCompositeOperation = 'source-over';
+
+    // Vykresli body v dávkach pre lepší výkon
+    const batchSize = 1000;
+    for (let i = 0; i < positions.length; i += batchSize) {
+      const batch = positions.slice(i, Math.min(i + batchSize, positions.length));
+      
+      batch.forEach(pos => {
+        // Použiť intenzitu podľa počtu (ak je k dispozícii)
+        const intensity = pos.count ? Math.min(pos.count / 10, 1) : 1;
+        ctx.globalAlpha = intensity * 0.6;
+        
+        // Použiť offscreen canvas pre rýchlejšie rendering
+        ctx.drawImage(offscreenCanvasRef.current, pos.x - 25, pos.y - 25);
+      });
+      
+      // Umožni prehliadaču update UI medzi dávkami
+      if (i + batchSize < positions.length) {
+        await new Promise(resolve => setTimeout(resolve, 0));
+      }
+    }
+
+    ctx.restore();
+
+    const endTime = performance.now();
+    const renderTime = endTime - startTime;
+    
+    setPerformanceMetrics({
+      renderTime: renderTime.toFixed(2),
+      pointsCount: positions.length,
+      avgTimePerPoint: (renderTime / positions.length).toFixed(4),
+      canvasSize: `${fullWidth}x${fullHeight}`,
     });
 
-    console.log('✅ Heatmap drawn in original resolution (1:1)');
+    console.log(`✅ Heatmap rendered in ${renderTime.toFixed(2)}ms (${(renderTime / positions.length).toFixed(4)}ms per point)`);
   };
 
   const handleDownloadHeatmap = () => {
@@ -426,15 +531,34 @@ const TrackingViewer = () => {
             </Section>
 
             <Section>
-              <h2>🎨 Agregovaná Heatmap (Originálne rozmery)</h2>
+              <h2>🎨 Optimalizovaná Agregovaná Heatmap</h2>
               <p style={{ fontSize: '14px', color: '#666', marginBottom: '16px' }}>
-                Heatmap v originálnom rozlíšení z {trackingData?.totalPositions?.toLocaleString() || 0} pozícií od {trackingData?.usersCount || 0} používateľov
+                Heatmap s batch renderingom a offscreen canvas optimalizáciou
               </p>
+              
+              {loading && (
+                <>
+                  <LoadingText>Renderujem heatmap...</LoadingText>
+                  <ProgressBar>
+                    <ProgressFill progress={renderProgress} />
+                  </ProgressBar>
+                </>
+              )}
+              
               <HeatmapContainer>
                 <CanvasWrapper>
                   <HeatmapCanvas ref={canvasRef} />
                 </CanvasWrapper>
               </HeatmapContainer>
+              
+              {performanceMetrics && (
+                <PerformanceInfo>
+                  <div>⚡ Render time: {performanceMetrics.renderTime}ms</div>
+                  <div>📍 Points rendered: {performanceMetrics.pointsCount}</div>
+                  <div>⏱️ Avg per point: {performanceMetrics.avgTimePerPoint}ms</div>
+                  <div>📐 Canvas size: {performanceMetrics.canvasSize}</div>
+                </PerformanceInfo>
+              )}
               
               <ButtonGroup>
                 <StyledButton variant="success" onClick={handleDownloadHeatmap}>
@@ -450,7 +574,7 @@ const TrackingViewer = () => {
               <Section>
                 <h2>🖼️ Cloudinary Vizualizácie ({getCloudinaryImages().length})</h2>
                 <p style={{ fontSize: '14px', color: '#666', marginBottom: '16px' }}>
-                  Individuálne heatmap obrázky uložené v Cloudinary (originálne rozmery)
+                  Individuálne heatmap obrázky uložené v Cloudinary
                 </p>
                 <CloudinaryImageGrid>
                   {getCloudinaryImages().map((url, idx) => (

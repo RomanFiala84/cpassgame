@@ -1,20 +1,9 @@
 // api/admin-tracking-components.js
-// Agregácia tracking dát pre AdminPanel
+// OPTIMALIZOVANÁ VERZIA - Pure MongoDB agregácia
 
-import { MongoClient } from 'mongodb';
-
-let cachedClient = null;
-
-async function connectToDatabase() {
-  if (cachedClient) return cachedClient;
-  const client = new MongoClient(process.env.MONGODB_URI);
-  await client.connect();
-  cachedClient = client;
-  return client;
-}
+import { connectToDatabase, ensureIndexes } from './utils/dbConnect';
 
 export default async function handler(req, res) {
-  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -24,15 +13,19 @@ export default async function handler(req, res) {
   }
 
   if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ 
+      success: false,
+      error: 'Method not allowed' 
+    });
   }
 
   try {
-    const client = await connectToDatabase();
-    const db = client.db('conspiracy');
+    const { db } = await connectToDatabase();
+    await ensureIndexes(db);
 
-    // Agregácia tracking dát podľa contentId a contentType
+    // ✅ OPTIMALIZOVANÁ AGREGÁCIA - Všetko na DB level
     const aggregation = await db.collection('hover_tracking').aggregate([
+      // Stage 1: Group by component
       {
         $group: {
           _id: {
@@ -40,55 +33,104 @@ export default async function handler(req, res) {
             contentType: '$contentType'
           },
           usersCount: { $addToSet: '$userId' },
-          totalPoints: { $sum: { $size: '$mousePositions' } },
+          // ✅ Počítaj pozície bez ich načítania
+          totalPoints: { 
+            $sum: { 
+              $cond: [
+                { $isArray: '$mousePositions' },
+                { $size: '$mousePositions' },
+                0
+              ]
+            }
+          },
           avgHoverTime: { $avg: '$hoverMetrics.totalHoverTime' },
           recordsCount: { $sum: 1 },
           lastUpdated: { $max: '$timestamp' },
-          visualizations: { $push: '$cloudinaryData.url' }
-        }
-      },
-      {
-        $project: {
-          contentId: '$_id.contentId',
-          contentType: '$_id.contentType',
-          usersCount: { $size: '$usersCount' },
-          totalPoints: 1,
-          avgHoverTime: 1,
-          recordsCount: 1,
-          lastUpdated: 1,
-          visualizations: {
-            $filter: {
-              input: '$visualizations',
-              as: 'viz',
-              cond: { $ne: ['$$viz', null] }
+          visualizations: { 
+            $push: {
+              $cond: [
+                { $ne: ['$cloudinaryData.url', null] },
+                '$cloudinaryData.url',
+                '$$REMOVE'
+              ]
             }
           }
         }
       },
-      { $sort: { recordsCount: -1 } }
+      // Stage 2: Project finálnu štruktúru
+      {
+        $project: {
+          _id: 0,
+          contentId: '$_id.contentId',
+          contentType: '$_id.contentType',
+          usersCount: { $size: '$usersCount' },
+          totalPoints: 1,
+          avgHoverTime: { $round: ['$avgHoverTime', 0] },
+          recordsCount: 1,
+          lastUpdated: 1,
+          visualizationsCount: { $size: '$visualizations' },
+          latestVisualization: { $arrayElemAt: ['$visualizations', -1] }
+        }
+      },
+      // Stage 3: Sort by popularity
+      { 
+        $sort: { recordsCount: -1, lastUpdated: -1 } 
+      },
+      // Stage 4: Limit pre performance
+      {
+        $limit: 100
+      }
+    ]).toArray();
+
+    // Štatistiky
+    const stats = await db.collection('hover_tracking').aggregate([
+      {
+        $group: {
+          _id: null,
+          totalRecords: { $sum: 1 },
+          totalUsers: { $addToSet: '$userId' },
+          totalPositions: { 
+            $sum: { 
+              $cond: [
+                { $isArray: '$mousePositions' },
+                { $size: '$mousePositions' },
+                0
+              ]
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          totalRecords: 1,
+          totalUsers: { $size: '$totalUsers' },
+          totalPositions: 1
+        }
+      }
     ]).toArray();
 
     return res.status(200).json({
       success: true,
-      components: aggregation.map(item => ({
-        contentId: item.contentId,
-        contentType: item.contentType,
-        usersCount: item.usersCount,
-        totalPoints: item.totalPoints,
-        avgHoverTime: Math.round(item.avgHoverTime || 0),
-        recordsCount: item.recordsCount,
-        lastUpdated: item.lastUpdated,
-        visualizationsCount: item.visualizations.length,
-        latestVisualization: item.visualizations[item.visualizations.length - 1] || null
-      })),
-      total: aggregation.length
+      components: aggregation,
+      total: aggregation.length,
+      stats: stats[0] || {
+        totalRecords: 0,
+        totalUsers: 0,
+        totalPositions: 0
+      },
+      _meta: {
+        generatedAt: new Date().toISOString(),
+        limit: 100
+      }
     });
 
   } catch (error) {
     console.error('❌ Admin tracking components error:', error);
     return res.status(500).json({
       success: false,
-      error: error.message
+      error: 'Internal server error',
+      message: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 }

@@ -1,5 +1,5 @@
 // api/save-tracking.js
-// OPRAVENÁ VERZIA - Lepšia štruktúra pre agregáciu a Cloudinary
+// HTML EXPORT VERZIA - Ukladá HTML súbory namiesto PNG
 
 import { MongoClient } from 'mongodb';
 import { v2 as cloudinary } from 'cloudinary';
@@ -89,38 +89,34 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { visualization, ...trackingData } = req.body;
+    const { htmlVisualization, ...trackingData } = req.body;
 
     console.log('📥 Received tracking data for:', trackingData.contentId);
 
     let cloudinaryData = null;
 
-    // ✅ Upload vizualizácie do Cloudinary
-    if (visualization) {
+    // ✅ Upload HTML vizualizácie do Cloudinary
+    if (htmlVisualization) {
       try {
         const filename = `${trackingData.userId}_${trackingData.contentId}_${Date.now()}`;
         
-        const result = await cloudinary.uploader.upload(visualization, {
+        // ✅ KĽÚČOVÁ ZMENA - Upload ako RAW (HTML)
+        const result = await cloudinary.uploader.upload(htmlVisualization, {
           folder: 'hover-tracking-visualizations',
           public_id: filename,
-          resource_type: 'image',
-          format: 'png', // ✅ PNG namiesto webp pre lepšiu kompatibilitu
-          transformation: [
-            { width: 1200, crop: 'limit', quality: 'auto:good' },
-          ],
+          resource_type: 'raw', // ✅ RAW namiesto image (pre HTML)
+          format: 'html', // ✅ HTML formát
         });
 
         cloudinaryData = {
           url: result.secure_url,
           publicId: result.public_id,
-          width: result.width,
-          height: result.height,
-          format: result.format,
+          format: 'html',
           bytes: result.bytes,
           createdAt: new Date().toISOString(),
         };
 
-        console.log('✅ Cloudinary upload successful:', cloudinaryData.url);
+        console.log('✅ Cloudinary HTML upload successful:', cloudinaryData.url);
       } catch (uploadError) {
         console.error('❌ Cloudinary upload failed:', uploadError);
         // Pokračuj bez vizualizácie
@@ -146,11 +142,11 @@ export default async function handler(req, res) {
       },
       mousePositions: trackingData.mousePositions || [],
       movementAnalysis,
-      cloudinaryData, // ✅ Ukladá URL, publicId, atď.
+      cloudinaryData, // ✅ Ukladá URL k HTML súboru
       containerDimensions: trackingData.containerDimensions,
     };
 
-    // ✅ Uložiť ako samostatný dokument (lepšie pre agregáciu)
+    // ✅ Uložiť ako samostatný dokument
     const result = await db.collection('hover_tracking').insertOne(trackingRecord);
 
     console.log('✅ MongoDB save successful:', result.insertedId);
@@ -158,7 +154,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       trackingId: result.insertedId,
-      imageUrl: cloudinaryData?.url || null,
+      htmlUrl: cloudinaryData?.url || null,
       cloudinaryPublicId: cloudinaryData?.publicId || null,
     });
 

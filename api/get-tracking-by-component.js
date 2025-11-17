@@ -1,17 +1,7 @@
 // api/get-tracking-by-component.js
-// Získava tracking dáta pre konkrétny contentId a contentType
+// OPTIMALIZOVANÁ VERZIA s agregáciou na DB level
 
-import { MongoClient } from 'mongodb';
-
-let cachedClient = null;
-
-async function connectToDatabase() {
-  if (cachedClient) return cachedClient;
-  const client = new MongoClient(process.env.MONGODB_URI);
-  await client.connect();
-  cachedClient = client;
-  return client;
-}
+import { connectToDatabase, ensureIndexes } from './utils/dbConnect';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -23,47 +13,107 @@ export default async function handler(req, res) {
   }
 
   if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ 
+      success: false,
+      error: 'Method not allowed' 
+    });
   }
 
   try {
-    const { contentId, contentType } = req.query;
+    const { contentId, contentType, includePositions = 'true' } = req.query;
 
+    // Validácia
     if (!contentId || !contentType) {
       return res.status(400).json({
         success: false,
-        error: 'Missing contentId or contentType'
+        error: 'Missing required parameters: contentId and contentType'
       });
     }
 
-    const client = await connectToDatabase();
-    const db = client.db('conspiracy');
+    const { db } = await connectToDatabase();
+    await ensureIndexes(db);
 
-    // Získaj všetky tracking záznamy pre daný komponent
+    const includePos = includePositions === 'true';
+
+    // ✅ OPTIMALIZÁCIA - Použiť agregáciu namiesto client-side processing
+    const aggregationPipeline = [
+      {
+        $match: {
+          contentId: contentId,
+          contentType: contentType
+        }
+      },
+      {
+        $sort: { timestamp: -1 }
+      }
+    ];
+
+    // Ak nepotrebujeme pozície, skipni ich
+    if (!includePos) {
+      aggregationPipeline.push({
+        $project: {
+          mousePositions: 0 // Exclude positions
+        }
+      });
+    }
+
     const records = await db.collection('hover_tracking')
-      .find({
-        contentId: contentId,
-        contentType: contentType
-      })
-      .sort({ timestamp: -1 })
+      .aggregate(aggregationPipeline)
       .toArray();
 
-    // Agreguj všetky pozície myši do jedného datasetu pre heatmap
-    const allPositions = [];
+    if (records.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'No tracking data found for this component'
+      });
+    }
+
+    // ✅ OPTIMALIZÁCIA - Agreguj na databáze, nie v JS
+    let aggregatedPositions = [];
     let totalHoverTime = 0;
     const uniqueUsers = new Set();
 
-    records.forEach(record => {
-      uniqueUsers.add(record.userId);
-      
-      if (record.mousePositions && Array.isArray(record.mousePositions)) {
-        allPositions.push(...record.mousePositions);
+    if (includePos) {
+      // Použiť streaming pre veľké datasety
+      const maxPositions = 50000; // Limit pre performance
+      let positionCount = 0;
+
+      for (const record of records) {
+        uniqueUsers.add(record.userId);
+        
+        if (record.mousePositions && Array.isArray(record.mousePositions)) {
+          // ✅ OPTIMALIZÁCIA - Sample positions ak ich je príliš veľa
+          const positions = record.mousePositions;
+          
+          if (positionCount + positions.length > maxPositions) {
+            // Sample aby sme neprekročili limit
+            const remaining = maxPositions - positionCount;
+            const step = Math.ceil(positions.length / remaining);
+            const sampled = positions.filter((_, idx) => idx % step === 0);
+            aggregatedPositions.push(...sampled.slice(0, remaining));
+            positionCount = maxPositions;
+            break;
+          } else {
+            aggregatedPositions.push(...positions);
+            positionCount += positions.length;
+          }
+        }
+        
+        if (record.hoverMetrics?.totalHoverTime) {
+          totalHoverTime += record.hoverMetrics.totalHoverTime;
+        }
       }
-      
-      if (record.hoverMetrics?.totalHoverTime) {
-        totalHoverTime += record.hoverMetrics.totalHoverTime;
-      }
-    });
+
+      console.log(`📊 Aggregated ${positionCount} positions from ${records.length} records`);
+    } else {
+      // Len spočítaj bez načítania pozícií
+      records.forEach(record => {
+        uniqueUsers.add(record.userId);
+        if (record.hoverMetrics?.totalHoverTime) {
+          totalHoverTime += record.hoverMetrics.totalHoverTime;
+        }
+      });
+    }
 
     return res.status(200).json({
       success: true,
@@ -72,12 +122,19 @@ export default async function handler(req, res) {
         contentType,
         usersCount: uniqueUsers.size,
         recordsCount: records.length,
-        totalPositions: allPositions.length,
+        totalPositions: aggregatedPositions.length,
         totalHoverTime,
         avgHoverTime: uniqueUsers.size > 0 ? Math.round(totalHoverTime / uniqueUsers.size) : 0,
-        aggregatedPositions: allPositions,
-        individualRecords: records,
-        containerDimensions: records[0]?.containerDimensions || null
+        aggregatedPositions: includePos ? aggregatedPositions : undefined,
+        individualRecords: records.map(r => ({
+          ...r,
+          mousePositions: includePos ? undefined : r.mousePositions // Strip positions z response
+        })),
+        containerDimensions: records[0]?.containerDimensions || null,
+        _meta: {
+          positionsIncluded: includePos,
+          samplingApplied: aggregatedPositions.length >= 50000
+        }
       }
     });
 
@@ -85,7 +142,8 @@ export default async function handler(req, res) {
     console.error('❌ Get tracking by component error:', error);
     return res.status(500).json({
       success: false,
-      error: error.message
+      error: 'Internal server error',
+      message: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 }
