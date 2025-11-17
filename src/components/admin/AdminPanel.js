@@ -9,6 +9,7 @@ import StyledButton from '../../styles/StyledButton';
 import { useUserStats } from '../../contexts/UserStatsContext';
 import * as XLSX from 'xlsx';
 
+// ... všetky styled components zostávajú rovnaké ...
 const Container = styled.div`
   padding: 20px;
   max-width: 1400px;
@@ -379,7 +380,6 @@ const TrackingBadge = styled.span`
 `;
 
 // ADMIN PANEL KOMPONENT
-
 const AdminPanel = () => {
   const navigate = useNavigate();
   const { dataManager, userId } = useUserStats();
@@ -399,8 +399,6 @@ const AdminPanel = () => {
   const [allUsers, setAllUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
-
-  // ✅ STATE PRE TRACKING
   const [trackingComponents, setTrackingComponents] = useState([]);
   const [trackingLoading, setTrackingLoading] = useState(false);
 
@@ -425,13 +423,10 @@ const AdminPanel = () => {
     setLoading(false);
   }, [dataManager]);
 
-  // ✅ OPRAVENÁ FUNKCIA: Načítať tracking komponenty
   const loadTrackingComponents = useCallback(async () => {
     setTrackingLoading(true);
     try {
-      // ✅ OPRAVENÝ ENDPOINT (odstránené /tracking/)
       const response = await fetch('/api/admin-tracking-components');
-
       const data = await response.json();
 
       if (data.success) {
@@ -455,12 +450,10 @@ const AdminPanel = () => {
     loadTrackingComponents();
   }, [userId, dataManager, navigate, loadStats, loadTrackingComponents]);
 
-  // Otvoriť tracking viewer
   const handleOpenTracking = () => {
     navigate('/admin/tracking');
   };
 
-  // Helper funkcia
   const formatTime = (ms) => {
     if (!ms) return '0s';
     return `${(ms / 1000).toFixed(1)}s`;
@@ -730,12 +723,13 @@ const AdminPanel = () => {
     }
   };
 
+  // ✅ ZMENENÉ: Nový endpoint
   const handleDeleteTracking = async () => {
     if (!window.confirm('⚠️ VYMAZAŤ TRACKING DB (všetky tracking dáta)?\n\nTáto akcia je nevratná!')) return;
     if (!window.confirm('Ste si istý? Všetky tracking dáta budú natrvalo vymazané!')) return;
 
     try {
-      const response = await fetch('/api/tracking/delete-all', {
+      const response = await fetch('/api/delete-all-tracking', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ adminCode: 'RF9846' })
@@ -743,6 +737,7 @@ const AdminPanel = () => {
 
       if (response.ok) {
         alert('✅ Tracking DB vymazaná!');
+        await loadTrackingComponents(); // ✅ Refresh tracking components
       } else {
         const errorData = await response.json();
         alert(`❌ Chyba: ${errorData.error || response.statusText}`);
@@ -752,6 +747,7 @@ const AdminPanel = () => {
     }
   };
 
+  // ✅ ZMENENÉ: Nový endpoint
   const handleDeleteAll = async () => {
     if (!window.confirm('⚠️ VYMAZAŤ VŠETKY DATABÁZY?\n\n- Progress DB\n- Responses DB\n- Tracking DB\n\nTáto akcia je NEVRATNÁ!')) return;
     if (!window.confirm('Ste si ABSOLÚTNE istý? Všetky dáta vo VŠETKÝCH databázach budú natrvalo vymazané!')) return;
@@ -772,7 +768,7 @@ const AdminPanel = () => {
         body: JSON.stringify({ adminCode: 'RF9846', deleteAll: true })
       });
 
-      await fetch('/api/tracking/delete-all', {
+      await fetch('/api/delete-all-tracking', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ adminCode: 'RF9846' })
@@ -781,6 +777,7 @@ const AdminPanel = () => {
       dataManager.clearAllData();
       alert('✅ Všetky databázy vymazané!\n\n- Progress DB\n- Responses DB\n- Tracking DB');
       await loadStats();
+      await loadTrackingComponents(); // ✅ Refresh tracking
     } catch (error) {
       alert(`❌ Chyba: ${error.message}`);
     } finally {
@@ -852,7 +849,6 @@ const AdminPanel = () => {
           </StatsGrid>
         </Section>
 
-        {/* ✅ TRACKING HEATMAPS SEKCIA */}
         <TrackingSection>
           <SectionTitle>🔥 Tracking Heatmaps</SectionTitle>
           <InfoText>

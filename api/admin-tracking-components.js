@@ -1,7 +1,29 @@
 // api/admin-tracking-components.js
-// OPTIMALIZOVANÁ VERZIA - Pure MongoDB agregácia
+import { MongoClient } from 'mongodb';
 
-import { connectToDatabase, ensureIndexes } from './utils/dbConnect';
+let cachedClient = null;
+
+async function connectToDatabase() {
+  if (cachedClient) {
+    const db = cachedClient.db('conspiracy');
+    return { client: cachedClient, db };
+  }
+
+  if (!process.env.MONGODB_URI) {
+    throw new Error('MONGODB_URI not configured');
+  }
+
+  const client = new MongoClient(process.env.MONGODB_URI, {
+    maxPoolSize: 10,
+    minPoolSize: 2,
+  });
+  
+  await client.connect();
+  cachedClient = client;
+  const db = client.db('conspiracy');
+  
+  return { client, db };
+}
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -21,11 +43,29 @@ export default async function handler(req, res) {
 
   try {
     const { db } = await connectToDatabase();
-    await ensureIndexes(db);
 
-    // ✅ OPTIMALIZOVANÁ AGREGÁCIA - Všetko na DB level
+    // Kontrola či kolekcia existuje
+    const collections = await db.listCollections({ name: 'hover_tracking' }).toArray();
+    
+    if (collections.length === 0) {
+      return res.status(200).json({
+        success: true,
+        components: [],
+        total: 0,
+        stats: {
+          totalRecords: 0,
+          totalUsers: 0,
+          totalPositions: 0
+        },
+        _meta: {
+          message: 'No tracking data yet',
+          generatedAt: new Date().toISOString()
+        }
+      });
+    }
+
+    // Agregácia
     const aggregation = await db.collection('hover_tracking').aggregate([
-      // Stage 1: Group by component
       {
         $group: {
           _id: {
@@ -33,7 +73,6 @@ export default async function handler(req, res) {
             contentType: '$contentType'
           },
           usersCount: { $addToSet: '$userId' },
-          // ✅ Počítaj pozície bez ich načítania
           totalPoints: { 
             $sum: { 
               $cond: [
@@ -43,13 +82,22 @@ export default async function handler(req, res) {
               ]
             }
           },
-          avgHoverTime: { $avg: '$hoverMetrics.totalHoverTime' },
+          avgHoverTime: { 
+            $avg: { 
+              $ifNull: ['$hoverMetrics.totalHoverTime', 0] 
+            } 
+          },
           recordsCount: { $sum: 1 },
           lastUpdated: { $max: '$timestamp' },
           visualizations: { 
             $push: {
               $cond: [
-                { $ne: ['$cloudinaryData.url', null] },
+                { 
+                  $and: [
+                    { $ne: ['$cloudinaryData', null] },
+                    { $ne: ['$cloudinaryData.url', null] }
+                  ]
+                },
                 '$cloudinaryData.url',
                 '$$REMOVE'
               ]
@@ -57,7 +105,6 @@ export default async function handler(req, res) {
           }
         }
       },
-      // Stage 2: Project finálnu štruktúru
       {
         $project: {
           _id: 0,
@@ -65,25 +112,35 @@ export default async function handler(req, res) {
           contentType: '$_id.contentType',
           usersCount: { $size: '$usersCount' },
           totalPoints: 1,
-          avgHoverTime: { $round: ['$avgHoverTime', 0] },
+          avgHoverTime: { 
+            $round: [
+              { $ifNull: ['$avgHoverTime', 0] }, 
+              0
+            ] 
+          },
           recordsCount: 1,
           lastUpdated: 1,
-          visualizationsCount: { $size: '$visualizations' },
-          latestVisualization: { $arrayElemAt: ['$visualizations', -1] }
+          visualizationsCount: { 
+            $size: { $ifNull: ['$visualizations', []] } 
+          },
+          latestVisualization: { 
+            $arrayElemAt: [
+              { $ifNull: ['$visualizations', []] }, 
+              -1
+            ] 
+          }
         }
       },
-      // Stage 3: Sort by popularity
       { 
         $sort: { recordsCount: -1, lastUpdated: -1 } 
       },
-      // Stage 4: Limit pre performance
       {
         $limit: 100
       }
     ]).toArray();
 
-    // Štatistiky
-    const stats = await db.collection('hover_tracking').aggregate([
+    // Stats
+    const statsResult = await db.collection('hover_tracking').aggregate([
       {
         $group: {
           _id: null,
@@ -110,15 +167,17 @@ export default async function handler(req, res) {
       }
     ]).toArray();
 
+    const stats = statsResult[0] || {
+      totalRecords: 0,
+      totalUsers: 0,
+      totalPositions: 0
+    };
+
     return res.status(200).json({
       success: true,
       components: aggregation,
       total: aggregation.length,
-      stats: stats[0] || {
-        totalRecords: 0,
-        totalUsers: 0,
-        totalPositions: 0
-      },
+      stats,
       _meta: {
         generatedAt: new Date().toISOString(),
         limit: 100
@@ -126,11 +185,12 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('❌ Admin tracking components error:', error);
+    console.error('❌ Admin tracking error:', error);
     return res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: process.env.NODE_ENV === 'development' ? error.message : undefined
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 }
