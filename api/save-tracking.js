@@ -1,17 +1,8 @@
 // api/save-tracking.js
-// HTML EXPORT VERZIA - Ukladá HTML súbory namiesto PNG
+// OPRAVENÁ VERZIA - Ukladá PNG obrázky namiesto HTML
 
 import { MongoClient } from 'mongodb';
-import { v2 as cloudinary } from 'cloudinary';
 
-// Konfigurácia Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-// MongoDB connection (s cachovaním)
 let cachedClient = null;
 
 async function connectToDatabase() {
@@ -25,7 +16,6 @@ async function connectToDatabase() {
   return client;
 }
 
-// Helper funkcia - analýza pohybu
 function analyzeMouseMovement(positions) {
   if (!positions || positions.length < 2) {
     return {
@@ -71,62 +61,28 @@ function analyzeMouseMovement(positions) {
   };
 }
 
-// Vercel Function Handler
 export default async function handler(req, res) {
-  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Handle preflight OPTIONS request
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  // Only allow POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { htmlVisualization, ...trackingData } = req.body;
+    const trackingData = req.body;
 
     console.log('📥 Received tracking data for:', trackingData.contentId);
-
-    let cloudinaryData = null;
-
-    // ✅ Upload HTML vizualizácie do Cloudinary
-    if (htmlVisualization) {
-      try {
-        const filename = `${trackingData.userId}_${trackingData.contentId}_${Date.now()}`;
-        
-        // ✅ KĽÚČOVÁ ZMENA - Upload ako RAW (HTML)
-        const result = await cloudinary.uploader.upload(htmlVisualization, {
-          folder: 'hover-tracking-visualizations',
-          public_id: filename,
-          resource_type: 'raw', // ✅ RAW namiesto image (pre HTML)
-          format: 'html', // ✅ HTML formát
-        });
-
-        cloudinaryData = {
-          url: result.secure_url,
-          publicId: result.public_id,
-          format: 'html',
-          bytes: result.bytes,
-          createdAt: new Date().toISOString(),
-        };
-
-        console.log('✅ Cloudinary HTML upload successful:', cloudinaryData.url);
-      } catch (uploadError) {
-        console.error('❌ Cloudinary upload failed:', uploadError);
-        // Pokračuj bez vizualizácie
-      }
-    }
 
     // Analýza pohybu myši
     const movementAnalysis = analyzeMouseMovement(trackingData.mousePositions || []);
 
-    // ✅ Uloženie do MongoDB
+    // ✅ Uloženie do MongoDB (BEZ cloudinaryData - to sa pridá neskôr)
     const client = await connectToDatabase();
     const db = client.db('conspiracy');
     
@@ -136,26 +92,24 @@ export default async function handler(req, res) {
       contentType: trackingData.contentType,
       timestamp: new Date(),
       hoverMetrics: {
-        totalHoverTime: trackingData.hoverMetrics?.totalHoverTime || 0,
-        hoverStartTime: trackingData.hoverMetrics?.hoverStartTime,
-        hoverEndTime: trackingData.hoverMetrics?.hoverEndTime,
+        totalHoverTime: trackingData.totalHoverTime || 0,
+        hoverStartTime: trackingData.hoverStartTime,
       },
       mousePositions: trackingData.mousePositions || [],
       movementAnalysis,
-      cloudinaryData, // ✅ Ukladá URL k HTML súboru
+      cloudinaryData: null, // ✅ Bude aktualizované neskôr cez update-tracking-cloudinary
       containerDimensions: trackingData.containerDimensions,
+      isMobile: trackingData.isMobile || false,
     };
 
-    // ✅ Uložiť ako samostatný dokument
     const result = await db.collection('hover_tracking').insertOne(trackingRecord);
 
     console.log('✅ MongoDB save successful:', result.insertedId);
 
     return res.status(200).json({
       success: true,
-      trackingId: result.insertedId,
-      htmlUrl: cloudinaryData?.url || null,
-      cloudinaryPublicId: cloudinaryData?.publicId || null,
+      trackingId: result.insertedId.toString(),
+      message: 'Tracking data saved'
     });
 
   } catch (error) {

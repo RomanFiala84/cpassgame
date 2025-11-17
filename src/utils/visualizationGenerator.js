@@ -1,12 +1,8 @@
 // src/utils/visualizationGenerator.js
-// CANVAS-BASED VISUALIZATION - Pre Cloudinary upload
-// Generuje PNG obrázok s heatmap overlay
+// CANVAS-BASED VISUALIZATION s trajectory a component background
 
 /**
  * Generuje PNG vizualizáciu s heatmap overlay
- * ✅ Canvas rendering - rýchly a efektívny
- * ✅ Kompatibilný s Cloudinary
- * ✅ Presné pozície s agregáciou
  */
 export const generateVisualization = async (trackingData, width, height, containerElement) => {
   if (!trackingData.mousePositions || trackingData.mousePositions.length < 5) {
@@ -15,8 +11,8 @@ export const generateVisualization = async (trackingData, width, height, contain
   }
 
   try {
-    const fullWidth = containerElement?.scrollWidth || width;
-    const fullHeight = containerElement?.scrollHeight || height;
+    const fullWidth = containerElement?.scrollWidth || width || 1000;
+    const fullHeight = containerElement?.scrollHeight || height || 2000;
     
     console.log('🎨 Creating Canvas visualization:', {
       dimensions: `${fullWidth}x${fullHeight}px`,
@@ -27,28 +23,28 @@ export const generateVisualization = async (trackingData, width, height, contain
     const canvas = document.createElement('canvas');
     canvas.width = fullWidth;
     canvas.height = fullHeight;
-    const ctx = canvas.getContext('2d', { alpha: true });
+    const ctx = canvas.getContext('2d', { alpha: false });
 
     // 1. Zachyť screenshot obsahy (ak je možné)
-    if (containerElement) {
-      await captureContainerToCanvas(containerElement, canvas, ctx);
-    } else {
-      // Biely background ak nemáme element
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, fullWidth, fullHeight);
-    }
+    await captureContainerToCanvas(containerElement, canvas, ctx, fullWidth, fullHeight);
 
-    // 2. Vykresli heatmap overlay
+    // 2. Pridaj semi-transparent overlay
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.fillRect(0, 0, fullWidth, fullHeight);
+
+    // 3. Vykresli heatmap overlay
     await drawHeatmapOverlay(ctx, trackingData.mousePositions, fullWidth, fullHeight);
 
-    // 3. Vykresli trajectory a markery
-    drawTrajectory(ctx, trackingData.mousePositions);
+    // 4. Vykresli trajectory s šípkami
+    drawTrajectoryEnhanced(ctx, trackingData.mousePositions);
+
+    // 5. Vykresli START a END markery
     drawMarkers(ctx, trackingData.mousePositions);
 
-    // 4. Vykresli info panel
+    // 6. Vykresli info panel
     drawInfoPanel(ctx, trackingData, fullWidth, fullHeight);
 
-    // 5. Konvertuj canvas na Blob pre upload
+    // 7. Konvertuj canvas na Blob pre upload
     const blob = await new Promise((resolve) => {
       canvas.toBlob((blob) => resolve(blob), 'image/png', 0.95);
     });
@@ -62,7 +58,6 @@ export const generateVisualization = async (trackingData, width, height, contain
       dimensions: `${fullWidth}x${fullHeight}px`
     });
 
-    // Vytvor Object URL pre preview (dočasný)
     const objectUrl = URL.createObjectURL(blob);
 
     return {
@@ -89,48 +84,71 @@ export const generateVisualization = async (trackingData, width, height, contain
 /**
  * Zachytí obsah containeru na canvas pomocou html2canvas
  */
-async function captureContainerToCanvas(containerElement, canvas, ctx) {
+async function captureContainerToCanvas(containerElement, canvas, ctx, targetWidth, targetHeight) {
+  if (!containerElement) {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, targetWidth, targetHeight);
+    return;
+  }
+
   try {
-    // Ak máte html2canvas nainštalovaný (už je vo vašom package.json)
     const html2canvas = (await import('html2canvas')).default;
     
     const screenshot = await html2canvas(containerElement, {
-      width: canvas.width,
-      height: canvas.height,
+      width: containerElement.scrollWidth,
+      height: containerElement.scrollHeight,
       scrollX: 0,
       scrollY: 0,
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
       scale: 1,
-      logging: false
+      logging: false,
+      windowWidth: containerElement.scrollWidth,
+      windowHeight: containerElement.scrollHeight,
     });
 
-    // Prekopíruj screenshot na náš canvas
-    ctx.drawImage(screenshot, 0, 0);
-    console.log('✅ Container content captured');
+    // Škáluj screenshot na target rozmery
+    const sourceWidth = screenshot.width;
+    const sourceHeight = screenshot.height;
+    
+    const scaleX = targetWidth / sourceWidth;
+    const scaleY = targetHeight / sourceHeight;
+    const scale = Math.min(scaleX, scaleY);
+    
+    const scaledWidth = sourceWidth * scale;
+    const scaledHeight = sourceHeight * scale;
+    
+    const offsetX = (targetWidth - scaledWidth) / 2;
+    const offsetY = (targetHeight - scaledHeight) / 2;
+    
+    ctx.fillStyle = '#f5f5f5';
+    ctx.fillRect(0, 0, targetWidth, targetHeight);
+    ctx.drawImage(screenshot, offsetX, offsetY, scaledWidth, scaledHeight);
+    
+    console.log('✅ Container captured and scaled:', {
+      original: `${sourceWidth}x${sourceHeight}`,
+      scaled: `${scaledWidth.toFixed(0)}x${scaledHeight.toFixed(0)}`,
+      scale: scale.toFixed(3)
+    });
     
   } catch (error) {
-    console.warn('⚠️ Failed to capture container, using white background:', error);
+    console.warn('⚠️ Failed to capture container:', error);
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, targetWidth, targetHeight);
   }
 }
 
 /**
  * Vykresli optimalizovaný heatmap overlay
- * ✅ Grid-based agregácia
- * ✅ Radial gradients
  */
 async function drawHeatmapOverlay(ctx, positions, width, height) {
   const gridSize = 25;
   const cols = Math.ceil(width / gridSize);
   const rows = Math.ceil(height / gridSize);
   
-  // Vytvor grid pre agregáciu
   const grid = Array(rows).fill(0).map(() => Array(cols).fill(0));
   
-  // Agreguj pozície do gridu
   positions.forEach(pos => {
     const col = Math.floor(pos.x / gridSize);
     const row = Math.floor(pos.y / gridSize);
@@ -140,7 +158,6 @@ async function drawHeatmapOverlay(ctx, positions, width, height) {
     }
   });
   
-  // Nájdi maximum pre normalizáciu
   let maxValue = 0;
   grid.forEach(row => {
     row.forEach(val => {
@@ -150,7 +167,6 @@ async function drawHeatmapOverlay(ctx, positions, width, height) {
 
   if (maxValue === 0) return;
 
-  // Vytvor offscreen canvas pre gradient template
   const gradientCanvas = document.createElement('canvas');
   gradientCanvas.width = gridSize * 2;
   gradientCanvas.height = gridSize * 2;
@@ -170,7 +186,6 @@ async function drawHeatmapOverlay(ctx, positions, width, height) {
   gradientCtx.fillStyle = gradient;
   gradientCtx.fillRect(0, 0, gridSize * 2, gridSize * 2);
 
-  // Vykresli grid bunky s gradientmi
   ctx.save();
   ctx.globalCompositeOperation = 'multiply';
   
@@ -193,37 +208,68 @@ async function drawHeatmapOverlay(ctx, positions, width, height) {
 }
 
 /**
- * Vykresli trajectory line
+ * Vykresli trajectory line s direction indicators
  */
-function drawTrajectory(ctx, positions) {
+function drawTrajectoryEnhanced(ctx, positions) {
   if (positions.length < 2) return;
 
   ctx.save();
-  ctx.strokeStyle = 'rgba(74, 144, 226, 0.6)';
-  ctx.lineWidth = 2.5;
+  
+  // Hlavná čiara
+  ctx.strokeStyle = 'rgba(74, 144, 226, 0.8)';
+  ctx.lineWidth = 3;
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-  ctx.shadowBlur = 4;
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+  ctx.shadowBlur = 6;
+  ctx.shadowOffsetX = 2;
+  ctx.shadowOffsetY = 2;
   
   ctx.beginPath();
   ctx.moveTo(positions[0].x, positions[0].y);
   
-  // Simplified line pre performance
   const step = Math.max(1, Math.floor(positions.length / 500));
   for (let i = step; i < positions.length; i += step) {
     ctx.lineTo(positions[i].x, positions[i].y);
   }
   
-  // Vždy zahrň posledný bod
   if (positions.length > 1) {
     ctx.lineTo(positions[positions.length - 1].x, positions[positions.length - 1].y);
   }
   
   ctx.stroke();
+  
+  // Direction indicators (šípky)
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 0;
+  ctx.fillStyle = 'rgba(74, 144, 226, 0.9)';
+  
+  const arrowInterval = Math.max(50, Math.floor(positions.length / 20));
+  
+  for (let i = arrowInterval; i < positions.length; i += arrowInterval) {
+    const p1 = positions[i - 1];
+    const p2 = positions[i];
+    
+    const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+    
+    ctx.save();
+    ctx.translate(p2.x, p2.y);
+    ctx.rotate(angle);
+    
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(-10, -5);
+    ctx.lineTo(-10, 5);
+    ctx.closePath();
+    ctx.fill();
+    
+    ctx.restore();
+  }
+  
   ctx.restore();
   
-  console.log('✅ Trajectory drawn');
+  console.log('✅ Enhanced trajectory with direction indicators drawn');
 }
 
 /**
@@ -245,12 +291,12 @@ function drawMarkers(ctx, positions) {
   ctx.shadowBlur = 6;
   
   ctx.beginPath();
-  ctx.arc(first.x, first.y, 12, 0, Math.PI * 2);
+  ctx.arc(first.x, first.y, 14, 0, Math.PI * 2);
   ctx.fill();
   ctx.stroke();
   
   ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.font = 'bold 11px -apple-system, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.shadowBlur = 0;
@@ -263,7 +309,7 @@ function drawMarkers(ctx, positions) {
   ctx.shadowBlur = 6;
   
   ctx.beginPath();
-  ctx.arc(last.x, last.y, 12, 0, Math.PI * 2);
+  ctx.arc(last.x, last.y, 14, 0, Math.PI * 2);
   ctx.fill();
   ctx.stroke();
   
@@ -281,8 +327,8 @@ function drawMarkers(ctx, positions) {
  */
 function drawInfoPanel(ctx, trackingData, width, height) {
   const padding = 20;
-  const panelWidth = 250;
-  const panelHeight = 160;
+  const panelWidth = 280;
+  const panelHeight = 180;
   const x = width - panelWidth - padding;
   const y = height - panelHeight - padding;
 
@@ -294,7 +340,6 @@ function drawInfoPanel(ctx, trackingData, width, height) {
   ctx.shadowBlur = 20;
   ctx.shadowOffsetY = 4;
   
-  // Rounded rectangle
   const radius = 12;
   ctx.beginPath();
   ctx.moveTo(x + radius, y);
@@ -314,13 +359,13 @@ function drawInfoPanel(ctx, trackingData, width, height) {
 
   // Title
   ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.font = 'bold 16px -apple-system, sans-serif';
   ctx.fillText('🔥 Heatmap Info', x + 16, y + 28);
 
   // Stats
-  ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-  const lineHeight = 24;
-  let currentY = y + 58;
+  ctx.font = '14px -apple-system, sans-serif';
+  const lineHeight = 26;
+  let currentY = y + 60;
 
   const stats = [
     `⏱️ Hover time: ${(trackingData.totalHoverTime / 1000).toFixed(1)}s`,
@@ -339,98 +384,3 @@ function drawInfoPanel(ctx, trackingData, width, height) {
   
   console.log('✅ Info panel drawn');
 }
-
-/**
- * Export pre samostatné HTML (bonusová funkcia - nie pre Cloudinary)
- */
-export const exportAsInteractiveHTML = async (trackingData, containerElement) => {
-  const canvas = document.createElement('canvas');
-  const fullWidth = containerElement.scrollWidth;
-  const fullHeight = containerElement.scrollHeight;
-  
-  canvas.width = fullWidth;
-  canvas.height = fullHeight;
-  const ctx = canvas.getContext('2d');
-
-  // Vytvor vizualizáciu
-  await captureContainerToCanvas(containerElement, canvas, ctx);
-  await drawHeatmapOverlay(ctx, trackingData.mousePositions, fullWidth, fullHeight);
-  drawTrajectory(ctx, trackingData.mousePositions);
-  drawMarkers(ctx, trackingData.mousePositions);
-  drawInfoPanel(ctx, trackingData, fullWidth, fullHeight);
-
-  // Konvertuj na data URL
-  const imageDataUrl = canvas.toDataURL('image/png', 0.95);
-
-  // Vytvor HTML wrapper
-  const html = `<!DOCTYPE html>
-<html lang="sk">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Heatmap - ${trackingData.contentId}</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 20px;
-      background: #f5f5f5;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .container {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-    }
-    img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 8px;
-    }
-    .download-btn {
-      margin-top: 20px;
-      padding: 12px 24px;
-      background: #9d4edd;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-    }
-    .download-btn:hover {
-      background: #7b2cbf;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <img src="${imageDataUrl}" alt="Heatmap Visualization">
-    <button class="download-btn" onclick="downloadImage()">💾 Download PNG</button>
-  </div>
-  <script>
-    function downloadImage() {
-      const link = document.createElement('a');
-      link.download = 'heatmap_${trackingData.contentId}_${Date.now()}.png';
-      link.href = '${imageDataUrl}';
-      link.click();
-    }
-  </script>
-</body>
-</html>`;
-
-  // Vytvor blob a download link
-  const blob = new Blob([html], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-  
-  return {
-    html,
-    url,
-    blob
-  };
-};
