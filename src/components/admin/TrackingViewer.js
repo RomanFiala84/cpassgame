@@ -1,5 +1,5 @@
 // src/components/admin/TrackingViewer.js
-// FINÁLNA OPRAVENÁ VERZIA - Canvas vždy v DOM
+// FINÁLNA OPRAVENÁ VERZIA - Canvas vždy v DOM (ako v starej verzii)
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,6 @@ import Layout from '../../styles/Layout';
 import StyledButton from '../../styles/StyledButton';
 import { convertPercentToPixels, convertLandmarksPercentToPixels } from '../../utils/trackingHelpers';
 
-// ✅ KONŠTANTY
 const STANDARD_WIDTH = 1920;
 const STANDARD_HEIGHT = 2000;
 
@@ -119,6 +118,8 @@ const HeatmapContainer = styled.div`
   border-radius: 8px;
   overflow: auto;
   background: #f5f5f5;
+  min-height: 400px;
+  display: ${p => p.show ? 'block' : 'none'};
 `;
 
 const CanvasWrapper = styled.div`
@@ -138,6 +139,10 @@ const LoadingText = styled.div`
   padding: 40px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   font-size: 16px;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const StatsRow = styled.div`
@@ -223,7 +228,6 @@ const TrackingViewer = () => {
   const [performanceMetrics, setPerformanceMetrics] = useState(null);
   const [showLandmarks, setShowLandmarks] = useState(false);
 
-  // Načítať zoznam komponentov
   useEffect(() => {
     const loadComponents = async () => {
       try {
@@ -243,7 +247,6 @@ const TrackingViewer = () => {
     loadComponents();
   }, []);
 
-  // Agregácia pozícií do gridu
   const aggregatePositions = (positions, gridSize = 10) => {
     if (!positions || positions.length === 0) return [];
     
@@ -263,7 +266,6 @@ const TrackingViewer = () => {
     return Array.from(grid.values());
   };
 
-  // Vykresli heatmap overlay
   const drawHeatmapOverlay = async (ctx, positions, width, height) => {
     if (!positions || positions.length === 0) return;
 
@@ -297,7 +299,6 @@ const TrackingViewer = () => {
     console.log(`✅ Heatmap overlay drawn (${positions.length} aggregated points)`);
   };
 
-  // Vykresli landmark boundaries (debug)
   const drawLandmarkBoundaries = (ctx, landmarks) => {
     if (!landmarks || landmarks.length === 0) return;
 
@@ -328,21 +329,17 @@ const TrackingViewer = () => {
     console.log(`✅ Drew ${landmarks.length} landmark boundaries`);
   };
 
-  // ✅ HLAVNÁ FUNKCIA - Renderuj composite heatmap
   useEffect(() => {
     if (!selectedComponent) return;
 
     const renderCompositeHeatmap = async (data) => {
-      // ✅ OPRAVA - Kratší wait (canvas je teraz vždy v DOM)
-      await new Promise(resolve => setTimeout(resolve, 50));
-
       const canvas = canvasRef.current;
       if (!canvas || !data) {
         console.error('❌ No canvas or data');
         return;
       }
 
-      console.log('✅ Canvas found!');
+      console.log('✅ Canvas found!', canvas);
 
       const startTime = performance.now();
       const ctx = canvas.getContext('2d', { alpha: false });
@@ -520,7 +517,10 @@ const TrackingViewer = () => {
         
         if (data.success) {
           setTrackingData(data.data);
-          await renderCompositeHeatmap(data.data);
+          // ✅ Počkaj na DOM update
+          setTimeout(() => {
+            renderCompositeHeatmap(data.data);
+          }, 100);
         } else {
           console.error('❌ API returned error:', data.error);
           alert(`Chyba: ${data.error}`);
@@ -637,28 +637,32 @@ const TrackingViewer = () => {
                 Component template (šírka 1920px, dynamická výška) s agregovanou heatmap zo všetkých používateľov (rendered client-side)
               </SectionSubtitle>
               
-              {loading ? (
+              {/* ✅ LOADING TEXT - Samostatne */}
+              {loading && (
                 <LoadingText>Renderujem composite heatmap...</LoadingText>
-              ) : (
+              )}
+              
+              {/* ✅ CANVAS - Vždy v DOM (hidden počas loading) */}
+              <HeatmapContainer show={!loading}>
+                <CanvasWrapper>
+                  <HeatmapCanvas ref={canvasRef} />
+                </CanvasWrapper>
+              </HeatmapContainer>
+              
+              {!loading && performanceMetrics && (
+                <PerformanceInfo>
+                  <div>⚡ Render time: {performanceMetrics.renderTime}ms</div>
+                  <div>📍 Points: {performanceMetrics.pointsCount}</div>
+                  <div>👥 Users: {performanceMetrics.usersCount}</div>
+                  <div>🎯 Landmarks: {performanceMetrics.landmarksCount}</div>
+                  <div>📐 Size: {performanceMetrics.canvasSize}</div>
+                  <div>💾 Format: {performanceMetrics.storageFormat}</div>
+                  <div>🖥️ Mode: {performanceMetrics.renderMode}</div>
+                </PerformanceInfo>
+              )}
+              
+              {!loading && (
                 <>
-                  <HeatmapContainer>
-                    <CanvasWrapper>
-                      <HeatmapCanvas ref={canvasRef} />
-                    </CanvasWrapper>
-                  </HeatmapContainer>
-                  
-                  {performanceMetrics && (
-                    <PerformanceInfo>
-                      <div>⚡ Render time: {performanceMetrics.renderTime}ms</div>
-                      <div>📍 Points: {performanceMetrics.pointsCount}</div>
-                      <div>👥 Users: {performanceMetrics.usersCount}</div>
-                      <div>🎯 Landmarks: {performanceMetrics.landmarksCount}</div>
-                      <div>📐 Size: {performanceMetrics.canvasSize}</div>
-                      <div>💾 Format: {performanceMetrics.storageFormat}</div>
-                      <div>🖥️ Mode: {performanceMetrics.renderMode}</div>
-                    </PerformanceInfo>
-                  )}
-                  
                   <DebugToggle>
                     <input 
                       type="checkbox" 
