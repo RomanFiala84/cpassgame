@@ -1,5 +1,5 @@
 // src/components/admin/TrackingViewer.js
-// FINÁLNA VERZIA - Composite heatmap client-side (1920px template)
+// FINÁLNA OPRAVENÁ VERZIA - S detailnými debug logmi
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -328,74 +328,107 @@ const TrackingViewer = () => {
     console.log(`✅ Drew ${landmarks.length} landmark boundaries`);
   };
 
-  // ✅ HLAVNÁ FUNKCIA - Renderuj composite heatmap client-side
+  // ✅ OPRAVENÁ HLAVNÁ FUNKCIA - S detailnými debug logmi
   useEffect(() => {
     if (!selectedComponent) return;
 
     const renderCompositeHeatmap = async (data) => {
       const canvas = canvasRef.current;
-      if (!canvas || !data) return;
+      if (!canvas || !data) {
+        console.error('❌ No canvas or data');
+        return;
+      }
 
       const startTime = performance.now();
       const ctx = canvas.getContext('2d', { alpha: false });
       
-      // ✅ Zisti template rozmery (1920px šírka)
+      // ✅ DEBUG - Log celé data
+      console.log('🔍 DEBUG - Raw data from API:', {
+        containerDimensions: data.containerDimensions,
+        aggregatedPositions: data.aggregatedPositions?.slice(0, 3), // Prvé 3 pozície
+        positionsCount: data.aggregatedPositions?.length,
+        landmarks: data.landmarks,
+        templateUrl: data.componentTemplateUrl
+      });
+
+      // ✅ Zisti template rozmery
       let canvasWidth = STANDARD_WIDTH;
       let canvasHeight = STANDARD_HEIGHT;
 
-      // Vypočítaj proportional height z originálnych rozmerov
-      if (data.containerDimensions && data.containerDimensions.originalWidth) {
-        canvasWidth = STANDARD_WIDTH;
-        const scale = STANDARD_WIDTH / data.containerDimensions.originalWidth;
-        canvasHeight = Math.round(data.containerDimensions.originalHeight * scale);
-        canvasHeight = Math.max(600, Math.min(10000, canvasHeight));
-      } else if (data.containerDimensions) {
-        canvasWidth = data.containerDimensions.width || STANDARD_WIDTH;
-        canvasHeight = data.containerDimensions.height || STANDARD_HEIGHT;
+      // ✅ OPRAVA - Lepšia detekcia rozmerov
+      if (data.containerDimensions) {
+        if (data.containerDimensions.originalWidth && data.containerDimensions.originalHeight) {
+          // ✅ Nový formát (percent)
+          canvasWidth = STANDARD_WIDTH;
+          const scale = STANDARD_WIDTH / data.containerDimensions.originalWidth;
+          canvasHeight = Math.round(data.containerDimensions.originalHeight * scale);
+          canvasHeight = Math.max(600, Math.min(10000, canvasHeight));
+          
+          console.log('✅ Using NEW format (percent):', {
+            originalWidth: data.containerDimensions.originalWidth,
+            originalHeight: data.containerDimensions.originalHeight,
+            canvasWidth,
+            canvasHeight,
+            scale: scale.toFixed(2)
+          });
+        } else if (data.containerDimensions.width && data.containerDimensions.height) {
+          // ✅ Starý formát (pixely)
+          canvasWidth = data.containerDimensions.width;
+          canvasHeight = data.containerDimensions.height;
+          
+          console.log('⚠️ Using OLD format (pixels):', {
+            canvasWidth,
+            canvasHeight
+          });
+        }
+      } else {
+        console.warn('⚠️ No containerDimensions, using fallback');
       }
       
       canvas.width = canvasWidth;
       canvas.height = canvasHeight;
 
-      console.log('🎨 Rendering composite heatmap (client-side):', {
-        positions: data.aggregatedPositions?.length,
-        landmarks: data.landmarks?.length,
-        templateUrl: data.componentTemplateUrl,
-        size: `${canvasWidth}×${canvasHeight}`,
-        storageFormat: data.containerDimensions?.storageFormat || 'unknown'
+      console.log('🎨 Canvas setup:', {
+        canvasWidth,
+        canvasHeight,
+        storageFormat: data.containerDimensions?.storageFormat
       });
 
-      // ✅ KROK 1: Načítaj component template ako pozadie
+      // ✅ KROK 1: Načítaj template
       let templateLoaded = false;
       
       if (data.componentTemplateUrl) {
         try {
+          console.log('📥 Loading template from:', data.componentTemplateUrl);
+          
           templateLoaded = await new Promise((resolve) => {
             const templateImg = new Image();
             templateImg.crossOrigin = 'anonymous';
             
             templateImg.onload = () => {
               ctx.drawImage(templateImg, 0, 0, canvasWidth, canvasHeight);
-              console.log('✅ Component template loaded as background');
+              console.log('✅ Template loaded successfully');
               resolve(true);
             };
             
             templateImg.onerror = (error) => {
-              console.error('❌ Failed to load template:', error);
+              console.error('❌ Template load error:', error);
+              console.error('❌ Template URL:', data.componentTemplateUrl);
               resolve(false);
             };
             
             templateImg.src = data.componentTemplateUrl;
           });
         } catch (error) {
-          console.error('❌ Template error:', error);
+          console.error('❌ Template exception:', error);
           templateLoaded = false;
         }
+      } else {
+        console.warn('⚠️ No template URL');
       }
 
-      // ✅ Ak template sa nenačítal, použij šedé pozadie
+      // Fallback pozadie
       if (!templateLoaded) {
-        console.warn('⚠️ No component template, using gray background');
         ctx.fillStyle = '#f5f5f5';
         ctx.fillRect(0, 0, canvasWidth, canvasHeight);
         
@@ -403,31 +436,49 @@ const TrackingViewer = () => {
         ctx.font = 'bold 18px Arial';
         ctx.textAlign = 'center';
         ctx.fillText('📊 Composite Heatmap', canvasWidth / 2, 80);
-        
         ctx.font = '14px Arial';
         ctx.fillStyle = '#999999';
         ctx.fillText(`${data.contentId}`, canvasWidth / 2, 110);
         ctx.fillText('⚠️ Component screenshot not available', canvasWidth / 2, 140);
       }
 
-      // ✅ KROK 2: Konvertuj percentá na pixely
+      // ✅ KROK 2: Konvertuj pozície
       let pixelPositions = data.aggregatedPositions;
       let pixelLandmarks = data.landmarks;
+
+      console.log('🔍 DEBUG - Before conversion:', {
+        storageFormat: data.containerDimensions?.storageFormat,
+        firstPosition: pixelPositions?.[0],
+        positionsCount: pixelPositions?.length
+      });
 
       if (data.containerDimensions?.storageFormat === 'percent') {
         console.log('🔄 Converting percent to pixels...');
         pixelPositions = convertPercentToPixels(data.aggregatedPositions, canvasWidth, canvasHeight);
         pixelLandmarks = convertLandmarksPercentToPixels(data.landmarks, canvasWidth, canvasHeight);
-        console.log(`✅ Converted ${pixelPositions.length} positions to pixels`);
+        
+        console.log('✅ Converted positions:', {
+          firstPositionBefore: data.aggregatedPositions[0],
+          firstPositionAfter: pixelPositions[0],
+          count: pixelPositions.length
+        });
+      } else {
+        console.warn('⚠️ StorageFormat is NOT percent, using positions as-is');
       }
 
-      // ✅ KROK 3: Vykresli heatmap overlay CLIENT-SIDE
+      // ✅ KROK 3: Vykresli heatmap
       if (pixelPositions && pixelPositions.length > 0) {
         const aggregated = aggregatePositions(pixelPositions, 10);
+        
+        console.log('🎨 Drawing heatmap:', {
+          originalPositions: pixelPositions.length,
+          aggregatedPoints: aggregated.length,
+          firstAggregated: aggregated[0]
+        });
+        
         await drawHeatmapOverlay(ctx, aggregated, canvasWidth, canvasHeight);
-        console.log(`✅ Drew composite heatmap with ${aggregated.length} aggregated points (CLIENT-SIDE)`);
       } else {
-        console.warn('⚠️ No tracking positions to draw');
+        console.error('❌ No positions to draw!');
         
         ctx.fillStyle = '#ff9800';
         ctx.font = '16px Arial';
@@ -435,7 +486,7 @@ const TrackingViewer = () => {
         ctx.fillText('⚠️ No tracking data available', canvasWidth / 2, canvasHeight / 2);
       }
 
-      // ✅ KROK 4: Vykresli landmarks (ak je debug mode)
+      // ✅ KROK 4: Landmarks (debug)
       if (showLandmarks && pixelLandmarks && pixelLandmarks.length > 0) {
         drawLandmarkBoundaries(ctx, pixelLandmarks);
       }
@@ -453,15 +504,16 @@ const TrackingViewer = () => {
         renderMode: 'client-side'
       });
 
-      console.log(`✅ Composite heatmap rendered CLIENT-SIDE in ${renderTime.toFixed(2)}ms`);
+      console.log(`✅ Render complete in ${renderTime.toFixed(2)}ms`);
     };
 
     const loadAndRenderHeatmap = async () => {
       setLoading(true);
       try {
-        const response = await fetch(
-          `/api/get-tracking-by-component?contentId=${selectedComponent.contentId}&contentType=${selectedComponent.contentType}`
-        );
+        const url = `/api/get-tracking-by-component?contentId=${selectedComponent.contentId}&contentType=${selectedComponent.contentType}`;
+        console.log('📡 Fetching from:', url);
+        
+        const response = await fetch(url);
         
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -469,15 +521,17 @@ const TrackingViewer = () => {
         
         const data = await response.json();
         
+        console.log('📥 API Response:', data);
+        
         if (data.success) {
           setTrackingData(data.data);
           await renderCompositeHeatmap(data.data);
         } else {
-          console.error('API returned error:', data.error);
+          console.error('❌ API returned error:', data.error);
           alert(`Chyba: ${data.error}`);
         }
       } catch (error) {
-        console.error('Error loading tracking data:', error);
+        console.error('❌ Fetch error:', error);
         alert(`Nepodarilo sa načítať tracking dáta: ${error.message}`);
       } finally {
         setLoading(false);
