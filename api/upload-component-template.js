@@ -1,5 +1,5 @@
 // api/upload-component-template.js
-// Upload component template screenshots (FIXNÉ 1200×2000px)
+// Upload component template screenshots (1920px × dynamická výška)
 
 import { v2 as cloudinary } from 'cloudinary';
 
@@ -13,7 +13,7 @@ cloudinary.config({
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: '10mb',
+      sizeLimit: '10mb', // ✅ Môžeš zvýšiť na 15mb (1920px templates sú väčšie)
     },
   },
 };
@@ -62,8 +62,8 @@ export default async function handler(req, res) {
       context: {
         contentId: contentId || 'unknown',
         contentType: contentType || 'unknown',
-        width: dimensions?.width || 1200,
-        height: dimensions?.height || 2000,
+        width: dimensions?.width || 1920, // ✅ OPRAVENÉ z 1200 na 1920
+        height: dimensions?.height || 2000, // Fallback
         createdAt: new Date().toISOString(),
       },
     });

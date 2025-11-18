@@ -1,54 +1,61 @@
 // src/utils/visualizationGenerator.js
-// Generuje len heatmap overlay (bez component screenshotu)
+// FINÁLNA VERZIA - Individuálna heatmap overlay (1920px template)
 
 /**
- * Generuje PNG heatmap overlay (bez component pozadia)
+ * ✅ Vygeneruje individuálnu heatmap overlay (transparent pozadie)
  */
 export const generateVisualization = async (trackingData, width, height, containerElement) => {
-  if (!trackingData.mousePositions || trackingData.mousePositions.length < 5) {
-    console.log('⚠️ Insufficient tracking data');
-    return null;
-  }
-
   try {
-    const fullWidth = containerElement?.scrollWidth || width || 1000;
-    const fullHeight = containerElement?.scrollHeight || height || 2000;
-    
-    console.log('🎨 Creating heatmap overlay:', {
-      dimensions: `${fullWidth}x${fullHeight}px`,
-      positions: trackingData.mousePositions.length
+    console.log('🎨 Creating individual heatmap overlay:', {
+      positions: trackingData.mousePositions?.length || 0,
+      targetSize: `${width}×${height}`
     });
 
-    // Vytvor transparent canvas
-    const canvas = document.createElement('canvas');
-    canvas.width = fullWidth;
-    canvas.height = fullHeight;
-    const ctx = canvas.getContext('2d', { alpha: true });
-
-    // ✅ Transparent pozadie (žiadny screenshot)
-    ctx.clearRect(0, 0, fullWidth, fullHeight);
-
-    // Vykresli heatmap overlay
-    await drawHeatmapOverlay(ctx, trackingData.mousePositions, fullWidth, fullHeight);
-
-    // Vykresli trajectory
-    drawTrajectoryEnhanced(ctx, trackingData.mousePositions);
-
-    // Vykresli markery
-    drawMarkers(ctx, trackingData.mousePositions);
-
-    // Konvertuj na Blob
-    const blob = await new Promise((resolve) => {
-      canvas.toBlob((blob) => resolve(blob), 'image/png', 0.95);
-    });
-
-    if (!blob) {
-      throw new Error('Failed to create blob from canvas');
+    // ✅ VALIDÁCIA
+    if (!trackingData.mousePositions || trackingData.mousePositions.length === 0) {
+      console.warn('⚠️ No mouse positions to visualize');
+      return null;
     }
 
-    console.log('✅ Heatmap overlay generated:', {
+    // ✅ Canvas s CIEĽOVÝMI rozmermi (1920px × proportional height)
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d', { alpha: true });
+
+    // ✅ TRANSPARENT pozadie (pre overlay)
+    ctx.clearRect(0, 0, width, height);
+
+    // Agreguj pozície do gridu
+    const gridSize = 10;
+    const aggregated = aggregatePositionsToGrid(trackingData.mousePositions, gridSize);
+
+    console.log(`📊 Aggregated ${trackingData.mousePositions.length} positions into ${aggregated.length} grid points`);
+
+    // ✅ Vykresli heatmap gradient
+    await drawHeatmapGradient(ctx, aggregated, width, height);
+
+    // ✅ Vykresli trajectory
+    if (trackingData.mousePositions.length > 1) {
+      drawTrajectory(ctx, trackingData.mousePositions);
+    }
+
+    // ✅ Vykresli start/end markery
+    drawMarkers(ctx, trackingData.mousePositions);
+
+    // Konvertuj canvas na Blob
+    const blob = await new Promise((resolve) => {
+      canvas.toBlob((b) => resolve(b), 'image/png', 0.95);
+    });
+
+    if (!blob || blob.size === 0) {
+      console.error('❌ Generated blob is empty!');
+      return null;
+    }
+
+    console.log('✅ Individual heatmap overlay generated:', {
       size: `${(blob.size / 1024).toFixed(2)}KB`,
-      dimensions: `${fullWidth}x${fullHeight}px`
+      dimensions: `${width}×${height}`
     });
 
     const objectUrl = URL.createObjectURL(blob);
@@ -56,242 +63,137 @@ export const generateVisualization = async (trackingData, width, height, contain
     return {
       blob,
       objectUrl,
-      canvas,
-      dimensions: { width: fullWidth, height: fullHeight },
-      metadata: {
-        contentId: trackingData.contentId,
-        contentType: trackingData.contentType,
-        userId: trackingData.userId,
-        pointsCount: trackingData.mousePositions.length,
-        hoverTime: trackingData.totalHoverTime,
-        timestamp: Date.now()
-      }
+      width,
+      height
     };
 
   } catch (error) {
-    console.error('❌ Error generating visualization:', error);
+    console.error('❌ Heatmap generation error:', error);
     return null;
   }
 };
 
 /**
- * ✅ NOVÁ FUNKCIA - Vygeneruje referenčný screenshot komponentu
+ * ✅ Agreguj pozície do gridu (zníženie počtu bodov)
  */
-export const generateComponentTemplate = async (containerElement) => {
-  if (!containerElement) {
-    console.error('❌ No container element provided');
-    return null;
-  }
-
-  try {
-    const html2canvas = (await import('html2canvas')).default;
-    
-    const screenshot = await html2canvas(containerElement, {
-      width: containerElement.scrollWidth,
-      height: containerElement.scrollHeight,
-      scrollX: 0,
-      scrollY: 0,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: '#ffffff',
-      scale: 1,
-      logging: false,
-    });
-
-    // Konvertuj na Blob
-    const blob = await new Promise((resolve) => {
-      screenshot.toBlob((blob) => resolve(blob), 'image/png', 0.95);
-    });
-
-    console.log('✅ Component template generated:', {
-      width: screenshot.width,
-      height: screenshot.height,
-      size: `${(blob.size / 1024).toFixed(2)}KB`
-    });
-
-    return {
-      blob,
-      dimensions: {
-        width: screenshot.width,
-        height: screenshot.height
-      }
-    };
-
-  } catch (error) {
-    console.error('❌ Error generating component template:', error);
-    return null;
-  }
-};
-
-// Pomocné funkcie zostávajú rovnaké...
-async function drawHeatmapOverlay(ctx, positions, width, height) {
-  const gridSize = 25;
-  const cols = Math.ceil(width / gridSize);
-  const rows = Math.ceil(height / gridSize);
-  
-  const grid = Array(rows).fill(0).map(() => Array(cols).fill(0));
+function aggregatePositionsToGrid(positions, gridSize = 10) {
+  const grid = new Map();
   
   positions.forEach(pos => {
-    const col = Math.floor(pos.x / gridSize);
-    const row = Math.floor(pos.y / gridSize);
+    const gridX = Math.floor(pos.x / gridSize) * gridSize;
+    const gridY = Math.floor(pos.y / gridSize) * gridSize;
+    const key = `${gridX},${gridY}`;
     
-    if (row >= 0 && row < rows && col >= 0 && col < cols) {
-      grid[row][col]++;
+    if (!grid.has(key)) {
+      grid.set(key, { 
+        x: gridX + gridSize / 2, 
+        y: gridY + gridSize / 2, 
+        count: 0 
+      });
     }
+    grid.get(key).count++;
   });
   
-  let maxValue = 0;
-  grid.forEach(row => {
-    row.forEach(val => {
-      if (val > maxValue) maxValue = val;
-    });
-  });
-
-  if (maxValue === 0) return;
-
-  const gradientCanvas = document.createElement('canvas');
-  gradientCanvas.width = gridSize * 2;
-  gradientCanvas.height = gridSize * 2;
-  const gradientCtx = gradientCanvas.getContext('2d');
-  
-  const centerX = gridSize;
-  const centerY = gridSize;
-  const gradient = gradientCtx.createRadialGradient(
-    centerX, centerY, 0,
-    centerX, centerY, gridSize
-  );
-  gradient.addColorStop(0, 'rgba(255, 0, 0, 0.7)');
-  gradient.addColorStop(0.3, 'rgba(255, 100, 0, 0.5)');
-  gradient.addColorStop(0.6, 'rgba(255, 200, 0, 0.3)');
-  gradient.addColorStop(1, 'rgba(255, 255, 0, 0)');
-  
-  gradientCtx.fillStyle = gradient;
-  gradientCtx.fillRect(0, 0, gridSize * 2, gridSize * 2);
-
-  ctx.save();
-  ctx.globalCompositeOperation = 'source-over';
-  
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const count = grid[r][c];
-      if (count > 0) {
-        const intensity = count / maxValue;
-        const x = c * gridSize;
-        const y = r * gridSize;
-        
-        ctx.globalAlpha = Math.min(0.3 + intensity * 0.7, 1);
-        ctx.drawImage(gradientCanvas, x - gridSize / 2, y - gridSize / 2);
-      }
-    }
-  }
-  
-  ctx.restore();
-  console.log(`✅ Heatmap overlay drawn (${rows}x${cols} grid)`);
+  return Array.from(grid.values());
 }
 
-function drawTrajectoryEnhanced(ctx, positions) {
+/**
+ * ✅ Vykresli heatmap gradient overlay
+ */
+async function drawHeatmapGradient(ctx, positions, width, height) {
+  if (!positions || positions.length === 0) return;
+
+  // Vytvor gradient template (kruhový gradient)
+  const gradientCanvas = document.createElement('canvas');
+  const radius = 50;
+  gradientCanvas.width = radius * 2;
+  gradientCanvas.height = radius * 2;
+  const gradientCtx = gradientCanvas.getContext('2d');
+  
+  const gradient = gradientCtx.createRadialGradient(radius, radius, 0, radius, radius, radius);
+  gradient.addColorStop(0, 'rgba(255, 0, 0, 0.8)');    // Červená (stred)
+  gradient.addColorStop(0.3, 'rgba(255, 165, 0, 0.6)'); // Oranžová
+  gradient.addColorStop(0.6, 'rgba(255, 255, 0, 0.4)'); // Žltá
+  gradient.addColorStop(1, 'rgba(255, 255, 0, 0)');     // Transparent (okraj)
+  
+  gradientCtx.fillStyle = gradient;
+  gradientCtx.fillRect(0, 0, radius * 2, radius * 2);
+
+  // Nájdi max count pre intensity scaling
+  const maxCount = Math.max(...positions.map(p => p.count || 1));
+
+  // Vykresli všetky body s intenzitou
+  ctx.save();
+  ctx.globalCompositeOperation = 'source-over';
+
+  positions.forEach(pos => {
+    const intensity = (pos.count || 1) / maxCount;
+    ctx.globalAlpha = Math.min(0.3 + intensity * 0.7, 1);
+    ctx.drawImage(gradientCanvas, pos.x - radius, pos.y - radius);
+  });
+
+  ctx.restore();
+  
+  console.log(`✅ Heatmap overlay drawn (${positions.length} aggregated points)`);
+}
+
+/**
+ * ✅ Vykresli trajectory (cesty myši)
+ */
+function drawTrajectory(ctx, positions) {
   if (positions.length < 2) return;
 
   ctx.save();
-  
-  ctx.strokeStyle = 'rgba(74, 144, 226, 0.8)';
-  ctx.lineWidth = 3;
-  ctx.lineJoin = 'round';
+  ctx.strokeStyle = 'rgba(0, 150, 255, 0.3)'; // Modrá, semi-transparent
+  ctx.lineWidth = 2;
   ctx.lineCap = 'round';
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-  ctx.shadowBlur = 6;
-  ctx.shadowOffsetX = 2;
-  ctx.shadowOffsetY = 2;
-  
+  ctx.lineJoin = 'round';
+
+  // Znížený sampling (každý 5. bod pre výkon)
+  const sampledPositions = positions.filter((_, i) => i % 5 === 0);
+
   ctx.beginPath();
-  ctx.moveTo(positions[0].x, positions[0].y);
-  
-  const step = Math.max(1, Math.floor(positions.length / 500));
-  for (let i = step; i < positions.length; i += step) {
-    ctx.lineTo(positions[i].x, positions[i].y);
+  ctx.moveTo(sampledPositions[0].x, sampledPositions[0].y);
+
+  for (let i = 1; i < sampledPositions.length; i++) {
+    ctx.lineTo(sampledPositions[i].x, sampledPositions[i].y);
   }
-  
-  if (positions.length > 1) {
-    ctx.lineTo(positions[positions.length - 1].x, positions[positions.length - 1].y);
-  }
-  
+
   ctx.stroke();
-  
-  ctx.shadowBlur = 0;
-  ctx.shadowOffsetX = 0;
-  ctx.shadowOffsetY = 0;
-  ctx.fillStyle = 'rgba(74, 144, 226, 0.9)';
-  
-  const arrowInterval = Math.max(50, Math.floor(positions.length / 20));
-  
-  for (let i = arrowInterval; i < positions.length; i += arrowInterval) {
-    const p1 = positions[i - 1];
-    const p2 = positions[i];
-    
-    const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
-    
-    ctx.save();
-    ctx.translate(p2.x, p2.y);
-    ctx.rotate(angle);
-    
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(-10, -5);
-    ctx.lineTo(-10, 5);
-    ctx.closePath();
-    ctx.fill();
-    
-    ctx.restore();
-  }
-  
   ctx.restore();
-  
-  console.log('✅ Enhanced trajectory drawn');
+
+  console.log('✅ Trajectory drawn');
 }
 
+/**
+ * ✅ Vykresli start/end markery
+ */
 function drawMarkers(ctx, positions) {
   if (positions.length === 0) return;
 
-  const first = positions[0];
-  const last = positions[positions.length - 1];
-
   ctx.save();
 
-  // START marker
-  ctx.fillStyle = '#00C853';
-  ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = 4;
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-  ctx.shadowBlur = 6;
-  
+  // Start marker (zelený)
+  const start = positions[0];
+  ctx.fillStyle = 'rgba(0, 255, 0, 0.7)';
   ctx.beginPath();
-  ctx.arc(first.x, first.y, 14, 0, Math.PI * 2);
+  ctx.arc(start.x, start.y, 8, 0, Math.PI * 2);
   ctx.fill();
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+  ctx.lineWidth = 2;
   ctx.stroke();
-  
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 11px -apple-system, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.shadowBlur = 0;
-  ctx.fillText('S', first.x, first.y);
 
-  // END marker
-  ctx.fillStyle = '#E53935';
-  ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = 4;
-  ctx.shadowBlur = 6;
-  
+  // End marker (červený)
+  const end = positions[positions.length - 1];
+  ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
   ctx.beginPath();
-  ctx.arc(last.x, last.y, 14, 0, Math.PI * 2);
+  ctx.arc(end.x, end.y, 8, 0, Math.PI * 2);
   ctx.fill();
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+  ctx.lineWidth = 2;
   ctx.stroke();
-  
-  ctx.fillStyle = '#ffffff';
-  ctx.shadowBlur = 0;
-  ctx.fillText('E', last.x, last.y);
 
   ctx.restore();
-  
+
   console.log('✅ Markers drawn');
 }

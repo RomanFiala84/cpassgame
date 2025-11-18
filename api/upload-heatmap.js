@@ -1,5 +1,5 @@
 // api/upload-heatmap.js
-// VERCEL SIMPLIFIED VERSION - Direct base64 upload without formidable
+// VERCEL SIMPLIFIED VERSION - Upload individuálnych heatmap (1920px)
 
 import { v2 as cloudinary } from 'cloudinary';
 
@@ -13,7 +13,7 @@ cloudinary.config({
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: '10mb',
+      sizeLimit: '15mb', // ✅ ZVÝŠENÉ z 10mb na 15mb (1920px templates)
     },
   },
 };
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    console.log('📥 Received upload request');
+    console.log('📥 Received heatmap upload request');
 
     const { imageBase64, contentId, contentType, userId, trackingId } = req.body;
 
@@ -44,12 +44,15 @@ export default async function handler(req, res) {
       });
     }
 
+    // ✅ Zisti veľkosť obrazu
+    const imageSizeKB = (imageBase64.length * 0.75 / 1024).toFixed(2); // Base64 je ~33% väčší
+
     console.log('✅ Image data received:', {
       contentId,
       contentType,
       userId,
       trackingId,
-      imageSize: imageBase64.length
+      imageSizeKB: `${imageSizeKB}KB`
     });
 
     // Upload to Cloudinary
@@ -62,6 +65,7 @@ export default async function handler(req, res) {
       
       tags: [
         'heatmap',
+        'individual', // ✅ PRIDANÉ - označuje individuálnu heatmap
         contentType || 'unknown',
         contentId || 'unknown',
         `user_${userId || 'unknown'}`,
@@ -74,21 +78,24 @@ export default async function handler(req, res) {
         userId: userId || 'unknown',
         trackingId: trackingId || 'unknown',
         timestamp: new Date().toISOString(),
+        templateWidth: 1920, // ✅ PRIDANÉ - označuje template width
       },
       
+      // ✅ OPRAVENÉ - Eager transformations pre 1920px template
       eager: [
-        { width: 400, height: 600, crop: 'fit', quality: 'auto', format: 'webp' },
-        { width: 1000, height: 1500, crop: 'fit', quality: 'auto:good', format: 'png' }
+        { width: 600, height: 900, crop: 'fit', quality: 'auto', format: 'webp' }, // Thumbnail
+        { width: 1200, height: 1800, crop: 'fit', quality: 'auto:good', format: 'png' } // Medium
       ],
       
       eager_async: true,
       invalidate: true,
     });
 
-    console.log('✅ Cloudinary upload successful:', {
+    console.log('✅ Cloudinary heatmap upload successful:', {
       publicId: uploadResult.public_id,
       url: uploadResult.secure_url,
-      size: uploadResult.bytes
+      size: `${(uploadResult.bytes / 1024).toFixed(2)}KB`,
+      dimensions: `${uploadResult.width}×${uploadResult.height}`
     });
 
     return res.status(200).json({
@@ -107,7 +114,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('❌ Cloudinary upload error:', error);
+    console.error('❌ Cloudinary heatmap upload error:', error);
     return res.status(500).json({ 
       success: false, 
       error: 'Upload failed',

@@ -1,12 +1,12 @@
 // src/utils/trackingHelpers.js
-// FINÁLNA VERZIA - 1920px template + relatívne pozície (percentá)
+// FINÁLNA VERZIA - 1920px template + percentá + individuálne heatmapy
 
 import { generateVisualization } from './visualizationGenerator';
 
 /**
- * ✅ KONŠTANTY - Fixná šírka 1920px, dynamická výška
+ * ✅ KONŠTANTY
  */
-const STANDARD_WIDTH = 1920; // ✅ ZVÄČŠENÉ na fullHD
+const STANDARD_WIDTH = 1920;
 const MAX_HEIGHT = 10000;
 const MIN_HEIGHT = 600;
 
@@ -33,7 +33,7 @@ function calculateProportionalHeight(originalWidth, originalHeight, targetWidth)
 }
 
 /**
- * ✅ OPRAVENÁ FUNKCIA - Resize s bielym pozadím
+ * ✅ Resize s bielym pozadím
  */
 async function resizeImageToStandard(blob, targetWidth = STANDARD_WIDTH) {
   return new Promise((resolve, reject) => {
@@ -54,11 +54,9 @@ async function resizeImageToStandard(blob, targetWidth = STANDARD_WIDTH) {
       canvas.height = targetHeight;
       const ctx = canvas.getContext('2d', { alpha: false });
       
-      // Biele pozadie
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, targetWidth, targetHeight);
       
-      // Vykresli obrázok
       const scale = targetWidth / img.width;
       const scaledHeight = img.height * scale;
       
@@ -84,19 +82,18 @@ async function resizeImageToStandard(blob, targetWidth = STANDARD_WIDTH) {
 }
 
 /**
- * ✅ NOVÁ FUNKCIA B - Normalizuj tracking pozície ako PERCENTÁ
+ * ✅ Normalizuj tracking pozície ako PERCENTÁ
  */
 function normalizeTrackingPositionsAsPercent(positions, originalWidth, originalHeight) {
   if (!positions || positions.length === 0) return [];
   
   return positions.map(pos => {
     const normalized = {
-      x: Number(((pos.x / originalWidth) * 100).toFixed(4)), // % z šírky
-      y: Number(((pos.y / originalHeight) * 100).toFixed(4)), // % z výšky
+      x: Number(((pos.x / originalWidth) * 100).toFixed(4)),
+      y: Number(((pos.y / originalHeight) * 100).toFixed(4)),
       timestamp: pos.timestamp
     };
     
-    // Normalizuj aj landmark pozície ako percentá
     if (pos.nearestLandmark) {
       normalized.nearestLandmark = {
         id: pos.nearestLandmark.id,
@@ -117,7 +114,7 @@ function normalizeTrackingPositionsAsPercent(positions, originalWidth, originalH
 }
 
 /**
- * ✅ NOVÁ FUNKCIA B - Normalizuj landmarks ako PERCENTÁ
+ * ✅ Normalizuj landmarks ako PERCENTÁ
  */
 function normalizeLandmarksAsPercent(landmarks, originalWidth, originalHeight) {
   if (!landmarks || landmarks.length === 0) return [];
@@ -135,7 +132,7 @@ function normalizeLandmarksAsPercent(landmarks, originalWidth, originalHeight) {
 }
 
 /**
- * ✅ NOVÁ FUNKCIA B - Konvertuj percentá späť na pixely (pre zobrazenie)
+ * ✅ Konvertuj percentá na pixely
  */
 export function convertPercentToPixels(positions, templateWidth, templateHeight) {
   if (!positions || positions.length === 0) return [];
@@ -147,7 +144,6 @@ export function convertPercentToPixels(positions, templateWidth, templateHeight)
       timestamp: pos.timestamp
     };
     
-    // Konvertuj aj landmark pozície
     if (pos.nearestLandmark) {
       pixel.nearestLandmark = {
         id: pos.nearestLandmark.id,
@@ -168,7 +164,7 @@ export function convertPercentToPixels(positions, templateWidth, templateHeight)
 }
 
 /**
- * ✅ NOVÁ FUNKCIA B - Konvertuj landmarks percentá na pixely
+ * ✅ Konvertuj landmarks percentá na pixely
  */
 export function convertLandmarksPercentToPixels(landmarks, templateWidth, templateHeight) {
   if (!landmarks || landmarks.length === 0) return [];
@@ -186,25 +182,25 @@ export function convertLandmarksPercentToPixels(landmarks, templateWidth, templa
 }
 
 /**
- * ✅ UPRAVENÁ FUNKCIA - Uloží tracking s percentami
+ * ✅ HLAVNÁ FUNKCIA - Uloží tracking + vygeneruje individuálnu heatmap (1920px)
  */
 export const saveTrackingWithVisualization = async (trackingData, containerElement) => {
   try {
-    console.log('💾 Saving tracking data with visualization...');
+    console.log('💾 Saving tracking data with individual heatmap...');
 
     const originalWidth = trackingData.containerDimensions?.width || STANDARD_WIDTH;
     const originalHeight = trackingData.containerDimensions?.height || MIN_HEIGHT;
 
     console.log('📐 Original dimensions:', { originalWidth, originalHeight });
 
-    // ✅ B: Normalizuj tracking pozície ako PERCENTÁ
+    // ✅ Normalizuj tracking pozície ako PERCENTÁ
     const normalizedPositions = normalizeTrackingPositionsAsPercent(
       trackingData.mousePositions,
       originalWidth,
       originalHeight
     );
 
-    // ✅ B: Normalizuj landmarks ako PERCENTÁ
+    // ✅ Normalizuj landmarks ako PERCENTÁ
     const normalizedLandmarks = normalizeLandmarksAsPercent(
       trackingData.landmarks || [],
       originalWidth,
@@ -219,7 +215,7 @@ export const saveTrackingWithVisualization = async (trackingData, containerEleme
       containerDimensions: {
         originalWidth: originalWidth,
         originalHeight: originalHeight,
-        storageFormat: 'percent' // ✅ Označenie že sú uložené ako percentá
+        storageFormat: 'percent'
       }
     };
 
@@ -236,10 +232,13 @@ export const saveTrackingWithVisualization = async (trackingData, containerEleme
     const trackingResult = await trackingResponse.json();
     console.log('✅ Tracking data saved (percent format):', trackingResult);
 
-    // ✅ Pre visualization konvertuj percentá na pixely template rozmerov
+    // ✅ Vygeneruj INDIVIDUÁLNU heatmap pre Cloudinary (1920px template)
     const targetWidth = STANDARD_WIDTH;
     const targetHeight = calculateProportionalHeight(originalWidth, originalHeight, targetWidth);
 
+    console.log('📐 Target dimensions for heatmap:', { targetWidth, targetHeight });
+
+    // Konvertuj percentá na pixely (pre 1920px template)
     const pixelPositions = convertPercentToPixels(
       normalizedPositions,
       targetWidth,
@@ -252,7 +251,7 @@ export const saveTrackingWithVisualization = async (trackingData, containerEleme
       targetHeight
     );
 
-    // Vygeneruj heatmap overlay
+    // Vygeneruj individuálnu heatmap overlay
     const visualization = await generateVisualization(
       {
         ...trackingData,
@@ -269,10 +268,15 @@ export const saveTrackingWithVisualization = async (trackingData, containerEleme
       return { success: true, tracking: trackingResult };
     }
 
+    console.log('✅ Individual heatmap generated:', {
+      size: `${(visualization.blob.size / 1024).toFixed(2)}KB`,
+      dimensions: `${targetWidth}×${targetHeight}`
+    });
+
     // Konvertuj Blob na base64
     const base64Image = await blobToBase64(visualization.blob);
 
-    // Upload heatmap overlay do Cloudinary
+    // Upload individuálnej heatmap do Cloudinary
     const cloudinaryResponse = await fetch('/api/upload-heatmap', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -291,7 +295,7 @@ export const saveTrackingWithVisualization = async (trackingData, containerEleme
     }
 
     const cloudinaryResult = await cloudinaryResponse.json();
-    console.log('✅ Heatmap uploaded to Cloudinary:', cloudinaryResult.data?.url);
+    console.log('✅ Individual heatmap uploaded to Cloudinary:', cloudinaryResult.data?.url);
 
     // Aktualizuj tracking záznam s Cloudinary URL
     await fetch('/api/update-tracking-cloudinary', {
@@ -318,7 +322,7 @@ export const saveTrackingWithVisualization = async (trackingData, containerEleme
 };
 
 /**
- * ✅ UPRAVENÁ FUNKCIA A - Template s 1920px šírkou
+ * ✅ Template generation (1920px, lepší font rendering)
  */
 export const generateAndUploadComponentTemplate = async (containerElement, contentId, contentType) => {
   if (!containerElement) {
@@ -341,10 +345,12 @@ export const generateAndUploadComponentTemplate = async (containerElement, conte
       useCORS: true,
       allowTaint: false,
       backgroundColor: '#FFFFFF',
-      scale: 1,
+      scale: 2, // ✅ Lepší text rendering
       logging: false,
       removeContainer: false,
       foreignObjectRendering: false,
+      imageTimeout: 0,
+      letterRendering: true,
     });
 
     const originalBlob = await new Promise((resolve) => {
@@ -355,13 +361,12 @@ export const generateAndUploadComponentTemplate = async (containerElement, conte
       throw new Error('Failed to create blob from screenshot');
     }
 
-    console.log('📏 Original screenshot size:', {
+    console.log('📏 Original screenshot size (scale=2):', {
       width: screenshot.width,
       height: screenshot.height,
       size: `${(originalBlob.size / 1024).toFixed(2)}KB`
     });
 
-    // ✅ A: Resize na 1920px šírku
     const resizeResult = await resizeImageToStandard(originalBlob, STANDARD_WIDTH);
 
     console.log('📏 Resized to 1920px:', {
@@ -372,7 +377,6 @@ export const generateAndUploadComponentTemplate = async (containerElement, conte
 
     const base64Image = await blobToBase64(resizeResult.blob);
 
-    // Upload do Cloudinary
     const response = await fetch('/api/upload-component-template', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

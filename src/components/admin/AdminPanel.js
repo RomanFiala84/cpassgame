@@ -472,7 +472,7 @@ const AdminPanel = () => {
     return `${(ms / 1000).toFixed(1)}s`;
   };
 
-      // ✅ FINÁLNA VERZIA - 1920px template generation, bez confirm dialógov
+  // ✅ FINÁLNA FUNKCIA - handleGenerateTemplates (1920px template generation)
   const handleGenerateTemplates = async () => {
     const confirmed = window.confirm(
       '📸 Vygenerovať component template screenshots?\n\n' +
@@ -512,7 +512,7 @@ const AdminPanel = () => {
         setTemplateProgress(`📸 Spracúvam ${i + 1}/${components.length}: ${comp.name}...`);
 
         try {
-          // ✅ OPRAVA A - Väčšie okno pre 1920px screenshot
+          // ✅ OPRAVA - Väčšie okno pre 1920px screenshot
           const fullPath = `${window.location.origin}${comp.path}`;
           const newWindow = window.open(
             fullPath, 
@@ -528,7 +528,7 @@ const AdminPanel = () => {
           console.log(`⏳ Čakám 10s na načítanie ${comp.name}...`);
           await new Promise(resolve => setTimeout(resolve, 10000));
 
-          // ✅ Scroll check (bez chýb)
+          // ✅ Scroll check
           try {
             if (newWindow.document && newWindow.document.body) {
               const bodyHeight = newWindow.document.body.scrollHeight;
@@ -625,6 +625,7 @@ const AdminPanel = () => {
       setTemplateProgress('');
     }
   };
+
 
 
 

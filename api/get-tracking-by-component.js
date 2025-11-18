@@ -83,7 +83,7 @@ export default async function handler(req, res) {
         aggregatedLandmarks = record.landmarks;
       }
 
-      // ✅ OPRAVA B - Zachytaj containerDimensions (preferuj najnovší s storageFormat)
+      // ✅ OPRAVA - Zachytaj containerDimensions (preferuj najnovší s storageFormat)
       if (record.containerDimensions) {
         if (!containerDimensions || record.containerDimensions.storageFormat) {
           containerDimensions = record.containerDimensions;

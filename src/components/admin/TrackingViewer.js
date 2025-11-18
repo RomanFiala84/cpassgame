@@ -1,5 +1,5 @@
 // src/components/admin/TrackingViewer.js
-// FINÁLNA VERZIA - 1920px template + prepočet percent na pixely
+// FINÁLNA VERZIA - Composite heatmap client-side (1920px template)
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,7 @@ import Layout from '../../styles/Layout';
 import StyledButton from '../../styles/StyledButton';
 import { convertPercentToPixels, convertLandmarksPercentToPixels } from '../../utils/trackingHelpers';
 
-// ✅ KONŠTANTY - Aktualizované na 1920px
+// ✅ KONŠTANTY
 const STANDARD_WIDTH = 1920;
 const STANDARD_HEIGHT = 2000;
 
@@ -328,7 +328,7 @@ const TrackingViewer = () => {
     console.log(`✅ Drew ${landmarks.length} landmark boundaries`);
   };
 
-  // ✅ UPRAVENÁ FUNKCIA - Načítať tracking dáta a vykresliť composite heatmap
+  // ✅ HLAVNÁ FUNKCIA - Renderuj composite heatmap client-side
   useEffect(() => {
     if (!selectedComponent) return;
 
@@ -339,18 +339,17 @@ const TrackingViewer = () => {
       const startTime = performance.now();
       const ctx = canvas.getContext('2d', { alpha: false });
       
-      // ✅ OPRAVA B - Zisti template rozmery
+      // ✅ Zisti template rozmery (1920px šírka)
       let canvasWidth = STANDARD_WIDTH;
       let canvasHeight = STANDARD_HEIGHT;
 
-      // Ak máme containerDimensions s originalWidth/originalHeight, použi proportional height
+      // Vypočítaj proportional height z originálnych rozmerov
       if (data.containerDimensions && data.containerDimensions.originalWidth) {
         canvasWidth = STANDARD_WIDTH;
         const scale = STANDARD_WIDTH / data.containerDimensions.originalWidth;
         canvasHeight = Math.round(data.containerDimensions.originalHeight * scale);
-        canvasHeight = Math.max(600, Math.min(10000, canvasHeight)); // Clamp
+        canvasHeight = Math.max(600, Math.min(10000, canvasHeight));
       } else if (data.containerDimensions) {
-        // Fallback
         canvasWidth = data.containerDimensions.width || STANDARD_WIDTH;
         canvasHeight = data.containerDimensions.height || STANDARD_HEIGHT;
       }
@@ -358,7 +357,7 @@ const TrackingViewer = () => {
       canvas.width = canvasWidth;
       canvas.height = canvasHeight;
 
-      console.log('🎨 Rendering composite heatmap:', {
+      console.log('🎨 Rendering composite heatmap (client-side):', {
         positions: data.aggregatedPositions?.length,
         landmarks: data.landmarks?.length,
         templateUrl: data.componentTemplateUrl,
@@ -366,7 +365,52 @@ const TrackingViewer = () => {
         storageFormat: data.containerDimensions?.storageFormat || 'unknown'
       });
 
-      // ✅ B: Konvertuj percentá na pixely (ak sú uložené ako percentá)
+      // ✅ KROK 1: Načítaj component template ako pozadie
+      let templateLoaded = false;
+      
+      if (data.componentTemplateUrl) {
+        try {
+          templateLoaded = await new Promise((resolve) => {
+            const templateImg = new Image();
+            templateImg.crossOrigin = 'anonymous';
+            
+            templateImg.onload = () => {
+              ctx.drawImage(templateImg, 0, 0, canvasWidth, canvasHeight);
+              console.log('✅ Component template loaded as background');
+              resolve(true);
+            };
+            
+            templateImg.onerror = (error) => {
+              console.error('❌ Failed to load template:', error);
+              resolve(false);
+            };
+            
+            templateImg.src = data.componentTemplateUrl;
+          });
+        } catch (error) {
+          console.error('❌ Template error:', error);
+          templateLoaded = false;
+        }
+      }
+
+      // ✅ Ak template sa nenačítal, použij šedé pozadie
+      if (!templateLoaded) {
+        console.warn('⚠️ No component template, using gray background');
+        ctx.fillStyle = '#f5f5f5';
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+        
+        ctx.fillStyle = '#666666';
+        ctx.font = 'bold 18px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('📊 Composite Heatmap', canvasWidth / 2, 80);
+        
+        ctx.font = '14px Arial';
+        ctx.fillStyle = '#999999';
+        ctx.fillText(`${data.contentId}`, canvasWidth / 2, 110);
+        ctx.fillText('⚠️ Component screenshot not available', canvasWidth / 2, 140);
+      }
+
+      // ✅ KROK 2: Konvertuj percentá na pixely
       let pixelPositions = data.aggregatedPositions;
       let pixelLandmarks = data.landmarks;
 
@@ -377,67 +421,11 @@ const TrackingViewer = () => {
         console.log(`✅ Converted ${pixelPositions.length} positions to pixels`);
       }
 
-      // ✅ 1. Načítaj component template
-      if (data.componentTemplateUrl) {
-        try {
-          await new Promise((resolve) => {
-            const templateImg = new Image();
-            templateImg.crossOrigin = 'anonymous';
-            
-            templateImg.onload = () => {
-              ctx.drawImage(templateImg, 0, 0, canvasWidth, canvasHeight);
-              console.log('✅ Component template loaded');
-              resolve();
-            };
-            
-            templateImg.onerror = (error) => {
-              console.error('❌ Failed to load template:', error);
-              ctx.fillStyle = '#f5f5f5';
-              ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-              
-              ctx.fillStyle = '#999999';
-              ctx.font = '16px Arial';
-              ctx.textAlign = 'center';
-              ctx.fillText('⚠️ Background template not loaded', canvasWidth / 2, canvasHeight / 2 - 20);
-              ctx.font = '14px Arial';
-              ctx.fillText('Showing heatmap overlay only', canvasWidth / 2, canvasHeight / 2 + 10);
-              
-              resolve();
-            };
-            
-            templateImg.src = data.componentTemplateUrl;
-          });
-        } catch (error) {
-          console.error('❌ Template error:', error);
-          ctx.fillStyle = '#f5f5f5';
-          ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-        }
-      } else {
-        console.warn('⚠️ No component template URL available');
-        ctx.fillStyle = '#f5f5f5';
-        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-        
-        ctx.fillStyle = '#666666';
-        ctx.font = 'bold 18px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('📊 Heatmap Data', canvasWidth / 2, 80);
-        
-        ctx.font = '14px Arial';
-        ctx.fillStyle = '#999999';
-        ctx.fillText(`${data.contentId}`, canvasWidth / 2, 110);
-        ctx.fillText(`${pixelPositions?.length || 0} tracking points`, canvasWidth / 2, 140);
-        ctx.fillText(`${data.usersCount} users`, canvasWidth / 2, 170);
-        
-        ctx.fillStyle = '#cccccc';
-        ctx.font = '12px Arial';
-        ctx.fillText('⚠️ Component screenshot not available', canvasWidth / 2, canvasHeight - 40);
-      }
-
-      // ✅ 2. Vykresli heatmap overlay (s pixel pozíciami)
+      // ✅ KROK 3: Vykresli heatmap overlay CLIENT-SIDE
       if (pixelPositions && pixelPositions.length > 0) {
         const aggregated = aggregatePositions(pixelPositions, 10);
         await drawHeatmapOverlay(ctx, aggregated, canvasWidth, canvasHeight);
-        console.log(`✅ Drew heatmap with ${aggregated.length} aggregated points`);
+        console.log(`✅ Drew composite heatmap with ${aggregated.length} aggregated points (CLIENT-SIDE)`);
       } else {
         console.warn('⚠️ No tracking positions to draw');
         
@@ -447,7 +435,7 @@ const TrackingViewer = () => {
         ctx.fillText('⚠️ No tracking data available', canvasWidth / 2, canvasHeight / 2);
       }
 
-      // ✅ 3. Vykresli landmarks (ak je debug mode)
+      // ✅ KROK 4: Vykresli landmarks (ak je debug mode)
       if (showLandmarks && pixelLandmarks && pixelLandmarks.length > 0) {
         drawLandmarkBoundaries(ctx, pixelLandmarks);
       }
@@ -461,10 +449,11 @@ const TrackingViewer = () => {
         usersCount: data.usersCount || 0,
         landmarksCount: pixelLandmarks?.length || 0,
         canvasSize: `${canvasWidth}×${canvasHeight}`,
-        storageFormat: data.containerDimensions?.storageFormat || 'unknown'
+        storageFormat: data.containerDimensions?.storageFormat || 'unknown',
+        renderMode: 'client-side'
       });
 
-      console.log(`✅ Composite heatmap rendered in ${renderTime.toFixed(2)}ms`);
+      console.log(`✅ Composite heatmap rendered CLIENT-SIDE in ${renderTime.toFixed(2)}ms`);
     };
 
     const loadAndRenderHeatmap = async () => {
@@ -503,7 +492,7 @@ const TrackingViewer = () => {
     if (!canvas) return;
 
     const link = document.createElement('a');
-    link.download = `heatmap_${selectedComponent.contentId}_${Date.now()}.png`;
+    link.download = `composite_heatmap_${selectedComponent.contentId}_${Date.now()}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
   };
@@ -594,7 +583,7 @@ const TrackingViewer = () => {
                 🎨 Composite Heatmap
               </h2>
               <SectionSubtitle>
-                Component template (šírka 1920px, dynamická výška) s agregovanou heatmap zo všetkých používateľov
+                Component template (šírka 1920px, dynamická výška) s agregovanou heatmap zo všetkých používateľov (rendered client-side)
               </SectionSubtitle>
               
               {loading ? (
@@ -615,6 +604,7 @@ const TrackingViewer = () => {
                       <div>🎯 Landmarks: {performanceMetrics.landmarksCount}</div>
                       <div>📐 Size: {performanceMetrics.canvasSize}</div>
                       <div>💾 Format: {performanceMetrics.storageFormat}</div>
+                      <div>🖥️ Mode: {performanceMetrics.renderMode}</div>
                     </PerformanceInfo>
                   )}
                   
@@ -629,7 +619,7 @@ const TrackingViewer = () => {
                   
                   <ButtonGroup>
                     <StyledButton variant="success" onClick={handleDownloadHeatmap}>
-                      💾 Stiahnuť Heatmap
+                      💾 Stiahnuť Composite Heatmap
                     </StyledButton>
                     <StyledButton variant="outline" onClick={() => setSelectedComponent(null)}>
                       ← Späť na zoznam
