@@ -1,5 +1,5 @@
 // src/components/admin/TrackingViewer.js
-// FINÁLNA OPRAVENÁ VERZIA - S canvas wait loop
+// FINÁLNA OPRAVENÁ VERZIA - Canvas vždy v DOM
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -328,22 +328,17 @@ const TrackingViewer = () => {
     console.log(`✅ Drew ${landmarks.length} landmark boundaries`);
   };
 
-  // ✅ OPRAVENÁ HLAVNÁ FUNKCIA - S canvas wait loop
+  // ✅ HLAVNÁ FUNKCIA - Renderuj composite heatmap
   useEffect(() => {
     if (!selectedComponent) return;
 
     const renderCompositeHeatmap = async (data) => {
-      // ✅ OPRAVA - Počkaj na canvas (môže byť null pri prvom renderi)
-      let attempts = 0;
-      while (!canvasRef.current && attempts < 10) {
-        console.log(`⏳ Waiting for canvas... attempt ${attempts + 1}/10`);
-        await new Promise(resolve => setTimeout(resolve, 100));
-        attempts++;
-      }
+      // ✅ OPRAVA - Kratší wait (canvas je teraz vždy v DOM)
+      await new Promise(resolve => setTimeout(resolve, 50));
 
       const canvas = canvasRef.current;
       if (!canvas || !data) {
-        console.error('❌ No canvas or data after waiting');
+        console.error('❌ No canvas or data');
         return;
       }
 
@@ -352,7 +347,6 @@ const TrackingViewer = () => {
       const startTime = performance.now();
       const ctx = canvas.getContext('2d', { alpha: false });
       
-      // ✅ DEBUG - Log celé data
       console.log('🔍 DEBUG - Raw data from API:', {
         containerDimensions: data.containerDimensions,
         aggregatedPositions: data.aggregatedPositions?.slice(0, 3),
@@ -361,7 +355,6 @@ const TrackingViewer = () => {
         templateUrl: data.componentTemplateUrl
       });
 
-      // ✅ Zisti template rozmery
       let canvasWidth = STANDARD_WIDTH;
       let canvasHeight = STANDARD_HEIGHT;
 
@@ -401,7 +394,6 @@ const TrackingViewer = () => {
         storageFormat: data.containerDimensions?.storageFormat
       });
 
-      // ✅ KROK 1: Načítaj template
       let templateLoaded = false;
       
       if (data.componentTemplateUrl) {
@@ -434,7 +426,6 @@ const TrackingViewer = () => {
         console.warn('⚠️ No template URL');
       }
 
-      // Fallback pozadie
       if (!templateLoaded) {
         ctx.fillStyle = '#f5f5f5';
         ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -449,7 +440,6 @@ const TrackingViewer = () => {
         ctx.fillText('⚠️ Component screenshot not available', canvasWidth / 2, 140);
       }
 
-      // ✅ KROK 2: Konvertuj pozície
       let pixelPositions = data.aggregatedPositions;
       let pixelLandmarks = data.landmarks;
 
@@ -473,7 +463,6 @@ const TrackingViewer = () => {
         console.warn('⚠️ StorageFormat is NOT percent, using positions as-is');
       }
 
-      // ✅ KROK 3: Vykresli heatmap
       if (pixelPositions && pixelPositions.length > 0) {
         const aggregated = aggregatePositions(pixelPositions, 10);
         
@@ -493,7 +482,6 @@ const TrackingViewer = () => {
         ctx.fillText('⚠️ No tracking data available', canvasWidth / 2, canvasHeight / 2);
       }
 
-      // ✅ KROK 4: Landmarks (debug)
       if (showLandmarks && pixelLandmarks && pixelLandmarks.length > 0) {
         drawLandmarkBoundaries(ctx, pixelLandmarks);
       }
@@ -578,7 +566,7 @@ const TrackingViewer = () => {
           </StyledButton>
         </Header>
 
-        {!selectedComponent ? (
+        {!selectedComponent && (
           <Section>
             <h2 style={{ color: 'inherit', marginBottom: '16px' }}>
               Vyberte komponent na zobrazenie
@@ -603,7 +591,9 @@ const TrackingViewer = () => {
               ))}
             </ComponentGrid>
           </Section>
-        ) : (
+        )}
+
+        {selectedComponent && (
           <>
             <Section>
               <ComponentTitle>
