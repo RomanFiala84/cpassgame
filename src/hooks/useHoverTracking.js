@@ -1,275 +1,201 @@
 // src/hooks/useHoverTracking.js
-// FINÁLNA OPRAVENÁ VERZIA - Page-relative tracking + fixed return values
+// FINÁLNA OPRAVENÁ VERZIA - Page-relative tracking pre full-page template
 
-import { useEffect, useRef, useCallback } from 'react';
-import { saveTrackingWithVisualization, generateAndUploadComponentTemplate } from '../utils/trackingHelpers';
-import { useUserStats } from '../contexts/UserStatsContext';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
-const TRACKING_SAMPLE_INTERVAL = 100;
-const LANDMARK_THRESHOLD = 200;
-
-export const useHoverTracking = (contentId, contentType, containerRef, options = {}) => {
-  const { userId } = useUserStats();
-  
+export const useHoverTracking = (containerRef, contentId, contentType) => {
+  const [isTracking, setIsTracking] = useState(false);
   const mousePositions = useRef([]);
   const startTime = useRef(null);
-  const lastSampleTime = useRef(0);
-  const totalHoverTime = useRef(0);
-  const landmarks = useRef([]);
-  const containerDimensions = useRef(null);
-  const isTracking = useRef(false);
-  const templateGenerated = useRef(false);
+  const lastCaptureTime = useRef(0);
+  const landmarksCache = useRef(null);
 
-  const { 
-    enableTracking = true,
-    detectLandmarks = true,
-    landmarkSelectors = [
-      '[data-landmark]',
-      '[class*="Post"]',
-      'button',
-      'input',
-      '[role="button"]'
-    ]
-  } = options;
+  // ✅ OPRAVENÁ FUNKCIA - Detekcia landmarks s PAGE-RELATIVE pozíciami
+  const detectLandmarks = useCallback(() => {
+    if (!containerRef.current) return [];
 
-  // ✅ Detekuj landmarks s page-relative pozíciami
-  const detectPageLandmarks = useCallback(() => {
-    if (!containerRef.current || !detectLandmarks) return;
-
-    const detectedLandmarks = [];
+    const container = containerRef.current;
     
-    landmarkSelectors.forEach(selector => {
-      const elements = containerRef.current.querySelectorAll(selector);
+    // Nájdi všetky elementy s data-landmark atribútom
+    const landmarkElements = container.querySelectorAll('[data-landmark]');
+    
+    const landmarks = Array.from(landmarkElements).map(el => {
+      const rect = el.getBoundingClientRect();
       
-      elements.forEach((el, index) => {
-        const rect = el.getBoundingClientRect();
-        const landmarkId = el.getAttribute('data-landmark') || 
-                          el.getAttribute('data-testid') || 
-                          `${selector.replace(/[[\]]/g, '')}_${index}`;
-        
-        const pageTop = rect.top + window.scrollY;
-        const pageLeft = rect.left + window.scrollX;
-        
-        detectedLandmarks.push({
-          id: landmarkId,
-          type: el.tagName.toLowerCase(),
-          position: {
-            top: pageTop,
-            left: pageLeft,
-            width: rect.width,
-            height: rect.height
-          }
-        });
-      });
+      // ✅ OPRAVA - Pozícia relatívna k CELEJ STRÁNKE
+      return {
+        id: el.getAttribute('data-landmark-id'),
+        type: el.getAttribute('data-landmark'),
+        position: {
+          top: Math.round(rect.top + window.scrollY),
+          left: Math.round(rect.left + window.scrollX),
+          width: Math.round(rect.width),
+          height: Math.round(rect.height)
+        }
+      };
     });
 
-    landmarks.current = detectedLandmarks;
-    
-    console.log(`🎯 Detected ${detectedLandmarks.length} landmarks (page-relative)`);
-  }, [containerRef, detectLandmarks, landmarkSelectors]);
+    console.log(`🎯 Detected ${landmarks.length} landmarks (page-relative):`, landmarks);
+    return landmarks;
+  }, [containerRef]);
 
-  // ✅ Nájdi nearest landmark
-  const findNearestLandmark = useCallback((pageX, pageY) => {
-    if (landmarks.current.length === 0) return null;
+  // Nájdi najbližší landmark
+  const findNearestLandmark = useCallback((x, y, landmarks) => {
+    if (!landmarks || landmarks.length === 0) return null;
 
     let nearest = null;
-    let minDistance = LANDMARK_THRESHOLD;
+    let minDistance = Infinity;
 
-    landmarks.current.forEach(landmark => {
-      const { top, left, width, height } = landmark.position;
+    landmarks.forEach(landmark => {
+      // Check if point is inside landmark
+      const { left, top, width, height } = landmark.position;
       
-      const landmarkCenterX = left + width / 2;
-      const landmarkCenterY = top + height / 2;
+      if (x >= left && x <= left + width && y >= top && y <= top + height) {
+        // Point is inside this landmark
+        nearest = landmark;
+        return;
+      }
+
+      // Calculate distance to center
+      const centerX = left + width / 2;
+      const centerY = top + height / 2;
       
-      const dx = pageX - landmarkCenterX;
-      const dy = pageY - landmarkCenterY;
-      const distance = Math.sqrt(dx * dx + dy * dy);
+      const distance = Math.sqrt(
+        Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)
+      );
 
       if (distance < minDistance) {
         minDistance = distance;
-        nearest = {
-          id: landmark.id,
-          type: landmark.type,
-          offsetX: pageX - left,
-          offsetY: pageY - top,
-          landmarkPosition: { top, left, width, height }
-        };
+        nearest = landmark;
       }
     });
 
     return nearest;
   }, []);
 
-  // ✅ Record mouse position (PAGE coordinates)
-  const recordMousePosition = useCallback((e) => {
-    if (!isTracking.current || !containerRef.current) return;
+  // ✅ OPRAVENÁ FUNKCIA - Mouse tracking s PAGE coordinates
+  const handleMouseMove = useCallback((e) => {
+    if (!isTracking || !containerRef.current) return;
 
     const now = Date.now();
-    if (now - lastSampleTime.current < TRACKING_SAMPLE_INTERVAL) return;
+    const timeSinceLastCapture = now - lastCaptureTime.current;
+    
+    // Adaptívne FPS (10-30 FPS)
+    const captureInterval = mousePositions.current.length < 100 ? 33 : 100;
+    
+    if (timeSinceLastCapture < captureInterval) return;
 
-    lastSampleTime.current = now;
-
+    // ✅ OPRAVA - Používaj PAGE coordinates (e.pageX, e.pageY)
     const pageX = e.pageX;
     const pageY = e.pageY;
 
+    // Cache landmarks ak ešte nie sú
+    if (!landmarksCache.current) {
+      landmarksCache.current = detectLandmarks();
+    }
+
+    // Nájdi najbližší landmark
+    const nearestLandmark = findNearestLandmark(pageX, pageY, landmarksCache.current);
+
     const position = {
-      x: pageX,
-      y: pageY,
-      timestamp: now
+      x: Math.round(pageX),
+      y: Math.round(pageY),
+      timestamp: now,
     };
 
-    const nearestLandmark = findNearestLandmark(pageX, pageY);
+    // Pridaj landmark info ak existuje
     if (nearestLandmark) {
-      position.nearestLandmark = nearestLandmark;
+      position.nearestLandmark = {
+        id: nearestLandmark.id,
+        type: nearestLandmark.type,
+        offsetX: Math.round(pageX - nearestLandmark.position.left),
+        offsetY: Math.round(pageY - nearestLandmark.position.top),
+        landmarkPosition: nearestLandmark.position
+      };
     }
 
     mousePositions.current.push(position);
+    lastCaptureTime.current = now;
+    
+  }, [isTracking, containerRef, detectLandmarks, findNearestLandmark]);
 
-  }, [containerRef, findNearestLandmark]);
-
-  // ✅ Start tracking
-  const startTracking = useCallback(async () => {
-    if (!enableTracking || isTracking.current) {
-      return;
-    }
-
-    // ✅ OPRAVA - Počkaj na container
-    let attempts = 0;
-    while (!containerRef.current && attempts < 20) {
-      console.log(`⏳ Waiting for container... attempt ${attempts + 1}/20`);
-      await new Promise(resolve => setTimeout(resolve, 100));
-      attempts++;
-    }
-
-    if (!containerRef.current) {
-      console.error('❌ Container not found after waiting');
-      return;
-    }
-
-    console.log('🎬 Starting hover tracking:', { contentId, contentType, userId });
-
+  // Start tracking
+  const startTracking = useCallback(() => {
+    if (isTracking) return;
+    
+    console.log('🖱️ Starting page-relative tracking with landmarks...');
+    
+    mousePositions.current = [];
     startTime.current = Date.now();
-    isTracking.current = true;
+    lastCaptureTime.current = 0;
+    
+    // Detekuj landmarks pri štarte
+    landmarksCache.current = detectLandmarks();
+    
+    setIsTracking(true);
+  }, [isTracking, detectLandmarks]);
 
-    // ✅ Ulož FULL PAGE dimensions
-    containerDimensions.current = {
+  // Stop tracking
+  const stopTracking = useCallback(() => {
+    if (!isTracking) return;
+    
+    const totalTime = Date.now() - (startTime.current || 0);
+    console.log(`🛑 Tracking stopped - ${mousePositions.current.length} positions in ${(totalTime / 1000).toFixed(1)}s`);
+    
+    setIsTracking(false);
+  }, [isTracking]);
+
+  // ✅ OPRAVENÁ FUNKCIA - Get final data s PAGE dimensions
+  const getFinalData = useCallback(() => {
+    const endTime = Date.now();
+    const totalHoverTime = startTime.current ? endTime - startTime.current : 0;
+
+    // ✅ OPRAVA - Ulož FULL PAGE dimensions
+    const containerDimensions = {
       width: document.documentElement.scrollWidth,
       height: document.documentElement.scrollHeight,
-      containerWidth: containerRef.current.scrollWidth,
-      containerHeight: containerRef.current.scrollHeight,
-      containerOffsetTop: containerRef.current.getBoundingClientRect().top + window.scrollY,
-      containerOffsetLeft: containerRef.current.getBoundingClientRect().left + window.scrollX
+      containerWidth: containerRef.current?.scrollWidth,
+      containerHeight: containerRef.current?.scrollHeight,
+      containerOffsetTop: containerRef.current ? 
+        containerRef.current.getBoundingClientRect().top + window.scrollY : 0,
+      containerOffsetLeft: containerRef.current ? 
+        containerRef.current.getBoundingClientRect().left + window.scrollX : 0
     };
 
-    console.log('📐 Page dimensions:', containerDimensions.current);
+    console.log('📐 Final data dimensions:', containerDimensions);
 
-    detectPageLandmarks();
-
-    // Generate template
-    if (!templateGenerated.current) {
-      try {
-        console.log('📸 Generating component template...');
-        await generateAndUploadComponentTemplate(containerRef.current, contentId, contentType);
-        templateGenerated.current = true;
-        console.log('✅ Template generated successfully');
-      } catch (error) {
-        console.error('❌ Template generation failed:', error);
-      }
-    }
-
-    document.addEventListener('mousemove', recordMousePosition);
-    console.log('✅ Tracking started');
-
-  }, [enableTracking, containerRef, contentId, contentType, userId, detectPageLandmarks, recordMousePosition]);
-
-  // ✅ Stop tracking
-  const stopTracking = useCallback(async () => {
-    if (!isTracking.current) {
-      console.warn('⚠️ Tracking already stopped');
-      return;
-    }
-
-    console.log('🛑 Stopping tracking...');
-    
-    document.removeEventListener('mousemove', recordMousePosition);
-    isTracking.current = false;
-
-    const endTime = Date.now();
-    totalHoverTime.current = endTime - startTime.current;
-
-    if (mousePositions.current.length === 0) {
-      console.warn('⚠️ No mouse positions recorded');
-      return;
-    }
-
-    const trackingData = {
-      userId,
+    return {
+      userId: null, // Bude nastavené v komponente
       contentId,
       contentType,
       mousePositions: mousePositions.current,
-      landmarks: landmarks.current,
-      containerDimensions: containerDimensions.current,
-      totalHoverTime: totalHoverTime.current,
-      timestamp: new Date().toISOString()
+      totalHoverTime,
+      hoverStartTime: startTime.current,
+      containerDimensions,
+      landmarks: landmarksCache.current || [],
+      timestamp: new Date().toISOString(),
+      isMobile: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
     };
+  }, [contentId, contentType, containerRef]);
 
-    console.log('💾 Saving tracking data:', {
-      positions: mousePositions.current.length,
-      landmarks: landmarks.current.length,
-      time: `${(totalHoverTime.current / 1000).toFixed(1)}s`
-    });
-
-    try {
-      await saveTrackingWithVisualization(trackingData, containerRef.current);
-      console.log('✅ Tracking data saved successfully');
-    } catch (error) {
-      console.error('❌ Failed to save tracking data:', error);
-    }
-
-    // Reset
-    mousePositions.current = [];
-    landmarks.current = [];
-    startTime.current = null;
-    totalHoverTime.current = 0;
-
-  }, [userId, contentId, contentType, containerRef, recordMousePosition]);
-
-  // Lifecycle
+  // Event listeners
   useEffect(() => {
-    if (!enableTracking) return;
+    if (!isTracking) return;
 
-    startTracking();
+    // ✅ OPRAVA - Listener na DOCUMENT (nie na container)
+    document.addEventListener('mousemove', handleMouseMove, { passive: true });
 
     return () => {
-      if (isTracking.current) {
-        stopTracking();
-      }
+      document.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [enableTracking, startTracking, stopTracking]);
+  }, [isTracking, handleMouseMove]);
 
-  // Window unload
-  useEffect(() => {
-    const handleUnload = () => {
-      if (isTracking.current) {
-        stopTracking();
-      }
-    };
-
-    window.addEventListener('beforeunload', handleUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleUnload);
-    };
-  }, [stopTracking]);
-
-  // ✅ OPRAVA - Return správne hodnoty
   return {
+    isTracking,
     startTracking,
     stopTracking,
-    isTracking: isTracking.current,
-    positionsCount: mousePositions.current.length,
-    landmarksCount: landmarks.current.length,
-    totalHoverTime: totalHoverTime.current
+    getFinalData,
+    positionsCount: mousePositions.current.length
   };
 };
 
