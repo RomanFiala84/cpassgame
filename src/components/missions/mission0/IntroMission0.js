@@ -35,10 +35,10 @@ const IntroMission0 = () => {
   return (
     <Layout>
       <Container>
-        <Title>🕵️ Špeciálna Agentúra</Title>
+        <Title>🕵️ Špeciálny Agent</Title>
         <Text>
-          [translate:Vstúpte do kože špeciálneho agenta a pomôžte nám odhaliť pravdu.]  
-          [translate:Vyplňte demografický dotazník a začnite misiu.]
+          [Vstúpte do kože špeciálneho agenta a pomôžte nám odhaliť pravdu.]  
+          [Vyplňte demografický dotazník a začnite misiu.]
         </Text>
         <StyledButton accent onClick={handleContinue}>
           Pokračovať na Questionnaire 0

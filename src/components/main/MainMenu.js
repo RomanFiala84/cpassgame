@@ -576,16 +576,16 @@ const MainMenu = () => {
 
   // ✅ NOVÝ - Príbeh a inštrukcie pre DetectiveTip
   const detectiveStory = `
-    <p>Vitajte, <strong>detektíve</strong>! 🕵️</p>
+    <p>Vitajte, <strong>kolega</strong>! 🕵️</p>
     
-    <p>Svet je plný <em>tajomstiev a záhad</em>, ktoré čakajú na odhalenie. Vaša úloha je preskúmať informácie, rozlíšiť pravdu od lži a stať sa majstrom v <strong>kritickém myslení</strong>.</p>
+    <p>Svet je plný <em>tajomstiev a záhad</em>, ktoré čakajú na odhalenie. Vaša úloha je preskúmať informácie, rozlíšiť pravdu od klamstiev a stať sa majstrom v <strong>kritickém myslení</strong>.</p>
     
     <p><strong>Ako to funguje?</strong></p>
     <p>• Dokončením každej misie získate <strong>25 bodov</strong><br/>
     • Zdieľajte svoj kód s priateľmi a získajte <strong>+10 bodov</strong> za každého<br/>
     • Odomknite ďalšie misie a posúvajte sa vyššie v rankingu</p>
     
-    <p>Pripravení? <strong>Začnime pátrať!</strong> 🔍</p>
+    <p>Pripravený? <strong>Začnime pátrať!</strong> 🔍</p>
   `;
 
   return (

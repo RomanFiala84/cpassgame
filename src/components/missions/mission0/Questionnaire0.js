@@ -88,10 +88,10 @@ const QUESTIONS = [
 
 // ✅ Tipy od detektíva - jeden všeobecný tip pre celý dotazník
 const DETECTIVE_TIP = `
-  🎯 <strong>Vitajte v prvom dotazníku, detektíve!</strong><br/><br/>
+  🎯 <strong>Vitajte v prvom dotazníku, detektív!</strong><br/><br/>
   Tento dotazník nám pomôže lepšie spoznať vás a prispôsobiť ďalšie misie.<br/><br/>
   <em>Dôležité:</em> Nie sú žiadne správne alebo nesprávne odpovede - odpovedajte podľa 
-  vášho najlepšieho vedomia a buďte úprimní. Všetky údaje zostanú <strong>anonymné</strong> 
+  vášho najlepšieho vedomia a buďte úprimný. Všetky údaje zostanú <strong>anonymné</strong> 
   a budú použité len na výskumné účely. 🔍
 `;
 

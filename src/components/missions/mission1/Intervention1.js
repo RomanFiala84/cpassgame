@@ -149,10 +149,9 @@ const Intervention1 = () => {
           </TimeTracker>
           
           <InterventionContent>
-            <h3>Čo je debunking?</h3>
+            <h3>Test</h3>
             <p>
-              Debunking je proces vyvracovania falošných informácií pomocou faktov a dôkazov.
-              Je to účinná metóda boja proti dezinformáciám.
+              „Každý príspevok stojí na nejakých základoch. Môžeme rozlíšiť dva typy: A) Stabilné základy - Text obsahuje konkrétne mená, dátumy, zdroje alebo odkazy na štúdie. Výhodou je že sa dá presne dohľadať, odkiaľ informácia pochádza, a vieme si tak informáciu sami overiť. B) Nestabilné základy - Text obsahuje len frázy bez špecifikácie, zdrojov a sprostredkovaná informácia je často zavádzajúca a vyvoláva nátlak. Nevýhodou je že sa nemáme čoho chytiť, nevieme si informáciu overiť. Skúsme sa spätne pozrieť na príspevky, ktoré si videl. Boli postavené skôr na stabilných alebo nestabilných základoch?"
             </p>
             
             <ExampleBox>
@@ -161,7 +160,7 @@ const Intervention1 = () => {
                 <strong>Mýtus:</strong> "Vakcíny obsahujú čipy na sledovanie."
               </p>
               <p>
-                <strong>Fakt:</strong> Vakcíny obsahujú biologické látky (antigény, adjuvansy) 
+                <strong>Fakt:</strong> Vakcíny obsahujú biologické látky 
                 a nemôžu obsahovať elektronické čipy. Čip by bol viditeľný voľným okom 
                 a vyžadoval by by zdroj energie.
               </p>
