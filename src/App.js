@@ -1,5 +1,5 @@
 // src/App.js
-// FINÁLNA OPRAVENÁ VERZIA - S TrackingViewer route
+// FINÁLNA OPRAVENÁ VERZIA - S Stroop Tests Integration
 
 import React from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
@@ -23,7 +23,7 @@ import MainMenu from './components/main/MainMenu';
 // ADMIN COMPONENTS
 // ═══════════════════════════════════════════════════════════
 import AdminPanel from './components/admin/AdminPanel';
-import TrackingViewer from './components/admin/TrackingViewer'; // ✅ PRIDANÉ
+import TrackingViewer from './components/admin/TrackingViewer';
 
 // ═══════════════════════════════════════════════════════════
 // SPECIAL AGENT MISSION (Mission 0)
@@ -39,6 +39,7 @@ import IntroMission1 from './components/missions/mission1/IntroMission1';
 import Questionnaire1A from './components/missions/mission1/Questionnaire1A';
 import Prevention1 from './components/missions/mission1/Prevention1';
 import PostsA1 from './components/missions/mission1/PostsA1';
+import StroopTest1 from './components/activities/StroopTest1'; // ✅ PRIDANÉ
 import Intervention1 from './components/missions/mission1/Intervention1';
 import PostsB1 from './components/missions/mission1/PostsB1';
 import Questionnaire1B from './components/missions/mission1/Questionnaire1B';
@@ -51,6 +52,7 @@ import IntroMission2 from './components/missions/mission2/IntroMission2';
 import Questionnaire2A from './components/missions/mission2/Questionnaire2A';
 import Prevention2 from './components/missions/mission2/Prevention2';
 import PostsA2 from './components/missions/mission2/PostsA2';
+import StroopTest2 from './components/activities/StroopTest2'; // ✅ PRIDANÉ
 import Intervention2 from './components/missions/mission2/Intervention2';
 import PostsB2 from './components/missions/mission2/PostsB2';
 import Questionnaire2B from './components/missions/mission2/Questionnaire2B';
@@ -63,6 +65,7 @@ import IntroMission3 from './components/missions/mission3/IntroMission3';
 import Questionnaire3A from './components/missions/mission3/Questionnaire3A';
 import Prevention3 from './components/missions/mission3/Prevention3';
 import PostsA3 from './components/missions/mission3/PostsA3';
+import StroopTest3 from './components/activities/StroopTest3'; // ✅ PRIDANÉ
 import Intervention3 from './components/missions/mission3/Intervention3';
 import PostsB3 from './components/missions/mission3/PostsB3';
 import Questionnaire3B from './components/missions/mission3/Questionnaire3B';
@@ -157,7 +160,6 @@ function AppContent() {
             ADMIN
             ═══════════════════════════════════════════════════════════ */}
         <Route path="/admin" element={<PageTransition><AdminPanel /></PageTransition>} />
-        {/* ✅ NOVÁ ROUTE PRE TRACKING VIEWER */}
         <Route path="/admin/tracking" element={<PageTransition><TrackingViewer /></PageTransition>} />
 
         {/* ═══════════════════════════════════════════════════════════
@@ -168,36 +170,66 @@ function AppContent() {
         <Route path="/mission0/outro" element={<PageTransition><OutroMission0 /></PageTransition>} />
 
         {/* ═══════════════════════════════════════════════════════════
-            MISSION 1
+            MISSION 1 - DETEKTÍVNA ŠIFRA
+            
+            FLOW PRI SKUPINE S INTERVENCIOU (group='1'):
+            PostsA1 → StroopTest1 → Intervention1 → PostsB1
+            
+            FLOW PRI SKUPINÁCH BEZ INTERVENCIE (group='0' | '2'):
+            PostsA1 → StroopTest1 → PostsB1
             ═══════════════════════════════════════════════════════════ */}
         <Route path="/mission1/intro" element={<PageTransition><IntroMission1 /></PageTransition>} />
         <Route path="/mission1/questionnaire1a" element={<PageTransition><Questionnaire1A /></PageTransition>} />
         <Route path="/mission1/prevention" element={<PageTransition><Prevention1 /></PageTransition>} />
         <Route path="/mission1/postsa" element={<PageTransition><PostsA1 /></PageTransition>} />
+        
+        {/* ✅ STROOP TEST MISSION 1 - Tajná šifra s detektívom */}
+        <Route path="/mission1/stroop-test" element={<PageTransition><StroopTest1 /></PageTransition>} />
+        
         <Route path="/mission1/intervention" element={<PageTransition><Intervention1 /></PageTransition>} />
         <Route path="/mission1/postsb" element={<PageTransition><PostsB1 /></PageTransition>} />
         <Route path="/mission1/questionnaire1b" element={<PageTransition><Questionnaire1B /></PageTransition>} />
         <Route path="/mission1/outro" element={<PageTransition><OutroMission1 /></PageTransition>} />
 
         {/* ═══════════════════════════════════════════════════════════
-            MISSION 2
+            MISSION 2 - DETEKTÍVNA ŠIFRA
+            
+            FLOW PRI SKUPINE S INTERVENCIOU (group='1'):
+            PostsA2 → StroopTest2 → Intervention2 → PostsB2
+            
+            FLOW PRI SKUPINÁCH BEZ INTERVENCIE (group='0' | '2'):
+            PostsA2 → StroopTest2 → PostsB2
             ═══════════════════════════════════════════════════════════ */}
         <Route path="/mission2/intro" element={<PageTransition><IntroMission2 /></PageTransition>} />
         <Route path="/mission2/questionnaire2a" element={<PageTransition><Questionnaire2A /></PageTransition>} />
         <Route path="/mission2/prevention" element={<PageTransition><Prevention2 /></PageTransition>} />
         <Route path="/mission2/postsa" element={<PageTransition><PostsA2 /></PageTransition>} />
+        
+        {/* ✅ STROOP TEST MISSION 2 - Tajná šifra s detektívom */}
+        <Route path="/mission2/stroop-test" element={<PageTransition><StroopTest2 /></PageTransition>} />
+        
         <Route path="/mission2/intervention" element={<PageTransition><Intervention2 /></PageTransition>} />
         <Route path="/mission2/postsb" element={<PageTransition><PostsB2 /></PageTransition>} />
         <Route path="/mission2/questionnaire2b" element={<PageTransition><Questionnaire2B /></PageTransition>} />
         <Route path="/mission2/outro" element={<PageTransition><OutroMission2 /></PageTransition>} />
 
         {/* ═══════════════════════════════════════════════════════════
-            MISSION 3
+            MISSION 3 - DETEKTÍVNA ŠIFRA
+            
+            FLOW PRI GRUPPE S INTERVENCIOU (group='1'):
+            PostsA3 → StroopTest3 → Intervention3 → PostsB3
+            
+            FLOW PRI SKUPINÁCH BEZ INTERVENCIE (group='0' | '2'):
+            PostsA3 → StroopTest3 → PostsB3
             ═══════════════════════════════════════════════════════════ */}
         <Route path="/mission3/intro" element={<PageTransition><IntroMission3 /></PageTransition>} />
         <Route path="/mission3/questionnaire3a" element={<PageTransition><Questionnaire3A /></PageTransition>} />
         <Route path="/mission3/prevention" element={<PageTransition><Prevention3 /></PageTransition>} />
         <Route path="/mission3/postsa" element={<PageTransition><PostsA3 /></PageTransition>} />
+        
+        {/* ✅ STROOP TEST MISSION 3 - Tajná šifra s detektívom */}
+        <Route path="/mission3/stroop-test" element={<PageTransition><StroopTest3 /></PageTransition>} />
+        
         <Route path="/mission3/intervention" element={<PageTransition><Intervention3 /></PageTransition>} />
         <Route path="/mission3/postsb" element={<PageTransition><PostsB3 /></PageTransition>} />
         <Route path="/mission3/questionnaire3b" element={<PageTransition><Questionnaire3B /></PageTransition>} />
