@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useUserStats } from '../../contexts/UserStatsContext';
 
 // ═══════════════════════════════════════════════════════════════════════
-// SIDEBAR WRAPPER - Slide-in/out animácia
+// SIDEBAR WRAPPER
 // ═══════════════════════════════════════════════════════════════════════
 
 const Wrapper = styled.div`
@@ -11,29 +11,28 @@ const Wrapper = styled.div`
   top: 0;
   left: 0;
   height: 100vh;
-  width: ${p => p.isOpen ? '220px' : '60px'};
+  width: ${p => p.isOpen ? '140px' : '0'};
   background: ${p => p.theme.CARD_BACKGROUND};
-  border-right: 2px solid ${p => p.theme.ACCENT_COLOR};
+  border-right: ${p => p.isOpen ? `2px solid ${p.theme.ACCENT_COLOR}` : 'none'};
   box-shadow: ${p => p.isOpen ? '4px 0 16px rgba(0,0,0,0.3)' : 'none'};
   z-index: 1300;
-  padding: ${p => p.isOpen ? '16px' : '8px'};
+  padding: ${p => p.isOpen ? '16px 8px' : '0'};
   display: flex;
   flex-direction: column;
-  gap: ${p => p.isOpen ? '16px' : '8px'};
+  gap: ${p => p.isOpen ? '12px' : '0'};
   overflow-y: auto;
   transition: width 0.3s ease, padding 0.3s ease, box-shadow 0.3s ease;
 
-  /* MOBILE */
   @media (max-width: 768px) {
-    width: ${p => p.isOpen ? '200px' : '50px'};
-    padding: ${p => p.isOpen ? '12px' : '6px'};
-    gap: ${p => p.isOpen ? '12px' : '6px'};
+    width: ${p => p.isOpen ? '130px' : '0'};
+    padding: ${p => p.isOpen ? '12px 6px' : '0'};
+    gap: ${p => p.isOpen ? '10px' : '0'};
   }
 
   @media (max-width: 480px) {
-    width: ${p => p.isOpen ? '180px' : '45px'};
-    padding: ${p => p.isOpen ? '10px' : '5px'};
-    gap: ${p => p.isOpen ? '10px' : '5px'};
+    width: ${p => p.isOpen ? '120px' : '0'};
+    padding: ${p => p.isOpen ? '10px 5px' : '0'};
+    gap: ${p => p.isOpen ? '8px' : '0'};
   }
 `;
 
@@ -43,7 +42,7 @@ const Wrapper = styled.div`
 
 const ToggleButton = styled.button`
   position: fixed;
-  left: ${p => p.isOpen ? '220px' : '60px'};
+  left: ${p => p.isOpen ? '140px' : '0'};
   top: 16px;
   width: 44px;
   height: 44px;
@@ -69,14 +68,14 @@ const ToggleButton = styled.button`
   }
 
   @media (max-width: 768px) {
-    left: ${p => p.isOpen ? '200px' : '50px'};
+    left: ${p => p.isOpen ? '130px' : '0'};
     width: 40px;
     height: 40px;
     font-size: 18px;
   }
 
   @media (max-width: 480px) {
-    left: ${p => p.isOpen ? '180px' : '45px'};
+    left: ${p => p.isOpen ? '120px' : '0'};
     width: 36px;
     height: 36px;
     font-size: 16px;
@@ -84,43 +83,104 @@ const ToggleButton = styled.button`
 `;
 
 // ═══════════════════════════════════════════════════════════════════════
-// OVERLAY NA MOBILE
+// MINI VERSION - Vedľa toggle buttonu
 // ═══════════════════════════════════════════════════════════════════════
 
-const SidebarOverlay = styled.div`
-  display: none;
+const MiniVersion = styled.div`
   position: fixed;
-  top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1250;
-  opacity: ${p => p.isOpen ? '1' : '0'};
-  pointer-events: ${p => p.isOpen ? 'auto' : 'none'};
-  transition: opacity 0.3s ease;
+  top: 16px;
+  width: ${p => !p.isOpen ? 'auto' : '0'};
+  height: ${p => !p.isOpen ? '44px' : '0'};
+  display: ${p => !p.isOpen ? 'flex' : 'none'};
+  align-items: center;
+  gap: 6px;
+  padding: ${p => !p.isOpen ? '0 12px 0 0' : '0'};
+  background: transparent;
+  pointer-events: ${p => !p.isOpen ? 'auto' : 'none'};
+  z-index: 1299;
+  transition: all 0.3s ease;
+  margin-left: 52px;
 
   @media (max-width: 768px) {
-    display: block;
+    margin-left: 48px;
+  }
+
+  @media (max-width: 480px) {
+    margin-left: 44px;
+  }
+`;
+
+const MiniIcon = styled.div`
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, 
+    ${p => p.theme.ACCENT_COLOR}, 
+    ${p => p.theme.ACCENT_COLOR_2}
+  );
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  box-shadow: 0 2px 8px ${p => p.theme.ACCENT_COLOR}66;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+
+  @media (max-width: 480px) {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+`;
+
+const MiniInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: fit-content;
+`;
+
+const MiniLabel = styled.div`
+  font-size: 8px;
+  font-weight: 600;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  text-transform: uppercase;
+`;
+
+const MiniValue = styled.div`
+  font-size: 14px;
+  font-weight: 700;
+  color: ${p => p.theme.ACCENT_COLOR};
+
+  @media (max-width: 480px) {
+    font-size: 12px;
   }
 `;
 
 // ═══════════════════════════════════════════════════════════════════════
-// CONTENT
+// SIDEBAR CONTENT
 // ═══════════════════════════════════════════════════════════════════════
 
 const SidebarContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${p => p.isOpen ? '16px' : '12px'};
+  gap: 12px;
   transition: gap 0.3s ease;
 
   @media (max-width: 768px) {
-    gap: ${p => p.isOpen ? '12px' : '10px'};
+    gap: 10px;
   }
 
   @media (max-width: 480px) {
-    gap: ${p => p.isOpen ? '10px' : '8px'};
+    gap: 8px;
   }
 `;
 
@@ -130,19 +190,28 @@ const SidebarContent = styled.div`
 
 const LevelSection = styled.div`
   display: flex;
-  flex-direction: ${p => p.isOpen ? 'column' : 'column'};
+  flex-direction: column;
   align-items: center;
-  gap: ${p => p.isOpen ? '8px' : '4px'};
-  padding: ${p => p.isOpen ? '12px' : '8px'};
-  background: ${p => !p.isOpen ? p.theme.SECONDARY_BACKGROUND : 'transparent'};
-  border: ${p => !p.isOpen ? `1px solid ${p.theme.BORDER_COLOR}44` : 'none'};
+  gap: 6px;
+  padding: 10px;
+  background: ${p => p.theme.SECONDARY_BACKGROUND};
+  border: 1px solid ${p => p.theme.BORDER_COLOR}44;
   border-radius: 8px;
-  transition: all 0.3s ease;
+
+  @media (max-width: 768px) {
+    padding: 8px;
+    gap: 4px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 6px;
+    gap: 3px;
+  }
 `;
 
 const LevelIcon = styled.div`
-  width: ${p => p.isOpen ? '56px' : '44px'};
-  height: ${p => p.isOpen ? '56px' : '44px'};
+  width: 48px;
+  height: 48px;
   background: linear-gradient(135deg, 
     ${p => p.theme.ACCENT_COLOR}, 
     ${p => p.theme.ACCENT_COLOR_2}
@@ -151,124 +220,118 @@ const LevelIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: ${p => p.isOpen ? '32px' : '24px'};
+  font-size: 28px;
   font-weight: 700;
   color: white;
   box-shadow: 0 4px 12px ${p => p.theme.ACCENT_COLOR}66;
   flex-shrink: 0;
-  transition: width 0.3s ease, height 0.3s ease, font-size 0.3s ease;
 
   @media (max-width: 768px) {
-    width: ${p => p.isOpen ? '48px' : '40px'};
-    height: ${p => p.isOpen ? '48px' : '40px'};
-    font-size: ${p => p.isOpen ? '24px' : '20px'};
+    width: 44px;
+    height: 44px;
+    font-size: 24px;
   }
 
   @media (max-width: 480px) {
-    width: ${p => p.isOpen ? '40px' : '36px'};
-    height: ${p => p.isOpen ? '40px' : '36px'};
-    font-size: ${p => p.isOpen ? '20px' : '18px'};
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
   }
 `;
 
 const LevelInfo = styled.div`
-  display: ${p => p.isOpen ? 'flex' : 'none'};
+  display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   width: 100%;
 `;
 
 const LevelLabel = styled.div`
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.3px;
+
+  @media (max-width: 480px) {
+    font-size: 8px;
+  }
 `;
 
 const LevelValue = styled.div`
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
 
   @media (max-width: 480px) {
-    font-size: 14px;
+    font-size: 12px;
   }
 `;
 
 // ═══════════════════════════════════════════════════════════════════════
-// STATS SECTION
+// STATS
 // ═══════════════════════════════════════════════════════════════════════
 
-const StatsSection = styled.div`
-  display: ${p => p.isOpen ? 'grid' : 'flex'};
-  grid-template-columns: ${p => p.isOpen ? '1fr 1fr' : 'auto'};
-  flex-direction: ${p => !p.isOpen ? 'column' : 'row'};
-  gap: ${p => p.isOpen ? '8px' : '6px'};
-  transition: all 0.3s ease;
-`;
-
-const StatCard = styled.div`
+const StatItem = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: ${p => p.isOpen ? '4px' : '2px'};
-  padding: ${p => p.isOpen ? '10px' : '6px'};
+  gap: 3px;
+  padding: 8px;
   background: ${p => p.theme.SECONDARY_BACKGROUND};
   border: 1px solid ${p => p.theme.BORDER_COLOR}44;
   border-radius: 6px;
-  transition: all 0.3s ease;
 
   @media (max-width: 480px) {
-    padding: ${p => p.isOpen ? '8px' : '5px'};
+    padding: 6px;
+    gap: 2px;
   }
 `;
 
 const StatLabel = styled.div`
-  font-size: ${p => p.isOpen ? '9px' : '7px'};
+  font-size: 8px;
   font-weight: 600;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   text-transform: uppercase;
   letter-spacing: 0.2px;
-  display: ${p => p.isOpen ? 'block' : 'none'};
-  transition: display 0.3s ease;
+
+  @media (max-width: 480px) {
+    font-size: 7px;
+  }
 `;
 
 const StatValue = styled.div`
-  font-size: ${p => {
-    if (p.$large) return p.isOpen ? '14px' : '12px';
-    return p.isOpen ? '12px' : '10px';
-  }};
+  font-size: ${p => p.$large ? '14px' : '12px'};
   font-weight: 700;
   color: ${p => p.$highlight ? p.theme.ACCENT_COLOR : p.theme.PRIMARY_TEXT_COLOR};
-  transition: font-size 0.3s ease;
 
   @media (max-width: 480px) {
-    font-size: ${p => {
-      if (p.$large) return p.isOpen ? '12px' : '10px';
-      return p.isOpen ? '10px' : '9px';
-    }};
+    font-size: ${p => p.$large ? '12px' : '10px'};
   }
 `;
 
 // ═══════════════════════════════════════════════════════════════════════
-// PROGRESS SECTION
+// PROGRESS
 // ═══════════════════════════════════════════════════════════════════════
 
 const ProgressSection = styled.div`
-  display: ${p => p.isOpen ? 'flex' : 'none'};
+  display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 10px;
+  gap: 6px;
+  padding: 8px;
   background: ${p => p.theme.SECONDARY_BACKGROUND};
   border: 1px solid ${p => p.theme.BORDER_COLOR}44;
   border-radius: 6px;
-  transition: display 0.3s ease;
+
+  @media (max-width: 480px) {
+    padding: 6px;
+    gap: 4px;
+  }
 `;
 
 const ProgressLabel = styled.div`
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 600;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   text-transform: uppercase;
@@ -296,8 +359,9 @@ const ProgressBar = styled.div`
 const ProgressInfo = styled.div`
   display: flex;
   justify-content: space-between;
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 600;
+  gap: 4px;
 `;
 
 const ProgressText = styled.div`
@@ -306,6 +370,28 @@ const ProgressText = styled.div`
 
 const ProgressPercentage = styled.div`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+`;
+
+// ═══════════════════════════════════════════════════════════════════════
+// OVERLAY NA MOBILE
+// ═══════════════════════════════════════════════════════════════════════
+
+const SidebarOverlay = styled.div`
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1250;
+  opacity: ${p => p.isOpen ? '1' : '0'};
+  pointer-events: ${p => p.isOpen ? 'auto' : 'none'};
+  transition: opacity 0.3s ease;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
 `;
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -338,46 +424,53 @@ const LevelDisplay = () => {
         {isOpen ? '◀' : '▶'}
       </ToggleButton>
 
+      {/* MINI VERSION - Vedľa buttonu keď je zatvorený */}
+      <MiniVersion isOpen={isOpen}>
+        <MiniIcon>{level}</MiniIcon>
+        <MiniInfo>
+          <MiniLabel>Level</MiniLabel>
+          <MiniValue>{mission}/100</MiniValue>
+        </MiniInfo>
+      </MiniVersion>
+
       {/* OVERLAY NA MOBILE */}
       <SidebarOverlay isOpen={isOpen} onClick={closeSidebar} />
 
-      {/* SIDEBAR */}
+      {/* SIDEBAR - OTVORENÝ */}
       <Wrapper isOpen={isOpen}>
-        <SidebarContent isOpen={isOpen}>
-          {/* Level - Vždy viditeľné */}
-          <LevelSection isOpen={isOpen}>
-            <LevelIcon isOpen={isOpen}>{level}</LevelIcon>
-            <LevelInfo isOpen={isOpen}>
+        <SidebarContent>
+          {/* Level */}
+          <LevelSection>
+            <LevelIcon>{level}</LevelIcon>
+            <LevelInfo>
               <LevelLabel>Level</LevelLabel>
               <LevelValue>Detektív</LevelValue>
             </LevelInfo>
           </LevelSection>
 
-          {/* Stats - Skryté keď je sidebar zatvorený */}
-          <StatsSection isOpen={isOpen}>
-            <StatCard>
-              <StatLabel isOpen={isOpen}>Misie</StatLabel>
-              <StatValue isOpen={isOpen} $highlight>{mission}</StatValue>
-            </StatCard>
+          {/* Stats - Všetko pod sebou */}
+          <StatItem>
+            <StatLabel>Misie</StatLabel>
+            <StatValue $highlight>{mission}</StatValue>
+          </StatItem>
 
-            <StatCard>
-              <StatLabel isOpen={isOpen}>Bonus</StatLabel>
-              <StatValue isOpen={isOpen}>{bonus}</StatValue>
-            </StatCard>
+          <StatItem>
+            <StatLabel>Bonus</StatLabel>
+            <StatValue>{bonus}</StatValue>
+          </StatItem>
 
-            <StatCard>
-              <StatLabel isOpen={isOpen}>Referrals</StatLabel>
-              <StatValue isOpen={isOpen}>{referrals}</StatValue>
-            </StatCard>
+          <StatItem>
+            <StatLabel>Referrals</StatLabel>
+            <StatValue>{referrals}</StatValue>
+          </StatItem>
 
-            <StatCard>
-              <StatLabel isOpen={isOpen}>Spolu</StatLabel>
-              <StatValue isOpen={isOpen} $large $highlight>{total}</StatValue>
-            </StatCard>
-          </StatsSection>
+          <StatItem>
+            <StatLabel>Spolu</StatLabel>
+            <StatValue $large $highlight>{total}</StatValue>
+          </StatItem>
 
-          {/* Progress - Skryté keď je sidebar zatvorený */}
-          <ProgressSection isOpen={isOpen}>
+          {/* Progress */}
+          <ProgressSection>
             <ProgressLabel>Pokrok</ProgressLabel>
             <ProgressBarContainer>
               <ProgressBar $progress={progress} />
