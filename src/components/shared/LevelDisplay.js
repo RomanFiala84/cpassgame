@@ -25,12 +25,12 @@ const Wrapper = styled.div`
     gap: 7px;
   }
 
-  /* TABLET - Kompaktnejší layout */
+  /* TABLET - Kompaktnejší layout, presunúť VPRAVO */
   @media (max-width: 768px) {
     position: fixed;
     top: 12px;
-    left: 12px;
-    right: auto;
+    right: 12px;
+    left: auto;
     display: grid;
     grid-template-columns: auto 1fr;
     grid-template-rows: auto auto auto auto;
@@ -39,22 +39,30 @@ const Wrapper = styled.div`
     max-width: calc(100vw - 24px);
   }
 
-  /* MOBILE (landscape) - Horizontal layout */
-  @media (max-height: 600px) and (orientation: landscape) {
-    top: 8px;
-    left: 8px;
-    padding: 8px;
-    gap: 6px;
-    grid-template-columns: auto auto auto auto auto;
-    grid-template-rows: auto;
+  /* MOBILE (portrait) - Vertikálny kompaktný layout */
+  @media (max-width: 480px) {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    left: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 8px;
+    max-width: 130px;
   }
 
-  /* MOBILE (portrait) - Zmenší sa ešte viac */
-  @media (max-width: 480px) {
+  /* MOBILE (landscape) - Horizontal layout */
+  @media (max-height: 550px) and (orientation: landscape) {
     top: 8px;
-    left: 8px;
+    right: 8px;
+    left: auto;
     padding: 8px;
     gap: 6px;
+    display: grid;
+    grid-template-columns: auto auto auto auto auto;
+    grid-template-rows: auto;
+    max-width: calc(100vw - 16px);
   }
 `;
 
@@ -76,12 +84,20 @@ const LevelSection = styled.div`
     gap: 4px;
   }
 
-  @media (max-height: 600px) and (orientation: landscape) {
+  @media (max-width: 480px) {
     flex-direction: row;
     gap: 8px;
+    padding-bottom: 0;
+    border-bottom: none;
+    border-right: none;
+  }
+
+  @media (max-height: 550px) and (orientation: landscape) {
+    flex-direction: row;
+    gap: 6px;
     border-right: 1px solid ${p => p.theme.BORDER_COLOR};
     border-bottom: none;
-    padding-right: 10px;
+    padding-right: 8px;
     padding-bottom: 0;
   }
 `;
@@ -110,12 +126,12 @@ const LevelIcon = styled.div`
   }
 
   @media (max-width: 480px) {
-    width: 38px;
-    height: 38px;
-    font-size: 20px;
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
   }
 
-  @media (max-height: 600px) and (orientation: landscape) {
+  @media (max-height: 550px) and (orientation: landscape) {
     width: 36px;
     height: 36px;
     font-size: 18px;
@@ -127,6 +143,10 @@ const LevelInfo = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 2px;
+
+  @media (max-width: 480px) {
+    gap: 1px;
+  }
 `;
 
 const LevelLabel = styled.div`
@@ -141,8 +161,14 @@ const LevelLabel = styled.div`
     font-size: 8px;
   }
 
-  @media (max-height: 600px) and (orientation: landscape) {
+  @media (max-width: 480px) {
     font-size: 7px;
+    display: none;
+  }
+
+  @media (max-height: 550px) and (orientation: landscape) {
+    font-size: 7px;
+    display: none;
   }
 `;
 
@@ -156,7 +182,11 @@ const LevelValue = styled.div`
     font-size: 12px;
   }
 
-  @media (max-height: 600px) and (orientation: landscape) {
+  @media (max-width: 480px) {
+    font-size: 11px;
+  }
+
+  @media (max-height: 550px) and (orientation: landscape) {
     font-size: 10px;
   }
 `;
@@ -171,7 +201,12 @@ const StatsContainer = styled.div`
     grid-row: 1 / 3;
   }
 
-  @media (max-height: 600px) and (orientation: landscape) {
+  @media (max-width: 480px) {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  @media (max-height: 550px) and (orientation: landscape) {
     flex-direction: row;
     gap: 1px;
     grid-column: 2 / 6;
@@ -201,7 +236,18 @@ const StatItem = styled.div`
     }
   }
 
-  @media (max-height: 600px) and (orientation: landscape) {
+  @media (max-width: 480px) {
+    padding: 5px 4px;
+    gap: 2px;
+    border-bottom: 1px solid ${p => p.theme.BORDER_COLOR}22;
+    flex-direction: column;
+
+    &:last-of-type {
+      border-bottom: none;
+    }
+  }
+
+  @media (max-height: 550px) and (orientation: landscape) {
     flex-direction: column;
     padding: 4px 6px;
     gap: 2px;
@@ -227,7 +273,11 @@ const StatLabel = styled.div`
     font-size: 8px;
   }
 
-  @media (max-height: 600px) and (orientation: landscape) {
+  @media (max-width: 480px) {
+    font-size: 7px;
+  }
+
+  @media (max-height: 550px) and (orientation: landscape) {
     font-size: 7px;
   }
 `;
@@ -242,7 +292,11 @@ const StatValue = styled.div`
     font-size: ${p => p.$large ? '14px' : '11px'};
   }
 
-  @media (max-height: 600px) and (orientation: landscape) {
+  @media (max-width: 480px) {
+    font-size: ${p => p.$large ? '12px' : '10px'};
+  }
+
+  @media (max-height: 550px) and (orientation: landscape) {
     font-size: ${p => p.$large ? '12px' : '10px'};
   }
 `;
@@ -262,7 +316,12 @@ const ProgressSection = styled.div`
     padding-top: 4px;
   }
 
-  @media (max-height: 600px) and (orientation: landscape) {
+  @media (max-width: 480px) {
+    gap: 3px;
+    padding-top: 6px;
+  }
+
+  @media (max-height: 550px) and (orientation: landscape) {
     display: none;
   }
 `;
@@ -281,7 +340,8 @@ const ProgressBarVerticalWrapper = styled.div`
   }
 
   @media (max-width: 480px) {
-    height: 70px;
+    height: 60px;
+    gap: 2px;
   }
 `;
 
@@ -302,7 +362,7 @@ const ProgressBar = styled.div`
   }
 
   @media (max-width: 480px) {
-    height: 70px;
+    height: 60px;
     width: 6px;
   }
 `;
@@ -346,7 +406,7 @@ const ProgressLabel = styled.div`
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.2px;
-  line-height: 1;
+  line-height: 1.2;
   word-break: break-all;
   width: 8px;
   text-align: center;
@@ -359,6 +419,7 @@ const ProgressLabel = styled.div`
   @media (max-width: 480px) {
     font-size: 6px;
     width: 6px;
+    line-height: 1;
   }
 `;
 
@@ -367,6 +428,7 @@ const ProgressValue = styled.div`
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
   line-height: 1;
+  white-space: nowrap;
 
   @media (max-width: 768px) {
     font-size: 8px;
