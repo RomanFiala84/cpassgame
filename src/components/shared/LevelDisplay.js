@@ -1,6 +1,3 @@
-// src/components/shared/LevelDisplay.js
-// ULTRA-KOMPAKTNÁ VERZIA - Minimálna šírka, bez zbytočného priestoru
-
 import React from 'react';
 import styled from 'styled-components';
 import { useUserStats } from '../../contexts/UserStatsContext';
@@ -9,35 +6,54 @@ const Wrapper = styled.div`
   position: fixed;
   top: 20px;
   left: 20px;
-  /* ✅ OPRAVA - width: auto, min-content šírka */
   width: auto;
   z-index: 1200;
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-  padding: 8px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  
-  /* ✅ Minimálna šírka - obopína text */
+  gap: 8px;
   min-width: fit-content;
   max-width: fit-content;
-  
-  @media (max-width: 1280px) {
-    padding: 7px;
-    gap: 5px;
+
+  /* DESKTOP - Layout vertikálny (ako pôvodne) */
+  @media (max-width: 1024px) {
+    padding: 10px;
+    gap: 7px;
   }
-  
+
+  /* TABLET - Kompaktnejší layout */
   @media (max-width: 768px) {
     position: fixed;
-    top: 10px;
-    left: 10px;
-    width: auto;
+    top: 12px;
+    left: 12px;
+    right: auto;
     display: grid;
     grid-template-columns: auto 1fr;
-    grid-template-rows: auto auto auto auto auto;
+    grid-template-rows: auto auto auto auto;
+    gap: 8px;
+    padding: 10px;
+    max-width: calc(100vw - 24px);
+  }
+
+  /* MOBILE (landscape) - Horizontal layout */
+  @media (max-height: 600px) and (orientation: landscape) {
+    top: 8px;
+    left: 8px;
+    padding: 8px;
+    gap: 6px;
+    grid-template-columns: auto auto auto auto auto;
+    grid-template-rows: auto;
+  }
+
+  /* MOBILE (portrait) - Zmenší sa ešte viac */
+  @media (max-width: 480px) {
+    top: 8px;
+    left: 8px;
+    padding: 8px;
     gap: 6px;
   }
 `;
@@ -46,23 +62,33 @@ const LevelSection = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding-bottom: 6px;
+  gap: 6px;
+  padding-bottom: 8px;
   border-bottom: 1px solid ${p => p.theme.BORDER_COLOR};
-  
+
   @media (max-width: 768px) {
     grid-column: 1;
     grid-row: 1 / 3;
     border-bottom: none;
     border-right: 1px solid ${p => p.theme.BORDER_COLOR};
+    padding-right: 12px;
+    padding-bottom: 0;
+    gap: 4px;
+  }
+
+  @media (max-height: 600px) and (orientation: landscape) {
+    flex-direction: row;
+    gap: 8px;
+    border-right: 1px solid ${p => p.theme.BORDER_COLOR};
+    border-bottom: none;
     padding-right: 10px;
     padding-bottom: 0;
   }
 `;
 
 const LevelIcon = styled.div`
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   background: linear-gradient(135deg, 
     ${p => p.theme.ACCENT_COLOR}, 
     ${p => p.theme.ACCENT_COLOR_2}
@@ -71,33 +97,85 @@ const LevelIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 28px;
   font-weight: 700;
   color: white;
   box-shadow: 0 3px 8px ${p => p.theme.ACCENT_COLOR}44;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    width: 42px;
+    height: 42px;
+    font-size: 24px;
+  }
+
+  @media (max-width: 480px) {
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
+  }
+
+  @media (max-height: 600px) and (orientation: landscape) {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
 `;
 
 const LevelInfo = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0px;
+  gap: 2px;
 `;
 
 const LevelLabel = styled.div`
-  font-size: 7px;
+  font-size: 9px;
   font-weight: 600;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   text-transform: uppercase;
   letter-spacing: 0.3px;
   line-height: 1;
+
+  @media (max-width: 768px) {
+    font-size: 8px;
+  }
+
+  @media (max-height: 600px) and (orientation: landscape) {
+    font-size: 7px;
+  }
 `;
 
 const LevelValue = styled.div`
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
   line-height: 1;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+
+  @media (max-height: 600px) and (orientation: landscape) {
+    font-size: 10px;
+  }
+`;
+
+const StatsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  @media (max-width: 768px) {
+    grid-column: 2;
+    grid-row: 1 / 3;
+  }
+
+  @media (max-height: 600px) and (orientation: landscape) {
+    flex-direction: row;
+    gap: 1px;
+    grid-column: 2 / 6;
+  }
 `;
 
 const StatItem = styled.div`
@@ -105,36 +183,68 @@ const StatItem = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 2px;
-  padding: 4px 0;
-  border-bottom: ${p => p.$last ? 'none' : `1px solid ${p.theme.BORDER_COLOR}22`};
-  
+  gap: 3px;
+  padding: 6px 8px;
+  border-bottom: 1px solid ${p => p.theme.BORDER_COLOR}22;
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+
   @media (max-width: 768px) {
-    grid-column: 2;
-    padding: 3px;
-    border: none;
+    padding: 4px 6px;
+    gap: 2px;
     border-bottom: 1px solid ${p => p.theme.BORDER_COLOR}22;
-    
+
     &:last-of-type {
       border-bottom: none;
+    }
+  }
+
+  @media (max-height: 600px) and (orientation: landscape) {
+    flex-direction: column;
+    padding: 4px 6px;
+    gap: 2px;
+    border-bottom: none;
+    border-right: 1px solid ${p => p.theme.BORDER_COLOR}22;
+    min-width: 50px;
+
+    &:last-of-type {
+      border-right: none;
     }
   }
 `;
 
 const StatLabel = styled.div`
-  font-size: 7px;
+  font-size: 9px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.2px;
   line-height: 1;
+
+  @media (max-width: 768px) {
+    font-size: 8px;
+  }
+
+  @media (max-height: 600px) and (orientation: landscape) {
+    font-size: 7px;
+  }
 `;
 
 const StatValue = styled.div`
-  font-size: ${p => p.$large ? '16px' : '12px'};
+  font-size: ${p => p.$large ? '16px' : '13px'};
   font-weight: 700;
   color: ${p => p.$highlight ? p.theme.ACCENT_COLOR : p.theme.PRIMARY_TEXT_COLOR};
   line-height: 1;
+
+  @media (max-width: 768px) {
+    font-size: ${p => p.$large ? '14px' : '11px'};
+  }
+
+  @media (max-height: 600px) and (orientation: landscape) {
+    font-size: ${p => p.$large ? '12px' : '10px'};
+  }
 `;
 
 const ProgressSection = styled.div`
@@ -142,12 +252,18 @@ const ProgressSection = styled.div`
   flex-direction: row;
   align-items: flex-end;
   justify-content: center;
-  gap: 4px;
-  padding-top: 2px;
-  
+  gap: 6px;
+  padding-top: 4px;
+  border-top: 1px solid ${p => p.theme.BORDER_COLOR}22;
+
   @media (max-width: 768px) {
     grid-column: 1 / 3;
-    gap: 6px;
+    gap: 4px;
+    padding-top: 4px;
+  }
+
+  @media (max-height: 600px) and (orientation: landscape) {
+    display: none;
   }
 `;
 
@@ -157,7 +273,16 @@ const ProgressBarVerticalWrapper = styled.div`
   align-items: center;
   justify-content: flex-end;
   height: 100px;
-  gap: 2px;
+  gap: 3px;
+
+  @media (max-width: 768px) {
+    height: 80px;
+    gap: 2px;
+  }
+
+  @media (max-width: 480px) {
+    height: 70px;
+  }
 `;
 
 const ProgressBar = styled.div`
@@ -170,6 +295,16 @@ const ProgressBar = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+
+  @media (max-width: 768px) {
+    height: 80px;
+    width: 7px;
+  }
+
+  @media (max-width: 480px) {
+    height: 70px;
+    width: 6px;
+  }
 `;
 
 const Progress = styled.div`
@@ -182,7 +317,7 @@ const Progress = styled.div`
   border-radius: 4px;
   transition: height 0.4s ease;
   position: relative;
-  
+
   &::after {
     content: '';
     position: absolute;
@@ -198,38 +333,48 @@ const Progress = styled.div`
     );
     animation: shimmer 2s infinite;
   }
-  
+
   @keyframes shimmer {
     0% { transform: translateY(-100%); }
     100% { transform: translateY(100%); }
   }
 `;
 
-/* ✅ OPRAVA - Text pod sebou (P-r-o-g-r-e-s-s) */
 const ProgressLabel = styled.div`
-  font-size: 7px;
+  font-size: 8px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.2px;
   line-height: 1;
-  
-  /* Písmená pod sebou */
   word-break: break-all;
   width: 8px;
   text-align: center;
-  
+
   @media (max-width: 768px) {
-    width: auto;
-    word-break: normal;
+    font-size: 7px;
+    width: 7px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 6px;
+    width: 6px;
   }
 `;
 
 const ProgressValue = styled.div`
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
   line-height: 1;
+
+  @media (max-width: 768px) {
+    font-size: 8px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 7px;
+  }
 `;
 
 const LevelDisplay = () => {
@@ -254,29 +399,28 @@ const LevelDisplay = () => {
         </LevelInfo>
       </LevelSection>
 
-      {/* Misie */}
-      <StatItem>
-        <StatLabel>Misie</StatLabel>
-        <StatValue $highlight>{mission}</StatValue>
-      </StatItem>
+      {/* Stats Container */}
+      <StatsContainer>
+        <StatItem>
+          <StatLabel>Misie</StatLabel>
+          <StatValue $highlight>{mission}</StatValue>
+        </StatItem>
 
-      {/* Bonus */}
-      <StatItem>
-        <StatLabel>Bonus</StatLabel>
-        <StatValue>{bonus}</StatValue>
-      </StatItem>
+        <StatItem>
+          <StatLabel>Bonus</StatLabel>
+          <StatValue>{bonus}</StatValue>
+        </StatItem>
 
-      {/* Referrals */}
-      <StatItem>
-        <StatLabel>Referrals</StatLabel>
-        <StatValue>{referrals}</StatValue>
-      </StatItem>
+        <StatItem>
+          <StatLabel>Referrals</StatLabel>
+          <StatValue>{referrals}</StatValue>
+        </StatItem>
 
-      {/* Celkové body */}
-      <StatItem $last>
-        <StatLabel>Spolu</StatLabel>
-        <StatValue $large $highlight>{total}</StatValue>
-      </StatItem>
+        <StatItem>
+          <StatLabel>Spolu</StatLabel>
+          <StatValue $large $highlight>{total}</StatValue>
+        </StatItem>
+      </StatsContainer>
 
       {/* Progress */}
       <ProgressSection>
