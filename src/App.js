@@ -1,5 +1,5 @@
 // src/App.js
-// FINÁLNA OPRAVENÁ VERZIA - S Stroop Testami
+// FINÁLNA OPRAVENÁ VERZIA - S Stroop Testami (OPRAVENÉ IMPORT CESTY)
 
 import React from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
@@ -12,7 +12,6 @@ import ThemeToggle from './styles/ThemeToggle';
 import { UserStatsProvider } from './contexts/UserStatsContext';
 import PageTransition from './components/shared/PageTransition';
 
-
 // ═══════════════════════════════════════════════════════════
 // MAIN COMPONENTS
 // ═══════════════════════════════════════════════════════════
@@ -20,13 +19,11 @@ import Instruction from './components/main/Instruction';
 import Intro from './components/main/Intro';
 import MainMenu from './components/main/MainMenu';
 
-
 // ═══════════════════════════════════════════════════════════
 // ADMIN COMPONENTS
 // ═══════════════════════════════════════════════════════════
 import AdminPanel from './components/admin/AdminPanel';
 import TrackingViewer from './components/admin/TrackingViewer';
-
 
 // ═══════════════════════════════════════════════════════════
 // SPECIAL AGENT MISSION (Mission 0)
@@ -35,7 +32,6 @@ import IntroMission0 from './components/missions/mission0/IntroMission0';
 import Questionnaire0 from './components/missions/mission0/Questionnaire0';
 import OutroMission0 from './components/missions/mission0/OutroMission0';
 
-
 // ═══════════════════════════════════════════════════════════
 // MISSION 1
 // ═══════════════════════════════════════════════════════════
@@ -43,12 +39,11 @@ import IntroMission1 from './components/missions/mission1/IntroMission1';
 import Questionnaire1A from './components/missions/mission1/Questionnaire1A';
 import Prevention1 from './components/missions/mission1/Prevention1';
 import PostsA1 from './components/missions/mission1/PostsA1';
-import StroopTest1 from './components/activities/StroopTest1'; // ✅ NOVÉ
+import StroopTest1 from './components/StroopTest1'; // ✅ CORRECT PATH
 import Intervention1 from './components/missions/mission1/Intervention1';
 import PostsB1 from './components/missions/mission1/PostsB1';
 import Questionnaire1B from './components/missions/mission1/Questionnaire1B';
 import OutroMission1 from './components/missions/mission1/OutroMission1';
-
 
 // ═══════════════════════════════════════════════════════════
 // MISSION 2
@@ -57,12 +52,11 @@ import IntroMission2 from './components/missions/mission2/IntroMission2';
 import Questionnaire2A from './components/missions/mission2/Questionnaire2A';
 import Prevention2 from './components/missions/mission2/Prevention2';
 import PostsA2 from './components/missions/mission2/PostsA2';
-import StroopTest2 from './components/activities/StroopTest2'; // ✅ NOVÉ
+import StroopTest2 from './components/StroopTest2'; // ✅ CORRECT PATH
 import Intervention2 from './components/missions/mission2/Intervention2';
 import PostsB2 from './components/missions/mission2/PostsB2';
 import Questionnaire2B from './components/missions/mission2/Questionnaire2B';
 import OutroMission2 from './components/missions/mission2/OutroMission2';
-
 
 // ═══════════════════════════════════════════════════════════
 // MISSION 3
@@ -71,12 +65,11 @@ import IntroMission3 from './components/missions/mission3/IntroMission3';
 import Questionnaire3A from './components/missions/mission3/Questionnaire3A';
 import Prevention3 from './components/missions/mission3/Prevention3';
 import PostsA3 from './components/missions/mission3/PostsA3';
-import StroopTest3 from './components/activities/StroopTest3'; // ✅ NOVÉ
+import StroopTest3 from './components/StroopTest3'; // ✅ CORRECT PATH
 import Intervention3 from './components/missions/mission3/Intervention3';
 import PostsB3 from './components/missions/mission3/PostsB3';
 import Questionnaire3B from './components/missions/mission3/Questionnaire3B';
 import OutroMission3 from './components/missions/mission3/OutroMission3';
-
 
 // ✅ Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -147,7 +140,6 @@ class ErrorBoundary extends React.Component {
     return this.props.children;
   }
 }
-
 
 // ✅ AppContent - S AnimatePresence pre page transitions
 function AppContent() {
@@ -278,7 +270,6 @@ function AppContent() {
     </AnimatePresence>
   );
 }
-
 
 function App() {
   const [themeName, setThemeName] = React.useState(() => {
