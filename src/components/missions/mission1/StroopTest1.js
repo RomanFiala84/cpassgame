@@ -1,4 +1,4 @@
-// src/components/StroopTest1.js
+// src/components/missions/mission1/StroopTest1.js
 // ═══════════════════════════════════════════════════════════════════════
 // STROOP TEST MISSION 1 - S DETEKTÍVOM KONÁROM
 // Detektív instruuje respondenta že musí vyluštiť tajnú šifru
@@ -7,9 +7,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { useUserStats } from '../contexts/UserStatsContext';
-import DetectiveTipLarge from '../shared/DetectiveTipLarge';
-import PageTransition from '../shared/PageTransition';
+import { useUserStats } from '../../../contexts/UserStatsContext';
+import DetectiveTipLarge from '../../shared/DetectiveTipLarge';
+import PageTransition from '../../shared/PageTransition';
 
 // ═══════════════════════════════════════════════════════════════════════
 // STYLED COMPONENTS
@@ -362,7 +362,7 @@ const StroopTest1 = () => {
     <p>Tvoja úloha:</p>
     <ul style="text-align: left; display: inline-block;">
       <li><strong>Pozri sa na slovo</strong> - uvidíš anglické slovo</li>
-      <li><strong>Ale ignoruj slovo!</strong> - Kluk na FARBU, ktorou je slovo napísané</li>
+      <li><strong>Ale ignoruj slovo!</strong> - Klikni na FARBU, ktorou je slovo napísané</li>
       <li><strong>Buď rýchly a presný</strong> - Čas má vplyv na bezpečnosť 🔐</li>
     </ul>
     <p style="margin-top: 16px; color: #ff5459;"><strong>⚠️ Toto je detekčný test!</strong> Pokúšame sa zistiť, či si dostatočne pozorný. Podvádzanie alebo neopatrnosť budú detegované! 👁️</p>
@@ -480,7 +480,7 @@ const StroopTest1 = () => {
                 </StatItem>
                 <StatItem>
                   <StatLabel>Najrýchlejší</StatLabel>
-                  <StatValue>{validReactions.length > 0 ? Math.min(...trials.map(t => t.reactionTime || Infinity)) : 0}ms</StatValue>
+                  <StatValue>{validReactions.length > 0 ? Math.min(...validReactions.map(t => t.reactionTime)) : 0}ms</StatValue>
                 </StatItem>
               </Stats>
 
@@ -499,7 +499,7 @@ const StroopTest1 = () => {
             <DetectiveTipLarge
               tip={`
                 <p>🕵️ <strong>Výborně!</strong> Šifru si vylúštil správne!</p>
-                <p>Tvoj čas reakcie a presnosť ukazujú, že si <strong>veľmi pozorný</strong> skúmaní. Takisto sme zaznamenali tvoje pohyby a klikania - všetko sa kvôli bezpečnosti zaznamenáva. 📊</p>
+                <p>Tvoj čas reakcie a presnosť ukazujú, že si <strong>veľmi pozorný</strong> v skúmaní. Takisto sme zaznamenali tvoje pohyby a klikania - všetko sa kvôli bezpečnosti zaznamenáva. 📊</p>
                 <p><strong>Pokračuj ďalej v múzeálnej skúsenosti!</strong> 🎖️</p>
               `}
               detectiveName="🕵️ Detektív Konan"
