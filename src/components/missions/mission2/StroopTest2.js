@@ -302,7 +302,7 @@ const ContinueButton = styled.button`
 // COMPONENT - MISSION 1
 // ═══════════════════════════════════════════════════════════════════════
 
-const StroopTest1 = () => {
+const StroopTest2 = () => {
   const navigate = useNavigate();
   const { dataManager, userId } = useUserStats();
   const [showDetectiveTip, setShowDetectiveTip] = useState(true);
@@ -375,7 +375,7 @@ const StroopTest1 = () => {
     const avgRT = validRTs.length > 0 ? validRTs.reduce((sum, t) => sum + t.reactionTime, 0) / validRTs.length : 0;
 
     const stroopResults = {
-      mission: 1,
+      mission: 2,
       testType: 'stroop',
       totalTrials: 9,
       correctAnswers: correctCount,
@@ -390,11 +390,11 @@ const StroopTest1 = () => {
       const progress = await dataManager.loadUserProgress(participantCode);
       const updatedProgress = {
         ...progress,
-        stroop_test_mission1_results: stroopResults,
-        stroop_test_mission1_completed: true
+        stroop_test_mission2_results: stroopResults,
+        stroop_test_mission2_completed: true
       };
       await dataManager.saveProgress(participantCode, updatedProgress);
-      console.log('✅ Stroop test M1 results saved:', stroopResults);
+      console.log('✅ Stroop test M2 results saved:', stroopResults);
     } catch (error) {
       console.error('❌ Error saving stroop results:', error);
     }
@@ -442,13 +442,13 @@ const StroopTest1 = () => {
       const group = String(progress.group_assignment);
 
       if (group === '1') {
-        navigate('/mission1/intervention');
+        navigate('/mission2/intervention');
       } else {
-        navigate('/mission1/postsb');
+        navigate('/mission2/postsb');
       }
     } catch (error) {
       console.error('Error navigating:', error);
-      navigate('/mission1/postsb');
+      navigate('/mission2/postsb');
     }
   };
 
@@ -609,4 +609,4 @@ const StroopTest1 = () => {
   );
 };
 
-export default StroopTest1;
+export default StroopTest2;
