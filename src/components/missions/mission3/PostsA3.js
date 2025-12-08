@@ -305,9 +305,9 @@ const PostsA3 = () => {
       const group = progress.group_assignment;
       
       if (group === '1') {
-        navigate('/mission3/intervention');
+        navigate('/mission3/stroop-test3');
       } else {
-        navigate('/mission3/postsb');
+        navigate('/mission3/stroop-test3');
       }
       
     } catch (error) {

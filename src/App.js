@@ -186,7 +186,7 @@ function AppContent() {
         <Route path="/mission1/postsa" element={<PageTransition><PostsA1 /></PageTransition>} />
         
         {/* ✅ STROOP TEST MISSION 1 - Tajná šifra s detektívom */}
-        <Route path="/mission1/stroop-test" element={<PageTransition><StroopTest1 /></PageTransition>} />
+        <Route path="/mission1/stroop-test1" element={<PageTransition><StroopTest1 /></PageTransition>} />
         
         <Route path="/mission1/intervention" element={<PageTransition><Intervention1 /></PageTransition>} />
         <Route path="/mission1/postsb" element={<PageTransition><PostsB1 /></PageTransition>} />
@@ -208,7 +208,7 @@ function AppContent() {
         <Route path="/mission2/postsa" element={<PageTransition><PostsA2 /></PageTransition>} />
         
         {/* ✅ STROOP TEST MISSION 2 - Tajná šifra s detektívom */}
-        <Route path="/mission2/stroop-test" element={<PageTransition><StroopTest2 /></PageTransition>} />
+        <Route path="/mission2/stroop-test2" element={<PageTransition><StroopTest2 /></PageTransition>} />
         
         <Route path="/mission2/intervention" element={<PageTransition><Intervention2 /></PageTransition>} />
         <Route path="/mission2/postsb" element={<PageTransition><PostsB2 /></PageTransition>} />
@@ -230,7 +230,7 @@ function AppContent() {
         <Route path="/mission3/postsa" element={<PageTransition><PostsA3 /></PageTransition>} />
         
         {/* ✅ STROOP TEST MISSION 3 - Tajná šifra s detektívom */}
-        <Route path="/mission3/stroop-test" element={<PageTransition><StroopTest3 /></PageTransition>} />
+        <Route path="/mission3/stroop-test3" element={<PageTransition><StroopTest3 /></PageTransition>} />
         
         <Route path="/mission3/intervention" element={<PageTransition><Intervention3 /></PageTransition>} />
         <Route path="/mission3/postsb" element={<PageTransition><PostsB3 /></PageTransition>} />
