@@ -1,5 +1,5 @@
 // src/components/shared/LevelDisplay.js
-// FINÁLNA VERZIA - Kompaktný úzky vertikálny panel
+// FINÁLNA VERZIA - Vertikálny progress bar zdola nahor
 
 import React from 'react';
 import styled from 'styled-components';
@@ -9,7 +9,10 @@ const Wrapper = styled.div`
   position: fixed;
   top: 20px;
   left: 20px;
-  width: 180px;
+  /* ✅ OPRAVA - Štvrtinová šírka */
+  width: 25%;
+  min-width: 180px;
+  max-width: 200px;
   z-index: 1200;
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
@@ -21,13 +24,16 @@ const Wrapper = styled.div`
   gap: 10px;
   
   @media (max-width: 1024px) {
-    width: 160px;
+    width: 25%;
+    min-width: 160px;
     padding: 14px 10px;
     gap: 8px;
   }
   
   @media (max-width: 768px) {
-    width: calc(100% - 40px);
+    position: static;
+    width: 100%;
+    margin-bottom: 20px;
   }
   
   @media (max-width: 480px) {
@@ -109,9 +115,11 @@ const StatValue = styled.div`
 
 const ProgressSection = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
+  /* ✅ ZMENA - flex-direction: column → row s alignment */
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
   padding-top: 6px;
 `;
 
@@ -121,32 +129,57 @@ const ProgressLabelText = styled.div`
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.3px;
+  /* ✅ ZMENA - rotácia na 90° */
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  width: 12px;
+  text-align: center;
 `;
 
 const ProgressValue = styled.div`
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
+  /* ✅ ZMENA - vertikálny text */
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  min-width: 20px;
+  text-align: center;
 `;
 
+/* ✅ NOVÝ - Wrapper pre vertikálny progress bar */
+const ProgressBarVerticalWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 150px;
+  gap: 4px;
+`;
+
+/* ✅ ZMENA - Vertikálny progress bar */
 const ProgressBar = styled.div`
-  width: 100%;
-  height: 10px;
+  width: 12px;
+  height: 150px;
   background: ${p => p.theme.BORDER_COLOR};
   border-radius: 6px;
   overflow: hidden;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 `;
 
+/* ✅ ZMENA - Gradient zdola nahor (to top) */
 const Progress = styled.div`
-  height: 100%;
-  width: ${p => p.$progress || 0}%;
-  background: linear-gradient(90deg, 
+  width: 100%;
+  height: ${p => p.$progress || 0}%;
+  background: linear-gradient(to top, 
     ${p => p.theme.ACCENT_COLOR}, 
     ${p => p.theme.ACCENT_COLOR_2}
   );
   border-radius: 6px;
-  transition: width 0.4s ease;
+  transition: height 0.4s ease;
   position: relative;
   
   &::after {
@@ -157,7 +190,7 @@ const Progress = styled.div`
     right: 0;
     bottom: 0;
     background: linear-gradient(
-      90deg,
+      180deg,
       rgba(255, 255, 255, 0) 0%,
       rgba(255, 255, 255, 0.3) 50%,
       rgba(255, 255, 255, 0) 100%
@@ -166,8 +199,8 @@ const Progress = styled.div`
   }
   
   @keyframes shimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
   }
 `;
 
@@ -217,13 +250,15 @@ const LevelDisplay = () => {
         <StatValue $large $highlight>{total}</StatValue>
       </StatItem>
 
-      {/* Progress */}
+      {/* ✅ ZMENA - Progress s vertikálnym barom */}
       <ProgressSection>
-        <ProgressLabelText>Progress</ProgressLabelText>
-        <ProgressValue>{mission}/100</ProgressValue>
-        <ProgressBar>
-          <Progress $progress={progress} />
-        </ProgressBar>
+        <ProgressBarVerticalWrapper>
+          <ProgressValue>{mission}/100</ProgressValue>
+          <ProgressBar>
+            <Progress $progress={progress} />
+          </ProgressBar>
+          <ProgressLabelText>Progress</ProgressLabelText>
+        </ProgressBarVerticalWrapper>
       </ProgressSection>
     </Wrapper>
   );
