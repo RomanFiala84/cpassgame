@@ -34,14 +34,14 @@ const Toggle = styled.button`
     transform: translateY(0);
   }
   
-  @media (max-width: 768px) {
+  @media (max-width: 50px) {
     bottom: 15px;
     right: 15px;
     padding: 8px 12px;
     font-size: 14px;
   }
   
-  @media (max-width: 480px) {
+  @media (max-width: 50px) {
     bottom: 10px;
     right: 10px;
     padding: 8px 12px;
@@ -52,7 +52,7 @@ const Toggle = styled.button`
 const Icon = styled.span`
   font-size: 20px;
   
-  @media (max-width: 768px) {
+  @media (max-width: 50px) {
     font-size: 18px;
   }
 `;

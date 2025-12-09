@@ -1,6 +1,3 @@
-// api/get-tracking-by-component.js
-// FINÁLNA VERZIA - S percent support
-
 import { MongoClient } from 'mongodb';
 
 let cachedClient = null;
@@ -43,7 +40,6 @@ export default async function handler(req, res) {
     const client = await connectToDatabase();
     const db = client.db('conspiracy');
 
-    // Načítaj všetky tracking záznamy pre tento komponent
     const records = await db.collection('hover_tracking')
       .find({ 
         contentId: contentId,
@@ -60,7 +56,6 @@ export default async function handler(req, res) {
 
     console.log(`✅ Found ${records.length} tracking records for ${contentId}`);
 
-    // ✅ Agreguj tracking dáta zo všetkých používateľov
     const aggregatedPositions = [];
     const users = new Set();
     let totalHoverTime = 0;
@@ -69,12 +64,10 @@ export default async function handler(req, res) {
     let aggregatedLandmarks = [];
 
     records.forEach(record => {
-      // Agreguj pozície
       if (record.mousePositions && Array.isArray(record.mousePositions)) {
         aggregatedPositions.push(...record.mousePositions);
       }
 
-      // Zber metadáta
       users.add(record.userId);
       totalHoverTime += record.hoverMetrics?.totalHoverTime || 0;
 

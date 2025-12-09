@@ -45,7 +45,7 @@ export const generateVisualization = async (trackingData, width, height, contain
 
     // Konvertuj canvas na Blob
     const blob = await new Promise((resolve) => {
-      canvas.toBlob((b) => resolve(b), 'image/png', 0.98);  // ✅ 0.98 kvalita
+      canvas.toBlob((b) => resolve(b), 'image/png', 1);  // ✅ 1.0 kvalita
     });
 
     if (!blob || blob.size === 0) {
@@ -104,7 +104,7 @@ async function drawHeatmapGradientHighQuality(ctx, positions, width, height) {
   if (!positions || positions.length === 0) return;
 
   // ✅ OPRAVA - Väčší radius pre lepšiu kvalitu
-  const radius = 75;
+  const radius = 50;
   const gradientCanvas = document.createElement('canvas');
   gradientCanvas.width = radius * 2;
   gradientCanvas.height = radius * 2;
@@ -112,10 +112,10 @@ async function drawHeatmapGradientHighQuality(ctx, positions, width, height) {
   
   // ✅ OPRAVA - Radiálny gradient s lepšími farbami
   const gradient = gradientCtx.createRadialGradient(radius, radius, 0, radius, radius, radius);
-  gradient.addColorStop(0, 'rgba(255, 0, 0, 0.9)');      // Červená (stred) - intenzívnejšia
-  gradient.addColorStop(0.25, 'rgba(255, 100, 0, 0.7)'); // Oranžová
-  gradient.addColorStop(0.5, 'rgba(255, 200, 0, 0.5)');  // Žltá
-  gradient.addColorStop(0.75, 'rgba(255, 255, 0, 0.2)'); // Svetlo žltá
+  gradient.addColorStop(0, 'rgba(255, 0, 0, 1)');      // Červená (stred) - intenzívnejšia
+  gradient.addColorStop(0.25, 'rgba(255, 155, 0, 1)'); // Oranžová
+  gradient.addColorStop(0.5, 'rgba(255, 255, 0, 1)');  // Žltá
+  gradient.addColorStop(0.75, 'rgba(255, 255, 100, 1)'); // Svetlo žltá
   gradient.addColorStop(1, 'rgba(255, 255, 0, 0)');      // Transparent (okraj)
   
   gradientCtx.fillStyle = gradient;
@@ -151,7 +151,7 @@ function drawTrajectory(ctx, positions) {
   if (positions.length < 2) return;
 
   ctx.save();
-  ctx.strokeStyle = 'rgba(0, 150, 255, 0.3)'; // Modrá, semi-transparent
+  ctx.strokeStyle = 'rgba(255, 0, 255, 1)'; // Modrá, semi-transparent
   ctx.lineWidth = 2;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
@@ -182,21 +182,21 @@ function drawMarkers(ctx, positions) {
 
   // Start marker (zelený)
   const start = positions[0];
-  ctx.fillStyle = 'rgba(0, 255, 0, 0.7)';
+  ctx.fillStyle = 'rgba(0, 255, 0, 1)';
   ctx.beginPath();
   ctx.arc(start.x, start.y, 8, 0, Math.PI * 2);
   ctx.fill();
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+  ctx.strokeStyle = 'rgba(255, 255, 255, 1)';
   ctx.lineWidth = 2;
   ctx.stroke();
 
   // End marker (červený)
   const end = positions[positions.length - 1];
-  ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
+  ctx.fillStyle = 'rgba(255, 0, 0, 1)';
   ctx.beginPath();
   ctx.arc(end.x, end.y, 8, 0, Math.PI * 2);
   ctx.fill();
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+  ctx.strokeStyle = 'rgba(255, 255, 255, 1)';
   ctx.lineWidth = 2;
   ctx.stroke();
 

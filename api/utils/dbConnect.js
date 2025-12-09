@@ -1,4 +1,3 @@
-// api/utils/dbConnect.js
 import { MongoClient } from 'mongodb';
 
 let cachedClient = null;
@@ -13,7 +12,6 @@ const MONGODB_OPTIONS = {
 };
 
 export async function connectToDatabase() {
-  // Ak máme cached connection, vráť ho
   if (cachedClient && cachedDb) {
     return { client: cachedClient, db: cachedDb };
   }
@@ -45,7 +43,6 @@ export async function ensureIndexes(db) {
   try {
     const collection = db.collection('hover_tracking');
     
-    // Indexy pre rýchlejšie queries
     await collection.createIndex(
       { contentId: 1, contentType: 1, timestamp: -1 },
       { background: true, name: 'content_composite' }
@@ -64,7 +61,6 @@ export async function ensureIndexes(db) {
     console.log('✅ Indexes ensured');
     
   } catch (error) {
-    // Indexy môžu už existovať, nie je to kritická chyba
     console.warn('⚠️ Index creation warning:', error.message);
   }
 }

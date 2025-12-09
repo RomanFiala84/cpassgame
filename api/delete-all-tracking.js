@@ -1,4 +1,3 @@
-// api/delete-all-tracking.js
 import { MongoClient } from 'mongodb';
 
 let cachedClient = null;

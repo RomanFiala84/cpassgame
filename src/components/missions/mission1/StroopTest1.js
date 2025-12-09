@@ -1,7 +1,7 @@
 // src/components/missions/mission1/StroopTest1.js
 // ═══════════════════════════════════════════════════════════════════════
 // STROOP TEST MISSION 1 - S DETEKTÍVOM KONÁROM
-// FINÁLNA VERZIA - 48 POLOŽIEK (24 congruent + 24 incongruent)
+// FINÁLNA VERZIA - 48 POLOŽIEK (NÁHODNE PREMIEŠANÉ)
 // ═══════════════════════════════════════════════════════════════════════
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -179,7 +179,6 @@ const ButtonGroup = styled.div`
   }
 `;
 
-// ✅ OPRAVENÉ - Farebné štvorce namiesto textu
 const OptionButton = styled.button`
   display: flex;
   align-items: center;
@@ -209,7 +208,6 @@ const OptionButton = styled.button`
     cursor: not-allowed;
   }
 
-  /* ✅ Checkmark keď je selektovaný */
   &::after {
     content: ${p => p.isSelected ? '"✓"' : '""'};
     position: absolute;
@@ -342,6 +340,19 @@ const ContinueButton = styled.button`
 `;
 
 // ═══════════════════════════════════════════════════════════════════════
+// HELPER FUNCTION - SHUFFLE ARRAY
+// ═══════════════════════════════════════════════════════════════════════
+
+const shuffleArray = (array) => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
+// ═══════════════════════════════════════════════════════════════════════
 // COMPONENT - MISSION 1
 // ═══════════════════════════════════════════════════════════════════════
 
@@ -350,7 +361,6 @@ const StroopTest1 = () => {
   const { dataManager, userId } = useUserStats();
   const [showDetectiveTip, setShowDetectiveTip] = useState(true);
 
-  // ✅ OPRAVENÉ - Farby s anglickými keyami a slovenskými labelami
   const colors = {
     RED: { rgb: 'rgba(255, 0, 0, 1)', label: 'Červená' },
     GREEN: { rgb: 'rgba(9, 255, 0, 1)', label: 'Zelená' },
@@ -359,7 +369,7 @@ const StroopTest1 = () => {
   };
 
   // ✅ FIXED TRIALS - 48 položiek (24 congruent + 24 incongruent)
-  const FIXED_TRIALS = [
+  const FIXED_TRIALS_UNSORTED = [
     // ═════════════════════════════════════════════════════
     // CONGRUENT TRIALS (24 položiek)
     // ═════════════════════════════════════════════════════
@@ -417,6 +427,9 @@ const StroopTest1 = () => {
     { word: 'YELLOW', displayColor: 'GREEN', congruent: false }
   ];
 
+  // ✅ SHUFFLE - Premiešaj poradie aby neboli farby za sebou
+  const FIXED_TRIALS = shuffleArray(FIXED_TRIALS_UNSORTED);
+
   // ✅ Konvertuj na trials objekty
   const initializeTrials = () => {
     return FIXED_TRIALS.map((trial, i) => ({
@@ -447,6 +460,16 @@ const StroopTest1 = () => {
     ? validReactions.reduce((sum, t) => sum + t.reactionTime, 0) / validReactions.length
     : 0;
 
+  // Congruent vs Incongruent stats
+  const congruentTrials = trials.filter(t => t.congruent === true);
+  const incongruentTrials = trials.filter(t => t.congruent === false);
+  const congruentAccuracy = congruentTrials.length > 0 
+    ? Math.round((congruentTrials.filter(t => t.isCorrect).length / congruentTrials.length) * 100)
+    : 0;
+  const incongruentAccuracy = incongruentTrials.length > 0 
+    ? Math.round((incongruentTrials.filter(t => t.isCorrect).length / incongruentTrials.length) * 100)
+    : 0;
+
   // ✅ Detektívov tip
   const detectiveTip = `
     <p>🕵️ <strong>Pozor!</strong> Máme <em>kritickú úlohu</em>!</p>
@@ -466,6 +489,16 @@ const StroopTest1 = () => {
     const validRTs = completedTrials.filter(t => t.reactionTime !== null);
     const avgRT = validRTs.length > 0 ? validRTs.reduce((sum, t) => sum + t.reactionTime, 0) / validRTs.length : 0;
 
+    // Separate congruent and incongruent analysis
+    const congTrials = completedTrials.filter(t => t.congruent === true);
+    const incongTrials = completedTrials.filter(t => t.congruent === false);
+    const congAccuracy = congTrials.length > 0 
+      ? (congTrials.filter(t => t.isCorrect).length / congTrials.length) * 100
+      : 0;
+    const incongAccuracy = incongTrials.length > 0
+      ? (incongTrials.filter(t => t.isCorrect).length / incongTrials.length) * 100
+      : 0;
+
     const stroopResults = {
       mission: 1,
       testType: 'stroop',
@@ -473,6 +506,9 @@ const StroopTest1 = () => {
       correctAnswers: correctCount,
       accuracy: (correctCount / 48) * 100,
       avgReactionTime: Math.round(avgRT),
+      congruentAccuracy: Math.round(congAccuracy),
+      incongruentAccuracy: Math.round(incongAccuracy),
+      stroopEffect: Math.round(incongAccuracy) - Math.round(congAccuracy),
       trials: completedTrials,
       completedAt: new Date().toISOString()
     };
@@ -566,12 +602,12 @@ const StroopTest1 = () => {
                   <StatValue $highlight>{accuracy}%</StatValue>
                 </StatItem>
                 <StatItem>
-                  <StatLabel>Priem. čas</StatLabel>
-                  <StatValue>{Math.round(avgReactionTime)}ms</StatValue>
+                  <StatLabel>Zhodné</StatLabel>
+                  <StatValue>{congruentAccuracy}%</StatValue>
                 </StatItem>
                 <StatItem>
-                  <StatLabel>Najrýchlejší</StatLabel>
-                  <StatValue>{validReactions.length > 0 ? Math.min(...validReactions.map(t => t.reactionTime)) : 0}ms</StatValue>
+                  <StatLabel>Nezhodné</StatLabel>
+                  <StatValue $highlight>{incongruentAccuracy}%</StatValue>
                 </StatItem>
               </Stats>
 
@@ -632,7 +668,6 @@ const StroopTest1 = () => {
               </StroopWord>
             )}
 
-            {/* ✅ OPRAVENÉ - Farebné štvorce s slovenskými návešťami */}
             <ButtonGroup>
               <OptionButton
                 onClick={() => handleAnswer('RED')}

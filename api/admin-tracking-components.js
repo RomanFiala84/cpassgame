@@ -1,4 +1,3 @@
-// api/admin-tracking-components.js
 import { MongoClient } from 'mongodb';
 
 let cachedClient = null;
@@ -43,8 +42,6 @@ export default async function handler(req, res) {
 
   try {
     const { db } = await connectToDatabase();
-
-    // Kontrola či kolekcia existuje
     const collections = await db.listCollections({ name: 'hover_tracking' }).toArray();
     
     if (collections.length === 0) {
@@ -64,7 +61,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Agregácia
     const aggregation = await db.collection('hover_tracking').aggregate([
       {
         $group: {
@@ -139,7 +135,6 @@ export default async function handler(req, res) {
       }
     ]).toArray();
 
-    // Stats
     const statsResult = await db.collection('hover_tracking').aggregate([
       {
         $group: {

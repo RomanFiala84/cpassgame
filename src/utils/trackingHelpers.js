@@ -69,7 +69,7 @@ async function resizeImageToStandardHighQuality(blob, targetWidth = STANDARD_WID
           width: targetWidth,
           height: targetHeight 
         });
-      }, 'image/png', 0.98);
+      }, 'image/png', 1);
     };
     
     img.onerror = () => {

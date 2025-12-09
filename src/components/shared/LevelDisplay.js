@@ -9,30 +9,32 @@ import { useUserStats } from '../../contexts/UserStatsContext';
 const Wrapper = styled.div`
   position: fixed;
   top: 0;
-  left: 0;
+  left: ${p => p.isOpen ? '0' : '-140px'};
   height: 100vh;
-  width: ${p => p.isOpen ? '140px' : '0'};
+  width: 140px;
   background: ${p => p.theme.CARD_BACKGROUND};
-  border-right: ${p => p.isOpen ? `2px solid ${p.theme.ACCENT_COLOR}` : 'none'};
-  box-shadow: ${p => p.isOpen ? '4px 0 16px rgba(0,0,0,0.3)' : 'none'};
+  border-right: 2px solid ${p => p.theme.ACCENT_COLOR};
+  box-shadow: 4px 0 16px rgba(0,0,0,0.3);
   z-index: 1300;
-  padding: ${p => p.isOpen ? '16px 8px' : '0'};
+  padding: 16px 8px;
   display: flex;
   flex-direction: column;
-  gap: ${p => p.isOpen ? '12px' : '0'};
+  gap: 12px;
   overflow-y: auto;
-  transition: width 0.3s ease, padding 0.3s ease, box-shadow 0.3s ease;
+  transition: left 0.3s ease, box-shadow 0.3s ease;
 
   @media (max-width: 768px) {
-    width: ${p => p.isOpen ? '130px' : '0'};
-    padding: ${p => p.isOpen ? '12px 6px' : '0'};
-    gap: ${p => p.isOpen ? '10px' : '0'};
+    width: 130px;
+    left: ${p => p.isOpen ? '0' : '-130px'};
+    padding: 12px 6px;
+    gap: 10px;
   }
 
   @media (max-width: 480px) {
-    width: ${p => p.isOpen ? '120px' : '0'};
-    padding: ${p => p.isOpen ? '10px 5px' : '0'};
-    gap: ${p => p.isOpen ? '8px' : '0'};
+    width: 120px;
+    left: ${p => p.isOpen ? '0' : '-120px'};
+    padding: 10px 5px;
+    gap: 8px;
   }
 `;
 
@@ -56,7 +58,7 @@ const ToggleButton = styled.button`
   align-items: center;
   justify-content: center;
   z-index: 1350;
-  transition: left 0.3s ease;
+  transition: left 0.3s ease, background 0.2s ease;
   padding: 0;
 
   &:hover {
@@ -400,7 +402,7 @@ const SidebarOverlay = styled.div`
 
 const LevelDisplay = () => {
   const { userStats } = useUserStats();
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false); // ✅ DEFAULTNE FALSE = CLOSED
 
   const mission = userStats?.missionPoints ?? 0;
   const bonus = userStats?.bonusPoints ?? 0;
