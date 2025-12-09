@@ -336,9 +336,9 @@ const PostsA1 = () => {
       const group = progress.group_assignment;
       
       if (group === '1') {
-        navigate('/mission1/strooptest1');
+        navigate('/mission1/stroop-test1');
       } else {
-        navigate('/mission1/strooptest1');
+        navigate('/mission1/stroop-test1');
       }
       
     } catch (error) {

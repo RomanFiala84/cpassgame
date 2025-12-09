@@ -1,7 +1,7 @@
 // src/components/missions/mission1/StroopTest1.js
 // ═══════════════════════════════════════════════════════════════════════
 // STROOP TEST MISSION 1 - S DETEKTÍVOM KONÁROM
-// Detektív instruuje respondenta že musí vyluštiť tajnú šifru
+// FINÁLNA VERZIA - 48 POLOŽIEK (24 congruent + 24 incongruent)
 // ═══════════════════════════════════════════════════════════════════════
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -170,42 +170,85 @@ const StroopWord = styled.div`
 const ButtonGroup = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 24px;
   width: 100%;
+  justify-items: center;
 
   @media (max-width: 480px) {
-    gap: 10px;
+    gap: 16px;
   }
 `;
 
+// ✅ OPRAVENÉ - Farebné štvorce namiesto textu
 const OptionButton = styled.button`
-  padding: 16px 20px;
-  font-size: 16px;
-  font-weight: 600;
-  border: 2px solid ${p => p.theme.BORDER_COLOR};
-  background: ${p => p.isSelected ? p.theme.ACCENT_COLOR : 'transparent'};
-  color: ${p => p.isSelected ? 'white' : p.theme.PRIMARY_TEXT_COLOR};
-  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  border: 4px solid ${p => p.isSelected ? p.theme.ACCENT_COLOR : 'transparent'};
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
+  padding: 0;
+  background: ${p => p.buttonColor};
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 
   &:hover:not(:disabled) {
-    background: ${p => p.theme.ACCENT_COLOR}22;
-    border-color: ${p => p.theme.ACCENT_COLOR};
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
   }
 
   &:active:not(:disabled) {
-    transform: scale(0.98);
+    transform: scale(0.95);
   }
 
   &:disabled {
-    opacity: 0.5;
+    opacity: 0.7;
     cursor: not-allowed;
   }
 
+  /* ✅ Checkmark keď je selektovaný */
+  &::after {
+    content: ${p => p.isSelected ? '"✓"' : '""'};
+    position: absolute;
+    font-size: 48px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    animation: ${p => p.isSelected ? 'scaleIn 0.3s ease' : 'none'};
+  }
+
+  @keyframes scaleIn {
+    from {
+      transform: scale(0.5);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 768px) {
+    width: 90px;
+    height: 90px;
+    border-width: 3px;
+
+    &::after {
+      font-size: 40px;
+    }
+  }
+
   @media (max-width: 480px) {
-    padding: 12px 16px;
-    font-size: 14px;
+    width: 75px;
+    height: 75px;
+    border-width: 2px;
+
+    &::after {
+      font-size: 32px;
+    }
   }
 `;
 
@@ -307,40 +350,89 @@ const StroopTest1 = () => {
   const { dataManager, userId } = useUserStats();
   const [showDetectiveTip, setShowDetectiveTip] = useState(true);
 
+  // ✅ OPRAVENÉ - Farby s anglickými keyami a slovenskými labelami
   const colors = {
-    RED: 'rgb(255, 84, 89)',
-    GREEN: 'rgb(50, 184, 198)',
-    BLUE: 'rgb(59, 130, 246)',
-    YELLOW: 'rgb(245, 158, 11)'
+    RED: { rgb: 'rgba(255, 0, 0, 1)', label: 'Červená' },
+    GREEN: { rgb: 'rgba(9, 255, 0, 1)', label: 'Zelená' },
+    BLUE: { rgb: 'rgb(1, 0, 255)', label: 'Modrá' },
+    YELLOW: { rgb: 'rgba(255, 255, 0, 1)', label: 'Žltá' }
   };
 
-  const colorNames = ['RED', 'GREEN', 'BLUE', 'YELLOW'];
+  // ✅ FIXED TRIALS - 48 položiek (24 congruent + 24 incongruent)
+  const FIXED_TRIALS = [
+    // ═════════════════════════════════════════════════════
+    // CONGRUENT TRIALS (24 položiek)
+    // ═════════════════════════════════════════════════════
+    { word: 'RED', displayColor: 'RED', congruent: true },
+    { word: 'GREEN', displayColor: 'GREEN', congruent: true },
+    { word: 'BLUE', displayColor: 'BLUE', congruent: true },
+    { word: 'YELLOW', displayColor: 'YELLOW', congruent: true },
+    { word: 'RED', displayColor: 'RED', congruent: true },
+    { word: 'GREEN', displayColor: 'GREEN', congruent: true },
+    { word: 'BLUE', displayColor: 'BLUE', congruent: true },
+    { word: 'YELLOW', displayColor: 'YELLOW', congruent: true },
+    { word: 'RED', displayColor: 'RED', congruent: true },
+    { word: 'GREEN', displayColor: 'GREEN', congruent: true },
+    { word: 'BLUE', displayColor: 'BLUE', congruent: true },
+    { word: 'YELLOW', displayColor: 'YELLOW', congruent: true },
+    { word: 'RED', displayColor: 'RED', congruent: true },
+    { word: 'GREEN', displayColor: 'GREEN', congruent: true },
+    { word: 'BLUE', displayColor: 'BLUE', congruent: true },
+    { word: 'YELLOW', displayColor: 'YELLOW', congruent: true },
+    { word: 'RED', displayColor: 'RED', congruent: true },
+    { word: 'GREEN', displayColor: 'GREEN', congruent: true },
+    { word: 'BLUE', displayColor: 'BLUE', congruent: true },
+    { word: 'YELLOW', displayColor: 'YELLOW', congruent: true },
+    { word: 'RED', displayColor: 'RED', congruent: true },
+    { word: 'GREEN', displayColor: 'GREEN', congruent: true },
+    { word: 'BLUE', displayColor: 'BLUE', congruent: true },
+    { word: 'YELLOW', displayColor: 'YELLOW', congruent: true },
 
-  const generateTrials = () => {
-    const trials = [];
-    for (let i = 0; i < 9; i++) {
-      const wordColor = colorNames[Math.floor(Math.random() * colorNames.length)];
-      let displayColor = colorNames[Math.floor(Math.random() * colorNames.length)];
+    // ═════════════════════════════════════════════════════
+    // INCONGRUENT TRIALS (24 položiek)
+    // ═════════════════════════════════════════════════════
+    { word: 'RED', displayColor: 'GREEN', congruent: false },
+    { word: 'RED', displayColor: 'BLUE', congruent: false },
+    { word: 'RED', displayColor: 'YELLOW', congruent: false },
+    { word: 'GREEN', displayColor: 'RED', congruent: false },
+    { word: 'GREEN', displayColor: 'BLUE', congruent: false },
+    { word: 'GREEN', displayColor: 'YELLOW', congruent: false },
+    { word: 'BLUE', displayColor: 'RED', congruent: false },
+    { word: 'BLUE', displayColor: 'GREEN', congruent: false },
+    { word: 'BLUE', displayColor: 'YELLOW', congruent: false },
+    { word: 'YELLOW', displayColor: 'RED', congruent: false },
+    { word: 'YELLOW', displayColor: 'GREEN', congruent: false },
+    { word: 'YELLOW', displayColor: 'BLUE', congruent: false },
+    { word: 'RED', displayColor: 'GREEN', congruent: false },
+    { word: 'RED', displayColor: 'BLUE', congruent: false },
+    { word: 'GREEN', displayColor: 'RED', congruent: false },
+    { word: 'GREEN', displayColor: 'YELLOW', congruent: false },
+    { word: 'BLUE', displayColor: 'RED', congruent: false },
+    { word: 'BLUE', displayColor: 'GREEN', congruent: false },
+    { word: 'YELLOW', displayColor: 'RED', congruent: false },
+    { word: 'YELLOW', displayColor: 'BLUE', congruent: false },
+    { word: 'RED', displayColor: 'YELLOW', congruent: false },
+    { word: 'GREEN', displayColor: 'BLUE', congruent: false },
+    { word: 'BLUE', displayColor: 'YELLOW', congruent: false },
+    { word: 'YELLOW', displayColor: 'GREEN', congruent: false }
+  ];
 
-      if (Math.random() > 0.5) {
-        displayColor = wordColor;
-      }
-
-      trials.push({
-        id: i,
-        word: wordColor,
-        displayColor: colors[displayColor],
-        correctAnswer: displayColor,
-        response: null,
-        reactionTime: null,
-        isCorrect: null,
-        timestamp: null
-      });
-    }
-    return trials;
+  // ✅ Konvertuj na trials objekty
+  const initializeTrials = () => {
+    return FIXED_TRIALS.map((trial, i) => ({
+      id: i,
+      word: trial.word,
+      displayColor: colors[trial.displayColor].rgb,
+      correctAnswer: trial.displayColor,
+      response: null,
+      reactionTime: null,
+      isCorrect: null,
+      timestamp: null,
+      congruent: trial.congruent
+    }));
   };
 
-  const [trials, setTrials] = useState(generateTrials());
+  const [trials, setTrials] = useState(() => initializeTrials());
   const [currentTrialIndex, setCurrentTrialIndex] = useState(0);
   const [startTime, setStartTime] = useState(null);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -368,7 +460,7 @@ const StroopTest1 = () => {
     <p style="margin-top: 16px; color: #ff5459;"><strong>⚠️ Toto je detekčný test!</strong> Pokúšame sa zistiť, či si dostatočne pozorný. Podvádzanie alebo neopatrnosť budú detegované! 👁️</p>
   `;
 
-  // ✅ MOVED saveResults here with useCallback
+  // ✅ saveResults
   const saveResults = useCallback(async (completedTrials) => {
     const correctCount = completedTrials.filter(t => t.isCorrect).length;
     const validRTs = completedTrials.filter(t => t.reactionTime !== null);
@@ -377,9 +469,9 @@ const StroopTest1 = () => {
     const stroopResults = {
       mission: 1,
       testType: 'stroop',
-      totalTrials: 9,
+      totalTrials: 48,
       correctAnswers: correctCount,
-      accuracy: (correctCount / 9) * 100,
+      accuracy: (correctCount / 48) * 100,
       avgReactionTime: Math.round(avgRT),
       trials: completedTrials,
       completedAt: new Date().toISOString()
@@ -405,7 +497,6 @@ const StroopTest1 = () => {
     setSelectedAnswer(null);
   }, [currentTrialIndex]);
 
-  // ✅ handleAnswer now has saveResults in dependencies
   const handleAnswer = useCallback((answer) => {
     const endTime = Date.now();
     const reactionTime = endTime - startTime;
@@ -423,7 +514,7 @@ const StroopTest1 = () => {
     updatedTrials[currentTrialIndex] = updatedTrial;
     setTrials(updatedTrials);
 
-    if (currentTrialIndex < 8) {
+    if (currentTrialIndex < 47) {
       setTimeout(() => {
         setCurrentTrialIndex(currentTrialIndex + 1);
       }, 500);
@@ -468,7 +559,7 @@ const StroopTest1 = () => {
               <Stats>
                 <StatItem>
                   <StatLabel>Správne</StatLabel>
-                  <StatValue $highlight>{correctAnswers}/9</StatValue>
+                  <StatValue $highlight>{correctAnswers}/48</StatValue>
                 </StatItem>
                 <StatItem>
                   <StatLabel>Presnosť</StatLabel>
@@ -494,7 +585,6 @@ const StroopTest1 = () => {
             </CompletionMessage>
           </Wrapper>
 
-          {/* ✅ DETEKTÍVOV TIP - Pri dokončení */}
           {showDetectiveTip && (
             <DetectiveTipLarge
               tip={`
@@ -529,9 +619,9 @@ const StroopTest1 = () => {
 
           <ProgressContainer>
             <ProgressBar>
-              <ProgressFill current={currentTrialIndex + 1} total={9} />
+              <ProgressFill current={currentTrialIndex + 1} total={48} />
             </ProgressBar>
-            <ProgressText>{currentTrialIndex + 1}/9</ProgressText>
+            <ProgressText>{currentTrialIndex + 1}/48</ProgressText>
           </ProgressContainer>
 
           <GameArea>
@@ -542,45 +632,42 @@ const StroopTest1 = () => {
               </StroopWord>
             )}
 
+            {/* ✅ OPRAVENÉ - Farebné štvorce s slovenskými návešťami */}
             <ButtonGroup>
               <OptionButton
                 onClick={() => handleAnswer('RED')}
                 isSelected={selectedAnswer === 'RED'}
                 disabled={selectedAnswer !== null}
-                style={{ borderColor: colors.RED }}
-              >
-                🔴 Červená
-              </OptionButton>
+                buttonColor={colors.RED.rgb}
+                title={colors.RED.label}
+              />
               <OptionButton
                 onClick={() => handleAnswer('GREEN')}
                 isSelected={selectedAnswer === 'GREEN'}
                 disabled={selectedAnswer !== null}
-                style={{ borderColor: colors.GREEN }}
-              >
-                🟢 Zelená
-              </OptionButton>
+                buttonColor={colors.GREEN.rgb}
+                title={colors.GREEN.label}
+              />
               <OptionButton
                 onClick={() => handleAnswer('BLUE')}
                 isSelected={selectedAnswer === 'BLUE'}
                 disabled={selectedAnswer !== null}
-                style={{ borderColor: colors.BLUE }}
-              >
-                🔵 Modrá
-              </OptionButton>
+                buttonColor={colors.BLUE.rgb}
+                title={colors.BLUE.label}
+              />
               <OptionButton
                 onClick={() => handleAnswer('YELLOW')}
                 isSelected={selectedAnswer === 'YELLOW'}
                 disabled={selectedAnswer !== null}
-                style={{ borderColor: colors.YELLOW }}
-              >
-                🟡 Žltá
-              </OptionButton>
+                buttonColor={colors.YELLOW.rgb}
+                title={colors.YELLOW.label}
+              />
             </ButtonGroup>
           </GameArea>
 
           <Stats>
             <StatItem>
-              <StatLabel>Správne: {correctAnswers}/9</StatLabel>
+              <StatLabel>Správne: {correctAnswers}/48</StatLabel>
               <StatValue $highlight>{accuracy}%</StatValue>
             </StatItem>
             <StatItem>
@@ -590,7 +677,6 @@ const StroopTest1 = () => {
           </Stats>
         </Wrapper>
 
-        {/* ✅ DETEKTÍVOV TIP - Na začiatku */}
         {showDetectiveTip && (
           <DetectiveTipLarge
             tip={detectiveTip}
