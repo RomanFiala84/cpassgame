@@ -1,6 +1,6 @@
 /**
  * /api/progress.js
- * KOMPLETNÁ OPRAVENÁ VERZIA - správne responses merge + náhodné skupiny
+ * KOMPLETNÁ OPRAVENÁ VERZIA - správne responses merge + náhodné skupiny + informovaný súhlas
  * Upravené pre Vercel
  */
 
@@ -124,7 +124,16 @@ const createNewParticipant = async (code, db) => {
     sharing_code: null,
     referral_code: null,
     
-    // ✅ KRITICKÉ: Inicializuj responses objekt
+    // ✅ PRIDANÉ: Informovaný súhlas a súťaž
+    informed_consent_given: false,
+    informed_consent_timestamp: null,
+    competition_consent_given: false,
+    competition_consent_timestamp: null,
+    competition_email: null,
+    used_referral_code: null,
+    blocked: false,
+    
+    // ✅ Inicializuj responses objekt
     responses: {}
   };
   
@@ -253,7 +262,7 @@ export default async function handler(req, res) {
           
           const newUser = {
             participant_code: code,
-            group_assignment: dataToUpdate.group_assignment || assignRandomGroup(),  // ✅ Náhodná skupina
+            group_assignment: dataToUpdate.group_assignment || assignRandomGroup(),
             createdAt: new Date(),
             updatedAt: new Date(),
             
@@ -282,7 +291,17 @@ export default async function handler(req, res) {
             timestamp_last_update: new Date().toISOString(),
             sharing_code: null,
             referral_code: null,
-            responses: {},  // ✅ Inicializuj responses
+            
+            // ✅ PRIDANÉ: Informovaný súhlas a súťaž
+            informed_consent_given: false,
+            informed_consent_timestamp: null,
+            competition_consent_given: false,
+            competition_consent_timestamp: null,
+            competition_email: null,
+            used_referral_code: null,
+            blocked: false,
+            
+            responses: {},
             
             // Merge s dataToUpdate
             ...dataToUpdate
@@ -313,7 +332,7 @@ export default async function handler(req, res) {
         // Priprav update data
         const updateData = {
           ...dataToUpdate,
-          responses: mergedResponses,  // ✅ Použiť merged responses
+          responses: mergedResponses,
           updatedAt: new Date(),
           timestamp_last_update: new Date().toISOString()
         };
