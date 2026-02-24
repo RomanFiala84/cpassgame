@@ -1,5 +1,5 @@
 // src/components/main/Instruction.js
-// FINÁLNA VERZIA s expandable sekciami inštrukcií
+// FINÁLNA VERZIA s expandable sekciami inštrukcií a novým poradím
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +7,8 @@ import styled from 'styled-components';
 import Layout from '../../styles/Layout';
 import StyledButton from '../../styles/StyledButton';
 import { useUserStats } from '../../contexts/UserStatsContext';
+
+// ... (všetky styled komponenty zostávajú rovnaké)
 
 const Container = styled.div`
   display: flex;
@@ -58,7 +60,6 @@ const Subtitle = styled.p`
   }
 `;
 
-// ✅ NOVÉ - Accordion pre inštrukcie
 const InstructionsSection = styled.div`
   width: 100%;
   max-width: 800px;
@@ -454,7 +455,6 @@ const ReferralNoticeText = styled.div`
   }
 `;
 
-// ✅ NOVÉ - Sekcia pre email (súťaž)
 const CompetitionSection = styled(FormCard)`
   background: ${p => `${p.theme.ACCENT_COLOR}11`};
   border-color: ${p => p.theme.ACCENT_COLOR}44;
@@ -479,6 +479,43 @@ const EmailInput = styled(Input)`
   letter-spacing: normal;
 `;
 
+const RulesSection = styled.div`
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 20px;
+`;
+
+const RulesButton = styled.button`
+  width: 100%;
+  padding: 16px 20px;
+  background: ${p => p.theme.CARD_BACKGROUND};
+  border: 2px solid ${p => p.theme.ACCENT_COLOR}44;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: ${p => p.theme.ACCENT_COLOR};
+  transition: all 0.2s ease;
+  font-family: inherit;
+  
+  &:hover {
+    border-color: ${p => p.theme.ACCENT_COLOR};
+    background: ${p => `${p.theme.ACCENT_COLOR}11`};
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 15px;
+    padding: 14px 16px;
+  }
+`;
+
+const RulesIcon = styled.span`
+  font-size: 20px;
+`;
+
 export default function Instruction() {
   const navigate = useNavigate();
   const { login, dataManager } = useUserStats();
@@ -487,6 +524,7 @@ export default function Instruction() {
   const [referralCode, setReferralCode] = useState('');
   const [hasReferral, setHasReferral] = useState(false);
   const [consentGiven, setConsentGiven] = useState(false);
+  const [competitionConsent, setCompetitionConsent] = useState(false);
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState({});
   const [referralAlreadyUsed, setReferralAlreadyUsed] = useState(false);
@@ -498,7 +536,6 @@ export default function Instruction() {
   
   const blockedWarningRef = useRef(null);
 
-  // ✅ Načítanie referral kódu z URL
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const refCode = urlParams.get('ref');
@@ -615,6 +652,10 @@ export default function Instruction() {
       e.email = 'Prosím zadajte platnú emailovú adresu.';
     }
     
+    if (email && !competitionConsent) {
+      e.competitionConsent = 'Musíte súhlasiť so zapojením do súťaže ak chcete zadať email.';
+    }
+    
     if (hasReferral) {
       if (referralAlreadyUsed) {
         e.referral = 'Už ste použili referral kód. Nemôžete ho zadať znova.';
@@ -651,8 +692,7 @@ export default function Instruction() {
     
     sessionStorage.setItem('participantCode', upperCode);
     
-    // ✅ Ulož email ak bol zadaný
-    if (email && validateEmail(email)) {
+    if (email && validateEmail(email) && competitionConsent) {
       try {
         await dataManager.saveCompetitionEmail(upperCode, email);
         console.log(`✅ Email pre súťaž uložený: ${email}`);
@@ -688,13 +728,18 @@ export default function Instruction() {
     setReferralAlreadyUsed(false);
     setErrors({});
     setConsentGiven(false);
+    setCompetitionConsent(false);
     setHasReferral(false);
     setReferralCode('');
     setReferralFromUrl(false);
     setEmail('');
   };
 
-  // ✅ Obsah sekcií inštrukcií
+  const handleViewRules = () => {
+    // Otvorí priložený súbor v novom okne
+    window.open('/Pravidla-A-Podmienky-Sutaze.docx', '_blank');
+  };
+
   const instructionsSections = [
     {
       id: 'podmienky',
@@ -854,7 +899,7 @@ export default function Instruction() {
           Prečítajte si inštrukcie a zadajte svoj kód účastníka
         </Subtitle>
 
-        {/* ✅ Expandable sekcie s inštrukciami */}
+        {/* Expandable sekcie s inštrukciami */}
         <InstructionsSection>
           <WelcomeText>
             <strong>Milá respondentka, milý respondent</strong>, ďakujeme vám za váš čas a ochotu zúčastniť sa v našom výskume.
@@ -878,7 +923,7 @@ export default function Instruction() {
           ))}
         </InstructionsSection>
 
-        {/* ✅ Indikátor automaticky vyplneného referral kódu */}
+        {/* Indikátor automaticky vyplneného referral kódu */}
         {referralFromUrl && referralCode && (
           <ReferralNotice>
             <ReferralNoticeText>
@@ -890,7 +935,7 @@ export default function Instruction() {
           </ReferralNotice>
         )}
 
-        {/* ✅ Blokovanie používateľa */}
+        {/* Blokovanie používateľa */}
         {isBlocked && (
           <BlockedWarning ref={blockedWarningRef}>
             <BlockedIcon>🚫</BlockedIcon>
@@ -916,169 +961,158 @@ export default function Instruction() {
           </BlockedWarning>
         )}
 
-        {/* ✅ Informácie o formáte kódu */}
-        <InfoBox>
-          <InfoTitle>ℹ️ Formát prihlasovacieho kódu</InfoTitle>
-          <InfoText>
-            Váš kód sa skladá z:<br/>
-            • <strong>1. písmeno</strong> mena<br/>
-            • <strong>3. písmeno</strong> mena<br/>
-            • <strong>2. písmeno</strong> priezviska<br/>
-            • <strong>4. písmeno</strong> priezviska<br/>
-            • <strong>Mesiac narodenia</strong> (2 číslice: 01-12)<br/>
-            <br/>
-            <strong>Príklad:</strong> Pre <strong>Roman Milanko</strong> narodený v <strong>novembri</strong>:<br/>
-            → <ExampleCode>RMIL11</ExampleCode>
-            <br/><br/>
-            <strong>Testovacie účty:</strong> TEST01-TEST60 • <strong>Admin:</strong> RF9846
-          </InfoText>
-        </InfoBox>
+        {/* 1. KONTAKT - sekcia ostáva na pôvodnom mieste */}
 
-        {/* ✅ Informovaný súhlas */}
+        {/* 2. INFORMOVANÝ SÚHLAS */}
         <FormCard $hasError={!!errors.consent}>
-          <CheckboxContainer>
+          <CheckboxContainer 
+            $disabled={isBlocked}
+            onClick={() => !isBlocked && setConsentGiven(!consentGiven)}
+          >
             <Checkbox
               type="checkbox"
               checked={consentGiven}
-              onChange={e => {
-                setConsentGiven(e.target.checked);
-                setErrors(prev => ({ ...prev, consent: null }));
-              }}
               disabled={isBlocked}
+              onChange={(e) => setConsentGiven(e.target.checked)}
             />
             <label>
-              Súhlasím s informovaným súhlasom a participáciou na výskume
+              Súhlasím s informovaným súhlasom a chcem sa zúčastniť výskumu
             </label>
           </CheckboxContainer>
           {errors.consent && <ErrorText>{errors.consent}</ErrorText>}
-          <Note>Podrobnosti nájdete v rozbalených sekciách vyššie</Note>
         </FormCard>
 
-        {/* ✅ Kód účastníka */}
-        <FormCard $hasError={!!errors.participant}>
-          <InputLabel htmlFor="participantCode">Kód účastníka *</InputLabel>
+        {/* 3. FORMAT PRIHLASOVACIEHO KÓDU */}
+        <InfoBox>
+          <InfoTitle>📋 Formát prihlasovacieho kódu</InfoTitle>
+          <InfoText>
+            <strong>Účastník výskumu:</strong> Váš kód má formát <ExampleCode>ABCD01</ExampleCode> — 4 veľké písmená + 2 číslice (mesiac narodenia).<br/>
+            <strong>Testovací účet:</strong> Kódy <ExampleCode>TEST01</ExampleCode> až <ExampleCode>TEST60</ExampleCode> pre testovanie aplikácie.<br/>
+            <strong>Administrátor:</strong> Špeciálny kód <ExampleCode>RF9846</ExampleCode> pre správu systému.
+          </InfoText>
+        </InfoBox>
+
+        {/* 4. KÓD ÚČASTNÍKA */}
+        <FormCard $hasError={!!errors.participant || !!errors.blocked}>
+          <InputLabel htmlFor="participant-code">Váš kód účastníka *</InputLabel>
           <Input
-            id="participantCode"
+            id="participant-code"
             type="text"
+            placeholder="Napr. ABCD01"
             value={participantCode}
-            onChange={async (e) => {
-              const newCode = e.target.value.toUpperCase();
-              setParticipantCode(newCode);
-              setErrors(prev => ({ ...prev, participant: null, referral: null }));
-              
-              if (newCode.length === 6) {
-                await checkReferralStatus(newCode);
-              } else {
-                setReferralAlreadyUsed(false);
-                setIsBlocked(false);
-              }
-            }}
-            placeholder="napr. RMIL11"
-            $hasError={!!errors.participant}
+            onChange={(e) => setParticipantCode(e.target.value)}
+            onBlur={(e) => checkReferralStatus(e.target.value)}
+            disabled={isBlocked}
             maxLength={6}
-            disabled={isLoading}
+            $hasError={!!errors.participant || !!errors.blocked}
+            autoComplete="off"
           />
           {errors.participant && <ErrorText>{errors.participant}</ErrorText>}
-          {isCheckingCode && <Note>🔄 Kontrolujem používateľa...</Note>}
-          {!isCheckingCode && !isBlocked && <Note>Zadajte kód podľa inštrukcií vyššie</Note>}
-          {isBlocked && <Note style={{color: '#ef4444'}}>⚠️ Tento účet je zablokovaný. Môžete zadať iný kód.</Note>}
+          {errors.blocked && <ErrorText>{errors.blocked}</ErrorText>}
+          <Note>Zadajte 6-znakový kód, ktorý ste dostali od výskumníka</Note>
         </FormCard>
 
-        {/* ✅ Email pre súťaž */}
-        <CompetitionSection $hasError={!!errors.email}>
-          <CompetitionTitle>📧 Zapojenie do súťaže (voliteľné)</CompetitionTitle>
+        {/* 5. EMAIL PRE SÚŤAŽ */}
+        <CompetitionSection>
+          <CompetitionTitle>🎁 Zapojte sa do súťaže o ceny</CompetitionTitle>
           <CompetitionText>
-            Účasť v súťaži nie je podmienkou účasti vo výskume. Ak sa chcete zapojiť do súťaže o ceny, 
-            zadajte prosím vašu emailovú adresu. Email nebude spájaný s vašimi odpoveďami vo výskume.
-          </CompetitionText>
-          <CompetitionText>
-            <strong>Podrobné pravidlá súťaže nájdete v samostatnom dokumente "Pravidlá a podmienky súťaže".</strong>
+            Ak chcete získať šancu vyhrať jednu z našich cien, zadajte svoj email. Použijeme ho len na kontaktovanie výhercov.
           </CompetitionText>
           
-          <InputLabel htmlFor="email">Email (nepovinný)</InputLabel>
+          <InputLabel htmlFor="email">Email (nepovinné)</InputLabel>
           <EmailInput
             id="email"
             type="email"
+            placeholder="vas.email@example.com"
             value={email}
-            onChange={e => {
-              setEmail(e.target.value);
-              setErrors(prev => ({ ...prev, email: null }));
-            }}
-            placeholder="vas.email@priklad.sk"
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={isBlocked}
             $hasError={!!errors.email}
-            disabled={isLoading || isBlocked}
+            autoComplete="email"
           />
           {errors.email && <ErrorText>{errors.email}</ErrorText>}
-          {email && !errors.email && validateEmail(email) && (
-            <Note style={{color: '#00ff88'}}>✓ Email je v správnom formáte</Note>
-          )}
+          <Note>Email bude použitý len pre účely súťaže a po jej skončení vymazaný</Note>
         </CompetitionSection>
 
-        {/* ✅ Referral checkbox */}
-        <CheckboxContainer $disabled={referralAlreadyUsed || isLoading || isBlocked}>
-          <Checkbox
-            type="checkbox"
-            checked={hasReferral}
-            onChange={e => {
-              if (!referralAlreadyUsed && !isBlocked) {
-                setHasReferral(e.target.checked);
-                setErrors(prev => ({ ...prev, referral: null }));
-              }
-            }}
-            disabled={referralAlreadyUsed || isLoading || isBlocked}
-          />
-          <label>
-            Mám referral kód od priateľa
-          </label>
-        </CheckboxContainer>
-
-        {/* ✅ Upozornenie že referral už použitý */}
-        {referralAlreadyUsed && (
-          <InfoBox $hasError>
-            <InfoTitle>⚠️ Referral kód už bol použitý</InfoTitle>
-            <InfoText>
-              Už ste zadali referral kód pri predošlom prihlásení. 
-              Každý používateľ môže použiť referral kód <strong>iba raz</strong>.
-            </InfoText>
-          </InfoBox>
-        )}
-
-        {/* ✅ Referral kód pole */}
-        {hasReferral && !referralAlreadyUsed && !isBlocked && (
-          <FormCard $hasError={!!errors.referral}>
-            <InputLabel htmlFor="referralCode">
-              Referral kód {referralFromUrl && '🔗 (automaticky vyplnený z linku)'}
-            </InputLabel>
-            <Input
-              id="referralCode"
-              type="text"
-              value={referralCode}
-              onChange={e => {
-                setReferralCode(e.target.value.toUpperCase());
-                setErrors(prev => ({ ...prev, referral: null }));
-                setReferralFromUrl(false);
-              }}
-              placeholder="napr. ABC123"
-              $hasError={!!errors.referral}
-              maxLength={6}
-              disabled={isLoading}
-            />
-            {errors.referral && <ErrorText>{errors.referral}</ErrorText>}
-            <Note>🎁 Váš priateľ dostane +10 bodov za odporúčanie!</Note>
+        {/* 6. INFORMOVANÝ SÚHLAS O ZAPOJENIE SA DO SÚŤAŽE */}
+        {email && (
+          <FormCard $hasError={!!errors.competitionConsent}>
+            <CheckboxContainer 
+              $disabled={isBlocked}
+              onClick={() => !isBlocked && setCompetitionConsent(!competitionConsent)}
+            >
+              <Checkbox
+                type="checkbox"
+                checked={competitionConsent}
+                disabled={isBlocked}
+                onChange={(e) => setCompetitionConsent(e.target.checked)}
+              />
+              <label>
+                Súhlasím so zapojením do súťaže a spracovaním emailu na tento účel
+              </label>
+            </CheckboxContainer>
+            {errors.competitionConsent && <ErrorText>{errors.competitionConsent}</ErrorText>}
           </FormCard>
         )}
 
-        {/* ✅ Tlačidlo na prihlásenie */}
+        {/* 7. REFERRAL KÓD */}
+        {!referralAlreadyUsed && (
+          <FormCard $hasError={!!errors.referral}>
+            <CheckboxContainer
+              $disabled={isBlocked}
+              onClick={() => !isBlocked && setHasReferral(!hasReferral)}
+            >
+              <Checkbox
+                type="checkbox"
+                checked={hasReferral}
+                disabled={isBlocked}
+                onChange={(e) => setHasReferral(e.target.checked)}
+              />
+              <label>Mám referral kód od priateľa</label>
+            </CheckboxContainer>
+
+            {hasReferral && (
+              <>
+                <InputLabel htmlFor="referral-code" style={{ marginTop: '16px' }}>
+                  Referral kód {referralFromUrl && '(automaticky vyplnený)'}
+                </InputLabel>
+                <Input
+                  id="referral-code"
+                  type="text"
+                  placeholder="Zadajte 6-znakový kód"
+                  value={referralCode}
+                  onChange={(e) => setReferralCode(e.target.value)}
+                  disabled={isBlocked || referralFromUrl}
+                  maxLength={6}
+                  $hasError={!!errors.referral}
+                  autoComplete="off"
+                />
+                {errors.referral && <ErrorText>{errors.referral}</ErrorText>}
+                <Note>
+                  {referralFromUrl 
+                    ? '✅ Kód vyplnený automaticky z odkazu' 
+                    : 'Zadajte 6-znakový kód vášho priateľa'}
+                </Note>
+              </>
+            )}
+          </FormCard>
+        )}
+
+        {/* 8. PRAVIDLÁ A PODMIENKY SÚŤAŽE */}
+        <RulesSection>
+          <RulesButton onClick={handleViewRules}>
+            <span>📄 Pravidlá a podmienky súťaže</span>
+            <RulesIcon>→</RulesIcon>
+          </RulesButton>
+        </RulesSection>
+
+        {/* Tlačidlá */}
         <ButtonContainer>
-          <StyledButton 
-            variant="accent"
-            size="large"
-            fullWidth
-            loading={isLoading}
-            disabled={isLoading || isCheckingCode || isBlocked}
+          <StyledButton
             onClick={handleStart}
+            disabled={isLoading || isBlocked || isCheckingCode}
           >
-            → Prihlásiť sa
+            {isLoading ? 'Načítavam...' : isCheckingCode ? 'Kontrolujem kód...' : 'Začať →'}
           </StyledButton>
         </ButtonContainer>
       </Container>
