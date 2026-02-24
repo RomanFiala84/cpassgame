@@ -12,6 +12,10 @@ import { useUserStats } from '../../contexts/UserStatsContext';
 // STYLED COMPONENTS
 // =====================
 
+// =====================
+// STYLED COMPONENTS
+// =====================
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -51,7 +55,7 @@ const Title = styled.h1`
 const Subtitle = styled.p`
   font-size: 18px;
   line-height: 1.6;
-  max-width: 700px;
+  max-width: 800px; /* ✅ Zmenené na 800px */
   margin-bottom: 32px;
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   text-align: center;
@@ -64,7 +68,7 @@ const Subtitle = styled.p`
 
 const InstructionsSection = styled.div`
   width: 100%;
-  max-width: 800px;
+  max-width: 800px; /* ✅ Zostáva 800px */
   margin-bottom: 32px;
 `;
 
@@ -184,7 +188,7 @@ const FormCard = styled.div`
   padding: 24px;
   margin-bottom: 20px;
   width: 100%;
-  max-width: 600px;
+  max-width: 800px; /* ✅ Zmenené z 600px na 800px */
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   transition: all 0.2s ease;
   
@@ -288,7 +292,7 @@ const InfoBox = styled.div`
   border-left: 4px solid ${p => p.$hasError ? '#ef4444' : p.theme.ACCENT_COLOR};
   padding: 20px;
   margin-bottom: 24px;
-  max-width: 600px;
+  max-width: 800px; /* ✅ Zmenené z 600px na 800px */
   width: 100%;
   border-radius: 12px;
   
@@ -334,11 +338,11 @@ const ButtonContainer = styled.div`
   justify-content: center;
   gap: 16px;
   margin-top: 32px;
+  width: 100%;
+  max-width: 800px; /* ✅ Zmenené z 600px na 800px */
   
   @media (max-width: 480px) {
     flex-direction: column;
-    width: 100%;
-    max-width: 600px;
   }
 `;
 
@@ -348,7 +352,7 @@ const BlockedWarning = styled.div`
   border-radius: 16px;
   padding: 32px;
   margin: 24px 0;
-  max-width: 600px;
+  max-width: 800px; /* ✅ Zmenené z 600px na 800px */
   width: 100%;
   box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);
   text-align: center;
@@ -427,7 +431,7 @@ const ReferralNotice = styled.div`
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 20px;
-  max-width: 600px;
+  max-width: 800px; /* ✅ Zmenené z 600px na 800px */
   width: 100%;
   text-align: center;
   animation: slideIn 0.5s ease-out;
@@ -483,7 +487,7 @@ const EmailInput = styled(Input)`
 
 const RulesSection = styled.div`
   width: 100%;
-  max-width: 600px;
+  max-width: 800px; /* ✅ Zmenené z 600px na 800px */
   margin-bottom: 20px;
 `;
 
@@ -494,6 +498,7 @@ const RulesAccordion = styled(AccordionItem)`
     border-color: ${p => p.theme.ACCENT_COLOR};
   }
 `;
+
 
 // =====================
 // MAIN COMPONENT
