@@ -524,6 +524,34 @@ export default function Instruction() {
   
   const blockedWarningRef = useRef(null);
 
+  useEffect(() => {
+  const checkExistingSession = async () => {
+    const existingCode = sessionStorage.getItem('participantCode');
+    
+    if (existingCode && !['0', '1', '2'].includes(existingCode)) {
+      console.log(`🔍 Kontrolujem existujúcu session: ${existingCode}`);
+      
+      try {
+        const userData = await dataManager.loadUserProgress(existingCode, true);
+        
+        if (userData?.blocked) {
+          console.log(`❌ Účastník ${existingCode} je blokovaný - odhlasenie`);
+          sessionStorage.removeItem('participantCode');
+          setParticipantCode(existingCode);
+          setIsBlocked(true);
+          setTimeout(() => {
+            blockedWarningRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 100);
+        }
+      } catch (error) {
+        console.error('Error checking session:', error);
+      }
+    }
+  };
+
+  checkExistingSession();
+}, [dataManager]);
+
   // URL referral check
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
