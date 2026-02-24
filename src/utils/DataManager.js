@@ -1,5 +1,5 @@
 // src/utils/DataManager.js
-// FINÁLNA VERZIA - s kontrolou duplicitných emailov
+// FINÁLNA VERZIA - s kontrolou duplicitných emailov + unikátnych sharing kódov
 
 import * as XLSX from 'xlsx';
 
@@ -36,9 +36,13 @@ class DataManager {
       'referral_code',
       'used_referral_code',
       'referred_by',
-      'competition_email',  // ✅ PRIDANÉ - Pre export emailov
+      'competition_email',
       'timestamp_start',
       'timestamp_last_update',
+      'informed_consent_given',           // ✅ PRIDANÉ
+      'informed_consent_timestamp',       // ✅ PRIDANÉ
+      'competition_consent_given',        // ✅ PRIDANÉ
+      'competition_consent_timestamp',    // ✅ PRIDANÉ
       'session_count',
       'total_time_spent',
       'instruction_completed',
@@ -70,12 +74,9 @@ class DataManager {
       const normalizedEmail = email.toLowerCase().trim();
       console.log(`🔍 Kontrolujem duplicitný email: ${normalizedEmail}`);
       
-      // Načítaj všetky dáta zo servera
       await this.syncAllFromServer();
-      
       const allData = this.getAllParticipantsData();
       
-      // Skontroluj či nejaký používateľ už má tento email
       const emailExists = Object.values(allData).some(userData => {
         const userEmail = userData.competition_email;
         if (!userEmail) return false;
@@ -92,7 +93,6 @@ class DataManager {
       
     } catch (error) {
       console.error('❌ Error checking email:', error);
-      // V prípade chyby povoľ pokračovať
       return false;
     }
   }
@@ -108,14 +108,10 @@ class DataManager {
       const normalizedEmail = email.toLowerCase().trim();
       console.log(`💌 Ukladám email pre súťaž: ${participantCode} → ${normalizedEmail}`);
       
-      // Načítaj používateľa
       const userData = await this.loadUserProgress(participantCode);
-      
-      // Ulož email
       userData.competition_email = normalizedEmail;
       userData.competition_email_added_at = new Date().toISOString();
       
-      // Ulož späť
       await this.saveProgress(participantCode, userData);
       
       console.log(`✅ Email uložený pre ${participantCode}`);
@@ -412,7 +408,7 @@ class DataManager {
               m2: data.mission2_unlocked,
               m3: data.mission3_unlocked
             });
-            const prog = this.validateAndFixData(data, participantCode);
+            const prog = await this.validateAndFixData(data, participantCode);
             this._cacheAndStore(participantCode, prog);
             return prog;
           }
@@ -445,7 +441,7 @@ class DataManager {
         return rec;
       }
 
-      const prog = this.validateAndFixData(data.progress || data, participantCode);
+      const prog = await this.validateAndFixData(data.progress || data, participantCode);
       this._cacheAndStore(participantCode, prog);
       return prog;
       
@@ -457,7 +453,7 @@ class DataManager {
         try {
           const data = JSON.parse(saved);
           console.log(`📦 Načítaný zo localStorage: ${participantCode}`);
-          const prog = this.validateAndFixData(data, participantCode);
+          const prog = await this.validateAndFixData(data, participantCode);
           this.cache.set(participantCode, prog);
           
           this.syncToServer(participantCode, prog).catch(e =>
@@ -471,7 +467,7 @@ class DataManager {
 
       const central = this.getAllParticipantsData();
       if (central[participantCode]) {
-        const prog = this.validateAndFixData(central[participantCode], participantCode);
+        const prog = await this.validateAndFixData(central[participantCode], participantCode);
         this._cacheAndStore(participantCode, prog);
         return prog;
       }
@@ -504,11 +500,13 @@ class DataManager {
     }
   }
 
-  validateAndFixData(data, participantCode) {
+  // ✅ OPRAVENÁ METÓDA - async a kontrola duplicity
+  async validateAndFixData(data, participantCode) {
     data.participant_code = participantCode;
     
+    // ✅ Vygeneruj unikátny sharing code
     if (!data.sharing_code) {
-      data.sharing_code = this.generatePersistentSharingCode(participantCode);
+      data.sharing_code = await this.generateUniqueSharingCode(participantCode);
     }
     
     if (!['0', '1', '2'].includes(data.group_assignment)) {
@@ -520,8 +518,8 @@ class DataManager {
     const preserveFields = [
       'blocked',
       'blocked_at',
-      'competition_email',              // ✅ PRIDANÉ
-      'competition_email_added_at',     // ✅ PRIDANÉ
+      'competition_email',
+      'competition_email_added_at',
       'mission0_unlocked',
       'mission1_unlocked',
       'mission2_unlocked',
@@ -552,6 +550,7 @@ class DataManager {
     console.log(`🔍 ValidateAndFixData pre ${participantCode}:`, {
       blocked: data.blocked,
       blocked_at: data.blocked_at,
+      sharing_code: data.sharing_code,
       competition_email: data.competition_email ? '✓' : '✗',
       m0: data.mission0_unlocked,
       m1: data.mission1_unlocked,
@@ -570,8 +569,12 @@ class DataManager {
       total_time_spent: 0,
       blocked: false,
       blocked_at: null,
-      competition_email: null,              // ✅ PRIDANÉ
-      competition_email_added_at: null,     // ✅ PRIDANÉ
+      competition_email: null,
+      competition_email_added_at: null,
+      informed_consent_given: false,          // ✅ PRIDANÉ
+      informed_consent_timestamp: null,       // ✅ PRIDANÉ
+      competition_consent_given: false,       // ✅ PRIDANÉ
+      competition_consent_timestamp: null,    // ✅ PRIDANÉ
       instruction_completed: false,
       intro_completed: false,
       user_stats_points: 0,
@@ -604,23 +607,54 @@ class DataManager {
     const rec = {
       participant_code: participantCode,
       group_assignment: Math.random() < 0.33 ? '0' : Math.random() < 0.66 ? '1' : '2',
-      sharing_code: this.generatePersistentSharingCode(participantCode),
+      sharing_code: await this.generateUniqueSharingCode(participantCode),
       referral_code: sessionStorage.getItem('referralCode') || null,
       ...defaults
     };
     
     this._cacheAndStore(participantCode, rec);
     
-    console.log(`✅ Lokálne vytvorený používateľ ${participantCode}`);
+    console.log(`✅ Lokálne vytvorený používateľ ${participantCode} so sharing code ${rec.sharing_code}`);
     return rec;
   }
 
-  generatePersistentSharingCode(participantCode) {
-    const existing = this.getSharingCode(participantCode);
-    if (existing) return existing;
+  // ✅ NOVÁ METÓDA - Generuje unikátny sharing code s kontrolou duplicity
+  async generateUniqueSharingCode(participantCode) {
+    let attempts = 0;
+    const maxAttempts = 50;
     
+    while (attempts < maxAttempts) {
+      // Vygeneruj kód s variáciou v seede
+      const code = this.generatePersistentSharingCode(participantCode, attempts);
+      
+      // 🔍 Skontroluj či kód už existuje
+      const allData = this.getAllParticipantsData();
+      const codeExists = Object.values(allData).some(userData => 
+        userData.sharing_code === code
+      );
+      
+      if (!codeExists) {
+        console.log(`✅ Vygenerovaný unikátny sharing code pre ${participantCode}: ${code}`);
+        return code;
+      }
+      
+      console.warn(`⚠️ Duplicita! Sharing code ${code} už existuje, pokus ${attempts + 1}/${maxAttempts}`);
+      attempts++;
+    }
+    
+    // Fallback: použij timestamp ak zlyhalo 50 pokusov
+    const fallbackCode = this.generatePersistentSharingCode(
+      participantCode + Date.now(), 
+      Math.random() * 1000
+    );
+    console.warn(`⚠️ Použitý fallback sharing code: ${fallbackCode}`);
+    return fallbackCode;
+  }
+
+  // ✅ UPRAVENÁ METÓDA - pridaný seed parameter pre variáciu
+  generatePersistentSharingCode(participantCode, seedVariation = 0) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let hash = this.hashCode(participantCode + 'SALT2025' + Date.now());
+    let hash = this.hashCode(participantCode + 'SALT2025' + seedVariation);
     let code = '';
     
     for (let i = 0; i < 6; i++) {
@@ -628,20 +662,12 @@ class DataManager {
       code += chars[hash % chars.length];
     }
     
-    const used = Object.values(this.getAllParticipantsData()).map(d => d.sharing_code);
-    
-    while (used.includes(code)) {
-      const randomChar = chars[Math.floor(Math.random() * chars.length)];
-      code = code.slice(0, -1) + randomChar;
-    }
-    
-    console.log(`✅ Vygenerovaný sharing code pre ${participantCode}: ${code}`);
     return code;
   }
 
   hashCode(str) {
     let h = 0;
-    for (const c of str) {
+    for (const c of String(str)) {
       h = (h << 5) - h + c.charCodeAt(0);
       h &= h;
     }

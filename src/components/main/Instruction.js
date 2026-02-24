@@ -690,6 +690,27 @@ export default function Instruction() {
     
     sessionStorage.setItem('participantCode', upperCode);
     
+    // ✅ NOVÉ - Ulož informovaný súhlas
+    try {
+      const userData = await dataManager.loadUserProgress(upperCode);
+      
+      // Informovaný súhlas s výskumom
+      userData.informed_consent_given = consentGiven;
+      userData.informed_consent_timestamp = new Date().toISOString();
+      
+      // Súhlas so súťažou (ak je zadaný email)
+      if (email && competitionConsent) {
+        userData.competition_consent_given = true;
+        userData.competition_consent_timestamp = new Date().toISOString();
+      }
+      
+      await dataManager.saveProgress(upperCode, userData);
+      console.log(`✅ Súhlasy uložené pre ${upperCode}`);
+      
+    } catch (error) {
+      console.error('Error saving consents:', error);
+    }
+
     // ✅ Ulož email ak je validný
     if (email && validateEmail(email) && competitionConsent) {
       try {
