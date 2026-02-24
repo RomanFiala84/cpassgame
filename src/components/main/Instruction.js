@@ -1,5 +1,5 @@
 // src/components/main/Instruction.js
-// FINÁLNA VERZIA - Automatické načítanie referral kódu z URL + blokovanie
+// FINÁLNA VERZIA s expandable sekciami inštrukcií
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -55,6 +55,122 @@ const Subtitle = styled.p`
   @media (max-width: 768px) {
     font-size: 16px;
     margin-bottom: 24px;
+  }
+`;
+
+// ✅ NOVÉ - Accordion pre inštrukcie
+const InstructionsSection = styled.div`
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 32px;
+`;
+
+const WelcomeText = styled.p`
+  font-size: 16px;
+  line-height: 1.6;
+  color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+  text-align: center;
+  margin-bottom: 24px;
+`;
+
+const AccordionItem = styled.div`
+  margin-bottom: 12px;
+  border: 1px solid ${props => props.theme.BORDER_COLOR};
+  border-radius: 12px;
+  overflow: hidden;
+  background: ${props => props.theme.CARD_BACKGROUND};
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: ${props => props.theme.ACCENT_COLOR}66;
+  }
+`;
+
+const AccordionHeader = styled.button`
+  width: 100%;
+  padding: 16px 20px;
+  background: ${props => props.$isOpen ? props.theme.CARD_BACKGROUND : 'transparent'};
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: ${props => props.$isOpen ? props.theme.ACCENT_COLOR : props.theme.PRIMARY_TEXT_COLOR};
+  transition: all 0.2s ease;
+  font-family: inherit;
+  
+  &:hover {
+    color: ${props => props.theme.ACCENT_COLOR};
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 15px;
+    padding: 14px 16px;
+  }
+`;
+
+const AccordionIcon = styled.span`
+  transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0)'};
+  transition: transform 0.3s ease;
+  font-size: 14px;
+  color: ${props => props.theme.ACCENT_COLOR};
+`;
+
+const AccordionContent = styled.div`
+  max-height: ${props => props.$isOpen ? '2000px' : '0'};
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+`;
+
+const AccordionInner = styled.div`
+  padding: ${props => props.$isOpen ? '0 20px 20px 20px' : '0 20px'};
+  color: ${props => props.theme.SECONDARY_TEXT_COLOR};
+  line-height: 1.8;
+  font-size: 14px;
+  
+  h3 {
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+    margin: 16px 0 8px 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  
+  ul {
+    margin: 8px 0;
+    padding-left: 24px;
+  }
+  
+  li {
+    margin-bottom: 8px;
+  }
+  
+  p {
+    margin-bottom: 12px;
+  }
+  
+  strong {
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+    font-weight: 600;
+  }
+  
+  a {
+    color: ${props => props.theme.ACCENT_COLOR};
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 13px;
+    
+    h3 {
+      font-size: 14px;
+    }
   }
 `;
 
@@ -302,7 +418,6 @@ const ClearCodeButton = styled(StyledButton)`
   }
 `;
 
-// ✅ NOVÝ - Highlight pre automaticky vyplnený kód
 const ReferralNotice = styled.div`
   background: ${p => `${p.theme.ACCENT_COLOR}22`};
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
@@ -339,6 +454,31 @@ const ReferralNoticeText = styled.div`
   }
 `;
 
+// ✅ NOVÉ - Sekcia pre email (súťaž)
+const CompetitionSection = styled(FormCard)`
+  background: ${p => `${p.theme.ACCENT_COLOR}11`};
+  border-color: ${p => p.theme.ACCENT_COLOR}44;
+`;
+
+const CompetitionTitle = styled.h3`
+  color: ${p => p.theme.ACCENT_COLOR};
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+`;
+
+const CompetitionText = styled.p`
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 16px;
+`;
+
+const EmailInput = styled(Input)`
+  text-transform: none;
+  letter-spacing: normal;
+`;
+
 export default function Instruction() {
   const navigate = useNavigate();
   const { login, dataManager } = useUserStats();
@@ -347,16 +487,18 @@ export default function Instruction() {
   const [referralCode, setReferralCode] = useState('');
   const [hasReferral, setHasReferral] = useState(false);
   const [consentGiven, setConsentGiven] = useState(false);
+  const [email, setEmail] = useState('');
   const [errors, setErrors] = useState({});
   const [referralAlreadyUsed, setReferralAlreadyUsed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingCode, setIsCheckingCode] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
   const [referralFromUrl, setReferralFromUrl] = useState(false);
+  const [openSections, setOpenSections] = useState({});
   
   const blockedWarningRef = useRef(null);
 
-  // ✅ NOVÝ useEffect - Načítanie referral kódu z URL
+  // ✅ Načítanie referral kódu z URL
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const refCode = urlParams.get('ref');
@@ -365,22 +507,31 @@ export default function Instruction() {
       console.log(`🔗 URL obsahuje referral code: ${refCode}`);
       
       const upperRef = refCode.toUpperCase();
-      
-      // Ulož do sessionStorage
       sessionStorage.setItem('referralCode', upperRef);
       
-      // ✅ Automaticky vyplň referral pole
       setReferralCode(upperRef);
       setHasReferral(true);
       setReferralFromUrl(true);
       
       console.log(`✅ Referral kód automaticky vyplnený: ${upperRef}`);
       
-      // ✅ Vymaž ref parameter z URL (bez reload)
       const newUrl = window.location.pathname;
       window.history.replaceState({}, '', newUrl);
     }
   }, []);
+
+  const toggleSection = (section) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
+
+  const validateEmail = (email) => {
+    if (!email) return true;
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
 
   const validateParticipantCode = (code) => {
     const upperCode = code.toUpperCase().trim();
@@ -402,14 +553,12 @@ export default function Instruction() {
     return { valid: false, type: null };
   };
 
-  // ✅ OPRAVENÉ - Force fetch zo servera
   const checkReferralStatus = async (userCode) => {
     if (!userCode || userCode.length !== 6) return false;
     
     try {
       setIsCheckingCode(true);
       
-      // ✅ Force refresh zo servera (preskočí cache)
       const userData = await dataManager.loadUserProgress(userCode, true);
       
       if (userData?.blocked) {
@@ -454,12 +603,16 @@ export default function Instruction() {
     }
     
     if (!consentGiven) {
-      e.consent = 'Musíte súhlasiť s účasťou.';
+      e.consent = 'Musíte súhlasiť s informovaným súhlasom.';
     }
     
     const codeValidation = validateParticipantCode(participantCode);
     if (!codeValidation.valid) {
       e.participant = 'Neplatný formát kódu. Použite formát ABCDMM, TEST01-TEST60, alebo RF9846';
+    }
+    
+    if (email && !validateEmail(email)) {
+      e.email = 'Prosím zadajte platnú emailovú adresu.';
     }
     
     if (hasReferral) {
@@ -498,6 +651,16 @@ export default function Instruction() {
     
     sessionStorage.setItem('participantCode', upperCode);
     
+    // ✅ Ulož email ak bol zadaný
+    if (email && validateEmail(email)) {
+      try {
+        await dataManager.saveCompetitionEmail(upperCode, email);
+        console.log(`✅ Email pre súťaž uložený: ${email}`);
+      } catch (error) {
+        console.error('Email save error:', error);
+      }
+    }
+    
     if (hasReferral && !referralAlreadyUsed && referralCode.trim()) {
       try {
         await dataManager.processReferral(upperCode, referralCode.trim().toUpperCase());
@@ -528,17 +691,194 @@ export default function Instruction() {
     setHasReferral(false);
     setReferralCode('');
     setReferralFromUrl(false);
+    setEmail('');
   };
+
+  // ✅ Obsah sekcií inštrukcií
+  const instructionsSections = [
+    {
+      id: 'podmienky',
+      title: 'Aké sú podmienky účasti vo výskume?',
+      content: (
+        <>
+          <ul>
+            <li>Účasť je určená len pre dospelé osoby (18 a viac rokov), ktoré sú schopné samostatne posúdiť informácie o výskume a rozhodnúť sa o svojej účasti.</li>
+            <li>Pre účasť je ďalej potrebné, aby účastník pochádzal/a zo Slovenska, prípadne mal/a trvalý/dlhodobý pobyt na území Slovenskej republiky.</li>
+            <li>Pozorne si prečítajte každú otázku a tvrdenie, odpovedajte prosím úprimne. Veľmi dlho nad otázkami a tvrdeniami nepremýšľajte. Pri jednotlivých položkách nie sú správne alebo nesprávne odpovede.</li>
+            <li>Pre lepšie spracovanie dát vás prosíme aby ste použili počítač alebo notebook, ak použijete mobilný telefón alebo tablet neobmedzí to vašu účasť vo výskume.</li>
+            <li>V prípade porušenia podmienok výskumu, môžete byť z výskumu a súťaže o ceny vylúčený, následkom čoho bude zablokovanie vášho prístupu do aplikácie.</li>
+          </ul>
+        </>
+      )
+    },
+    {
+      id: 'ciel',
+      title: 'Čo je cieľom predvýskumu a hlavného výskumu?',
+      content: (
+        <>
+          <h3>Predvýskum:</h3>
+          <p>Predtým ako spustíme hlavný výskum, potrebujeme overiť, že všetky otázky a tvrdenia v dotazníku sú zrozumiteľné a jednoznačné.</p>
+          
+          <h3>Hlavný výskum:</h3>
+          <p>Cieľom nášho hlavného výskumu je lepšie porozumieť tomu, ako ľudia na Slovensku vnímajú inštitúcie Európskej únie, ako im dôverujú a aké faktory s tým súvisia. V našom výskume sme sa preto zameriavame na to ako informácie o fungovaní EÚ a jej prínosoch môžu pôsobiť na presvedčenia a mieru dôvery v inštitúcie EÚ.</p>
+        </>
+      )
+    },
+    {
+      id: 'priebehPred',
+      title: 'Ako bude prebiehať predvýskum?',
+      content: (
+        <>
+          <ul>
+            <li>V predvýskume prejdete sériou otázok a tvrdení - dotazník (5-10 minút).</li>
+            <li>Pri hodnotení neexistujú správne ani nesprávne odpovede a po každom bloku otázok vás požiadame o spätnú väzbu.</li>
+          </ul>
+          <p><strong>Budeme sa pýtať napríklad na:</strong></p>
+          <ul>
+            <li><strong>Zrozumiteľnosť:</strong> Bola otázka alebo tvrdenie významovo jasná? Rozumeli ste všetkým použitým slovám?</li>
+            <li><strong>Jednoznačnosť:</strong> Mohli by ste si otázku vyložiť viacerými spôsobmi?</li>
+            <li><strong>Významová zhoda:</strong> Pri niektorých položkách vám ukážeme dva rôzne spôsoby formulácie toho istého tvrdenia. Budeme sa pýtať, či podľa vás znamenajú to isté, alebo sa v niečom líšia.</li>
+            <li><strong>Hodnotiaca stupnica:</strong> Bola stupnica odpovedí zrozumiteľná a mali ste pocit, že dokážete vyjadriť svoj skutočný postoj?</li>
+          </ul>
+        </>
+      )
+    },
+    {
+      id: 'priebehHlavny',
+      title: 'Ako bude prebiehať hlavný výskum?',
+      content: (
+        <>
+          <ul>
+            <li>Výskum prebieha online formou interaktívnej aplikácie.</li>
+            <li>Pozostáva z troch fáz:
+              <ul>
+                <li>Úvodný dotazník (5-10 minút)</li>
+                <li>Misia 1 (10-15 minút) - Prebehne bezprostredne po dokončení úvodného dotazníka</li>
+                <li>Misia 2 (10-15 minút) - Prebehne po piatich dňoch od dokončenia Misie 1</li>
+              </ul>
+            </li>
+            <li>Počas výskumu budeme automaticky zaznamenávať vaše interakcie s aplikáciou pre účely výskumu.</li>
+          </ul>
+        </>
+      )
+    },
+    {
+      id: 'spracovanie',
+      title: 'Ako budú spracované výsledky a chránené vaše údaje?',
+      content: (
+        <>
+          <ul>
+            <li>Odpovede, ktoré nám poskytnete vyplnením dotazníka, budú použité výhradne na výskumné účely.</li>
+            <li>Výsledky budú spracované a zverejňované len v anonymizovanej, súhrnnej forme, takže z nich nebude možné spätne identifikovať konkrétnu osobu.</li>
+            <li>V dotazníku neuvádzate žiadne osobné identifikačné údaje ani IP adresu a namiesto mena si vytvoríte jedinečný kód.</li>
+            <li>Všetky údaje sú anonymné, dôverné a uložené v zabezpečenej databáze, ku ktorej má prístup len výskumný tím.</li>
+            <li>Ak poskytnete e‑mailovú adresu kvôli zapojeniu sa do súťaže alebo do ďalšej časti výskumu, bude použitá výhradne na tieto účely a po ukončení súťaže a výskumu bude bezprostredne vymazaná.</li>
+          </ul>
+        </>
+      )
+    },
+    {
+      id: 'odstupenie',
+      title: 'Môžem odstúpiť?',
+      content: (
+        <>
+          <ul>
+            <li>Áno. Účasť je dobrovoľná a môžete kedykoľvek odstúpiť bez udania dôvodu.</li>
+            <li>Môžete tiež požiadať o vymazanie údajov, ktoré budú odstránené najneskôr do 7 dní po ukončení výskumu.</li>
+          </ul>
+        </>
+      )
+    },
+    {
+      id: 'rizika',
+      title: 'Aké sú riziká účasti vo výskume?',
+      content: (
+        <>
+          <ul>
+            <li>Účasť nepredstavuje žiadne závažné riziká.</li>
+            <li>Niektoré tvrdenia sa dotýkajú citlivých spoločenských tém, čo môže vyvolať mierne emocionálne napätie.</li>
+            <li>Ak pocítite akúkoľvek nepohodu, môžete účasť kedykoľvek ukončiť, prípadne využiť niektorý z kontaktov pre pomoc uvedených nižšie.</li>
+          </ul>
+        </>
+      )
+    },
+    {
+      id: 'podpora',
+      title: 'Ak budete počas výskumu cítiť znepokojení',
+      content: (
+        <>
+          <p>Je úplne v poriadku mať z niektorých tém alebo tvrdení nepríjemný pocit -- dotýkajú sa citlivých spoločenských tém.</p>
+          <ul>
+            <li>Odporúčame o svojich pocitoch alebo otázkach hovoriť s niekým, komu dôverujete (priateľ, rodina, odborník).</li>
+            <li>Ak máte pocit, že na vás podobné informácie dlhodobo pôsobia stresujúco alebo úzkostne, môže byť užitočné poradiť sa so psychológom alebo iným odborníkom.</li>
+          </ul>
+          <h3>Dostupné zdroje pomoci:</h3>
+          <ul>
+            <li>Kontakt na výskumníka - <a href="mailto:roman.fiala@tvu.sk">roman.fiala@tvu.sk</a></li>
+            <li>IPčko - <a href="https://ipcko.sk" target="_blank" rel="noopener noreferrer">https://ipcko.sk</a></li>
+            <li>Linka dôvery - <a href="https://www.linkanezabudka.sk" target="_blank" rel="noopener noreferrer">https://www.linkanezabudka.sk</a></li>
+          </ul>
+        </>
+      )
+    },
+    {
+      id: 'sutaz',
+      title: 'Súťaž',
+      content: (
+        <>
+          <p>Súťaž bude vyhodnotená na základe stanovených pravidiel (viď <strong>Pravidlá a podmienky súťaže</strong>) do 10 dní od ukončenia hlavného výskumu.</p>
+          <p>Podrobné informácie o bodovaní, cenách a podmienkach účasti nájdete v samostatnom dokumente Pravidlá a podmienky súťaže.</p>
+        </>
+      )
+    },
+    {
+      id: 'kontakt',
+      title: 'Kontakt',
+      content: (
+        <>
+          <p>V prípade, že máte otázky k samotnému výskumu, môžete nás kontaktovať na uvedenom e‑maile -- radi vám poskytneme doplňujúce informácie.</p>
+          <p><strong>Výskumník: Roman Fiala</strong><br/>
+          Psychológia, 3. roč. Bc.<br/>
+          Katedra psychológie, Filozofická fakulta, Trnavská univerzita v Trnave</p>
+          <p>Email: <a href="mailto:roman.fiala@tvu.sk">roman.fiala@tvu.sk</a></p>
+        </>
+      )
+    }
+  ];
 
   return (
     <Layout showLevelDisplay={false}>
       <Container>
         <Title>🔑 Conspiracy Pass</Title>
         <Subtitle>
-          Zadajte svoj kód účastníka a prípadne referral kód od priateľa
+          Prečítajte si inštrukcie a zadajte svoj kód účastníka
         </Subtitle>
 
-        {/* ✅ NOVÉ - Indikátor automaticky vyplneného kódu */}
+        {/* ✅ Expandable sekcie s inštrukciami */}
+        <InstructionsSection>
+          <WelcomeText>
+            <strong>Milá respondentka, milý respondent</strong>, ďakujeme vám za váš čas a ochotu zúčastniť sa v našom výskume.
+          </WelcomeText>
+          
+          {instructionsSections.map(section => (
+            <AccordionItem key={section.id}>
+              <AccordionHeader 
+                onClick={() => toggleSection(section.id)}
+                $isOpen={openSections[section.id]}
+              >
+                {section.title}
+                <AccordionIcon $isOpen={openSections[section.id]}>▼</AccordionIcon>
+              </AccordionHeader>
+              <AccordionContent $isOpen={openSections[section.id]}>
+                <AccordionInner $isOpen={openSections[section.id]}>
+                  {section.content}
+                </AccordionInner>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </InstructionsSection>
+
+        {/* ✅ Indikátor automaticky vyplneného referral kódu */}
         {referralFromUrl && referralCode && (
           <ReferralNotice>
             <ReferralNoticeText>
@@ -550,6 +890,7 @@ export default function Instruction() {
           </ReferralNotice>
         )}
 
+        {/* ✅ Blokovanie používateľa */}
         {isBlocked && (
           <BlockedWarning ref={blockedWarningRef}>
             <BlockedIcon>🚫</BlockedIcon>
@@ -562,7 +903,7 @@ export default function Instruction() {
             </BlockedMessage>
             <ContactInfo>
               <strong>Máte otázky?</strong><br/>
-              Kontaktujte administrátora na <strong>support@example.com</strong>
+              Kontaktujte administrátora na <strong>roman.fiala@tvu.sk</strong>
             </ContactInfo>
             
             <ClearCodeButton
@@ -575,6 +916,7 @@ export default function Instruction() {
           </BlockedWarning>
         )}
 
+        {/* ✅ Informácie o formáte kódu */}
         <InfoBox>
           <InfoTitle>ℹ️ Formát prihlasovacieho kódu</InfoTitle>
           <InfoText>
@@ -592,6 +934,7 @@ export default function Instruction() {
           </InfoText>
         </InfoBox>
 
+        {/* ✅ Informovaný súhlas */}
         <FormCard $hasError={!!errors.consent}>
           <CheckboxContainer>
             <Checkbox
@@ -603,11 +946,15 @@ export default function Instruction() {
               }}
               disabled={isBlocked}
             />
-            <label>Súhlasím s účasťou v prieskume</label>
+            <label>
+              Súhlasím s informovaným súhlasom a participáciou na výskume
+            </label>
           </CheckboxContainer>
           {errors.consent && <ErrorText>{errors.consent}</ErrorText>}
+          <Note>Podrobnosti nájdete v rozbalených sekciách vyššie</Note>
         </FormCard>
 
+        {/* ✅ Kód účastníka */}
         <FormCard $hasError={!!errors.participant}>
           <InputLabel htmlFor="participantCode">Kód účastníka *</InputLabel>
           <Input
@@ -637,6 +984,37 @@ export default function Instruction() {
           {isBlocked && <Note style={{color: '#ef4444'}}>⚠️ Tento účet je zablokovaný. Môžete zadať iný kód.</Note>}
         </FormCard>
 
+        {/* ✅ Email pre súťaž */}
+        <CompetitionSection $hasError={!!errors.email}>
+          <CompetitionTitle>📧 Zapojenie do súťaže (voliteľné)</CompetitionTitle>
+          <CompetitionText>
+            Účasť v súťaži nie je podmienkou účasti vo výskume. Ak sa chcete zapojiť do súťaže o ceny, 
+            zadajte prosím vašu emailovú adresu. Email nebude spájaný s vašimi odpoveďami vo výskume.
+          </CompetitionText>
+          <CompetitionText>
+            <strong>Podrobné pravidlá súťaže nájdete v samostatnom dokumente "Pravidlá a podmienky súťaže".</strong>
+          </CompetitionText>
+          
+          <InputLabel htmlFor="email">Email (nepovinný)</InputLabel>
+          <EmailInput
+            id="email"
+            type="email"
+            value={email}
+            onChange={e => {
+              setEmail(e.target.value);
+              setErrors(prev => ({ ...prev, email: null }));
+            }}
+            placeholder="vas.email@priklad.sk"
+            $hasError={!!errors.email}
+            disabled={isLoading || isBlocked}
+          />
+          {errors.email && <ErrorText>{errors.email}</ErrorText>}
+          {email && !errors.email && validateEmail(email) && (
+            <Note style={{color: '#00ff88'}}>✓ Email je v správnom formáte</Note>
+          )}
+        </CompetitionSection>
+
+        {/* ✅ Referral checkbox */}
         <CheckboxContainer $disabled={referralAlreadyUsed || isLoading || isBlocked}>
           <Checkbox
             type="checkbox"
@@ -654,6 +1032,7 @@ export default function Instruction() {
           </label>
         </CheckboxContainer>
 
+        {/* ✅ Upozornenie že referral už použitý */}
         {referralAlreadyUsed && (
           <InfoBox $hasError>
             <InfoTitle>⚠️ Referral kód už bol použitý</InfoTitle>
@@ -664,6 +1043,7 @@ export default function Instruction() {
           </InfoBox>
         )}
 
+        {/* ✅ Referral kód pole */}
         {hasReferral && !referralAlreadyUsed && !isBlocked && (
           <FormCard $hasError={!!errors.referral}>
             <InputLabel htmlFor="referralCode">
@@ -676,7 +1056,7 @@ export default function Instruction() {
               onChange={e => {
                 setReferralCode(e.target.value.toUpperCase());
                 setErrors(prev => ({ ...prev, referral: null }));
-                setReferralFromUrl(false); // Reset pri manuálnej zmene
+                setReferralFromUrl(false);
               }}
               placeholder="napr. ABC123"
               $hasError={!!errors.referral}
@@ -688,6 +1068,7 @@ export default function Instruction() {
           </FormCard>
         )}
 
+        {/* ✅ Tlačidlo na prihlásenie */}
         <ButtonContainer>
           <StyledButton 
             variant="accent"
