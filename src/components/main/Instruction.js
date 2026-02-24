@@ -1,5 +1,5 @@
 // src/components/main/Instruction.js
-// FINÁLNA VERZIA s expandable sekciami inštrukcií a novým poradím
+// FINÁLNA VERZIA s pravidlami súťaže ako expandable sekcia
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,7 @@ import Layout from '../../styles/Layout';
 import StyledButton from '../../styles/StyledButton';
 import { useUserStats } from '../../contexts/UserStatsContext';
 
-// ... (všetky styled komponenty zostávajú rovnaké)
+// ... (všetky existujúce styled komponenty zostávajú rovnaké)
 
 const Container = styled.div`
   display: flex;
@@ -121,7 +121,7 @@ const AccordionIcon = styled.span`
 `;
 
 const AccordionContent = styled.div`
-  max-height: ${props => props.$isOpen ? '2000px' : '0'};
+  max-height: ${props => props.$isOpen ? '3000px' : '0'};
   overflow: hidden;
   transition: max-height 0.4s ease;
 `;
@@ -479,41 +479,19 @@ const EmailInput = styled(Input)`
   letter-spacing: normal;
 `;
 
+// ✅ Nové - Wrapper pre pravidlá súťaže
 const RulesSection = styled.div`
   width: 100%;
   max-width: 600px;
   margin-bottom: 20px;
 `;
 
-const RulesButton = styled.button`
-  width: 100%;
-  padding: 16px 20px;
-  background: ${p => p.theme.CARD_BACKGROUND};
-  border: 2px solid ${p => p.theme.ACCENT_COLOR}44;
-  border-radius: 12px;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 16px;
-  font-weight: 600;
-  color: ${p => p.theme.ACCENT_COLOR};
-  transition: all 0.2s ease;
-  font-family: inherit;
+const RulesAccordion = styled(AccordionItem)`
+  border-color: ${p => p.theme.ACCENT_COLOR}44;
   
   &:hover {
     border-color: ${p => p.theme.ACCENT_COLOR};
-    background: ${p => `${p.theme.ACCENT_COLOR}11`};
   }
-  
-  @media (max-width: 768px) {
-    font-size: 15px;
-    padding: 14px 16px;
-  }
-`;
-
-const RulesIcon = styled.span`
-  font-size: 20px;
 `;
 
 export default function Instruction() {
@@ -648,10 +626,12 @@ export default function Instruction() {
       e.participant = 'Neplatný formát kódu. Použite formát ABCDMM, TEST01-TEST60, alebo RF9846';
     }
     
+    // ✅ Email validácia
     if (email && !validateEmail(email)) {
       e.email = 'Prosím zadajte platnú emailovú adresu.';
     }
     
+    // ✅ Ak je zadaný email, súhlas so súťažou je povinný
     if (email && !competitionConsent) {
       e.competitionConsent = 'Musíte súhlasiť so zapojením do súťaže ak chcete zadať email.';
     }
@@ -733,11 +713,6 @@ export default function Instruction() {
     setReferralCode('');
     setReferralFromUrl(false);
     setEmail('');
-  };
-
-  const handleViewRules = () => {
-    // Otvorí priložený súbor v novom okne
-    window.open('/Pravidla-A-Podmienky-Sutaze.docx', '_blank');
   };
 
   const instructionsSections = [
@@ -872,7 +847,7 @@ export default function Instruction() {
       content: (
         <>
           <p>Súťaž bude vyhodnotená na základe stanovených pravidiel (viď <strong>Pravidlá a podmienky súťaže</strong>) do 10 dní od ukončenia hlavného výskumu.</p>
-          <p>Podrobné informácie o bodovaní, cenách a podmienkach účasti nájdete v samostatnom dokumente Pravidlá a podmienky súťaže.</p>
+          <p>Podrobné informácie o bodovaní, cenách a podmienkach účasti nájdete nižšie v sekcii <strong>Pravidlá a podmienky súťaže</strong>.</p>
         </>
       )
     },
@@ -961,9 +936,7 @@ export default function Instruction() {
           </BlockedWarning>
         )}
 
-        {/* 1. KONTAKT - sekcia ostáva na pôvodnom mieste */}
-
-        {/* 2. INFORMOVANÝ SÚHLAS */}
+        {/* 1. INFORMOVANÝ SÚHLAS */}
         <FormCard $hasError={!!errors.consent}>
           <CheckboxContainer 
             $disabled={isBlocked}
@@ -982,7 +955,7 @@ export default function Instruction() {
           {errors.consent && <ErrorText>{errors.consent}</ErrorText>}
         </FormCard>
 
-        {/* 3. FORMAT PRIHLASOVACIEHO KÓDU */}
+        {/* 2. FORMAT PRIHLASOVACIEHO KÓDU */}
         <InfoBox>
           <InfoTitle>📋 Formát prihlasovacieho kódu</InfoTitle>
           <InfoText>
@@ -992,7 +965,7 @@ export default function Instruction() {
           </InfoText>
         </InfoBox>
 
-        {/* 4. KÓD ÚČASTNÍKA */}
+        {/* 3. KÓD ÚČASTNÍKA */}
         <FormCard $hasError={!!errors.participant || !!errors.blocked}>
           <InputLabel htmlFor="participant-code">Váš kód účastníka *</InputLabel>
           <Input
@@ -1012,7 +985,7 @@ export default function Instruction() {
           <Note>Zadajte 6-znakový kód, ktorý ste dostali od výskumníka</Note>
         </FormCard>
 
-        {/* 5. EMAIL PRE SÚŤAŽ */}
+        {/* 4. EMAIL PRE SÚŤAŽ */}
         <CompetitionSection>
           <CompetitionTitle>🎁 Zapojte sa do súťaže o ceny</CompetitionTitle>
           <CompetitionText>
@@ -1034,7 +1007,7 @@ export default function Instruction() {
           <Note>Email bude použitý len pre účely súťaže a po jej skončení vymazaný</Note>
         </CompetitionSection>
 
-        {/* 6. INFORMOVANÝ SÚHLAS O ZAPOJENIE SA DO SÚŤAŽE */}
+        {/* 5. INFORMOVANÝ SÚHLAS SO SÚŤAŽOU - zobrazí sa len ak je zadaný email */}
         {email && (
           <FormCard $hasError={!!errors.competitionConsent}>
             <CheckboxContainer 
@@ -1052,10 +1025,13 @@ export default function Instruction() {
               </label>
             </CheckboxContainer>
             {errors.competitionConsent && <ErrorText>{errors.competitionConsent}</ErrorText>}
+            <Note style={{ marginTop: '12px' }}>
+              Pre viac informácií si prečítajte <strong>Pravidlá a podmienky súťaže</strong> nižšie
+            </Note>
           </FormCard>
         )}
 
-        {/* 7. REFERRAL KÓD */}
+        {/* 6. REFERRAL KÓD */}
         {!referralAlreadyUsed && (
           <FormCard $hasError={!!errors.referral}>
             <CheckboxContainer
@@ -1098,12 +1074,117 @@ export default function Instruction() {
           </FormCard>
         )}
 
-        {/* 8. PRAVIDLÁ A PODMIENKY SÚŤAŽE */}
+        {/* 7. PRAVIDLÁ A PODMIENKY SÚŤAŽE - Expandable sekcia */}
         <RulesSection>
-          <RulesButton onClick={handleViewRules}>
-            <span>📄 Pravidlá a podmienky súťaže</span>
-            <RulesIcon>→</RulesIcon>
-          </RulesButton>
+          <RulesAccordion>
+            <AccordionHeader 
+              onClick={() => toggleSection('rules')}
+              $isOpen={openSections['rules']}
+            >
+              📄 Pravidlá a podmienky súťaže
+              <AccordionIcon $isOpen={openSections['rules']}>▼</AccordionIcon>
+            </AccordionHeader>
+            <AccordionContent $isOpen={openSections['rules']}>
+              <AccordionInner $isOpen={openSections['rules']}>
+                <h3>Organizátor súťaže:</h3>
+                <ul>
+                  <li>Organizátorom súťaže je hlavný zodpovedný riešiteľ výskumu -- Roman Fiala.</li>
+                </ul>
+
+                <h3>Účastníci súťaže:</h3>
+                <ul>
+                  <li>Súťaže sa môžu zúčastniť osoby, ktoré dovŕšili 18 rokov a vyjadrili informovaný súhlas s účasťou vo výskume.</li>
+                </ul>
+
+                <h3>Podmienky zaradenia do žrebovania:</h3>
+                <ul>
+                  <li>Podmienky účasti uvedené v tejto časti sú zároveň podmienkami na získanie minimálneho počtu 50 bodov potrebných na zaradenie do žrebovania.</li>
+                  <li>Účastník bude zaradený do žrebovania o ceny, ak:
+                    <ul>
+                      <li>Absolvuje aspoň jednu z požadovaných častí výskumu: Predvýskum alebo prvú časť hlavného výskumu.</li>
+                      <li>Pravdivo a úplne vyplní všetky povinné položky predvýskumu alebo prvej časti hlavného výskumu.</li>
+                      <li>Poskytne kontaktný e-mail určený výhradne na účely súťaže, ktorý nie je spájaný s výskumnými dátami.</li>
+                    </ul>
+                  </li>
+                  <li>Účasť v súťaži nie je podmienkou účasti vo výskume, respondent sa môže zúčastniť výskumu aj bez poskytnutia kontaktného e-mailu.</li>
+                </ul>
+
+                <h3>Trvanie súťaže:</h3>
+                <ul>
+                  <li>Súťaž prebieha v období od spustenia predvýskumu -- marec 2026 do ukončenia hlavného výskumu -- apríl 2026.</li>
+                  <li>Pozor -- predvýskum bude dostupný iba do spustenia hlavného výskumu, to znamená že po jeho spustení predvýskum už nebude možné absolvovať.</li>
+                  <li>Do žrebovania budú zaradení len účastníci, ktorí splnia podmienky účasti v tomto časovom intervale.</li>
+                </ul>
+
+                <h3>Bodovanie účasti v súťaži:</h3>
+                <p>Každý získaný bod predstavuje jeden žreb v súťaži. Účastník s vyšším počtom bodov tak má vyššiu pravdepodobnosť výhry. Minimálnou podmienkou zaradenia do žrebovania je získanie minimálne 50 bodov.</p>
+                <ul>
+                  <li>Za absolvovanie predvýskumu získava účastník <strong>50 bodov</strong>.</li>
+                  <li>Za absolvovanie prvej časti hlavného výskumu získava účastník <strong>50 bodov</strong>.</li>
+                  <li>Za absolvovanie druhej časti hlavného výskumu (follow-up meranie) získava účastník <strong>25 bodov</strong>.</li>
+                  <li>Za odporúčanie ďalším účastníkom <strong>10 bodov</strong> za nového účastníka.
+                    <ul>
+                      <li>Každý účastník, ktorý absolvuje aspoň predvýskum alebo prvú časť hlavného výskumu, získa jedinečný referral kód.</li>
+                      <li>Ak nový účastník pri vstupe do štúdie uvedie referral kód osoby, ktorá ho pozvala, a sám splní podmienky účasti, osoba, ktorá referral kód zdieľala, získa za každé takéto platné odporúčanie 10 bodov.</li>
+                      <li>Za toho istého nového účastníka možno referral kód započítať len raz a len jednému odporúčateľovi.</li>
+                      <li>Referral kód nemá vplyv na samotný priebeh výskumu, slúži iba na pridelenie bodov do súťaže.</li>
+                    </ul>
+                  </li>
+                </ul>
+
+                <h3>Výhry:</h3>
+                <ul>
+                  <li>Hlavnou cenou je darčekový poukaz v hodnote <strong>30 €</strong> pre jedného výhercu.</li>
+                  <li>Vedľajšími cenami sú darčekové poukazy, každý v hodnote <strong>10 €</strong> pre piatich výhercov.</li>
+                  <li>Výhercovia si určia v ktorom obchode si chcú uplatniť darčekový poukaz a na základe toho im bude poukaz poskytnutý.</li>
+                  <li>Organizátor si vyhradzuje právo zmeniť typ ceny za inú v rovnakej alebo vyššej hodnote (napr. iný typ poukážky), ak pôvodnú cenu nebude možné zabezpečiť.</li>
+                </ul>
+
+                <h3>Žrebovanie výhercov:</h3>
+                <ul>
+                  <li>Žrebovanie prebehne najneskôr do 10 dní po ukončení hlavného výskumu.</li>
+                  <li>Žrebovanie bude realizované náhodným výberom z databázy e-mailových adries účastníkov, ktorí splnili podmienky účasti.</li>
+                  <li>Žrebovanie vykoná organizátor za prítomnosti svedkov a bude zaznamenané na videozáznam s časovou stopou.</li>
+                </ul>
+
+                <h3>Oznámenie a odovzdanie výhry:</h3>
+                <ul>
+                  <li>Výhercovia budú kontaktovaní e-mailom najneskôr do 5 dní od žrebovania.</li>
+                  <li>Ak výherca do 10 pracovných dní od odoslania e-mailu nereaguje alebo odmietne výhru, cena môže byť pridelená náhradníkovi, ktorý bude vyžrebovaný rovnakým spôsobom.</li>
+                  <li>Výhra bude odovzdaná elektronicky formou poukazu.</li>
+                </ul>
+
+                <h3>Ochrana osobných údajov:</h3>
+                <ul>
+                  <li>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</li>
+                  <li>Údaje budú použité výhradne na účely kontaktovania výhercu a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</li>
+                  <li>Spracovanie osobných údajov prebieha v súlade s GDPR a zákonom č. 18/2018 Z. z.</li>
+                </ul>
+
+                <h3>Vylúčenie zo súťaže:</h3>
+                <p>Organizátor si vyhradzuje právo vylúčiť účastníka zo súťaže, ak:</p>
+                <ul>
+                  <li>Porušil tieto pravidlá a podmienky súťaže.</li>
+                  <li>Uviedol zjavne nepravdivé údaje alebo iným spôsobom zneužil mechanizmus súťaže (napr. viacnásobná registrácia s rôznymi e-mailmi).</li>
+                </ul>
+
+                <h3>Zodpovednosť organizátora:</h3>
+                <ul>
+                  <li>Organizátor nezodpovedá za technické problémy (napr. výpadky internetu, poruchy zariadenia účastníka), ktoré znemožnia alebo skomplikujú účasť v súťaži alebo dokončenie výskumu.</li>
+                </ul>
+
+                <h3>Súhlas so spracovaním osobných údajov a participáciou v súťaži:</h3>
+                <p><strong>Prehlasujem, že:</strong></p>
+                <ul>
+                  <li>Súhlasím s účasťou v súťaži a potvrdzujem, že som si Pravidlá a podmienky súťaže prečítal/a, porozumel/a im a súhlasím s nimi.</li>
+                  <li>Rozumiem, že v prípade porušenia podmienok súťaže, môžem byť zo súťaže o ceny vylúčený.</li>
+                  <li>Mám vedomosť o svojich právach a povinnostiach počas súťaže.</li>
+                  <li>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</li>
+                  <li>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z.</li>
+                </ul>
+              </AccordionInner>
+            </AccordionContent>
+          </RulesAccordion>
         </RulesSection>
 
         {/* Tlačidlá */}
