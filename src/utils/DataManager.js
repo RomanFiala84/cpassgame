@@ -1,10 +1,7 @@
 // src/utils/DataManager.js
-// FINÁLNA VERZIA - Vždy načíta blocked state zo servera + preserveFields
-// ✅ OPRAVENÉ PRE VERCEL
-
+// FINÁLNA VERZIA - s kontrolou duplicitných emailov
 
 import * as XLSX from 'xlsx';
-
 
 class DataManager {
   constructor() {
@@ -12,10 +9,7 @@ class DataManager {
     this.adminUserId = 'RF9846';
     this.cache = new Map();
     this.allParticipantsCache = null;
-    
-    // ✅ OPRAVA: Zmenená cesta z Netlify na Vercel
     this.apiBase = '/api/progress';
-
 
     this.clearAllData = () => {
       this.cache.clear();
@@ -33,7 +27,6 @@ class DataManager {
     };
   }
 
-
   getVariableList() {
     return [
       'participant_code',
@@ -43,6 +36,7 @@ class DataManager {
       'referral_code',
       'used_referral_code',
       'referred_by',
+      'competition_email',  // ✅ PRIDANÉ - Pre export emailov
       'timestamp_start',
       'timestamp_last_update',
       'session_count',
@@ -68,8 +62,71 @@ class DataManager {
     ];
   }
 
+  // ✅ NOVÁ METÓDA - Kontrola či email už existuje v databáze
+  async checkEmailExists(email) {
+    if (!email) return false;
+    
+    try {
+      const normalizedEmail = email.toLowerCase().trim();
+      console.log(`🔍 Kontrolujem duplicitný email: ${normalizedEmail}`);
+      
+      // Načítaj všetky dáta zo servera
+      await this.syncAllFromServer();
+      
+      const allData = this.getAllParticipantsData();
+      
+      // Skontroluj či nejaký používateľ už má tento email
+      const emailExists = Object.values(allData).some(userData => {
+        const userEmail = userData.competition_email;
+        if (!userEmail) return false;
+        return userEmail.toLowerCase().trim() === normalizedEmail;
+      });
+      
+      if (emailExists) {
+        console.log(`⚠️ Email ${normalizedEmail} už bol použitý`);
+        return true;
+      }
+      
+      console.log(`✅ Email ${normalizedEmail} je voľný`);
+      return false;
+      
+    } catch (error) {
+      console.error('❌ Error checking email:', error);
+      // V prípade chyby povoľ pokračovať
+      return false;
+    }
+  }
 
-  // ✅ OPRAVENÉ - Načíta PRIAMO zo servera, preskočí cache
+  // ✅ NOVÁ METÓDA - Uloženie emailu pre súťaž
+  async saveCompetitionEmail(participantCode, email) {
+    if (!participantCode || !email) {
+      console.warn('⚠️ Missing participantCode or email');
+      return false;
+    }
+    
+    try {
+      const normalizedEmail = email.toLowerCase().trim();
+      console.log(`💌 Ukladám email pre súťaž: ${participantCode} → ${normalizedEmail}`);
+      
+      // Načítaj používateľa
+      const userData = await this.loadUserProgress(participantCode);
+      
+      // Ulož email
+      userData.competition_email = normalizedEmail;
+      userData.competition_email_added_at = new Date().toISOString();
+      
+      // Ulož späť
+      await this.saveProgress(participantCode, userData);
+      
+      console.log(`✅ Email uložený pre ${participantCode}`);
+      return true;
+      
+    } catch (error) {
+      console.error('❌ Error saving competition email:', error);
+      throw error;
+    }
+  }
+
   async isUserBlocked(participantCode) {
     try {
       console.log(`🔍 Kontrolujem blocked status pre ${participantCode} (priamo zo servera)...`);
@@ -90,13 +147,10 @@ class DataManager {
     }
   }
 
-
-  // ✅ OPRAVENÉ - Clear cache po blokovaní
   async setBlockedState(participantCode, blocked) {
     try {
       console.log(`${blocked ? '🚫 Blokovanie' : '✅ Odblokovanie'} používateľa ${participantCode}...`);
       
-      // Načítaj priamo zo servera
       const resp = await fetch(`${this.apiBase}?code=${participantCode}`);
       if (!resp.ok) {
         throw new Error('Používateľ nenájdený na serveri');
@@ -106,10 +160,8 @@ class DataManager {
       userData.blocked = blocked;
       userData.blocked_at = blocked ? new Date().toISOString() : null;
       
-      // Ulož na server
       await this.saveProgress(participantCode, userData);
       
-      // ✅ KRITICKÉ - Vymaž cache a refresh zo servera
       this.cache.delete(participantCode);
       await this.fetchAllParticipantsData();
       
@@ -121,7 +173,6 @@ class DataManager {
       throw error;
     }
   }
-
 
   async validateReferralCode(code) {
     if (!code) return false;
@@ -140,11 +191,9 @@ class DataManager {
     }
   }
 
-
   async validateSharingCode(code) {
     return await this.validateReferralCode(code);
   }
-
 
   async getUserSharingCode(userId) {
     try {
@@ -155,7 +204,6 @@ class DataManager {
       return null;
     }
   }
-
 
   async processReferral(participantCode, referralCode) {
     try {
@@ -231,7 +279,6 @@ class DataManager {
     }
   }
 
-
   async unlockMissionForAll(missionId) {
     console.log(`🔓 Odomykám misiu ${missionId} pre všetkých...`);
     
@@ -242,16 +289,13 @@ class DataManager {
         body: JSON.stringify({ missionId, adminCode: this.adminUserId })
       });
 
-
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || `Server error: ${response.status}`);
       }
 
-
       const result = await response.json();
       console.log(`✅ Batch unlock ${missionId} na serveri (${result.modifiedCount} používateľov)`);
-
 
       await this.fetchAllParticipantsData();
       this.cache.clear();
@@ -262,7 +306,6 @@ class DataManager {
         url: window.location.href
       }));
 
-
       console.log(`✅ Misia ${missionId} odomknutá pre všetkých`);
       return result;
       
@@ -271,7 +314,6 @@ class DataManager {
       throw error;
     }
   }
-
 
   async lockMissionForAll(missionId) {
     console.log(`🔒 Zamykám misiu ${missionId} pre všetkých...`);
@@ -283,16 +325,13 @@ class DataManager {
         body: JSON.stringify({ missionId, adminCode: this.adminUserId })
       });
 
-
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || `Server error: ${response.status}`);
       }
 
-
       const result = await response.json();
       console.log(`✅ Batch lock ${missionId} na serveri (${result.modifiedCount} používateľov)`);
-
 
       await this.fetchAllParticipantsData();
       this.cache.clear();
@@ -303,7 +342,6 @@ class DataManager {
         url: window.location.href
       }));
 
-
       console.log(`✅ Misia ${missionId} zamknutá pre všetkých`);
       return result;
       
@@ -312,7 +350,6 @@ class DataManager {
       throw error;
     }
   }
-
 
   async fetchAllParticipantsData() {
     try {
@@ -342,27 +379,21 @@ class DataManager {
     }
   }
 
-
   async syncAllFromServer() {
     return await this.fetchAllParticipantsData();
   }
 
-
-  // ✅ OPRAVENÉ - Vždy načíta fresh data zo servera, preskočí localStorage cache
   async loadUserProgress(participantCode, forceServerFetch = false) {
     if (!participantCode) return null;
     
-    // ✅ Pri force fetch preskočiť cache úplne
     if (!forceServerFetch && this.cache.has(participantCode)) {
       console.log(`📦 Používam cache pre ${participantCode}`);
       return this.cache.get(participantCode);
     }
 
-
     try {
       console.log(`📡 Načítavam ${participantCode} zo servera...`);
       const resp = await fetch(`${this.apiBase}?code=${participantCode}`);
-
 
       if (!resp.ok) {
         if (resp.status === 404) {
@@ -395,12 +426,12 @@ class DataManager {
         throw new Error(`HTTP ${resp.status}`);
       }
 
-
       const data = await resp.json();
       
       console.log(`📥 Dáta zo servera pre ${participantCode}:`, {
         blocked: data.blocked,
         blocked_at: data.blocked_at,
+        competition_email: data.competition_email ? '✓' : '✗',
         mission0_unlocked: data.mission0_unlocked,
         mission1_unlocked: data.mission1_unlocked,
         mission2_unlocked: data.mission2_unlocked,
@@ -414,7 +445,6 @@ class DataManager {
         return rec;
       }
 
-
       const prog = this.validateAndFixData(data.progress || data, participantCode);
       this._cacheAndStore(participantCode, prog);
       return prog;
@@ -422,7 +452,6 @@ class DataManager {
     } catch (error) {
       console.warn('⚠️ Server nedostupný, používam localStorage:', error.message);
       
-      // Fallback na localStorage
       const saved = localStorage.getItem(`fullProgress_${participantCode}`);
       if (saved) {
         try {
@@ -440,7 +469,6 @@ class DataManager {
         }
       }
 
-
       const central = this.getAllParticipantsData();
       if (central[participantCode]) {
         const prog = this.validateAndFixData(central[participantCode], participantCode);
@@ -448,14 +476,12 @@ class DataManager {
         return prog;
       }
 
-
       console.log(`🆕 Lokálne vytváram nového používateľa ${participantCode}`);
       const rec = await this.createNewUserRecord(participantCode);
       await this.syncToServer(participantCode, rec);
       return rec;
     }
   }
-
 
   async syncToServer(participantCode, data) {
     try {
@@ -465,12 +491,10 @@ class DataManager {
         body: JSON.stringify(data)
       });
 
-
       if (!resp.ok) {
         console.warn(`Sync failed for ${participantCode}: HTTP ${resp.status}`);
         return false;
       }
-
 
       console.log(`✅ Synced ${participantCode} - blocked: ${data.blocked}`);
       return true;
@@ -480,8 +504,6 @@ class DataManager {
     }
   }
 
-
-  // ✅ OPRAVENÉ - Pridané 'blocked' a 'blocked_at' do preserveFields
   validateAndFixData(data, participantCode) {
     data.participant_code = participantCode;
     
@@ -495,10 +517,11 @@ class DataManager {
     
     const defaults = this.getDefaultFields();
     
-    // ✅ KRITICKÉ - Pole, ktoré sa NIKDY NEPREPÍŠU
     const preserveFields = [
-      'blocked',          // ✅ PRIDANÉ - Zachováva blocked state zo servera
-      'blocked_at',       // ✅ PRIDANÉ - Zachováva blocked timestamp
+      'blocked',
+      'blocked_at',
+      'competition_email',              // ✅ PRIDANÉ
+      'competition_email_added_at',     // ✅ PRIDANÉ
       'mission0_unlocked',
       'mission1_unlocked',
       'mission2_unlocked',
@@ -514,7 +537,6 @@ class DataManager {
     
     Object.entries(defaults).forEach(([k, v]) => {
       if (preserveFields.includes(k)) {
-        // Zachovaj existujúcu hodnotu (aj false!)
         if (data[k] === undefined) {
           data[k] = v;
         }
@@ -530,6 +552,7 @@ class DataManager {
     console.log(`🔍 ValidateAndFixData pre ${participantCode}:`, {
       blocked: data.blocked,
       blocked_at: data.blocked_at,
+      competition_email: data.competition_email ? '✓' : '✗',
       m0: data.mission0_unlocked,
       m1: data.mission1_unlocked,
       m2: data.mission2_unlocked,
@@ -539,7 +562,6 @@ class DataManager {
     return data;
   }
 
-
   getDefaultFields() {
     return {
       timestamp_start: new Date().toISOString(),
@@ -548,6 +570,8 @@ class DataManager {
       total_time_spent: 0,
       blocked: false,
       blocked_at: null,
+      competition_email: null,              // ✅ PRIDANÉ
+      competition_email_added_at: null,     // ✅ PRIDANÉ
       instruction_completed: false,
       intro_completed: false,
       user_stats_points: 0,
@@ -573,7 +597,6 @@ class DataManager {
     };
   }
 
-
   async createNewUserRecord(participantCode) {
     console.log(`🆕 Vytváram nového používateľa ${participantCode} (lokálne)...`);
     
@@ -591,7 +614,6 @@ class DataManager {
     console.log(`✅ Lokálne vytvorený používateľ ${participantCode}`);
     return rec;
   }
-
 
   generatePersistentSharingCode(participantCode) {
     const existing = this.getSharingCode(participantCode);
@@ -617,7 +639,6 @@ class DataManager {
     return code;
   }
 
-
   hashCode(str) {
     let h = 0;
     for (const c of str) {
@@ -627,7 +648,6 @@ class DataManager {
     return Math.abs(h);
   }
 
-
   getSharingCode(participantCode) {
     const prog =
       this.cache.get(participantCode) ||
@@ -635,10 +655,10 @@ class DataManager {
     return prog.sharing_code || null;
   }
 
-
   async saveProgress(participantCode, data) {
     console.log(`💾 Ukladám progress pre ${participantCode}:`, {
       blocked: data.blocked,
+      competition_email: data.competition_email ? '✓' : '✗',
       m0: data.mission0_unlocked,
       m1: data.mission1_unlocked,
       m2: data.mission2_unlocked,
@@ -652,13 +672,11 @@ class DataManager {
     await this.syncToServer(participantCode, data);
   }
 
-
   async loadComponentData(participantCode, componentKey) {
     if (!participantCode) return {};
     const prog = await this.loadUserProgress(participantCode);
     return prog ? prog[`${componentKey}_data`] || {} : {};
   }
-
 
   async saveComponentData(participantCode, componentKey, data) {
     if (!participantCode) return;
@@ -666,7 +684,6 @@ class DataManager {
     prog[`${componentKey}_data`] = data;
     await this.saveProgress(participantCode, prog);
   }
-
 
   saveToCentralStorage(participantCode, data) {
     const all = this.getAllParticipantsData();
@@ -677,14 +694,12 @@ class DataManager {
     }
   }
 
-
   getAllParticipantsData() {
     if (this.allParticipantsCache) {
       return this.allParticipantsCache;
     }
     return JSON.parse(localStorage.getItem(this.centralStorageKey) || '{}');
   }
-
 
   exportAllParticipantsCSV() {
     const all = this.getAllParticipantsData();
@@ -700,7 +715,6 @@ class DataManager {
     this.downloadCSV(csvContent);
   }
 
-
   exportAllParticipantsXLSX() {
     const all = this.getAllParticipantsData();
     const variables = this.getVariableList();
@@ -712,7 +726,6 @@ class DataManager {
     XLSX.writeFile(wb, `export_${Date.now()}.xlsx`);
   }
 
-
   downloadCSV(content) {
     const blob = new Blob([content], { type: 'text/csv' });
     const link = document.createElement('a');
@@ -721,11 +734,9 @@ class DataManager {
     link.click();
   }
 
-
   isAdmin(code) {
     return code === this.adminUserId;
   }
-
 
   _cacheAndStore(participantCode, data) {
     this.cache.set(participantCode, data);
@@ -733,7 +744,6 @@ class DataManager {
     this.saveToCentralStorage(participantCode, data);
   }
 }
-
 
 const dataManager = new DataManager();
 export default dataManager;

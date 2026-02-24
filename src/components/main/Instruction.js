@@ -1,5 +1,5 @@
 // src/components/main/Instruction.js
-// FINÁLNA VERZIA s pravidlami súťaže ako expandable sekcia
+// FINÁLNA VERZIA s kontrolou duplicitných emailov
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,9 @@ import Layout from '../../styles/Layout';
 import StyledButton from '../../styles/StyledButton';
 import { useUserStats } from '../../contexts/UserStatsContext';
 
-// ... (všetky existujúce styled komponenty zostávajú rovnaké)
+// =====================
+// STYLED COMPONENTS
+// =====================
 
 const Container = styled.div`
   display: flex;
@@ -479,7 +481,6 @@ const EmailInput = styled(Input)`
   letter-spacing: normal;
 `;
 
-// ✅ Nové - Wrapper pre pravidlá súťaže
 const RulesSection = styled.div`
   width: 100%;
   max-width: 600px;
@@ -493,6 +494,10 @@ const RulesAccordion = styled(AccordionItem)`
     border-color: ${p => p.theme.ACCENT_COLOR};
   }
 `;
+
+// =====================
+// MAIN COMPONENT
+// =====================
 
 export default function Instruction() {
   const navigate = useNavigate();
@@ -514,6 +519,7 @@ export default function Instruction() {
   
   const blockedWarningRef = useRef(null);
 
+  // URL referral check
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const refCode = urlParams.get('ref');
@@ -631,6 +637,18 @@ export default function Instruction() {
       e.email = 'Prosím zadajte platnú emailovú adresu.';
     }
     
+    // ✅ Kontrola duplicitného emailu
+    if (email && validateEmail(email)) {
+      try {
+        const exists = await dataManager.checkEmailExists(email);
+        if (exists) {
+          e.email = 'Tento email je už zaregistrovaný v súťaži. Použite iný email.';
+        }
+      } catch (error) {
+        console.error('Error checking email:', error);
+      }
+    }
+    
     // ✅ Ak je zadaný email, súhlas so súťažou je povinný
     if (email && !competitionConsent) {
       e.competitionConsent = 'Musíte súhlasiť so zapojením do súťaže ak chcete zadať email.';
@@ -672,6 +690,7 @@ export default function Instruction() {
     
     sessionStorage.setItem('participantCode', upperCode);
     
+    // ✅ Ulož email ak je validný
     if (email && validateEmail(email) && competitionConsent) {
       try {
         await dataManager.saveCompetitionEmail(upperCode, email);
