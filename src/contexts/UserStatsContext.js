@@ -24,13 +24,30 @@ export const UserStatsProvider = ({ children }) => {
   const lastLoadedUserIdRef = useRef(null);
 
   const login = useCallback(async (id) => {
+  try {
+    console.log(`🔐 Login attempt for: ${id}`);
+    
+    // ✅ KONTROLA BLOKOVANIA
+    const userData = await dataManager.loadUserProgress(id, true);
+    
+    if (userData?.blocked) {
+      console.log(`❌ Login zamietnutý: Účastník ${id} je blokovaný`);
+      sessionStorage.removeItem('participantCode');
+      return { success: false, blocked: true, message: 'Účet je blokovaný administrátorom' };
+    }
+    
+    // Pokračuj normálne
     sessionStorage.setItem('participantCode', id);
     setUserId(id);
-    const progress = await dataManager.loadUserProgress(id);
-    progress.instruction_completed = true;
-    progress.current_progress_step = 'intro';
-    await dataManager.saveProgress(id, progress);
-  }, [dataManager]);
+    userData.instruction_completed = true;
+    userData.current_progress_step = 'intro';
+    await dataManager.saveProgress(id, userData);
+    
+    return { success: true, blocked: false };
+  } catch (error) {
+    return { success: false, blocked: false, error: error.message };
+  }
+}, [dataManager]);
 
   const logout = useCallback(() => {
     sessionStorage.removeItem('participantCode');
