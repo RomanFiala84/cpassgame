@@ -709,71 +709,92 @@ export default function Instruction() {
   };
 
   const handleStart = async () => {
-    setIsLoading(true);
-    const e = await validate();
-    setErrors(e);
+  setIsLoading(true);
+  const e = await validate();
+  setErrors(e);
+  
+  if (Object.keys(e).length) {
+    setIsLoading(false);
+    return;
+  }
+
+  const codeValidation = validateParticipantCode(participantCode);
+  const upperCode = participantCode.toUpperCase();
+  
+  // ✅ ODSTRÁNENÉ - sessionStorage.setItem('participantCode', upperCode);
+  
+  // ✅ NOVÉ - Ulož informovaný súhlas PRED login
+  try {
+    const userData = await dataManager.loadUserProgress(upperCode);
     
-    if (Object.keys(e).length) {
+    // Informovaný súhlas s výskumom
+    userData.informed_consent_given = consentGiven;
+    userData.informed_consent_timestamp = new Date().toISOString();
+    
+    // Súhlas so súťažou (ak je zadaný email)
+    if (email && competitionConsent) {
+      userData.competition_consent_given = true;
+      userData.competition_consent_timestamp = new Date().toISOString();
+    }
+    
+    await dataManager.saveProgress(upperCode, userData);
+    console.log(`✅ Súhlasy uložené pre ${upperCode}`);
+    
+  } catch (error) {
+    console.error('Error saving consents:', error);
+  }
+
+  // ✅ Ulož email ak je validný
+  if (email && validateEmail(email) && competitionConsent) {
+    try {
+      await dataManager.saveCompetitionEmail(upperCode, email);
+      console.log(`✅ Email pre súťaž uložený: ${email}`);
+    } catch (error) {
+      console.error('Email save error:', error);
+    }
+  }
+  
+  // Spracuj referral kód
+  if (hasReferral && !referralAlreadyUsed && referralCode.trim()) {
+    try {
+      await dataManager.processReferral(upperCode, referralCode.trim().toUpperCase());
+    } catch (error) {
+      console.error('Referral processing error:', error);
+      setErrors({ referral: 'Chyba pri spracovaní referral kódu. Skúste znova.' });
       setIsLoading(false);
       return;
     }
-
-    const codeValidation = validateParticipantCode(participantCode);
-    const upperCode = participantCode.toUpperCase();
-    
-    sessionStorage.setItem('participantCode', upperCode);
-    
-    // ✅ NOVÉ - Ulož informovaný súhlas
-    try {
-      const userData = await dataManager.loadUserProgress(upperCode);
-      
-      // Informovaný súhlas s výskumom
-      userData.informed_consent_given = consentGiven;
-      userData.informed_consent_timestamp = new Date().toISOString();
-      
-      // Súhlas so súťažou (ak je zadaný email)
-      if (email && competitionConsent) {
-        userData.competition_consent_given = true;
-        userData.competition_consent_timestamp = new Date().toISOString();
-      }
-      
-      await dataManager.saveProgress(upperCode, userData);
-      console.log(`✅ Súhlasy uložené pre ${upperCode}`);
-      
-    } catch (error) {
-      console.error('Error saving consents:', error);
-    }
-
-    // ✅ Ulož email ak je validný
-    if (email && validateEmail(email) && competitionConsent) {
-      try {
-        await dataManager.saveCompetitionEmail(upperCode, email);
-        console.log(`✅ Email pre súťaž uložený: ${email}`);
-      } catch (error) {
-        console.error('Email save error:', error);
-      }
-    }
-    
-    if (hasReferral && !referralAlreadyUsed && referralCode.trim()) {
-      try {
-        await dataManager.processReferral(upperCode, referralCode.trim().toUpperCase());
-      } catch (error) {
-        console.error('Referral processing error:', error);
-        setErrors({ referral: 'Chyba pri spracovaní referral kódu. Skúste znova.' });
-        setIsLoading(false);
-        return;
-      }
-    }
-    
-    await login(upperCode);
-    setIsLoading(false);
-    
-    if (codeValidation.type === 'admin') {
-      navigate('/admin');
+  }
+  
+  // ✅ OPRAVENÉ - Spracuj výsledok loginu
+  const loginResult = await login(upperCode);
+  
+  if (!loginResult.success) {
+    if (loginResult.blocked) {
+      // Ak je blokovaný, zobraz upozornenie
+      setIsBlocked(true);
+      setParticipantCode(upperCode);
+      setErrors({ blocked: 'Tento účet bol zablokovaný administrátorom.' });
+      setTimeout(() => {
+        blockedWarningRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
     } else {
-      navigate('/intro');
+      setErrors({ general: loginResult.message || 'Chyba pri prihlásení' });
     }
-  };
+    setIsLoading(false);
+    return; // ⭐ ZASTAVÍ prihlásenie
+  }
+
+  setIsLoading(false);
+  
+  // ✅ Redirect len ak je prihlásenie úspešné
+  if (codeValidation.type === 'admin') {
+    navigate('/admin');
+  } else {
+    navigate('/intro');
+  }
+};
+
 
   const handleClearCode = () => {
     setParticipantCode('');
