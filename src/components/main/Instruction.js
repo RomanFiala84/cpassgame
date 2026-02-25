@@ -1119,7 +1119,7 @@ export default function Instruction() {
           />
           {errors.participant && <ErrorText>{errors.participant}</ErrorText>}
           {errors.blocked && <ErrorText>{errors.blocked}</ErrorText>}
-          <Note>Zadajte prosím kód podľa inštrukcií.</Note>
+          <Note>Prosím zadajte kód podľa inštrukcií.</Note>
         </FormCard>
 
         {/* 4. EMAIL PRE SÚŤAŽ */}
