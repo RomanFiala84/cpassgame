@@ -4,15 +4,15 @@ import styled from 'styled-components';
 
 const Toggle = styled.button`
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 15px;
+  right: 15px;
   z-index: 1100;
   padding: 10px 16px;
   border-radius: 12px;
   border: 2px solid ${props => props.theme.ACCENT_COLOR};
   background: ${props => props.theme.CARD_BACKGROUND};
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
