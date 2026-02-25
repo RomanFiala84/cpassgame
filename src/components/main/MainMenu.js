@@ -453,26 +453,97 @@ const ModalOverlay = styled.div`
   padding: 20px;
 `;
 
+// Pridaj k existujúcim styled components:
+
 const ModalContent = styled.div`
   position: relative;
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   border-radius: 16px;
   padding: 32px;
-  max-width: 500px;
+  max-width: 600px;
   width: 100%;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  max-height: 85vh;
+  overflow-y: auto;
   
   h3 {
     color: ${p => p.theme.ACCENT_COLOR};
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     font-size: 24px;
+    text-align: center;
+  }
+  
+  h4 {
+    color: ${p => p.theme.ACCENT_COLOR};
+    font-size: 15px;
+    font-weight: 700;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid ${p => p.theme.ACCENT_COLOR}33;
+    padding-bottom: 6px;
   }
   
   p {
-    line-height: 1.6;
+    line-height: 1.7;
     margin-bottom: 12px;
+  }
+  
+  ul {
+    margin: 8px 0 16px 0;
+    padding-left: 20px;
+    
+    li {
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+    
+    ul {
+      margin: 8px 0 8px 0;
+      padding-left: 20px;
+      
+      li {
+        font-size: 14px;
+        list-style-type: circle;
+      }
+    }
+  }
+  
+  a {
+    color: ${p => p.theme.ACCENT_COLOR};
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: ${p => p.theme.BORDER_COLOR}33;
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: ${p => p.theme.ACCENT_COLOR};
+    border-radius: 4px;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 24px;
+    max-height: 90vh;
+    
+    h3 {
+      font-size: 20px;
+    }
+    
+    h4 {
+      font-size: 14px;
+    }
   }
 `;
 
@@ -857,17 +928,18 @@ const MainMenu = () => {
               {modal.type === 'contest' && (
                 <>
                   <h3>🎁 Pravidlá a podmienky súťaže:</h3>
-                  <p>Organizátor súťaže:</p>
+                  
+                  <h4>Organizátor súťaže:</h4>
                   <ul>
                     <li>Organizátorom súťaže je hlavný zodpovedný riešiteľ výskumu - Roman Fiala.</li>
                   </ul>
 
-                  <p>Účastníci súťaže:</p>
+                  <h4>Účastníci súťaže:</h4>
                   <ul>
                     <li>Súťaže sa môžu zúčastniť osoby, ktoré dovŕšili 18 rokov a vyjadrili informovaný súhlas s účasťou vo výskume.</li>
                   </ul>
 
-                  <p>Podmienky zaradenia do žrebovania:</p>
+                  <h4>Podmienky zaradenia do žrebovania:</h4>
                   <ul>
                     <li>Podmienky účasti uvedené v tejto časti sú zároveň podmienkami na získanie minimálneho počtu 50 bodov potrebných na zaradenie do žrebovania.</li>
                     <li>Účastník bude zaradený do žrebovania o ceny, ak:
@@ -880,14 +952,14 @@ const MainMenu = () => {
                     <li>Účasť v súťaži nie je podmienkou účasti vo výskume, respondent sa môže zúčastniť výskumu aj bez poskytnutia kontaktného e-mailu.</li>
                   </ul>
 
-                  <p>Trvanie súťaže:</p>
+                  <h4>Trvanie súťaže:</h4>
                   <ul>
                     <li>Súťaž prebieha v období od spustenia predvýskumu -- marec 2026 do ukončenia hlavného výskumu -- apríl 2026.</li>
                     <li>Pozor - predvýskum bude dostupný iba do spustenia hlavného výskumu, to znamená že po jeho spustení predvýskum už nebude možné absolvovať.</li>
                     <li>Do žrebovania budú zaradení len účastníci, ktorí splnia podmienky účasti v tomto časovom intervale.</li>
                   </ul>
 
-                  <p>Bodovanie účasti v súťaži:</p>
+                  <h4>Bodovanie účasti v súťaži:</h4>
                   <ul>
                     <li>Každý získaný bod predstavuje jeden žreb v súťaži. Účastník s vyšším počtom bodov tak má vyššiu pravdepodobnosť výhry. Minimálnou podmienkou zaradenia do žrebovania je získanie minimálne 50 bodov.</li>
                     <li>Za absolvovanie predvýskumu získava účastník 50 bodov.</li>
@@ -903,7 +975,7 @@ const MainMenu = () => {
                     </li>
                   </ul>
 
-                  <p>Výhry:</p>
+                  <h4>Výhry:</h4>
                   <ul>
                     <li>Hlavnou cenou je darčekový poukaz v hodnote 30 € pre jedného výhercu.</li>
                     <li>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10 € pre piatich výhercov.</li>
@@ -911,37 +983,38 @@ const MainMenu = () => {
                     <li>Organizátor si vyhradzuje právo zmeniť typ ceny za inú v rovnakej alebo vyššej hodnote (napr. iný typ poukážky), ak pôvodnú cenu nebude možné zabezpečiť.</li>
                   </ul>
 
-                  <p>Žrebovanie výhercov:</p>
+                  <h4>Žrebovanie výhercov:</h4>
                   <ul>
                     <li>Žrebovanie prebehne najneskôr do 10 dní po ukončení hlavného výskumu.</li>
                     <li>Žrebovanie bude realizované náhodným výberom z databázy e-mailových adries účastníkov, ktorí splnili podmienky účasti.</li>
                     <li>Žrebovanie vykoná organizátor za prítomnosti svedkov a bude zaznamenané na videozáznam s časovou stopou.</li>
                   </ul>
 
-                  <p>Oznámenie a odovzdanie výhry:</p>
+                  <h4>Oznámenie a odovzdanie výhry:</h4>
                   <ul>
                     <li>Výhercovia budú kontaktovaní e-mailom najneskôr do 5 dní od žrebovania.</li>
                     <li>Ak výherca do 10 pracovných dní od odoslania e-mailu nereaguje alebo odmietne výhru, cena môže byť pridelená náhradníkovi, ktorý bude vyžrebovaný rovnakým spôsobom.</li>
                     <li>Výhra bude odovzdaná elektronicky formou poukazu.</li>
                   </ul>
 
-                  <p>Ochrana osobných údajov:</p>
+                  <h4>Ochrana osobných údajov:</h4>
                   <ul>
                     <li>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</li>
                     <li>Údaje budú použité výhradne na účely kontaktovania výhercu a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</li>
                     <li>Spracovanie osobných údajov prebieha v súlade s GDPR a zákonom č. 18/2018 Z. z.</li>
                   </ul>
 
-                  <p>Vylúčenie zo súťaže:</p>
+                  <h4>Vylúčenie zo súťaže:</h4>
                   <ul>
-                    <li>Organizátor si vyhradzuje právo vylúčiť účastníka zo súťaže, ak:</li>
-                    <ul>
-                      <li>Porušil tieto pravidlá a podmienky súťaže.</li>
-                      <li>Uviedol zjavne nepravdivé údaje alebo iným spôsobom zneužil mechanizmus súťaže (napr. viacnásobná registrácia s rôznymi e-mailmi).</li>
-                    </ul>
+                    <li>Organizátor si vyhradzuje právo vylúčiť účastníka zo súťaže, ak:
+                      <ul>
+                        <li>Porušil tieto pravidlá a podmienky súťaže.</li>
+                        <li>Uviedol zjavne nepravdivé údaje alebo iným spôsobom zneužil mechanizmus súťaže (napr. viacnásobná registrácia s rôznymi e-mailmi).</li>
+                      </ul>
+                    </li>
                   </ul>
 
-                  <p>Zodpovednosť organizátora:</p>
+                  <h4>Zodpovednosť organizátora:</h4>
                   <ul>
                     <li>Organizátor nezodpovedá za technické problémy (napr. výpadky internetu, poruchy zariadenia účastníka), ktoré znemožnia alebo skomplikujú účasť v súťaži alebo dokončenie výskumu.</li>
                   </ul>
