@@ -1,5 +1,5 @@
 // src/utils/DataManager.js
-// FINÁLNA VERZIA - s kontrolou duplicitných emailov + unikátnych sharing kódov
+// ✅ OPRAVENÁ VERZIA - s normalizáciou participantCode vo všetkých metódach
 
 import * as XLSX from 'xlsx';
 
@@ -39,10 +39,10 @@ class DataManager {
       'competition_email',
       'timestamp_start',
       'timestamp_last_update',
-      'informed_consent_given',           // ✅ PRIDANÉ
-      'informed_consent_timestamp',       // ✅ PRIDANÉ
-      'competition_consent_given',        // ✅ PRIDANÉ
-      'competition_consent_timestamp',    // ✅ PRIDANÉ
+      'informed_consent_given',
+      'informed_consent_timestamp',
+      'competition_consent_given',
+      'competition_consent_timestamp',
       'session_count',
       'total_time_spent',
       'instruction_completed',
@@ -66,7 +66,7 @@ class DataManager {
     ];
   }
 
-  // ✅ NOVÁ METÓDA - Kontrola či email už existuje v databáze
+  // ✅ Kontrola či email už existuje v databáze
   async checkEmailExists(email) {
     if (!email) return false;
     
@@ -97,24 +97,26 @@ class DataManager {
     }
   }
 
-  // ✅ NOVÁ METÓDA - Uloženie emailu pre súťaž
+  // ✅ Uloženie emailu pre súťaž
   async saveCompetitionEmail(participantCode, email) {
-    if (!participantCode || !email) {
+    const normalizedCode = participantCode.toUpperCase().trim(); // ✅ PRIDANÉ
+    
+    if (!normalizedCode || !email) {
       console.warn('⚠️ Missing participantCode or email');
       return false;
     }
     
     try {
       const normalizedEmail = email.toLowerCase().trim();
-      console.log(`💌 Ukladám email pre súťaž: ${participantCode} → ${normalizedEmail}`);
+      console.log(`💌 Ukladám email pre súťaž: ${normalizedCode} → ${normalizedEmail}`);
       
-      const userData = await this.loadUserProgress(participantCode);
+      const userData = await this.loadUserProgress(normalizedCode);
       userData.competition_email = normalizedEmail;
       userData.competition_email_added_at = new Date().toISOString();
       
-      await this.saveProgress(participantCode, userData);
+      await this.saveProgress(normalizedCode, userData);
       
-      console.log(`✅ Email uložený pre ${participantCode}`);
+      console.log(`✅ Email uložený pre ${normalizedCode}`);
       return true;
       
     } catch (error) {
@@ -124,9 +126,11 @@ class DataManager {
   }
 
   async isUserBlocked(participantCode) {
+    const normalizedCode = participantCode.toUpperCase().trim(); // ✅ PRIDANÉ
+    
     try {
-      console.log(`🔍 Kontrolujem blocked status pre ${participantCode} (priamo zo servera)...`);
-      const resp = await fetch(`${this.apiBase}?code=${participantCode}`);
+      console.log(`🔍 Kontrolujem blocked status pre ${normalizedCode} (priamo zo servera)...`);
+      const resp = await fetch(`${this.apiBase}?code=${normalizedCode}`);
       
       if (!resp.ok) {
         console.warn(`⚠️ Could not check blocked status from server: ${resp.status}`);
@@ -144,10 +148,12 @@ class DataManager {
   }
 
   async setBlockedState(participantCode, blocked) {
+    const normalizedCode = participantCode.toUpperCase().trim(); // ✅ PRIDANÉ
+    
     try {
-      console.log(`${blocked ? '🚫 Blokovanie' : '✅ Odblokovanie'} používateľa ${participantCode}...`);
+      console.log(`${blocked ? '🚫 Blokovanie' : '✅ Odblokovanie'} používateľa ${normalizedCode}...`);
       
-      const resp = await fetch(`${this.apiBase}?code=${participantCode}`);
+      const resp = await fetch(`${this.apiBase}?code=${normalizedCode}`);
       if (!resp.ok) {
         throw new Error('Používateľ nenájdený na serveri');
       }
@@ -156,12 +162,12 @@ class DataManager {
       userData.blocked = blocked;
       userData.blocked_at = blocked ? new Date().toISOString() : null;
       
-      await this.saveProgress(participantCode, userData);
+      await this.saveProgress(normalizedCode, userData);
       
-      this.cache.delete(participantCode);
+      this.cache.delete(normalizedCode);
       await this.fetchAllParticipantsData();
       
-      console.log(`✅ Používateľ ${participantCode} ${blocked ? 'zablokovaný' : 'odblokovaný'}`);
+      console.log(`✅ Používateľ ${normalizedCode} ${blocked ? 'zablokovaný' : 'odblokovaný'}`);
       return true;
       
     } catch (error) {
@@ -173,13 +179,15 @@ class DataManager {
   async validateReferralCode(code) {
     if (!code) return false;
     
+    const normalizedCode = code.toUpperCase().trim(); // ✅ PRIDANÉ
+    
     try {
       await this.syncAllFromServer();
       
       const all = this.getAllParticipantsData();
-      const exists = Object.values(all).some(d => d.sharing_code === code.toUpperCase());
+      const exists = Object.values(all).some(d => d.sharing_code === normalizedCode);
       
-      console.log(`🔍 Validating referral code ${code}: ${exists ? 'FOUND' : 'NOT FOUND'}`);
+      console.log(`🔍 Validating referral code ${normalizedCode}: ${exists ? 'FOUND' : 'NOT FOUND'}`);
       return exists;
     } catch (error) {
       console.error('Error validating referral code:', error);
@@ -192,8 +200,10 @@ class DataManager {
   }
 
   async getUserSharingCode(userId) {
+    const normalizedCode = userId.toUpperCase().trim(); // ✅ PRIDANÉ
+    
     try {
-      const userData = await this.loadUserProgress(userId);
+      const userData = await this.loadUserProgress(normalizedCode);
       return userData?.sharing_code || null;
     } catch (error) {
       console.error('Error getting sharing code:', error);
@@ -202,65 +212,68 @@ class DataManager {
   }
 
   async processReferral(participantCode, referralCode) {
+    const normalizedParticipant = participantCode.toUpperCase().trim(); // ✅ PRIDANÉ
+    const normalizedReferral = referralCode.toUpperCase().trim(); // ✅ PRIDANÉ
+    
     try {
-      console.log(`🎁 Processing referral: ${participantCode} → ${referralCode}`);
+      console.log(`🎁 Processing referral: ${normalizedParticipant} → ${normalizedReferral}`);
       
       await this.syncAllFromServer();
       const all = this.getAllParticipantsData();
       
-      const isValid = await this.validateReferralCode(referralCode);
+      const isValid = await this.validateReferralCode(normalizedReferral);
       if (!isValid) {
-        console.warn(`⚠️ Referral kód ${referralCode} neexistuje v systéme`);
+        console.warn(`⚠️ Referral kód ${normalizedReferral} neexistuje v systéme`);
         throw new Error('Tento referral kód neexistuje v systéme');
       }
       
       const entry = Object.entries(all).find(([_, d]) => 
-        d.sharing_code === referralCode.toUpperCase()
+        d.sharing_code === normalizedReferral
       );
       
       if (!entry) {
-        console.warn(`⚠️ Referral kód ${referralCode} nenájdený (unexpected)`);
+        console.warn(`⚠️ Referral kód ${normalizedReferral} nenájdený (unexpected)`);
         throw new Error('Neplatný referral kód');
       }
       
       const [refCode, refData] = entry;
       console.log(`✅ Referral kód patrí používateľovi: ${refCode}`);
       
-      const newUserData = await this.loadUserProgress(participantCode);
+      const newUserData = await this.loadUserProgress(normalizedParticipant);
       
       if (newUserData?.used_referral_code) {
-        console.warn(`⚠️ ${participantCode} už použil referral kód: ${newUserData.used_referral_code}`);
+        console.warn(`⚠️ ${normalizedParticipant} už použil referral kód: ${newUserData.used_referral_code}`);
         throw new Error('Už ste použili referral kód. Môžete ho použiť iba raz.');
       }
       
-      if (refCode === participantCode) {
-        console.warn(`⚠️ ${participantCode} sa pokúsil použiť svoj vlastný referral kód`);
+      if (refCode === normalizedParticipant) {
+        console.warn(`⚠️ ${normalizedParticipant} sa pokúsil použiť svoj vlastný referral kód`);
         throw new Error('Nemôžete použiť svoj vlastný zdieľací kód!');
       }
       
       refData.referred_users = refData.referred_users || [];
-      if (refData.referred_users.includes(participantCode)) {
-        console.warn(`⚠️ ${participantCode} už bol pridaný do referred_users pre ${refCode}`);
+      if (refData.referred_users.includes(normalizedParticipant)) {
+        console.warn(`⚠️ ${normalizedParticipant} už bol pridaný do referred_users pre ${refCode}`);
         throw new Error('Tento referral už bol spracovaný');
       }
       
       refData.referrals_count = (refData.referrals_count || 0) + 1;
-      refData.referred_users.push(participantCode);
+      refData.referred_users.push(normalizedParticipant);
       
       const missionPoints = refData.user_stats_mission_points || 0;
       const bonusPoints = refData.referrals_count * 10;
       refData.user_stats_points = missionPoints + bonusPoints;
       
-      newUserData.used_referral_code = referralCode.toUpperCase();
+      newUserData.used_referral_code = normalizedReferral;
       newUserData.referred_by = refCode;
-      newUserData.referral_code = referralCode.toUpperCase();
+      newUserData.referral_code = normalizedReferral;
       
       await this.saveProgress(refCode, refData);
-      await this.saveProgress(participantCode, newUserData);
+      await this.saveProgress(normalizedParticipant, newUserData);
       
       console.log(`✅ Referral spracovaný úspešne!`);
       console.log(`   - ${refCode}: ${refData.referrals_count} referralov, +${bonusPoints} bodov`);
-      console.log(`   - ${participantCode}: označený ako použil referral`);
+      console.log(`   - ${normalizedParticipant}: označený ako použil referral`);
       
       return {
         success: true,
@@ -382,40 +395,43 @@ class DataManager {
   async loadUserProgress(participantCode, forceServerFetch = false) {
     if (!participantCode) return null;
     
-    if (!forceServerFetch && this.cache.has(participantCode)) {
-      console.log(`📦 Používam cache pre ${participantCode}`);
-      return this.cache.get(participantCode);
+    // ✅ KRITICKÁ NORMALIZÁCIA - hneď na začiatku
+    const normalizedCode = participantCode.toUpperCase().trim();
+    
+    if (!forceServerFetch && this.cache.has(normalizedCode)) {
+      console.log(`📦 Používam cache pre ${normalizedCode}`);
+      return this.cache.get(normalizedCode);
     }
 
     try {
-      console.log(`📡 Načítavam ${participantCode} zo servera...`);
-      const resp = await fetch(`${this.apiBase}?code=${participantCode}`);
+      console.log(`📡 Načítavam ${normalizedCode} zo servera...`);
+      const resp = await fetch(`${this.apiBase}?code=${normalizedCode}`);
 
       if (!resp.ok) {
         if (resp.status === 404) {
-          console.log(`🆕 Používateľ ${participantCode} neexistuje na serveri`);
+          console.log(`🆕 Používateľ ${normalizedCode} neexistuje na serveri`);
           console.log(`   Backend ho automaticky vytvorí...`);
           
           await new Promise(resolve => setTimeout(resolve, 100));
-          const retryResp = await fetch(`${this.apiBase}?code=${participantCode}`);
+          const retryResp = await fetch(`${this.apiBase}?code=${normalizedCode}`);
           
           if (retryResp.ok) {
             const data = await retryResp.json();
-            console.log(`✅ Backend vytvoril ${participantCode}:`, {
+            console.log(`✅ Backend vytvoril ${normalizedCode}:`, {
               blocked: data.blocked,
               m0: data.mission0_unlocked,
               m1: data.mission1_unlocked,
               m2: data.mission2_unlocked,
               m3: data.mission3_unlocked
             });
-            const prog = await this.validateAndFixData(data, participantCode);
-            this._cacheAndStore(participantCode, prog);
+            const prog = await this.validateAndFixData(data, normalizedCode);
+            this._cacheAndStore(normalizedCode, prog);
             return prog;
           }
           
           console.warn('⚠️ Retry zlyhal, vytváram lokálne');
-          const rec = await this.createNewUserRecord(participantCode);
-          await this.syncToServer(participantCode, rec);
+          const rec = await this.createNewUserRecord(normalizedCode);
+          await this.syncToServer(normalizedCode, rec);
           return rec;
         }
         console.warn(`Server error ${resp.status}: ${resp.statusText}`);
@@ -424,7 +440,7 @@ class DataManager {
 
       const data = await resp.json();
       
-      console.log(`📥 Dáta zo servera pre ${participantCode}:`, {
+      console.log(`📥 Dáta zo servera pre ${normalizedCode}:`, {
         blocked: data.blocked,
         blocked_at: data.blocked_at,
         competition_email: data.competition_email ? '✓' : '✗',
@@ -436,27 +452,27 @@ class DataManager {
       
       if (!data || Object.keys(data).length === 0) {
         console.log(`🆕 Server vrátil prázdne dáta`);
-        const rec = await this.createNewUserRecord(participantCode);
-        await this.syncToServer(participantCode, rec);
+        const rec = await this.createNewUserRecord(normalizedCode);
+        await this.syncToServer(normalizedCode, rec);
         return rec;
       }
 
-      const prog = await this.validateAndFixData(data.progress || data, participantCode);
-      this._cacheAndStore(participantCode, prog);
+      const prog = await this.validateAndFixData(data.progress || data, normalizedCode);
+      this._cacheAndStore(normalizedCode, prog);
       return prog;
       
     } catch (error) {
       console.warn('⚠️ Server nedostupný, používam localStorage:', error.message);
       
-      const saved = localStorage.getItem(`fullProgress_${participantCode}`);
+      const saved = localStorage.getItem(`fullProgress_${normalizedCode}`);
       if (saved) {
         try {
           const data = JSON.parse(saved);
-          console.log(`📦 Načítaný zo localStorage: ${participantCode}`);
-          const prog = await this.validateAndFixData(data, participantCode);
-          this.cache.set(participantCode, prog);
+          console.log(`📦 Načítaný zo localStorage: ${normalizedCode}`);
+          const prog = await this.validateAndFixData(data, normalizedCode);
+          this.cache.set(normalizedCode, prog);
           
-          this.syncToServer(participantCode, prog).catch(e =>
+          this.syncToServer(normalizedCode, prog).catch(e =>
             console.warn('Background sync failed:', e)
           );
           return prog;
@@ -466,33 +482,35 @@ class DataManager {
       }
 
       const central = this.getAllParticipantsData();
-      if (central[participantCode]) {
-        const prog = await this.validateAndFixData(central[participantCode], participantCode);
-        this._cacheAndStore(participantCode, prog);
+      if (central[normalizedCode]) {
+        const prog = await this.validateAndFixData(central[normalizedCode], normalizedCode);
+        this._cacheAndStore(normalizedCode, prog);
         return prog;
       }
 
-      console.log(`🆕 Lokálne vytváram nového používateľa ${participantCode}`);
-      const rec = await this.createNewUserRecord(participantCode);
-      await this.syncToServer(participantCode, rec);
+      console.log(`🆕 Lokálne vytváram nového používateľa ${normalizedCode}`);
+      const rec = await this.createNewUserRecord(normalizedCode);
+      await this.syncToServer(normalizedCode, rec);
       return rec;
     }
   }
 
   async syncToServer(participantCode, data) {
+    const normalizedCode = participantCode.toUpperCase().trim(); // ✅ PRIDANÉ
+    
     try {
-      const resp = await fetch(`${this.apiBase}?code=${participantCode}`, {
+      const resp = await fetch(`${this.apiBase}?code=${normalizedCode}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
 
       if (!resp.ok) {
-        console.warn(`Sync failed for ${participantCode}: HTTP ${resp.status}`);
+        console.warn(`Sync failed for ${normalizedCode}: HTTP ${resp.status}`);
         return false;
       }
 
-      console.log(`✅ Synced ${participantCode} - blocked: ${data.blocked}`);
+      console.log(`✅ Synced ${normalizedCode} - blocked: ${data.blocked}`);
       return true;
     } catch (error) {
       console.warn('Sync na server zlyhal:', error.message);
@@ -500,13 +518,13 @@ class DataManager {
     }
   }
 
-  // ✅ OPRAVENÁ METÓDA - async a kontrola duplicity
   async validateAndFixData(data, participantCode) {
-    data.participant_code = participantCode;
+    const normalizedCode = participantCode.toUpperCase().trim(); // ✅ PRIDANÉ
+    data.participant_code = normalizedCode; // ✅ Vždy UPPERCASE
     
-    // ✅ Vygeneruj unikátny sharing code
+    // Vygeneruj unikátny sharing code
     if (!data.sharing_code) {
-      data.sharing_code = await this.generateUniqueSharingCode(participantCode);
+      data.sharing_code = await this.generateUniqueSharingCode(normalizedCode);
     }
     
     if (!['0', '1', '2'].includes(data.group_assignment)) {
@@ -547,7 +565,7 @@ class DataManager {
     
     data.timestamp_last_update = new Date().toISOString();
     
-    console.log(`🔍 ValidateAndFixData pre ${participantCode}:`, {
+    console.log(`🔍 ValidateAndFixData pre ${normalizedCode}:`, {
       blocked: data.blocked,
       blocked_at: data.blocked_at,
       sharing_code: data.sharing_code,
@@ -571,10 +589,10 @@ class DataManager {
       blocked_at: null,
       competition_email: null,
       competition_email_added_at: null,
-      informed_consent_given: false,          // ✅ PRIDANÉ
-      informed_consent_timestamp: null,       // ✅ PRIDANÉ
-      competition_consent_given: false,       // ✅ PRIDANÉ
-      competition_consent_timestamp: null,    // ✅ PRIDANÉ
+      informed_consent_given: false,
+      informed_consent_timestamp: null,
+      competition_consent_given: false,
+      competition_consent_timestamp: null,
       instruction_completed: false,
       intro_completed: false,
       user_stats_points: 0,
@@ -601,40 +619,41 @@ class DataManager {
   }
 
   async createNewUserRecord(participantCode) {
-    console.log(`🆕 Vytváram nového používateľa ${participantCode} (lokálne)...`);
+    const normalizedCode = participantCode.toUpperCase().trim(); // ✅ PRIDANÉ
+    console.log(`🆕 Vytváram nového používateľa ${normalizedCode} (lokálne)...`);
     
     const defaults = this.getDefaultFields();
     const rec = {
-      participant_code: participantCode,
+      participant_code: normalizedCode, // ✅ UPPERCASE
       group_assignment: Math.random() < 0.33 ? '0' : Math.random() < 0.66 ? '1' : '2',
-      sharing_code: await this.generateUniqueSharingCode(participantCode),
+      sharing_code: await this.generateUniqueSharingCode(normalizedCode),
       referral_code: sessionStorage.getItem('referralCode') || null,
       ...defaults
     };
     
-    this._cacheAndStore(participantCode, rec);
+    this._cacheAndStore(normalizedCode, rec);
     
-    console.log(`✅ Lokálne vytvorený používateľ ${participantCode} so sharing code ${rec.sharing_code}`);
+    console.log(`✅ Lokálne vytvorený používateľ ${normalizedCode} so sharing code ${rec.sharing_code}`);
     return rec;
   }
 
-  // ✅ NOVÁ METÓDA - Generuje unikátny sharing code s kontrolou duplicity
+  // Generuje unikátny sharing code s kontrolou duplicity
   async generateUniqueSharingCode(participantCode) {
+    const normalizedCode = participantCode.toUpperCase().trim(); // ✅ PRIDANÉ
+    
     let attempts = 0;
     const maxAttempts = 50;
     
     while (attempts < maxAttempts) {
-      // Vygeneruj kód s variáciou v seede
-      const code = this.generatePersistentSharingCode(participantCode, attempts);
+      const code = this.generatePersistentSharingCode(normalizedCode, attempts);
       
-      // 🔍 Skontroluj či kód už existuje
       const allData = this.getAllParticipantsData();
       const codeExists = Object.values(allData).some(userData => 
         userData.sharing_code === code
       );
       
       if (!codeExists) {
-        console.log(`✅ Vygenerovaný unikátny sharing code pre ${participantCode}: ${code}`);
+        console.log(`✅ Vygenerovaný unikátny sharing code pre ${normalizedCode}: ${code}`);
         return code;
       }
       
@@ -642,19 +661,18 @@ class DataManager {
       attempts++;
     }
     
-    // Fallback: použij timestamp ak zlyhalo 50 pokusov
     const fallbackCode = this.generatePersistentSharingCode(
-      participantCode + Date.now(), 
+      normalizedCode + Date.now(), 
       Math.random() * 1000
     );
     console.warn(`⚠️ Použitý fallback sharing code: ${fallbackCode}`);
     return fallbackCode;
   }
 
-  // ✅ UPRAVENÁ METÓDA - pridaný seed parameter pre variáciu
   generatePersistentSharingCode(participantCode, seedVariation = 0) {
+    const normalizedCode = participantCode.toUpperCase().trim(); // ✅ PRIDANÉ
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let hash = this.hashCode(participantCode + 'SALT2025' + seedVariation);
+    let hash = this.hashCode(normalizedCode + 'SALT2025' + seedVariation);
     let code = '';
     
     for (let i = 0; i < 6; i++) {
@@ -675,14 +693,18 @@ class DataManager {
   }
 
   getSharingCode(participantCode) {
+    const normalizedCode = participantCode.toUpperCase().trim(); // ✅ PRIDANÉ
+    
     const prog =
-      this.cache.get(participantCode) ||
-      JSON.parse(localStorage.getItem(`fullProgress_${participantCode}`) || '{}');
+      this.cache.get(normalizedCode) ||
+      JSON.parse(localStorage.getItem(`fullProgress_${normalizedCode}`) || '{}');
     return prog.sharing_code || null;
   }
 
   async saveProgress(participantCode, data) {
-    console.log(`💾 Ukladám progress pre ${participantCode}:`, {
+    const normalizedCode = participantCode.toUpperCase().trim(); // ✅ PRIDANÉ
+    
+    console.log(`💾 Ukladám progress pre ${normalizedCode}:`, {
       blocked: data.blocked,
       competition_email: data.competition_email ? '✓' : '✗',
       m0: data.mission0_unlocked,
@@ -691,32 +713,36 @@ class DataManager {
       m3: data.mission3_unlocked
     });
     
+    data.participant_code = normalizedCode; // ✅ Zabezpeč UPPERCASE v data
     data.timestamp_last_update = new Date().toISOString();
-    this.cache.set(participantCode, data);
-    localStorage.setItem(`fullProgress_${participantCode}`, JSON.stringify(data));
-    this.saveToCentralStorage(participantCode, data);
-    await this.syncToServer(participantCode, data);
+    this.cache.set(normalizedCode, data);
+    localStorage.setItem(`fullProgress_${normalizedCode}`, JSON.stringify(data));
+    this.saveToCentralStorage(normalizedCode, data);
+    await this.syncToServer(normalizedCode, data);
   }
 
   async loadComponentData(participantCode, componentKey) {
     if (!participantCode) return {};
-    const prog = await this.loadUserProgress(participantCode);
+    const normalizedCode = participantCode.toUpperCase().trim(); // ✅ PRIDANÉ
+    const prog = await this.loadUserProgress(normalizedCode);
     return prog ? prog[`${componentKey}_data`] || {} : {};
   }
 
   async saveComponentData(participantCode, componentKey, data) {
     if (!participantCode) return;
-    const prog = await this.loadUserProgress(participantCode);
+    const normalizedCode = participantCode.toUpperCase().trim(); // ✅ PRIDANÉ
+    const prog = await this.loadUserProgress(normalizedCode);
     prog[`${componentKey}_data`] = data;
-    await this.saveProgress(participantCode, prog);
+    await this.saveProgress(normalizedCode, prog);
   }
 
   saveToCentralStorage(participantCode, data) {
+    const normalizedCode = participantCode.toUpperCase().trim(); // ✅ PRIDANÉ
     const all = this.getAllParticipantsData();
-    all[participantCode] = data;
+    all[normalizedCode] = data;
     localStorage.setItem(this.centralStorageKey, JSON.stringify(all));
     if (this.allParticipantsCache) {
-      this.allParticipantsCache[participantCode] = data;
+      this.allParticipantsCache[normalizedCode] = data;
     }
   }
 
@@ -761,13 +787,15 @@ class DataManager {
   }
 
   isAdmin(code) {
-    return code === this.adminUserId;
+    const normalizedCode = code.toUpperCase().trim(); // ✅ PRIDANÉ
+    return normalizedCode === this.adminUserId;
   }
 
   _cacheAndStore(participantCode, data) {
-    this.cache.set(participantCode, data);
-    localStorage.setItem(`fullProgress_${participantCode}`, JSON.stringify(data));
-    this.saveToCentralStorage(participantCode, data);
+    const normalizedCode = participantCode.toUpperCase().trim(); // ✅ PRIDANÉ
+    this.cache.set(normalizedCode, data);
+    localStorage.setItem(`fullProgress_${normalizedCode}`, JSON.stringify(data));
+    this.saveToCentralStorage(normalizedCode, data);
   }
 }
 
