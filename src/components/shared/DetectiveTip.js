@@ -1,10 +1,8 @@
 // src/components/shared/DetectiveTip.js
-// OPRAVENÁ VERZIA - Delay len pri prvom otvorení
-
+// UPRAVENÁ VERZIA - Textový badge namiesto červeného
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
-
 
 const TipButton = styled.button`
   position: fixed;
@@ -46,7 +44,6 @@ const TipButton = styled.button`
   }
 `;
 
-
 const DetectiveIcon = styled.img`
   width: 110%;
   height: 110%;
@@ -56,7 +53,6 @@ const DetectiveIcon = styled.img`
   left: 50%;
   transform: translate(-50%, -50%);
 `;
-
 
 const DetectiveIconFallback = styled.div`
   width: 100%;
@@ -71,36 +67,37 @@ const DetectiveIconFallback = styled.div`
   }
 `;
 
-
-const Badge = styled.div`
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  width: 24px;
-  height: 24px;
-  background: #ff4444;
-  border-radius: 50%;
-  border: 2px solid ${p => p.theme.CARD_BACKGROUND};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: bold;
-  color: white;
-  animation: pulse 2s infinite;
+// ✅ NOVÝ: Textový badge pod ikonkou
+const TextBadge = styled.div`
+  position: fixed;
+  bottom: 10px;
+  right: 20px;
+  background: ${p => p.theme.CARD_BACKGROUND};
+  border: 2px solid ${p => p.theme.ACCENT_COLOR};
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: ${p => p.theme.ACCENT_COLOR};
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 998;
+  pointer-events: none;
   
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+  @media (max-width: 768px) {
+    bottom: 5px;
+    right: 15px;
+    font-size: 9px;
+    padding: 3px 8px;
   }
   
   @media (max-width: 480px) {
-    width: 20px;
-    height: 20px;
-    font-size: 10px;
+    bottom: 2px;
+    right: 15px;
+    font-size: 8px;
+    padding: 2px 6px;
   }
 `;
-
 
 const TipBubble = styled.div`
   position: fixed;
@@ -170,7 +167,6 @@ const TipBubble = styled.div`
   }
 `;
 
-
 const TipHeader = styled.div`
   display: flex;
   align-items: center;
@@ -179,7 +175,6 @@ const TipHeader = styled.div`
   padding-bottom: 12px;
   border-bottom: 2px solid ${p => p.theme.BORDER_COLOR};
 `;
-
 
 const DetectiveAvatar = styled.img`
   width: 40px;
@@ -193,7 +188,6 @@ const DetectiveAvatar = styled.img`
     height: 35px;
   }
 `;
-
 
 const DetectiveAvatarFallback = styled.div`
   width: 40px;
@@ -213,7 +207,6 @@ const DetectiveAvatarFallback = styled.div`
   }
 `;
 
-
 const DetectiveName = styled.div`
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
@@ -224,7 +217,6 @@ const DetectiveName = styled.div`
     font-size: 14px;
   }
 `;
-
 
 const TipText = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
@@ -247,7 +239,6 @@ const TipText = styled.div`
   }
 `;
 
-
 const CloseButton = styled.button`
   background: transparent;
   border: none;
@@ -264,7 +255,6 @@ const CloseButton = styled.button`
   }
 `;
 
-
 const ProgressBar = styled.div`
   position: absolute;
   bottom: 0;
@@ -276,7 +266,6 @@ const ProgressBar = styled.div`
   overflow: hidden;
 `;
 
-
 const ProgressFill = styled.div`
   height: 100%;
   background: ${p => p.theme.ACCENT_COLOR};
@@ -287,7 +276,6 @@ const ProgressFill = styled.div`
     to { width: 0%; }
   }
 `;
-
 
 const CountdownTimer = styled.div`
   position: absolute;
@@ -310,7 +298,6 @@ const CountdownTimer = styled.div`
   }
 `;
 
-
 const DetectiveTip = ({ 
   tip, 
   detectiveName = "Inšpektor Kritan", 
@@ -318,7 +305,7 @@ const DetectiveTip = ({
   autoOpenDelay = 500,
   autoClose = false,
   autoCloseDelay = 8000,
-  showBadge = false,
+  showBadge = true, // ✅ Teraz ovláda textový badge
   position = 'right',
   minReadTime = 10000,
   onOpen,
@@ -330,9 +317,7 @@ const DetectiveTip = ({
   const [canClose, setCanClose] = useState(false);
   const [countdown, setCountdown] = useState(minReadTime / 1000);
   
-  // ✅ NOVÉ: Track či bol tip už otvorený
   const hasBeenOpenedRef = useRef(false);
-
 
   const handleClose = useCallback(() => {
     if (!canClose) return;
@@ -345,19 +330,15 @@ const DetectiveTip = ({
     }, 400);
   }, [canClose, onClose]);
 
-
-  // ✅ UPRAVENÉ: Countdown len ak je prvé otvorenie
   useEffect(() => {
     if (!isOpen) return;
     
-    // ✅ Ak už bol otvorený, povoliť zatvoriť hneď
     if (hasBeenOpenedRef.current) {
       setCanClose(true);
       setCountdown(0);
       return;
     }
     
-    // ✅ Prvé otvorenie - countdown
     hasBeenOpenedRef.current = true;
     setCanClose(false);
     setCountdown(minReadTime / 1000);
@@ -376,7 +357,6 @@ const DetectiveTip = ({
     return () => clearInterval(interval);
   }, [isOpen, minReadTime]);
 
-
   useEffect(() => {
     if (autoOpen) {
       const timer = setTimeout(() => {
@@ -388,7 +368,6 @@ const DetectiveTip = ({
     }
   }, [autoOpen, autoOpenDelay, onOpen]);
 
-
   useEffect(() => {
     if (isOpen && autoClose && canClose) {
       const timer = setTimeout(() => {
@@ -399,7 +378,6 @@ const DetectiveTip = ({
     }
   }, [isOpen, autoClose, autoCloseDelay, canClose, handleClose]);
 
-
   const handleToggle = useCallback(() => {
     if (isOpen) {
       handleClose();
@@ -409,27 +387,24 @@ const DetectiveTip = ({
     }
   }, [isOpen, handleClose, onOpen]);
 
-
   const handleImageError = () => {
     console.warn('Detective image failed to load, using fallback');
     setImageError(true);
   };
 
-
   if (!tip) return null;
-
 
   const buttonStyle = position === 'left' ? { left: '20px', right: 'auto' } : {};
   const bubbleStyle = position === 'left' ? { left: '20px', right: 'auto' } : {};
-
+  const badgeStyle = position === 'left' ? { left: '20px', right: 'auto' } : {};
 
   return (
     <>
       <TipButton 
         onClick={handleToggle} 
-        title="Tip od detektíva"
+        title="TIP OD INŠPEKTORA"
         style={buttonStyle}
-        aria-label="Otvoriť tip od detektíva"
+        aria-label="Otvoriť tip od Inšpektora"
       >
         {!imageError ? (
           <DetectiveIcon 
@@ -440,12 +415,17 @@ const DetectiveTip = ({
         ) : (
           <DetectiveIconFallback>🕵️</DetectiveIconFallback>
         )}
-        {showBadge && !isOpen && <Badge>!</Badge>}
       </TipButton>
+      
+      {/* ✅ NOVÝ: Textový badge pod ikonkou */}
+      {showBadge && !isOpen && (
+        <TextBadge style={badgeStyle}>
+          Tip od {detectiveName}
+        </TextBadge>
+      )}
       
       {(isOpen || isClosing) && (
         <TipBubble style={bubbleStyle} $isClosing={isClosing}>
-          {/* ✅ Countdown len ak nie je prvé otvorenie */}
           {!canClose && (
             <CountdownTimer>
               ⏱️ {countdown}s
@@ -466,8 +446,8 @@ const DetectiveTip = ({
             <CloseButton 
               onClick={handleClose}
               disabled={!canClose}
-              aria-label="Zavrieť tip"
-              title={!canClose ? `Čakaj ešte ${countdown}s` : 'Zavrieť'}
+              aria-label="Zavrieť tip od Inšpektora"
+              title={!canClose ? `Prečítajte si prosím informácie ${countdown}s` : 'Zavrieť'}
             >
               ×
             </CloseButton>
@@ -484,6 +464,5 @@ const DetectiveTip = ({
     </>
   );
 };
-
 
 export default DetectiveTip;
