@@ -6,21 +6,42 @@ import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 
 
+// =====================
+// STYLED COMPONENTS - OPTIMALIZOVANÁ VERZIA
+// =====================
+
 const TipContainer = styled.div`
   position: relative;
   background: ${p => p.theme.CARD_BACKGROUND};
-  border: 3px solid ${p => p.theme.ACCENT_COLOR};
-  border-radius: 20px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  border: 2px solid ${p => p.theme.ACCENT_COLOR};
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
   animation: ${p => p.$isClosing ? 'slideOut' : 'slideIn'} 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   animation-fill-mode: forwards;
+  overflow: hidden;
+  
+  /* Decentný gradient pozadie */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+      circle at top left,
+      ${p => p.theme.ACCENT_COLOR}08 0%,
+      transparent 60%
+    );
+    pointer-events: none;
+  }
   
   @keyframes slideIn {
     from {
       opacity: 0;
-      transform: translateY(30px) scale(0.8);
+      transform: translateY(20px) scale(0.9);
     }
     to {
       opacity: 1;
@@ -35,99 +56,141 @@ const TipContainer = styled.div`
     }
     to {
       opacity: 0;
-      transform: translateY(30px) scale(0.8);
+      transform: translateY(20px) scale(0.9);
     }
   }
   
   @media (max-width: 768px) {
-    padding: 16px;
+    padding: 14px;
+    margin-bottom: 14px;
   }
   
   @media (max-width: 480px) {
-    padding: 14px;
+    padding: 12px;
+    margin-bottom: 12px;
   }
 `;
-
 
 const TipHeader = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 14px;
-  padding-bottom: 12px;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
   border-bottom: 2px solid ${p => p.theme.BORDER_COLOR};
+  position: relative;
+  z-index: 1;
 `;
 
-
 const DetectiveAvatar = styled.img`
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
+  box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}33;
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.1) rotate(5deg);
+  }
   
   @media (max-width: 480px) {
-    width: 35px;
-    height: 35px;
+    width: 32px;
+    height: 32px;
   }
 `;
 
-
 const DetectiveAvatarFallback = styled.div`
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: ${p => p.theme.ACCENT_COLOR};
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 18px;
+  box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}33;
   
   @media (max-width: 480px) {
-    width: 35px;
-    height: 35px;
-    font-size: 18px;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
   }
 `;
-
 
 const DetectiveName = styled.div`
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
-  font-size: 16px;
+  font-size: 14px;
   flex: 1;
   
   @media (max-width: 480px) {
-    font-size: 14px;
+    font-size: 13px;
   }
 `;
-
 
 const CloseButton = styled.button`
-  background: transparent;
+  background: ${p => p.theme.BORDER_COLOR}44;
   border: none;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
   padding: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   line-height: 1;
-  transition: color 0.2s ease;
+  transition: all 0.2s ease;
   
   &:hover {
-    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+    background: ${p => p.theme.ACCENT_COLOR};
+    color: #ffffff;
+    transform: rotate(90deg);
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 18px;
+    width: 22px;
+    height: 22px;
   }
 `;
-
 
 const TipText = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 15px;
-  line-height: 1.7;
+  font-size: 14px;
+  line-height: 1.6;
+  position: relative;
+  z-index: 1;
   
   @media (max-width: 480px) {
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  
+  p {
+    margin-bottom: 8px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  ul {
+    margin: 6px 0;
+    padding-left: 20px;
+    
+    li {
+      margin-bottom: 6px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
   }
   
   strong {
@@ -138,13 +201,24 @@ const TipText = styled.div`
   em {
     color: ${p => p.theme.ACCENT_COLOR_2};
     font-style: normal;
+    font-weight: 500;
+  }
+  
+  code {
+    background: ${p => p.theme.ACCENT_COLOR}11;
+    border: 1px solid ${p => p.theme.ACCENT_COLOR}33;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
   }
 `;
 
 
+
 const DetectiveTipSmall = ({ 
   tip, 
-  detectiveName = "Detektív Conan",
+  detectiveName = "Inšpektor Kritan",
   autoOpen = true,
   autoOpenDelay = 0,
   autoClose = false,

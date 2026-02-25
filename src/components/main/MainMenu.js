@@ -9,56 +9,75 @@ import StyledButton from '../../styles/StyledButton';
 import { useUserStats } from '../../contexts/UserStatsContext';
 import DetectiveTipLarge from '../shared/DetectiveTipLarge';
 
+// =====================
+// STYLED COMPONENTS - OPTIMALIZOVANÁ VERZIA
+// =====================
+
 const Container = styled.div`
-  padding: 20px;
+  padding: 16px;
   max-width: 800px;
   margin: 0 auto;
   
   @media (max-width: 768px) {
-    padding: 15px;
+    padding: 12px;
   }
 `;
 
 const Header = styled.div`
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 24px;
   
   @media (max-width: 768px) {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
   }
 `;
 
 const Title = styled.h1`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   
   @media (max-width: 768px) {
-    font-size: 28px;
+    font-size: 24px;
   }
   
   @media (max-width: 480px) {
-    font-size: 24px;
+    font-size: 22px;
   }
 `;
 
 const InstructionCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
-  border-left: 4px solid ${p => p.theme.ACCENT_COLOR};
+  border-left: 3px solid ${p => p.theme.ACCENT_COLOR};
   border-radius: 8px;
-  padding: 16px 20px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  transition: all 0.2s ease;
+  
+  &:hover {
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    border-left-width: 4px;
+  }
   
   h4 {
     color: ${p => p.theme.ACCENT_COLOR};
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    
+    &::before {
+      content: '💡';
+      font-size: 16px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    padding: 12px 14px;
   }
 `;
 
@@ -69,16 +88,24 @@ const InstructionList = styled.ul`
   
   li {
     color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-    padding: 8px 0 8px 24px;
+    padding: 6px 0 6px 22px;
     position: relative;
-    line-height: 1.6;
+    line-height: 1.5;
+    font-size: 14px;
     
     &:before {
       content: "▸";
       position: absolute;
-      left: 8px;
+      left: 6px;
       color: ${p => p.theme.ACCENT_COLOR};
       font-weight: bold;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    li {
+      font-size: 13px;
+      padding: 5px 0 5px 20px;
     }
   }
 `;
@@ -86,109 +113,169 @@ const InstructionList = styled.ul`
 const SubNote = styled.div`
   background: ${p => p.theme.ACCENT_COLOR}11;
   border-radius: 6px;
-  padding: 10px 12px;
-  margin-top: 8px;
-  font-size: 13px;
+  padding: 8px 10px;
+  margin-top: 6px;
+  font-size: 12px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  line-height: 1.5;
+  line-height: 1.4;
+  border-left: 2px solid ${p => p.theme.ACCENT_COLOR}44;
+  
+  @media (max-width: 480px) {
+    font-size: 11px;
+  }
 `;
 
 const InstructionsWrapper = styled.div`
   width: 100%;
   max-width: 800px;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 `;
 
 const StatsCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px solid ${p => p.theme.ACCENT_COLOR}44;
   border-radius: 12px;
-  padding: 20px;
+  padding: 16px;
   display: flex;
   justify-content: space-around;
-  gap: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  
+  /* Decentný gradient */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      ${p => p.theme.ACCENT_COLOR}08 0%,
+      transparent 60%
+    );
+    pointer-events: none;
+  }
+  
+  &:hover {
+    border-color: ${p => p.theme.ACCENT_COLOR}66;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  }
   
   @media (max-width: 480px) {
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
+    padding: 14px;
   }
 `;
 
 const StatItem = styled.div`
   text-align: center;
   flex: 1;
+  position: relative;
+  z-index: 1;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: ${p => p.theme.ACCENT_COLOR}08;
+  }
 `;
 
 const StatValue = styled.div`
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
   margin-bottom: 4px;
+  text-shadow: 0 1px 3px ${p => p.theme.ACCENT_COLOR}22;
   
   @media (max-width: 768px) {
-    font-size: 28px;
+    font-size: 24px;
   }
 `;
 
 const StatLabel = styled.div`
-  font-size: 12px;
+  font-size: 11px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   font-weight: 600;
 `;
 
 const SectionTitle = styled.h2`
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   text-align: center;
   
   @media (max-width: 480px) {
-    font-size: 20px;
+    font-size: 18px;
   }
 `;
 
 const MissionsList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-bottom: 40px;
+  gap: 12px;
+  margin-bottom: 24px;
 `;
 
 const MissionCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px solid ${p => p.locked ? p.theme.BORDER_COLOR : p.theme.ACCENT_COLOR}44;
   border-radius: 12px;
-  padding: 20px;
+  padding: 16px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
   position: relative;
   cursor: ${p => p.locked ? 'not-allowed' : 'pointer'};
   opacity: ${p => p.locked ? 0.6 : 1};
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  overflow: hidden;
+  
+  /* Gradient overlay pre dokončené misie */
+  ${p => p.completed && `
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        135deg,
+        ${p.theme.ACCENT_COLOR}08 0%,
+        transparent 70%
+      );
+      pointer-events: none;
+    }
+  `}
 
   &:hover {
     transform: ${p => p.locked ? 'none' : 'translateY(-2px)'};
     border-color: ${p => p.locked ? p.theme.BORDER_COLOR : p.theme.ACCENT_COLOR};
-    box-shadow: ${p => p.locked ? '0 2px 8px rgba(0,0,0,0.1)' : `0 6px 16px ${p.theme.ACCENT_COLOR}33`};
+    box-shadow: ${p => p.locked ? '0 2px 6px rgba(0,0,0,0.08)' : `0 4px 12px ${p.theme.ACCENT_COLOR}33`};
   }
   
   @media (max-width: 480px) {
     flex-direction: column;
     text-align: center;
-    gap: 12px;
+    gap: 10px;
+    padding: 14px;
   }
 `;
 
 const MissionIcon = styled.div`
-  width: 60px;
-  height: 60px;
-  min-width: 60px;
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
   background: linear-gradient(135deg, 
     ${p => p.theme.ACCENT_COLOR}, 
     ${p => p.theme.ACCENT_COLOR_2}
@@ -197,18 +284,21 @@ const MissionIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
+  font-size: 28px;
+  box-shadow: 0 2px 8px ${p => p.theme.ACCENT_COLOR}44;
   
   @media (max-width: 480px) {
-    width: 50px;
-    height: 50px;
-    min-width: 50px;
-    font-size: 28px;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    font-size: 24px;
   }
 `;
 
 const MissionContent = styled.div`
   flex: 1;
+  position: relative;
+  z-index: 1;
   
   @media (max-width: 480px) {
     text-align: center;
@@ -216,32 +306,38 @@ const MissionContent = styled.div`
 `;
 
 const MissionNumber = styled.div`
-  font-size: 12px;
+  font-size: 11px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  margin-bottom: 4px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-`;
-
-const MissionTitle = styled.h3`
-  font-size: 18px;
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  margin-bottom: 4px;
-  font-weight: 600;
-`;
-
-const MissionStatus = styled.div`
-  font-size: 13px;
-  color: ${p => p.completed ? '#10b981' : p.theme.SECONDARY_TEXT_COLOR};
+  margin-bottom: 3px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 `;
 
+const MissionTitle = styled.h3`
+  font-size: 16px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  margin-bottom: 4px;
+  font-weight: 600;
+  
+  @media (max-width: 480px) {
+    font-size: 15px;
+  }
+`;
+
+const MissionStatus = styled.div`
+  font-size: 12px;
+  color: ${p => p.completed ? '#10b981' : p.theme.SECONDARY_TEXT_COLOR};
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+`;
+
 const AdminButtons = styled.div`
   display: flex;
-  gap: 8px;
+  gap: 6px;
+  position: relative;
+  z-index: 1;
   
   @media (max-width: 480px) {
     width: 100%;
@@ -254,14 +350,14 @@ const AdminButton = styled.button`
   color: #fff;
   border: none;
   border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 11px;
+  padding: 6px 10px;
+  font-size: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
   font-weight: 600;
   
   &:hover:not(:disabled) {
-    opacity: 0.8;
+    opacity: 0.85;
     transform: scale(1.05);
   }
   
@@ -274,9 +370,9 @@ const AdminButton = styled.button`
 const ButtonGroup = styled.div`
   display: flex;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 40px;
+  margin-bottom: 24px;
   
   @media (max-width: 480px) {
     flex-direction: column;
@@ -294,24 +390,49 @@ const SharingSection = styled.div`
   );
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   border-radius: 16px;
-  padding: 24px;
+  padding: 20px;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  margin-top: 20px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  margin-top: 16px;
+  position: relative;
+  overflow: hidden;
+  
+  /* Dekoratívny gradient */
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+      circle at center,
+      ${p => p.theme.ACCENT_COLOR}15 0%,
+      transparent 50%
+    );
+    pointer-events: none;
+  }
   
   @media (max-width: 768px) {
-    padding: 20px;
+    padding: 16px;
   }
 `;
 
 const SharingTitle = styled.h3`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  margin-bottom: 16px;
-  font-size: 20px;
+  margin-bottom: 12px;
+  font-size: 18px;
   font-weight: 700;
+  position: relative;
+  z-index: 1;
+  
+  &::before {
+    content: '🎁';
+    margin-right: 8px;
+  }
   
   @media (max-width: 480px) {
-    font-size: 18px;
+    font-size: 16px;
   }
 `;
 
@@ -319,45 +440,19 @@ const SharingCodeDisplay = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px dashed ${p => p.theme.ACCENT_COLOR};
   border-radius: 12px;
-  padding: 20px;
-  margin: 16px 0;
+  padding: 16px;
+  margin: 12px 0;
+  position: relative;
+  z-index: 1;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-style: solid;
+    box-shadow: 0 2px 8px ${p => p.theme.ACCENT_COLOR}33;
+  }
 `;
 
 const SharingCodeLabel = styled.div`
-  font-size: 14px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  margin-bottom: 12px;
-`;
-
-const SharingCode = styled.code`
-  font-size: 36px;
-  font-weight: bold;
-  letter-spacing: 6px;
-  color: ${p => p.theme.ACCENT_COLOR};
-  font-family: 'Courier New', monospace;
-  
-  @media (max-width: 768px) {
-    font-size: 32px;
-    letter-spacing: 4px;
-  }
-  
-  @media (max-width: 480px) {
-    font-size: 28px;
-    letter-spacing: 3px;
-  }
-`;
-
-const LinkDisplay = styled.div`
-  background: ${p => p.theme.INPUT_BACKGROUND};
-  border: 2px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 12px;
-  padding: 16px;
-  margin: 16px 0;
-  word-break: break-all;
-  text-align: left;
-`;
-
-const LinkLabel = styled.div`
   font-size: 12px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   margin-bottom: 8px;
@@ -366,22 +461,69 @@ const LinkLabel = styled.div`
   font-weight: 600;
 `;
 
-const LinkText = styled.code`
-  font-size: 14px;
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+const SharingCode = styled.code`
+  font-size: 32px;
+  font-weight: bold;
+  letter-spacing: 4px;
+  color: ${p => p.theme.ACCENT_COLOR};
   font-family: 'Courier New', monospace;
-  line-height: 1.6;
+  text-shadow: 0 2px 4px ${p => p.theme.ACCENT_COLOR}22;
+  
+  @media (max-width: 768px) {
+    font-size: 28px;
+    letter-spacing: 3px;
+  }
   
   @media (max-width: 480px) {
-    font-size: 12px;
+    font-size: 24px;
+    letter-spacing: 2px;
+  }
+`;
+
+const LinkDisplay = styled.div`
+  background: ${p => p.theme.INPUT_BACKGROUND};
+  border: 2px solid ${p => p.theme.BORDER_COLOR};
+  border-radius: 12px;
+  padding: 12px;
+  margin: 12px 0;
+  word-break: break-all;
+  text-align: left;
+  position: relative;
+  z-index: 1;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: ${p => p.theme.ACCENT_COLOR}66;
+  }
+`;
+
+const LinkLabel = styled.div`
+  font-size: 11px;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+`;
+
+const LinkText = styled.code`
+  font-size: 13px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  font-family: 'Courier New', monospace;
+  line-height: 1.5;
+  
+  @media (max-width: 480px) {
+    font-size: 11px;
   }
 `;
 
 const ShareButtonsGroup = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 10px;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 1;
   
   @media (max-width: 480px) {
     grid-template-columns: 1fr;
@@ -390,9 +532,11 @@ const ShareButtonsGroup = styled.div`
 
 const SharingInfo = styled.p`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 14px;
-  margin: 16px 0;
-  line-height: 1.6;
+  font-size: 13px;
+  margin: 12px 0;
+  line-height: 1.5;
+  position: relative;
+  z-index: 1;
   
   strong {
     color: ${p => p.theme.ACCENT_COLOR};
@@ -403,34 +547,41 @@ const SharingInfo = styled.p`
 const ReferralStats = styled.div`
   display: flex;
   justify-content: center;
-  gap: 32px;
-  margin-top: 20px;
+  gap: 24px;
+  margin-top: 16px;
+  position: relative;
+  z-index: 1;
   
   @media (max-width: 480px) {
-    gap: 20px;
+    gap: 16px;
   }
 `;
 
 const ReferralStat = styled.div`
   text-align: center;
+  padding: 8px 16px;
+  background: ${p => p.theme.CARD_BACKGROUND}88;
+  border-radius: 10px;
+  backdrop-filter: blur(4px);
 `;
 
 const ReferralStatValue = styled.div`
-  font-size: 28px;
+  font-size: 24px;
   font-weight: bold;
   color: ${p => p.theme.ACCENT_COLOR};
+  text-shadow: 0 1px 3px ${p => p.theme.ACCENT_COLOR}33;
   
   @media (max-width: 768px) {
-    font-size: 24px;
+    font-size: 20px;
   }
 `;
 
 const ReferralStatLabel = styled.div`
-  font-size: 11px;
+  font-size: 10px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   margin-top: 4px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 `;
 
 const ModalOverlay = styled.div`
@@ -446,60 +597,78 @@ const ModalOverlay = styled.div`
   justify-content: center;
   z-index: 1000;
   padding: 20px;
+  animation: fadeIn 0.2s ease;
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
 `;
-
-// Pridaj k existujúcim styled components:
 
 const ModalContent = styled.div`
   position: relative;
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   border-radius: 16px;
-  padding: 32px;
+  padding: 24px;
   max-width: 600px;
   width: 100%;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   box-shadow: 0 20px 60px rgba(0,0,0,0.5);
   max-height: 85vh;
   overflow-y: auto;
+  animation: slideUp 0.3s ease;
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
   
   h3 {
     color: ${p => p.theme.ACCENT_COLOR};
-    margin-bottom: 20px;
-    font-size: 24px;
+    margin-bottom: 16px;
+    font-size: 20px;
     text-align: center;
   }
   
   h4 {
     color: ${p => p.theme.ACCENT_COLOR};
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
-    margin-top: 20px;
-    margin-bottom: 10px;
+    margin-top: 16px;
+    margin-bottom: 8px;
     border-bottom: 2px solid ${p => p.theme.ACCENT_COLOR}33;
-    padding-bottom: 6px;
+    padding-bottom: 4px;
   }
   
   p {
-    line-height: 1.7;
-    margin-bottom: 12px;
+    line-height: 1.6;
+    margin-bottom: 10px;
+    font-size: 14px;
   }
   
   ul {
-    margin: 8px 0 16px 0;
-    padding-left: 20px;
+    margin: 6px 0 12px 0;
+    padding-left: 18px;
     
     li {
-      line-height: 1.7;
-      margin-bottom: 8px;
+      line-height: 1.6;
+      margin-bottom: 6px;
+      font-size: 14px;
     }
     
     ul {
-      margin: 8px 0 8px 0;
-      padding-left: 20px;
+      margin: 6px 0 6px 0;
+      padding-left: 18px;
       
       li {
-        font-size: 14px;
+        font-size: 13px;
         list-style-type: circle;
       }
     }
@@ -515,44 +684,48 @@ const ModalContent = styled.div`
   }
   
   &::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
   
   &::-webkit-scrollbar-track {
     background: ${p => p.theme.BORDER_COLOR}33;
-    border-radius: 4px;
+    border-radius: 3px;
   }
   
   &::-webkit-scrollbar-thumb {
     background: ${p => p.theme.ACCENT_COLOR};
-    border-radius: 4px;
+    border-radius: 3px;
   }
   
   @media (max-width: 768px) {
-    padding: 24px;
+    padding: 20px;
     max-height: 90vh;
     
     h3 {
-      font-size: 20px;
+      font-size: 18px;
     }
     
     h4 {
-      font-size: 14px;
+      font-size: 13px;
+    }
+    
+    p, li {
+      font-size: 13px;
     }
   }
 `;
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 16px;
-  right: 16px;
-  background: transparent;
+  top: 12px;
+  right: 12px;
+  background: ${p => p.theme.BORDER_COLOR}44;
   border: none;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -560,11 +733,12 @@ const CloseButton = styled.button`
   transition: all 0.2s ease;
   
   &:hover {
-    background: ${p => p.theme.BORDER_COLOR};
-    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+    background: ${p => p.theme.ACCENT_COLOR};
+    color: #ffffff;
     transform: rotate(90deg);
   }
 `;
+
 
 const makeMissionList = (p) => [
   { id: 0, title: 'Misia 0 (Predvýskum)', route: '/mission0/intro', completed: !!p.mission0_completed, locked: !p.mission0_unlocked, icon: '🎯' },

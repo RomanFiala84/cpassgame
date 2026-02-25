@@ -4,27 +4,31 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 
+// =====================
+// STYLED COMPONENTS - OPTIMALIZOVANÁ VERZIA
+// =====================
+
 const TipButton = styled.button`
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 100px;
-  height: 100px;
+  bottom: 16px;
+  right: 16px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   background: linear-gradient(135deg, 
     ${p => p.theme.ACCENT_COLOR}, 
     ${p => p.theme.ACCENT_COLOR_2}
   );
-  border: 4px solid ${p => p.theme.CARD_BACKGROUND};
-  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  border: 3px solid ${p => p.theme.CARD_BACKGROUND};
+  box-shadow: 0 4px 16px rgba(0,0,0,0.35);
   cursor: pointer;
   z-index: 999;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   overflow: hidden;
   
   &:hover {
-    transform: scale(1.1);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    transform: scale(1.15) rotate(5deg);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.45);
   }
   
   &:active {
@@ -32,15 +36,15 @@ const TipButton = styled.button`
   }
   
   @media (max-width: 768px) {
-    width: 60px;
-    height: 60px;
-    bottom: 15px;
-    right: 15px;
+    width: 56px;
+    height: 56px;
+    bottom: 12px;
+    right: 12px;
   }
   
   @media (max-width: 480px) {
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
   }
 `;
 
@@ -52,6 +56,11 @@ const DetectiveIcon = styled.img`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  transition: transform 0.3s ease;
+  
+  ${TipButton}:hover & {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
 `;
 
 const DetectiveIconFallback = styled.div`
@@ -60,63 +69,89 @@ const DetectiveIconFallback = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 35px;
+  font-size: 32px;
+  
+  @media (max-width: 768px) {
+    font-size: 26px;
+  }
   
   @media (max-width: 480px) {
-    font-size: 28px;
+    font-size: 22px;
   }
 `;
 
-// ✅ NOVÝ: Textový badge pod ikonkou
 const TextBadge = styled.div`
   position: fixed;
-  bottom: 10px;
-  right: 20px;
+  bottom: 8px;
+  right: 16px;
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   border-radius: 8px;
-  padding: 4px 10px;
-  font-size: 11px;
+  padding: 3px 8px;
+  font-size: 10px;
   font-weight: 600;
   color: ${p => p.theme.ACCENT_COLOR};
   white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   z-index: 998;
   pointer-events: none;
+  animation: badgePulse 2s ease-in-out infinite;
+  
+  @keyframes badgePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
   
   @media (max-width: 768px) {
-    bottom: 5px;
-    right: 15px;
-    font-size: 9px;
-    padding: 3px 8px;
+    bottom: 4px;
+    right: 12px;
+    font-size: 8px;
+    padding: 2px 6px;
   }
   
   @media (max-width: 480px) {
     bottom: 2px;
-    right: 15px;
-    font-size: 8px;
-    padding: 2px 6px;
+    right: 12px;
+    font-size: 7px;
+    padding: 2px 5px;
   }
 `;
 
 const TipBubble = styled.div`
   position: fixed;
-  bottom: 100px;
-  right: 20px;
-  max-width: 380px;
+  bottom: 82px;
+  right: 16px;
+  max-width: 360px;
   background: ${p => p.theme.CARD_BACKGROUND};
-  border: 3px solid ${p => p.theme.ACCENT_COLOR};
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  border: 2px solid ${p => p.theme.ACCENT_COLOR};
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
   z-index: 998;
   animation: ${p => p.$isClosing ? 'slideOut' : 'slideIn'} 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   animation-fill-mode: forwards;
   
+  /* Decentný gradient pozadie */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+      circle at top right,
+      ${p => p.theme.ACCENT_COLOR}08 0%,
+      transparent 70%
+    );
+    border-radius: 16px;
+    pointer-events: none;
+  }
+  
   @keyframes slideIn {
     from {
       opacity: 0;
-      transform: translateY(30px) scale(0.8);
+      transform: translateY(20px) scale(0.9);
     }
     to {
       opacity: 1;
@@ -131,38 +166,41 @@ const TipBubble = styled.div`
     }
     to {
       opacity: 0;
-      transform: translateY(30px) scale(0.8);
+      transform: translateY(20px) scale(0.9);
     }
   }
   
   &::after {
     content: '';
     position: absolute;
-    bottom: -15px;
-    right: 35px;
+    bottom: -12px;
+    right: 30px;
     width: 0;
     height: 0;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-top: 15px solid ${p => p.theme.ACCENT_COLOR};
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 12px solid ${p => p.theme.ACCENT_COLOR};
   }
   
   @media (max-width: 768px) {
-    max-width: 320px;
-    right: 15px;
-    bottom: 85px;
-    padding: 16px;
+    max-width: 300px;
+    right: 12px;
+    bottom: 70px;
+    padding: 14px;
   }
   
   @media (max-width: 480px) {
-    max-width: calc(100vw - 30px);
-    left: 15px;
-    right: 15px;
-    bottom: 75px;
-    padding: 14px;
+    max-width: calc(100vw - 24px);
+    left: 12px;
+    right: 12px;
+    bottom: 62px;
+    padding: 12px;
     
     &::after {
-      right: 25px;
+      right: 20px;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 10px solid ${p => p.theme.ACCENT_COLOR};
     }
   }
 `;
@@ -170,62 +208,76 @@ const TipBubble = styled.div`
 const TipHeader = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 14px;
-  padding-bottom: 12px;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
   border-bottom: 2px solid ${p => p.theme.BORDER_COLOR};
+  position: relative;
+  z-index: 1;
 `;
 
 const DetectiveAvatar = styled.img`
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
+  box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}33;
   
   @media (max-width: 480px) {
-    width: 35px;
-    height: 35px;
+    width: 32px;
+    height: 32px;
   }
 `;
 
 const DetectiveAvatarFallback = styled.div`
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: ${p => p.theme.ACCENT_COLOR};
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 18px;
+  box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}33;
   
   @media (max-width: 480px) {
-    width: 35px;
-    height: 35px;
-    font-size: 18px;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
   }
 `;
 
 const DetectiveName = styled.div`
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
-  font-size: 16px;
+  font-size: 14px;
   flex: 1;
   
   @media (max-width: 480px) {
-    font-size: 14px;
+    font-size: 13px;
   }
 `;
 
 const TipText = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 15px;
-  line-height: 1.7;
+  font-size: 14px;
+  line-height: 1.6;
+  position: relative;
+  z-index: 1;
   
   @media (max-width: 480px) {
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  
+  p {
+    margin-bottom: 8px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
   
   strong {
@@ -236,22 +288,37 @@ const TipText = styled.div`
   em {
     color: ${p => p.theme.ACCENT_COLOR_2};
     font-style: normal;
+    font-weight: 500;
   }
 `;
 
 const CloseButton = styled.button`
-  background: transparent;
+  background: ${p => p.disabled ? 'transparent' : p.theme.BORDER_COLOR}44;
   border: none;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 24px;
+  font-size: 20px;
   cursor: ${p => p.disabled ? 'not-allowed' : 'pointer'};
   padding: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   line-height: 1;
-  transition: color 0.2s ease;
+  transition: all 0.2s ease;
   opacity: ${p => p.disabled ? 0.3 : 1};
   
   &:hover {
-    color: ${p => p.disabled ? p.theme.SECONDARY_TEXT_COLOR : p.theme.PRIMARY_TEXT_COLOR};
+    background: ${p => p.disabled ? 'transparent' : p.theme.ACCENT_COLOR};
+    color: ${p => p.disabled ? p.theme.SECONDARY_TEXT_COLOR : '#ffffff'};
+    transform: ${p => p.disabled ? 'none' : 'rotate(90deg)'};
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 18px;
+    width: 22px;
+    height: 22px;
   }
 `;
 
@@ -260,16 +327,20 @@ const ProgressBar = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  height: 4px;
+  height: 3px;
   background: ${p => p.theme.BORDER_COLOR};
-  border-radius: 0 0 18px 18px;
+  border-radius: 0 0 14px 14px;
   overflow: hidden;
 `;
 
 const ProgressFill = styled.div`
   height: 100%;
-  background: ${p => p.theme.ACCENT_COLOR};
+  background: linear-gradient(90deg, 
+    ${p => p.theme.ACCENT_COLOR}, 
+    ${p => p.theme.ACCENT_COLOR_2}
+  );
   animation: progress ${p => p.$duration}s linear;
+  box-shadow: 0 0 8px ${p => p.theme.ACCENT_COLOR}66;
   
   @keyframes progress {
     from { width: 100%; }
@@ -279,24 +350,27 @@ const ProgressFill = styled.div`
 
 const CountdownTimer = styled.div`
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 10px;
+  right: 10px;
   background: ${p => p.theme.ACCENT_COLOR}22;
   border: 1px solid ${p => p.theme.ACCENT_COLOR};
   border-radius: 6px;
-  padding: 4px 8px;
-  font-size: 11px;
+  padding: 3px 7px;
+  font-size: 10px;
   font-weight: 600;
   color: ${p => p.theme.ACCENT_COLOR};
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
+  z-index: 2;
+  backdrop-filter: blur(4px);
   
   @media (max-width: 480px) {
-    font-size: 10px;
-    padding: 3px 6px;
+    font-size: 9px;
+    padding: 2px 6px;
   }
 `;
+
 
 const DetectiveTip = ({ 
   tip, 

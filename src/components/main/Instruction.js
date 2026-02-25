@@ -17,18 +17,18 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 24px 16px;
   min-height: 100vh;
   
   @media (max-width: 768px) {
-    padding: 30px 15px;
+    padding: 20px 12px;
   }
 `;
 
 const Title = styled.h1`
-  font-size: 36px;
+  font-size: 28px;
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   background: linear-gradient(
     135deg,
     ${props => props.theme.ACCENT_COLOR},
@@ -40,46 +40,46 @@ const Title = styled.h1`
   font-weight: 700;
   
   @media (max-width: 768px) {
-    font-size: 28px;
+    font-size: 24px;
   }
   
   @media (max-width: 480px) {
-    font-size: 24px;
+    font-size: 22px;
   }
 `;
 
 const Subtitle = styled.p`
-  font-size: 18px;
-  line-height: 1.6;
+  font-size: 16px;
+  line-height: 1.5;
   max-width: 800px;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   text-align: center;
   
   @media (max-width: 768px) {
-    font-size: 16px;
-    margin-bottom: 24px;
+    font-size: 15px;
+    margin-bottom: 16px;
   }
 `;
 
 const InstructionsSection = styled.div`
   width: 100%;
   max-width: 800px;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 `;
 
 const WelcomeText = styled.p`
-  font-size: 16px;
-  line-height: 1.6;
+  font-size: 15px;
+  line-height: 1.5;
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 `;
 
 const AccordionItem = styled.div`
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   border: 1px solid ${props => props.theme.BORDER_COLOR};
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
   background: ${props => props.theme.CARD_BACKGROUND};
   transition: all 0.2s ease;
@@ -91,7 +91,7 @@ const AccordionItem = styled.div`
 
 const AccordionHeader = styled.button`
   width: 100%;
-  padding: 16px 20px;
+  padding: 12px 16px;
   background: ${props => props.$isOpen ? props.theme.CARD_BACKGROUND : 'transparent'};
   border: none;
   text-align: left;
@@ -99,7 +99,7 @@ const AccordionHeader = styled.button`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: ${props => props.$isOpen ? props.theme.ACCENT_COLOR : props.theme.PRIMARY_TEXT_COLOR};
   transition: all 0.2s ease;
@@ -110,8 +110,8 @@ const AccordionHeader = styled.button`
   }
   
   @media (max-width: 768px) {
-    font-size: 15px;
-    padding: 14px 16px;
+    font-size: 14px;
+    padding: 12px 14px;
   }
 `;
 
@@ -129,29 +129,29 @@ const AccordionContent = styled.div`
 `;
 
 const AccordionInner = styled.div`
-  padding: ${props => props.$isOpen ? '0 20px 20px 20px' : '0 20px'};
+  padding: ${props => props.$isOpen ? '0 16px 16px 16px' : '0 16px'};
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
-  line-height: 1.8;
-  font-size: 14px;
+  line-height: 1.6;
+  font-size: 13px;
   
   h3 {
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};
-    margin: 16px 0 8px 0;
-    font-size: 15px;
+    margin: 12px 0 6px 0;
+    font-size: 14px;
     font-weight: 600;
   }
   
   ul {
-    margin: 8px 0;
-    padding-left: 24px;
+    margin: 6px 0;
+    padding-left: 20px;
   }
   
   li {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
   
   p {
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
   
   strong {
@@ -169,10 +169,10 @@ const AccordionInner = styled.div`
   }
   
   @media (max-width: 768px) {
-    font-size: 13px;
+    font-size: 12px;
     
     h3 {
-      font-size: 14px;
+      font-size: 13px;
     }
   }
 `;
@@ -180,36 +180,44 @@ const AccordionInner = styled.div`
 const FormCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px solid ${p => p.$hasError ? '#ef4444' : p.theme.BORDER_COLOR};
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 20px;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
   width: 100%;
   max-width: 800px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   transition: all 0.2s ease;
-  scroll-margin-top: 20px; /* ✅ Pridané pre lepší autoscroll */
+  scroll-margin-top: 20px;
   
   &:hover {
     border-color: ${p => p.$hasError ? '#ef4444' : p.theme.ACCENT_COLOR}66;
   }
   
   @media (max-width: 768px) {
-    padding: 20px;
+    padding: 14px;
   }
 `;
 
 const ConsentText = styled.div`
-  font-size: 0.9em;
+  font-size: 0.85em;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  line-height: 1.6;
-  margin-top: 15px;
-  padding-left: 24px;
+  line-height: 1.5;
+  margin-top: 12px;
+  padding-left: 20px;
+  
+  ul {
+    margin: 4px 0;
+  }
+  
+  li {
+    margin-bottom: 4px;
+  }
 `;
 
 const CheckboxContainer = styled.div`
   display: flex;
-  align-items: center;
-  gap: 12px;
+  align-items: flex-start;
+  gap: 10px;
   cursor: ${p => p.$disabled ? 'not-allowed' : 'pointer'};
   
   label {
@@ -218,13 +226,16 @@ const CheckboxContainer = styled.div`
     text-decoration: ${p => p.$disabled ? 'line-through' : 'none'};
     opacity: ${p => p.$disabled ? 0.6 : 1};
     user-select: none;
-    font-size: 15px;
+    font-size: 14px;
+    line-height: 1.4;
   }
 `;
 
 const Checkbox = styled.input`
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  flex-shrink: 0;
   cursor: ${p => p.disabled ? 'not-allowed' : 'pointer'};
   accent-color: ${p => p.theme.ACCENT_COLOR};
 `;
@@ -232,17 +243,17 @@ const Checkbox = styled.input`
 const InputLabel = styled.label`
   display: block;
   font-weight: 600;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
-  font-size: 15px;
+  font-size: 14px;
 `;
 
 const Input = styled.input`
   width: 100%;
-  padding: 14px 16px;
+  padding: 12px 14px;
   border: 2px solid ${props => props.$hasError ? '#ef4444' : props.theme.BORDER_COLOR};
-  border-radius: 10px;
-  font-size: 16px;
+  border-radius: 8px;
+  font-size: 15px;
   background: ${props => props.theme.INPUT_BACKGROUND};
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   font-family: inherit;
@@ -273,8 +284,8 @@ const Input = styled.input`
 
 const ErrorText = styled.div`
   color: #ef4444;
-  font-size: 13px;
-  margin-top: 8px;
+  font-size: 12px;
+  margin-top: 6px;
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -286,40 +297,56 @@ const ErrorText = styled.div`
 `;
 
 const Note = styled.div`
-  font-size: 12px;
+  font-size: 11px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  margin-top: 8px;
-  line-height: 1.5;
+  margin-top: 6px;
+  line-height: 1.4;
+  
+  ul {
+    margin: 4px 0;
+  }
+  
+  li {
+    margin-bottom: 4px;
+  }
 `;
 
 const InfoBox = styled.div`
   background: ${p => p.$hasError ? '#ef444411' : `${p.theme.ACCENT_COLOR}11`};
-  border-left: 4px solid ${p => p.$hasError ? '#ef4444' : p.theme.ACCENT_COLOR};
-  padding: 20px;
-  margin-bottom: 24px;
+  border-left: 3px solid ${p => p.$hasError ? '#ef4444' : p.theme.ACCENT_COLOR};
+  padding: 16px;
+  margin-bottom: 16px;
   max-width: 800px;
   width: 100%;
-  border-radius: 12px;
+  border-radius: 10px;
   
   @media (max-width: 768px) {
-    padding: 16px;
+    padding: 14px;
   }
 `;
 
 const InfoTitle = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   font-weight: 700;
-  margin-bottom: 12px;
-  font-size: 16px;
+  margin-bottom: 8px;
+  font-size: 15px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 `;
 
 const InfoText = styled.div`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 14px;
-  line-height: 1.8;
+  font-size: 13px;
+  line-height: 1.6;
+  
+  ul {
+    margin: 4px 0;
+  }
+  
+  li {
+    margin-bottom: 4px;
+  }
   
   strong {
     color: ${p => p.theme.PRIMARY_TEXT_COLOR};
@@ -330,8 +357,8 @@ const InfoText = styled.div`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-  gap: 16px;
-  margin-top: 32px;
+  gap: 12px;
+  margin-top: 20px;
   width: 100%;
   max-width: 800px;
   
@@ -422,9 +449,9 @@ const ClearCodeButton = styled(StyledButton)`
 const ReferralNotice = styled.div`
   background: ${p => `${p.theme.ACCENT_COLOR}22`};
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 20px;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
   max-width: 800px;
   width: 100%;
   text-align: center;
@@ -444,13 +471,13 @@ const ReferralNotice = styled.div`
 
 const ReferralNoticeText = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 14px;
-  margin-bottom: 8px;
+  font-size: 13px;
+  margin-bottom: 6px;
   
   strong {
     color: ${p => p.theme.ACCENT_COLOR};
     font-weight: 700;
-    font-size: 18px;
+    font-size: 16px;
     letter-spacing: 2px;
   }
 `;
@@ -462,16 +489,24 @@ const CompetitionSection = styled(FormCard)`
 
 const CompetitionTitle = styled.h3`
   color: ${p => p.theme.ACCENT_COLOR};
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 `;
 
 const CompetitionText = styled.p`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  
+  ul {
+    margin: 4px 0;
+  }
+  
+  li {
+    margin-bottom: 4px;
+  }
 `;
 
 const EmailInput = styled(Input)`
@@ -482,7 +517,7 @@ const EmailInput = styled(Input)`
 const RulesSection = styled.div`
   width: 100%;
   max-width: 800px;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 `;
 
 const RulesAccordion = styled(AccordionItem)`

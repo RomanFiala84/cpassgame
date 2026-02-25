@@ -6,27 +6,31 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 
 
+// =====================
+// STYLED COMPONENTS - OPTIMALIZOVANÁ VERZIA
+// =====================
+
 const TipButton = styled.button`
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 100px;
-  height: 100px;
+  bottom: 16px;
+  right: 16px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   background: linear-gradient(135deg, 
     ${p => p.theme.ACCENT_COLOR}, 
     ${p => p.theme.ACCENT_COLOR_2}
   );
-  border: 4px solid ${p => p.theme.CARD_BACKGROUND};
-  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  border: 3px solid ${p => p.theme.CARD_BACKGROUND};
+  box-shadow: 0 4px 16px rgba(0,0,0,0.35);
   cursor: pointer;
   z-index: 999;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   overflow: hidden;
   
   &:hover {
-    transform: scale(1.1);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    transform: scale(1.15) rotate(5deg);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.45);
   }
   
   &:active {
@@ -34,18 +38,17 @@ const TipButton = styled.button`
   }
   
   @media (max-width: 768px) {
-    width: 60px;
-    height: 60px;
-    bottom: 15px;
-    right: 15px;
+    width: 56px;
+    height: 56px;
+    bottom: 12px;
+    right: 12px;
   }
   
   @media (max-width: 480px) {
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
   }
 `;
-
 
 const DetectiveIcon = styled.img`
   width: 110%;
@@ -55,8 +58,12 @@ const DetectiveIcon = styled.img`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  transition: transform 0.3s ease;
+  
+  ${TipButton}:hover & {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
 `;
-
 
 const DetectiveIconFallback = styled.div`
   width: 100%;
@@ -64,20 +71,23 @@ const DetectiveIconFallback = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 35px;
+  font-size: 32px;
+  
+  @media (max-width: 768px) {
+    font-size: 26px;
+  }
   
   @media (max-width: 480px) {
-    font-size: 28px;
+    font-size: 22px;
   }
 `;
 
-
 const Badge = styled.div`
   position: absolute;
-  top: -5px;
-  right: -5px;
-  width: 24px;
-  height: 24px;
+  top: -4px;
+  right: -4px;
+  width: 22px;
+  height: 22px;
   background: #ff4444;
   border-radius: 50%;
   border: 2px solid ${p => p.theme.CARD_BACKGROUND};
@@ -88,19 +98,27 @@ const Badge = styled.div`
   font-weight: bold;
   color: white;
   animation: pulse 2s infinite;
+  box-shadow: 0 2px 8px rgba(255, 68, 68, 0.5);
   
   @keyframes pulse {
     0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+    50% { transform: scale(1.15); }
+  }
+  
+  @media (max-width: 768px) {
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+    top: -3px;
+    right: -3px;
   }
   
   @media (max-width: 480px) {
-    width: 20px;
-    height: 20px;
-    font-size: 10px;
+    width: 16px;
+    height: 16px;
+    font-size: 9px;
   }
 `;
-
 
 const Overlay = styled.div`
   position: fixed;
@@ -108,13 +126,13 @@ const Overlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: 16px;
   animation: ${p => p.$isClosing ? 'fadeOut' : 'fadeIn'} 0.3s ease;
   animation-fill-mode: forwards;
   
@@ -129,18 +147,17 @@ const Overlay = styled.div`
   }
 `;
 
-
 const ModalContainer = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
-  border: 3px solid ${p => p.theme.ACCENT_COLOR};
-  border-radius: 20px;
-  max-width: 900px;
+  border: 2px solid ${p => p.theme.ACCENT_COLOR};
+  border-radius: 16px;
+  max-width: 850px;
   width: 100%;
   max-height: 90vh;
   overflow: hidden;
   display: flex;
   flex-direction: row;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5);
   position: relative;
   animation: ${p => p.$isClosing ? 'slideOut' : 'slideIn'} 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   animation-fill-mode: forwards;
@@ -148,7 +165,7 @@ const ModalContainer = styled.div`
   @keyframes slideIn {
     from {
       opacity: 0;
-      transform: scale(0.8) translateY(30px);
+      transform: scale(0.85) translateY(20px);
     }
     to {
       opacity: 1;
@@ -163,71 +180,84 @@ const ModalContainer = styled.div`
     }
     to {
       opacity: 0;
-      transform: scale(0.8) translateY(30px);
+      transform: scale(0.85) translateY(20px);
     }
   }
   
   @media (max-width: 768px) {
     max-width: 90%;
     flex-direction: column;
+    border-radius: 12px;
   }
   
   @media (max-width: 480px) {
     max-width: 95%;
-    border-radius: 16px;
   }
 `;
 
-
 const CountdownBadge = styled.div`
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 12px;
+  right: 12px;
   background: ${p => p.theme.ACCENT_COLOR};
   color: white;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
   font-weight: 700;
   z-index: 10;
   display: flex;
   align-items: center;
-  gap: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  gap: 5px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+  backdrop-filter: blur(4px);
   
   @media (max-width: 480px) {
-    font-size: 12px;
-    padding: 6px 12px;
-    top: 12px;
-    right: 12px;
+    font-size: 11px;
+    padding: 5px 10px;
+    top: 10px;
+    right: 10px;
   }
 `;
 
-
 const ContentContainer = styled.div`
   width: 50%;
-  padding: 30px;
+  padding: 24px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   order: 1;
   
+  /* Custom scrollbar */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: ${p => p.theme.BORDER_COLOR}33;
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: ${p => p.theme.ACCENT_COLOR};
+    border-radius: 3px;
+  }
+  
   @media (max-width: 768px) {
     width: 100%;
-    padding: 24px;
+    padding: 20px;
     order: 2;
   }
   
   @media (max-width: 480px) {
-    padding: 20px;
+    padding: 16px;
   }
 `;
-
 
 const DetectiveImageContainer = styled.div`
   position: relative;
   width: 50%;
-  min-height: 500px;
+  min-height: 480px;
   background: linear-gradient(135deg, 
     ${p => p.theme.ACCENT_COLOR}33, 
     ${p => p.theme.ACCENT_COLOR_2}33
@@ -235,17 +265,32 @@ const DetectiveImageContainer = styled.div`
   overflow: hidden;
   order: 2;
   
+  /* Dekoratívny pattern */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+      circle at 30% 50%,
+      ${p => p.theme.ACCENT_COLOR}15 0%,
+      transparent 60%
+    );
+    pointer-events: none;
+  }
+  
   @media (max-width: 768px) {
     width: 100%;
-    min-height: 250px;
+    min-height: 220px;
     order: 1;
   }
   
   @media (max-width: 480px) {
-    min-height: 200px;
+    min-height: 180px;
   }
 `;
-
 
 const DetectiveImage = styled.img`
   width: 100%;
@@ -254,51 +299,63 @@ const DetectiveImage = styled.img`
   object-position: center;
 `;
 
-
 const DetectiveImageFallback = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 120px;
+  font-size: 100px;
   
-  @media (max-width: 480px) {
+  @media (max-width: 768px) {
     font-size: 80px;
   }
+  
+  @media (max-width: 480px) {
+    font-size: 60px;
+  }
 `;
-
 
 const Header = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
   border-bottom: 2px solid ${p => p.theme.BORDER_COLOR};
 `;
 
-
 const DetectiveName = styled.div`
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  &::before {
+    content: '🕵️';
+    font-size: 22px;
+  }
   
   @media (max-width: 480px) {
-    font-size: 20px;
+    font-size: 18px;
+    
+    &::before {
+      font-size: 20px;
+    }
   }
 `;
 
-
 const CloseButton = styled.button`
-  background: transparent;
+  background: ${p => p.disabled ? 'transparent' : p.theme.BORDER_COLOR}44;
   border: none;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 28px;
+  font-size: 24px;
   cursor: ${p => p.disabled ? 'not-allowed' : 'pointer'};
   padding: 0;
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -307,22 +364,27 @@ const CloseButton = styled.button`
   opacity: ${p => p.disabled ? 0.3 : 1};
   
   &:hover {
-    background: ${p => p.disabled ? 'transparent' : p.theme.BORDER_COLOR};
-    color: ${p => p.disabled ? p.theme.SECONDARY_TEXT_COLOR : p.theme.PRIMARY_TEXT_COLOR};
+    background: ${p => p.disabled ? 'transparent' : p.theme.ACCENT_COLOR};
+    color: ${p => p.disabled ? p.theme.SECONDARY_TEXT_COLOR : '#ffffff'};
     transform: ${p => p.disabled ? 'none' : 'rotate(90deg)'};
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 22px;
+    width: 26px;
+    height: 26px;
   }
 `;
 
-
 const TipText = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 16px;
-  line-height: 1.8;
-  margin-bottom: 20px;
+  font-size: 15px;
+  line-height: 1.7;
+  margin-bottom: 16px;
   flex: 1;
   
   @media (max-width: 480px) {
-    font-size: 15px;
+    font-size: 14px;
     line-height: 1.6;
   }
   
@@ -337,14 +399,26 @@ const TipText = styled.div`
   }
   
   p {
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  ul {
+    margin: 8px 0;
+    padding-left: 20px;
+    
+    li {
+      margin-bottom: 6px;
+    }
   }
 `;
 
-
 const ActionButton = styled.button`
   width: 100%;
-  padding: 14px 24px;
+  padding: 12px 20px;
   background: ${p => p.disabled 
     ? p.theme.BORDER_COLOR 
     : `linear-gradient(135deg, ${p.theme.ACCENT_COLOR}, ${p.theme.ACCENT_COLOR_2})`
@@ -352,22 +426,51 @@ const ActionButton = styled.button`
   color: white;
   border: none;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   cursor: ${p => p.disabled ? 'not-allowed' : 'pointer'};
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  opacity: ${p => p.disabled ? 0.5 : 1};
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+  opacity: ${p => p.disabled ? 0.6 : 1};
+  position: relative;
+  overflow: hidden;
+  
+  /* Shine effect */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
+    transition: left 0.5s ease;
+  }
   
   &:hover {
     transform: ${p => p.disabled ? 'none' : 'translateY(-2px)'};
-    box-shadow: ${p => p.disabled ? '0 4px 12px rgba(0,0,0,0.2)' : '0 6px 16px rgba(0,0,0,0.3)'};
+    box-shadow: ${p => p.disabled ? '0 3px 10px rgba(0,0,0,0.2)' : '0 5px 15px rgba(0,0,0,0.3)'};
+    
+    &::before {
+      left: ${p => p.disabled ? '-100%' : '100%'};
+    }
   }
   
   &:active {
     transform: ${p => p.disabled ? 'none' : 'translateY(0)'};
   }
+  
+  @media (max-width: 480px) {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
 `;
+
 
 
 const DetectiveTipLarge = ({

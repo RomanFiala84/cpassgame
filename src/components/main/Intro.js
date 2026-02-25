@@ -1,5 +1,5 @@
 // src/components/main/Intro.js
-// FINÁLNA VERZIA - Optimalizovaný dizajn + veľký detective tip
+// OPTIMALIZOVANÁ VERZIA - Kompaktnejší dizajn + vizuálne vylepšenia
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +10,7 @@ import { useUserStats } from '../../contexts/UserStatsContext';
 import DetectiveTipLarge from '../shared/DetectiveTipLarge';
 
 const Container = styled.div`
-  padding: 40px 20px;
+  padding: 24px 16px;
   max-width: 900px;
   margin: 0 auto;
   min-height: calc(100vh - 80px);
@@ -20,22 +20,22 @@ const Container = styled.div`
   justify-content: center;
   
   @media (max-width: 768px) {
-    padding: 30px 15px;
+    padding: 20px 12px;
   }
 `;
 
 const Header = styled.div`
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 24px;
   
   @media (max-width: 768px) {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
   }
 `;
 
 const Title = styled.h1`
-  font-size: 40px;
-  margin-bottom: 16px;
+  font-size: 32px;
+  margin-bottom: 8px;
   background: linear-gradient(
     135deg,
     ${props => props.theme.ACCENT_COLOR},
@@ -48,30 +48,30 @@ const Title = styled.h1`
   font-weight: 700;
   
   @media (max-width: 768px) {
-    font-size: 32px;
+    font-size: 28px;
   }
   
   @media (max-width: 480px) {
-    font-size: 28px;
+    font-size: 24px;
   }
 `;
 
 const Subtitle = styled.h2`
-  font-size: 22px;
-  margin-bottom: 8px;
+  font-size: 18px;
+  margin-bottom: 4px;
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   text-align: center;
   font-weight: 600;
   
   @media (max-width: 480px) {
-    font-size: 20px;
+    font-size: 16px;
   }
 `;
 
 const Text = styled.p`
-  font-size: 18px;
-  line-height: 1.8;
-  margin-bottom: 32px;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 20px;
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   text-align: center;
   max-width: 700px;
@@ -82,9 +82,9 @@ const Text = styled.p`
   }
   
   @media (max-width: 480px) {
-    font-size: 16px;
-    line-height: 1.6;
-    margin-bottom: 24px;
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 16px;
   }
 `;
 
@@ -93,46 +93,74 @@ const GroupCard = styled.div`
     ${p => p.theme.ACCENT_COLOR}22, 
     ${p => p.theme.ACCENT_COLOR_2}22
   );
-  border: 3px solid ${p => p.theme.ACCENT_COLOR};
+  border: 2px solid ${p => p.theme.ACCENT_COLOR};
   border-radius: 16px;
-  padding: 32px 48px;
-  margin: 32px 0;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  padding: 24px 40px;
+  margin: 20px 0;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
   transition: all 0.3s ease;
-  min-width: 300px;
+  min-width: 280px;
+  position: relative;
+  overflow: hidden;
+  
+  /* Decentný gradient overlay */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+      circle at top right,
+      ${p => p.theme.ACCENT_COLOR}15 0%,
+      transparent 70%
+    );
+    pointer-events: none;
+  }
   
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px ${p => p.theme.ACCENT_COLOR}33;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px ${p => p.theme.ACCENT_COLOR}33;
+    border-color: ${p => p.theme.ACCENT_COLOR_2};
   }
   
   @media (max-width: 480px) {
-    padding: 24px 32px;
+    padding: 20px 28px;
     min-width: auto;
     width: 100%;
   }
 `;
 
 const GroupLabel = styled.div`
-  font-size: 14px;
+  font-size: 12px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 12px;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
   text-align: center;
   font-weight: 600;
+  position: relative;
+  z-index: 1;
+  
+  @media (max-width: 480px) {
+    font-size: 11px;
+  }
 `;
 
 const GroupValue = styled.div`
-  font-size: 48px;
+  font-size: 42px;
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
   text-align: center;
   font-family: 'Courier New', monospace;
   letter-spacing: 2px;
+  text-shadow: 0 2px 8px ${p => p.theme.ACCENT_COLOR}33;
+  position: relative;
+  z-index: 1;
   
   @media (max-width: 480px) {
-    font-size: 36px;
+    font-size: 32px;
   }
 `;
 
@@ -140,57 +168,84 @@ const InfoSection = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px solid ${p => p.theme.BORDER_COLOR};
   border-radius: 12px;
-  padding: 24px;
-  margin: 24px 0;
+  padding: 20px;
+  margin: 16px 0;
   max-width: 700px;
   width: 100%;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: ${p => p.theme.ACCENT_COLOR}66;
+  }
   
   @media (max-width: 480px) {
-    padding: 20px;
+    padding: 16px;
   }
 `;
 
 const InfoTitle = styled.h3`
-  font-size: 18px;
+  font-size: 16px;
   color: ${p => p.theme.ACCENT_COLOR};
   margin-bottom: 12px;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 8px;
+  
+  &::before {
+    content: '🎯';
+    font-size: 18px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 15px;
+  }
 `;
 
 const InfoList = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
+  display: grid;
+  gap: 8px;
 `;
 
 const InfoItem = styled.li`
-  font-size: 15px;
+  font-size: 14px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  margin-bottom: 10px;
-  padding-left: 24px;
+  padding: 8px 12px 8px 32px;
   position: relative;
-  line-height: 1.6;
+  line-height: 1.5;
+  background: ${p => p.theme.ACCENT_COLOR}08;
+  border-radius: 8px;
+  transition: all 0.2s ease;
   
   &::before {
     content: '✓';
     position: absolute;
-    left: 0;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
     color: ${p => p.theme.ACCENT_COLOR};
     font-weight: bold;
+    font-size: 16px;
   }
   
-  &:last-child {
-    margin-bottom: 0;
+  &:hover {
+    background: ${p => p.theme.ACCENT_COLOR}15;
+    transform: translateX(4px);
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 13px;
+    padding: 7px 10px 7px 28px;
   }
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
-  gap: 16px;
-  margin-top: 32px;
+  gap: 12px;
+  margin-top: 24px;
   
   @media (max-width: 480px) {
     flex-direction: column;
@@ -201,15 +256,48 @@ const ButtonContainer = styled.div`
 
 const LoadingSpinner = styled.div`
   display: inline-block;
-  width: 48px;
-  height: 48px;
-  border: 4px solid ${p => p.theme.BORDER_COLOR};
+  width: 40px;
+  height: 40px;
+  border: 3px solid ${p => p.theme.BORDER_COLOR};
   border-radius: 50%;
   border-top-color: ${p => p.theme.ACCENT_COLOR};
   animation: spin 0.8s linear infinite;
   
   @keyframes spin {
     to { transform: rotate(360deg); }
+  }
+`;
+
+const LoadingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 0;
+`;
+
+const LoadingText = styled.div`
+  font-size: 14px;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-weight: 500;
+`;
+
+const DepartmentBadge = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: ${p => p.theme.ACCENT_COLOR}22;
+  border: 2px solid ${p => p.theme.ACCENT_COLOR};
+  border-radius: 20px;
+  padding: 6px 16px;
+  margin: 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: ${p => p.theme.ACCENT_COLOR};
+  
+  &::before {
+    content: '🕵️';
+    font-size: 18px;
   }
 `;
 
@@ -227,7 +315,6 @@ const Intro = () => {
           const prog = await dataManager.loadUserProgress(userId);
           setGroupCode(prog.group_assignment || '0');
           
-          // ✅ Počkaj kým sa načítajú dáta pred zobrazením tipu
           setTimeout(() => {
             setShowTip(true);
           }, 300);
@@ -270,30 +357,34 @@ const Intro = () => {
         
         {isLoading ? (
           <GroupCard>
-            <GroupLabel>Načítavam oddelenie...</GroupLabel>
-            <GroupValue style={{ display: 'flex', justifyContent: 'center', padding: '20px 0' }}>
+            <GroupLabel>Priraďujem vás do oddelenia</GroupLabel>
+            <LoadingContainer>
               <LoadingSpinner />
-            </GroupValue>
+              <LoadingText>Načítavam...</LoadingText>
+            </LoadingContainer>
           </GroupCard>
         ) : (
           <>
             <GroupCard>
-              <GroupLabel>Vaše detektívne oddelenie je:</GroupLabel>
+              <GroupLabel>Vaše detektívne oddelenie</GroupLabel>
               <GroupValue>{getGroupDescription(groupCode)}</GroupValue>
             </GroupCard>
 
+            <DepartmentBadge>
+              Oddelenie {getGroupDescription(groupCode)}
+            </DepartmentBadge>
 
             <Text>
-              Výborne boli ste priradení do oddelenia <strong>{getGroupDescription(groupCode)}</strong>!
-              Ste pripravení začať svoju cestu detektíva? Ak áno, poďme sa pozrieť, čo vás čaká v tejto aplikácii.
+              Výborne! Boli ste priradení do oddelenia <strong>{getGroupDescription(groupCode)}</strong>.
+              Ste pripravení začať svoju cestu detektíva? Pozrime sa, čo vás čaká v tejto aplikácii.
             </Text>
 
             <InfoSection>
-              <InfoTitle>Čo vás čaká ?</InfoTitle>
+              <InfoTitle>Čo vás čaká?</InfoTitle>
               <InfoList>
-                <InfoItem>4 zaujímavé detektívne misie!</InfoItem>
-                <InfoItem>Zbieranie bodov a levelovanie!</InfoItem>
-                <InfoItem>Možnosť získať ceny v súťaži!</InfoItem>
+                <InfoItem>4 zaujímavé detektívne misie</InfoItem>
+                <InfoItem>Zbieranie bodov a levelovanie</InfoItem>
+                <InfoItem>Možnosť získať ceny v súťaži</InfoItem>
               </InfoList>
             </InfoSection>
 
@@ -303,13 +394,12 @@ const Intro = () => {
                 size="large"
                 onClick={handleContinue}
               >
-                Poďme na to!
+                Poďme na to! 🚀
               </StyledButton>
             </ButtonContainer>
           </>
         )}
 
-        {/* ✅ Detective Tip - zobrazí sa len po načítaní dát */}
         {showTip && !isLoading && (
           <DetectiveTipLarge
             detectiveName="Inšpektor Kritan"
