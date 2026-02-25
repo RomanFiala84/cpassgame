@@ -922,7 +922,7 @@ export default function Instruction() {
       title: 'Čo ak sa budem počas výskumu cítiť znepokojení?',
       content: (
         <>
-          <li>Je úplne v poriadku mať z niektorých tém alebo tvrdení nepríjemný pocit -- dotýkajú sa citlivých spoločenských tém.</p>
+          <li>Je úplne v poriadku mať z niektorých tém alebo tvrdení nepríjemný pocit -- dotýkajú sa citlivých spoločenských tém.</li>
           <ul>
             <li>Odporúčame o svojich pocitoch alebo otázkach hovoriť s niekým, komu dôverujete (priateľ, rodina, odborník).</li>
             <li>Ak máte pocit, že na vás podobné informácie dlhodobo pôsobia stresujúco alebo úzkostne, môže byť užitočné poradiť sa so psychológom alebo iným odborníkom.</li>
@@ -951,7 +951,7 @@ export default function Instruction() {
       title: 'Kontakt',
       content: (
         <>
-          <li>V prípade, že máte otázky k samotnému výskumu, môžete nás kontaktovať na uvedenom e‑maile -- radi vám poskytneme doplňujúce informácie.</p>
+          <li>V prípade, že máte otázky k samotnému výskumu, môžete nás kontaktovať na uvedenom e‑maile -- radi vám poskytneme doplňujúce informácie.</li>
           <li>Výskumník: Roman Fiala<br/>
           Psychológia, 3. roč. Bc.<br/>
           Katedra psychológie, Filozofická fakulta, Trnavská univerzita v Trnave</li>
@@ -1065,23 +1065,23 @@ export default function Instruction() {
           <InfoText>
             <strong>Do výskumu sa ako respondenti budete prhlasovať pomocou identifikačného kódu respondenta (IKR)</strong><br/>
             <strong>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom. Napr. <ExampleCode>ABCD01</ExampleCode></strong><br/>
-            <strong>Tento kód slúži na to aby bola zachovaná vaša anonymita a aby ste si kód do ďalšieho zapojenia sa do výskumu nemuseli pamätať.</strong><br/>
+            <strong>Tento kód slúži na to aby bola zachovaná vaša anonymita a aby ste si kód pri ďalšom prihlásení nemuseli pamätať.</strong><br/>
             <strong>Prosím zadajte kód podľa následujúcich inštrukcií:</strong><br/>
-            <strong>Pre 1. znak: Zadajte 1. písmeno vášho mena.</strong><br/>
-            <strong>Pre 2. znak: Zadajte 3. písmeno vášho mena.</strong><br/>
-            <strong>Pre 3. znak: Zadajte 1. písmeno vášho priezviska.</strong><br/>
-            <strong>Pre 4. znak: Zadajte 1. písmeno vášej obľúbenej farby.</strong><br/>
+            <strong>Pre 1. znak: Zadajte prvé písmeno vášho mena.</strong><br/>
+            <strong>Pre 2. znak: Zadajte posledné písmeno vášho mena.</strong><br/>
+            <strong>Pre 3. znak: Zadajte druhé písmeno vášho priezviska.</strong><br/>
+            <strong>Pre 4. znak: Zadajte tretie písmeno vášho priezviska .</strong><br/>
             <strong>Pre dvojčíslie: Zadajte číselne váš mesiac narodenia vo formáte MM (napr. pre 1. január zadajte 01).</strong><br/>
-            <strong>Príklad: Jožko Mrkvička narodený v novembri = <ExampleCode>JŽMK11</ExampleCode></strong><br/>
+            <strong>Príklad: Jožko Mrkvička narodený v novembri = <ExampleCode>JORK11</ExampleCode></strong><br/>
             <strong>V prípade ak ste sa do výskumu ešte neprihlásili a IKR už existuje, zadajte prosím:</strong><br/>
             <strong>Namiesto 1. znaku: Zadajte 1. písmeno okresu v ktorom žijete.</strong><br/>
-            <strong>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín= <ExampleCode>TŽMK11</ExampleCode></strong><br/>
+            <strong>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín= <ExampleCode>TORK11</ExampleCode></strong><br/>
           </InfoText>
         </InfoBox>
 
         {/* 3. KÓD ÚČASTNÍKA */}
         <FormCard $hasError={!!errors.participant || !!errors.blocked}>
-          <InputLabel htmlFor="participant-code">Váš kód účastníka *</InputLabel>
+          <InputLabel htmlFor="participant-code">Zadajte váš identifikačný kód respondenta *</InputLabel>
           <Input
             id="participant-code"
             type="text"
@@ -1096,21 +1096,29 @@ export default function Instruction() {
           />
           {errors.participant && <ErrorText>{errors.participant}</ErrorText>}
           {errors.blocked && <ErrorText>{errors.blocked}</ErrorText>}
-          <Note>Zadajte 6-znakový kód, ktorý ste dostali od výskumníka</Note>
+          <Note>Zadajte prosím kód podľa inštrukcií.</Note>
         </FormCard>
 
         {/* 4. EMAIL PRE SÚŤAŽ */}
         <CompetitionSection>
-          <CompetitionTitle>🎁 Zapojte sa do súťaže o ceny</CompetitionTitle>
+          <CompetitionTitle>Zapojte sa do súťaže o ceny</CompetitionTitle>
           <CompetitionText>
-            Ak chcete získať šancu vyhrať jednu z našich cien, zadajte svoj email. Použijeme ho len na kontaktovanie výhercov.
+             <strong>Pre zapojenie do súťaže je potrebné zadať e-mailovú adresu a absolovať predvýskum alebo prvú časť hlavného výskumu.</strong><br/>
+             <strong>Súťaž funguje na základe bodovacieho systému:</strong><br/>
+             <strong>Za absolvovanie predvýskumu získava účastník 50 bodov.</strong><br/>
+             <strong>Za absolvovanie prvej časti hlavného výskumu získava účastník 50 bodov.</strong><br/>
+             <strong>Za absolvovanie druhej časti hlavného výskumu (follow up meranie) získava účastník 25 bodov.</strong><br/>
+             <strong>Za odporúčanie ďalším účastníkom získava účastník 10 bodov za každého nového účastníka.</strong><br/>
+             <strong>Hlavnou cenou je darčekový poukaz v hodnote 30 € pre jedného výhercu.</strong><br/>
+             <strong>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10€ pre piatich výhercov.</strong><br/>
+             <strong>Viac informácií o súťaži nájdete v sekcii Pravidlá a podmienky súťaže.</strong><br/>
           </CompetitionText>
           
-          <InputLabel htmlFor="email">Email (nepovinné)</InputLabel>
+          <InputLabel htmlFor="email">Zadajte prosím e-mailovú adresu pre zapojenie do súťaže (nepovinné)</InputLabel>
           <EmailInput
             id="email"
             type="email"
-            placeholder="vas.email@example.com"
+            placeholder="vas.email@príklad.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={isBlocked}
@@ -1118,7 +1126,8 @@ export default function Instruction() {
             autoComplete="email"
           />
           {errors.email && <ErrorText>{errors.email}</ErrorText>}
-          <Note>Email bude použitý len pre účely súťaže a po jej skončení vymazaný</Note>
+            <strong>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</strong><br/>
+            <strong>E-mailová adresa bude použitá výhradne na účely kontaktovania výhercov a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</strong><br/>
         </CompetitionSection>
 
         {/* 5. INFORMOVANÝ SÚHLAS SO SÚŤAŽOU - zobrazí sa len ak je zadaný email */}
@@ -1135,12 +1144,20 @@ export default function Instruction() {
                 onChange={(e) => setCompetitionConsent(e.target.checked)}
               />
               <label>
-                Súhlasím so zapojením do súťaže a spracovaním emailu na tento účel
+                SÚHLASÍM SO SPRACOVANÍM OSOBNÝCH ÚDAJOV A PARTICIPÁCIOU V SÚŤAŽI
               </label>
+              <li>Prehlasujem, že:</li>
+              <li>Súhlasím s účasťou v súťaži a potvrdzujem, že som si Pravidlá a podmienky súťaže prečítal/a, porozumel/a im a súhlasím s nimi.</li>
+              <li>Rozumiem, že v prípade porušenia podmienok súťaže, môžem byť zo súťaže o ceny vylúčený.</li>
+              <li>Mám vedomosť o svojich právach a povinnostiach počas súťaže.</li>
+              <li>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</li>
+              <li>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</li>
+              <li>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</li>
+
             </CheckboxContainer>
             {errors.competitionConsent && <ErrorText>{errors.competitionConsent}</ErrorText>}
             <Note style={{ marginTop: '12px' }}>
-              Pre viac informácií si prečítajte <strong>Pravidlá a podmienky súťaže</strong> nižšie
+             <strong>Pre viac informácií si prečítajte prosím sekciu Pravidlá a podmienky súťaže</strong>
             </Note>
           </FormCard>
         )}
@@ -1158,7 +1175,7 @@ export default function Instruction() {
                 disabled={isBlocked}
                 onChange={(e) => setHasReferral(e.target.checked)}
               />
-              <label>Mám referral kód od priateľa</label>
+              <label>Mám referral kód:</label>
             </CheckboxContainer>
 
             {hasReferral && (
@@ -1180,8 +1197,8 @@ export default function Instruction() {
                 {errors.referral && <ErrorText>{errors.referral}</ErrorText>}
                 <Note>
                   {referralFromUrl 
-                    ? '✅ Kód vyplnený automaticky z odkazu' 
-                    : 'Zadajte 6-znakový kód vášho priateľa'}
+                    ? 'Kód bol vyplnený automaticky z odkazu' 
+                    : 'Zadajte 6-znakový kód ktorý vám bol poskytnutý respondentom od ktorého ste prišli do nášho výskumu.'}
                 </Note>
               </>
             )}
@@ -1195,14 +1212,14 @@ export default function Instruction() {
               onClick={() => toggleSection('rules')}
               $isOpen={openSections['rules']}
             >
-              📄 Pravidlá a podmienky súťaže
+              Pravidlá a podmienky súťaže
               <AccordionIcon $isOpen={openSections['rules']}>▼</AccordionIcon>
             </AccordionHeader>
             <AccordionContent $isOpen={openSections['rules']}>
               <AccordionInner $isOpen={openSections['rules']}>
                 <h3>Organizátor súťaže:</h3>
                 <ul>
-                  <li>Organizátorom súťaže je hlavný zodpovedný riešiteľ výskumu -- Roman Fiala.</li>
+                  <li>Organizátorom súťaže je hlavný zodpovedný riešiteľ výskumu - Roman Fiala.</li>
                 </ul>
 
                 <h3>Účastníci súťaže:</h3>
@@ -1286,16 +1303,6 @@ export default function Instruction() {
                 <ul>
                   <li>Organizátor nezodpovedá za technické problémy (napr. výpadky internetu, poruchy zariadenia účastníka), ktoré znemožnia alebo skomplikujú účasť v súťaži alebo dokončenie výskumu.</li>
                 </ul>
-
-                <h3>Súhlas so spracovaním osobných údajov a participáciou v súťaži:</h3>
-                <p><strong>Prehlasujem, že:</strong></p>
-                <ul>
-                  <li>Súhlasím s účasťou v súťaži a potvrdzujem, že som si Pravidlá a podmienky súťaže prečítal/a, porozumel/a im a súhlasím s nimi.</li>
-                  <li>Rozumiem, že v prípade porušenia podmienok súťaže, môžem byť zo súťaže o ceny vylúčený.</li>
-                  <li>Mám vedomosť o svojich právach a povinnostiach počas súťaže.</li>
-                  <li>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</li>
-                  <li>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z.</li>
-                </ul>
               </AccordionInner>
             </AccordionContent>
           </RulesAccordion>
@@ -1307,7 +1314,7 @@ export default function Instruction() {
             onClick={handleStart}
             disabled={isLoading || isBlocked || isCheckingCode}
           >
-            {isLoading ? 'Načítavam...' : isCheckingCode ? 'Kontrolujem kód...' : 'Začať →'}
+            {isLoading ? 'Načítavam...' : isCheckingCode ? 'Kontrolujem kód...' : 'Prihlásiť sa do aplikácie výskumu →'}
           </StyledButton>
         </ButtonContainer>
       </Container>
