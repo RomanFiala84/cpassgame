@@ -329,7 +329,7 @@ const ExampleCode = styled.code`
   font-family: 'Courier New', monospace;
   color: ${p => p.theme.ACCENT_COLOR};
   font-weight: 700;
-  font-size: 15px;
+  font-size: 25px;
   letter-spacing: 1px;
 `;
 
@@ -973,7 +973,7 @@ export default function Instruction() {
   return (
     <Layout showLevelDisplay={false}>
       <Container>
-        <Title><strong>CP-PASS</strong></Title>
+        <Title><ExampleCode><strong>CP-PASS</strong></ExampleCode></Title>
         <Subtitle>
           <strong>Milá respondentka, milý respondent, ďakujeme vám za váš čas a ochotu zúčastniť sa v našom výskume.</strong>
         </Subtitle>
@@ -1078,7 +1078,7 @@ export default function Instruction() {
           <InfoText>
             <ul>
                <li><strong>Do výskumu sa ako respondenti budete prihlasovať pomocou identifikačného kódu respondenta (IKR)</strong></li> 
-               <li><strong>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom. Napr. <ExampleCode>ABCD01</ExampleCode></strong></li> 
+               <li><strong>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom, napr. ABCD01</strong></li> 
                <li><strong>Tento kód slúži na to aby bola zachovaná vaša anonymita a aby ste si kód pri ďalšom prihlásení nemuseli pamätať.</strong></li> 
                <li><strong>Prosím zadajte kód podľa následujúcich inštrukcií:</strong></li> 
               <ul>
@@ -1275,7 +1275,7 @@ export default function Instruction() {
                 <h3>Trvanie súťaže:</h3>
                 <ul>
                   <li>Súťaž prebieha v období od spustenia predvýskumu -- marec 2026 do ukončenia hlavného výskumu -- apríl 2026.</li>
-                  <li>Pozor -- predvýskum bude dostupný iba do spustenia hlavného výskumu, to znamená že po jeho spustení predvýskum už nebude možné absolvovať.</li>
+                  <li>Pozor - predvýskum bude dostupný iba do spustenia hlavného výskumu, to znamená že po jeho spustení predvýskum už nebude možné absolvovať.</li>
                   <li>Do žrebovania budú zaradení len účastníci, ktorí splnia podmienky účasti v tomto časovom intervale.</li>
                 </ul>
 
