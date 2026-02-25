@@ -652,22 +652,22 @@ export default function Instruction() {
     const e = {};
     
     if (isBlocked) {
-      e.blocked = 'Tento účet bol zablokovaný administrátorom.';
+      e.blocked = 'Váš účet bol zablokovaný administrátorom.';
       return e;
     }
     
     if (!consentGiven) {
-      e.consent = 'Musíte súhlasiť s informovaným súhlasom.';
+      e.consent = 'Pre zapojenie sa do výskumu je potrebné poskytnúť informovaný súhlas s podmienkami výskumu.';
     }
     
     const codeValidation = validateParticipantCode(participantCode);
     if (!codeValidation.valid) {
-      e.participant = 'Neplatný formát kódu. Použite formát ABCDMM, TEST01-TEST60, alebo RF9846';
+      e.participant = 'Zadali ste neplatný formát identifikačného kódu respondenta. Zadajte identifikačný kód podľa inštrukcií.';
     }
     
     // ✅ Email validácia
     if (email && !validateEmail(email)) {
-      e.email = 'Prosím zadajte platnú emailovú adresu.';
+      e.email = 'Prosím zadajte e-mailovú adresu v správnom formáte.';
     }
     
     // ✅ Kontrola duplicitného emailu
@@ -675,7 +675,7 @@ export default function Instruction() {
       try {
         const exists = await dataManager.checkEmailExists(email);
         if (exists) {
-          e.email = 'Tento email je už zaregistrovaný v súťaži. Použite iný email.';
+          e.email = 'Táto e-mailová adresa už bola zaregistrovaná v súťaži.';
         }
       } catch (error) {
         console.error('Error checking email:', error);
@@ -684,22 +684,22 @@ export default function Instruction() {
     
     // ✅ Ak je zadaný email, súhlas so súťažou je povinný
     if (email && !competitionConsent) {
-      e.competitionConsent = 'Musíte súhlasiť so zapojením do súťaže ak chcete zadať email.';
+      e.competitionConsent = 'Pre zapojenie sa do súťaže je potrebné poskytnúť informovaný súhlas s pravidlami a podmienkami súťaže.';
     }
     
     if (hasReferral) {
       if (referralAlreadyUsed) {
-        e.referral = 'Už ste použili referral kód. Nemôžete ho zadať znova.';
+        e.referral = 'Už ste použili referral kód.';
       } else if (!referralCode || !/^[A-Z0-9]{6}$/.test(referralCode.trim())) {
         e.referral = 'Referral kód musí mať presne 6 znakov.';
       } else {
         const valid = await dataManager.validateReferralCode(referralCode.trim().toUpperCase());
         if (!valid) {
-          e.referral = 'Tento referral kód neexistuje v systéme.';
+          e.referral = 'Tento referral kód neexistuje.';
         } else {
           const userSharingCode = await dataManager.getUserSharingCode(participantCode.toUpperCase());
           if (userSharingCode && userSharingCode === referralCode.trim().toUpperCase()) {
-            e.referral = 'Nemôžete použiť svoj vlastný zdieľací kód!';
+            e.referral = 'Nemôžete použiť svoj vlastný referral kód!';
           }
         }
       }
@@ -760,7 +760,7 @@ export default function Instruction() {
       await dataManager.processReferral(upperCode, referralCode.trim().toUpperCase());
     } catch (error) {
       console.error('Referral processing error:', error);
-      setErrors({ referral: 'Chyba pri spracovaní referral kódu. Skúste znova.' });
+      setErrors({ referral: 'Chyba pri spracovaní referral kódu. Zadajte kód znova.' });
       setIsLoading(false);
       return;
     }
@@ -830,11 +830,14 @@ export default function Instruction() {
       title: 'Čo je cieľom predvýskumu a hlavného výskumu?',
       content: (
         <>
-          <h3>Predvýskum:</h3>
-          <p>Predtým ako spustíme hlavný výskum, potrebujeme overiť, že všetky otázky a tvrdenia v dotazníku sú zrozumiteľné a jednoznačné.</p>
-          
-          <h3>Hlavný výskum:</h3>
-          <p>Cieľom nášho hlavného výskumu je lepšie porozumieť tomu, ako ľudia na Slovensku vnímajú inštitúcie Európskej únie, ako im dôverujú a aké faktory s tým súvisia. V našom výskume sme sa preto zameriavame na to ako informácie o fungovaní EÚ a jej prínosoch môžu pôsobiť na presvedčenia a mieru dôvery v inštitúcie EÚ.</p>
+          <li>Predvýskum:</li>
+           <ul> 
+            <li>Predtým ako spustíme hlavný výskum, potrebujeme overiť, že všetky otázky a tvrdenia v dotazníku sú zrozumiteľné a jednoznačné.</li>
+          </ul>
+          <li>Hlavný výskum:</li>
+          <ul>
+            <li>Cieľom nášho hlavného výskumu je lepšie porozumieť tomu, ako ľudia na Slovensku vnímajú inštitúcie Európskej únie, ako im dôverujú a aké faktory s tým súvisia. V našom výskume sme sa preto zameriavame na to ako informácie o fungovaní EÚ a jej prínosoch môžu pôsobiť na presvedčenia a mieru dôvery v inštitúcie EÚ.</li>
+          </ul>
         </>
       )
     },
@@ -847,12 +850,12 @@ export default function Instruction() {
             <li>V predvýskume prejdete sériou otázok a tvrdení - dotazník (5-10 minút).</li>
             <li>Pri hodnotení neexistujú správne ani nesprávne odpovede a po každom bloku otázok vás požiadame o spätnú väzbu.</li>
           </ul>
-          <p><strong>Budeme sa pýtať napríklad na:</strong></p>
+          <li>Budeme sa pýtať napríklad na:</li>
           <ul>
-            <li><strong>Zrozumiteľnosť:</strong> Bola otázka alebo tvrdenie významovo jasná? Rozumeli ste všetkým použitým slovám?</li>
-            <li><strong>Jednoznačnosť:</strong> Mohli by ste si otázku vyložiť viacerými spôsobmi?</li>
-            <li><strong>Významová zhoda:</strong> Pri niektorých položkách vám ukážeme dva rôzne spôsoby formulácie toho istého tvrdenia. Budeme sa pýtať, či podľa vás znamenajú to isté, alebo sa v niečom líšia.</li>
-            <li><strong>Hodnotiaca stupnica:</strong> Bola stupnica odpovedí zrozumiteľná a mali ste pocit, že dokážete vyjadriť svoj skutočný postoj?</li>
+            <li>Zrozumiteľnosť: Bola otázka alebo tvrdenie významovo jasná? Rozumeli ste všetkým použitým slovám?</li>
+            <li>Jednoznačnosť: Mohli by ste si otázku vyložiť viacerými spôsobmi?</li>
+            <li>Významová zhoda: Pri niektorých položkách vám ukážeme dva rôzne spôsoby formulácie toho istého tvrdenia. Budeme sa pýtať, či podľa vás znamenajú to isté, alebo sa v niečom líšia.</li>
+            <li>Hodnotiaca stupnica: Bola stupnica odpovedí zrozumiteľná a mali ste pocit, že dokážete vyjadriť svoj skutočný postoj?</li>
           </ul>
         </>
       )
@@ -862,17 +865,15 @@ export default function Instruction() {
       title: 'Ako bude prebiehať hlavný výskum?',
       content: (
         <>
-          <ul>
-            <li>Výskum prebieha online formou interaktívnej aplikácie.</li>
-            <li>Pozostáva z troch fáz:
-              <ul>
-                <li>Úvodný dotazník (5-10 minút)</li>
-                <li>Misia 1 (10-15 minút) - Prebehne bezprostredne po dokončení úvodného dotazníka</li>
-                <li>Misia 2 (10-15 minút) - Prebehne po piatich dňoch od dokončenia Misie 1</li>
-              </ul>
-            </li>
-            <li>Počas výskumu budeme automaticky zaznamenávať vaše interakcie s aplikáciou pre účely výskumu.</li>
-          </ul>
+          <li>Výskum prebieha online formou interaktívnej aplikácie.</li>
+          <li>Pozostáva z troch fáz:
+            <ul>
+              <li>Úvodný dotazník (5-10 minút)</li>
+              <li>Misia 1 (10-15 minút) - Prebehne bezprostredne po dokončení úvodného dotazníka</li>
+              <li>Misia 2 (10-15 minút) - Prebehne po piatich dňoch od dokončenia Misie 1</li>
+            </ul>
+          </li>
+          <li>Počas výskumu budeme automaticky zaznamenávať vaše interakcie s aplikáciou pre účely výskumu.</li>
         </>
       )
     },
@@ -918,15 +919,15 @@ export default function Instruction() {
     },
     {
       id: 'podpora',
-      title: 'Ak budete počas výskumu cítiť znepokojení',
+      title: 'Čo ak sa budem počas výskumu cítiť znepokojení?',
       content: (
         <>
-          <p>Je úplne v poriadku mať z niektorých tém alebo tvrdení nepríjemný pocit -- dotýkajú sa citlivých spoločenských tém.</p>
+          <li>Je úplne v poriadku mať z niektorých tém alebo tvrdení nepríjemný pocit -- dotýkajú sa citlivých spoločenských tém.</p>
           <ul>
             <li>Odporúčame o svojich pocitoch alebo otázkach hovoriť s niekým, komu dôverujete (priateľ, rodina, odborník).</li>
             <li>Ak máte pocit, že na vás podobné informácie dlhodobo pôsobia stresujúco alebo úzkostne, môže byť užitočné poradiť sa so psychológom alebo iným odborníkom.</li>
           </ul>
-          <h3>Dostupné zdroje pomoci:</h3>
+          <li>Dostupné zdroje pomoci:</li>
           <ul>
             <li>Kontakt na výskumníka - <a href="mailto:roman.fiala@tvu.sk">roman.fiala@tvu.sk</a></li>
             <li>IPčko - <a href="https://ipcko.sk" target="_blank" rel="noopener noreferrer">https://ipcko.sk</a></li>
@@ -940,8 +941,8 @@ export default function Instruction() {
       title: 'Súťaž',
       content: (
         <>
-          <p>Súťaž bude vyhodnotená na základe stanovených pravidiel (viď <strong>Pravidlá a podmienky súťaže</strong>) do 10 dní od ukončenia hlavného výskumu.</p>
-          <p>Podrobné informácie o bodovaní, cenách a podmienkach účasti nájdete nižšie v sekcii <strong>Pravidlá a podmienky súťaže</strong>.</p>
+          <li>Súťaž bude vyhodnotená na základe stanovených pravidiel do 10 dní od ukončenia hlavného výskumu.</li>
+          <li>Podrobné informácie o bodovaní, cenách a podmienkach účasti nájdete nižšie v sekcii Pravidlá a podmienky súťaže.</li>
         </>
       )
     },
@@ -950,11 +951,11 @@ export default function Instruction() {
       title: 'Kontakt',
       content: (
         <>
-          <p>V prípade, že máte otázky k samotnému výskumu, môžete nás kontaktovať na uvedenom e‑maile -- radi vám poskytneme doplňujúce informácie.</p>
-          <p><strong>Výskumník: Roman Fiala</strong><br/>
+          <li>V prípade, že máte otázky k samotnému výskumu, môžete nás kontaktovať na uvedenom e‑maile -- radi vám poskytneme doplňujúce informácie.</p>
+          <li>Výskumník: Roman Fiala<br/>
           Psychológia, 3. roč. Bc.<br/>
-          Katedra psychológie, Filozofická fakulta, Trnavská univerzita v Trnave</p>
-          <p>Email: <a href="mailto:roman.fiala@tvu.sk">roman.fiala@tvu.sk</a></p>
+          Katedra psychológie, Filozofická fakulta, Trnavská univerzita v Trnave</li>
+          <li>Email: <a href="mailto:roman.fiala@tvu.sk">roman.fiala@tvu.sk</a></li>
         </>
       )
     }
@@ -963,15 +964,15 @@ export default function Instruction() {
   return (
     <Layout showLevelDisplay={false}>
       <Container>
-        <Title>🔑 Conspiracy Pass</Title>
+        <Title>CP-PASS</Title>
         <Subtitle>
-          Prečítajte si inštrukcie a zadajte svoj kód účastníka
+          Milá respondentka, milý respondent, ďakujeme vám za váš čas a ochotu zúčastniť sa v našom výskume.
         </Subtitle>
 
         {/* Expandable sekcie s inštrukciami */}
         <InstructionsSection>
           <WelcomeText>
-            <strong>Milá respondentka, milý respondent</strong>, ďakujeme vám za váš čas a ochotu zúčastniť sa v našom výskume.
+            <strong>Prečítajte si prosím pozorne podmienky a inštrukcie k výskumu.</strong>
           </WelcomeText>
           
           {instructionsSections.map(section => (
@@ -996,10 +997,10 @@ export default function Instruction() {
         {referralFromUrl && referralCode && (
           <ReferralNotice>
             <ReferralNoticeText>
-              🎁 Referral kód automaticky vyplnený: <strong>{referralCode}</strong>
+              Referral bol kód automaticky vyplnený: <strong>{referralCode}</strong>
             </ReferralNoticeText>
             <ReferralNoticeText style={{ marginTop: '8px', fontSize: '13px' }}>
-              Váš priateľ dostane +10 bodov za odporúčanie!
+              Váš priateľ/ka dostane +10 bodov za odporúčanie!
             </ReferralNoticeText>
           </ReferralNotice>
         )}
@@ -1008,16 +1009,16 @@ export default function Instruction() {
         {isBlocked && (
           <BlockedWarning ref={blockedWarningRef}>
             <BlockedIcon>🚫</BlockedIcon>
-            <BlockedTitle>Prístup zamietnutý</BlockedTitle>
+            <BlockedTitle>Váš prístup bol zamietnutý</BlockedTitle>
             <BlockedMessage>
-              Účet <strong>{participantCode}</strong> bol zablokovaný administrátorom.
+              Váš účet <strong>{participantCode}</strong> bol zablokovaný administrátorom.
             </BlockedMessage>
             <BlockedMessage>
-              Nemôžete sa prihlásiť do aplikácie, kým vám administrátor účet neodblokuje.
+              Nemôžete sa prihlásiť do aplikácie výskumu, kým vám administrátor váš účet neodblokuje.
             </BlockedMessage>
             <ContactInfo>
-              <strong>Máte otázky?</strong><br/>
-              Kontaktujte administrátora na <strong>roman.fiala@tvu.sk</strong>
+              <strong>V prípade otázok z akého dôvodu bol váš účet zablokovaný, kontaktujte prosím administrátora</strong><br/>
+              <strong>Email: roman.fiala@tvu.sk</strong>
             </ContactInfo>
             
             <ClearCodeButton
@@ -1043,19 +1044,38 @@ export default function Instruction() {
               onChange={(e) => setConsentGiven(e.target.checked)}
             />
             <label>
-              Súhlasím s informovaným súhlasom a chcem sa zúčastniť výskumu
+              SÚHLASÍM SO SPRACOVANÍM ÚDAJOV A PARTICIPÁCIOU NA VÝSKUME
             </label>
+            <li>Prehlasujem, že:</li>
+            <li>Bol(a) som informovaný(á) o účele, priebehu a podmienkach výskumu prostredníctvom informačného listu.</li>
+            <li>Rozumiem, že v prípade porušenia podmienok výskumu, môžem byť z výskumu a súťaže o ceny vylúčený, následkom čoho bude zablokovanie môjho prístupu do aplikácie.</li>
+            <li>Mám vedomosť o svojich právach a povinnostiach počas výskumu.</li>
+            <li>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</li>
+            <li>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</li>
+            <li>Rozumiem, že budú zaznamenávané moje interakcie s aplikáciou pre vedeckú analýzu.</li>
+            <li>Súhlasím s anonymizáciou a publikáciou mojich údajov v súhrnnej forme.</li>
+            <li>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</li>
           </CheckboxContainer>
           {errors.consent && <ErrorText>{errors.consent}</ErrorText>}
         </FormCard>
 
         {/* 2. FORMAT PRIHLASOVACIEHO KÓDU */}
         <InfoBox>
-          <InfoTitle>📋 Formát prihlasovacieho kódu</InfoTitle>
+          <InfoTitle>Inštrukcie pre prihlásenie:</InfoTitle>
           <InfoText>
-            <strong>Účastník výskumu:</strong> Váš kód má formát <ExampleCode>ABCD01</ExampleCode> — 4 veľké písmená + 2 číslice (mesiac narodenia).<br/>
-            <strong>Testovací účet:</strong> Kódy <ExampleCode>TEST01</ExampleCode> až <ExampleCode>TEST60</ExampleCode> pre testovanie aplikácie.<br/>
-            <strong>Administrátor:</strong> Špeciálny kód <ExampleCode>RF9846</ExampleCode> pre správu systému.
+            <strong>Do výskumu sa ako respondenti budete prhlasovať pomocou identifikačného kódu respondenta (IKR)</strong><br/>
+            <strong>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom. Napr. <ExampleCode>ABCD01</ExampleCode></strong><br/>
+            <strong>Tento kód slúži na to aby bola zachovaná vaša anonymita a aby ste si kód do ďalšieho zapojenia sa do výskumu nemuseli pamätať.</strong><br/>
+            <strong>Prosím zadajte kód podľa následujúcich inštrukcií:</strong><br/>
+            <strong>Pre 1. znak: Zadajte 1. písmeno vášho mena.</strong><br/>
+            <strong>Pre 2. znak: Zadajte 3. písmeno vášho mena.</strong><br/>
+            <strong>Pre 3. znak: Zadajte 1. písmeno vášho priezviska.</strong><br/>
+            <strong>Pre 4. znak: Zadajte 1. písmeno vášej obľúbenej farby.</strong><br/>
+            <strong>Pre dvojčíslie: Zadajte číselne váš mesiac narodenia vo formáte MM (napr. pre 1. január zadajte 01).</strong><br/>
+            <strong>Príklad: Jožko Mrkvička narodený v novembri = <ExampleCode>JŽMK11</ExampleCode></strong><br/>
+            <strong>V prípade ak ste sa do výskumu ešte neprihlásili a IKR už existuje, zadajte prosím:</strong><br/>
+            <strong>Namiesto 1. znaku: Zadajte 1. písmeno okresu v ktorom žijete.</strong><br/>
+            <strong>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín= <ExampleCode>TŽMK11</ExampleCode></strong><br/>
           </InfoText>
         </InfoBox>
 
