@@ -962,7 +962,7 @@ export default function Instruction() {
             <li>V prípade, že máte otázky k samotnému výskumu, môžete nás kontaktovať na uvedenom e‑maile -- radi vám poskytneme doplňujúce informácie.</li>
             <li>Výskumník: Roman Fiala<br/>
             Psychológia, 3. roč. Bc.<br/>
-            Katedra psychológie, Filozofická fakulta, Trnavská univerzita v Trnave
+            Katedra psychológie, Filozofická fakulta, Trnavská univerzita v Trnave<br/>
             Email: <a href="mailto:roman.fiala@tvu.sk">roman.fiala@tvu.sk</a></li>
           </ul>
         </>
@@ -1006,7 +1006,7 @@ export default function Instruction() {
         {referralFromUrl && referralCode && (
           <ReferralNotice>
             <ReferralNoticeText>
-              Referral bol kód automaticky vyplnený: <strong>{referralCode}</strong>
+              Referral kód bol automaticky vyplnený: <strong>{referralCode}</strong>
             </ReferralNoticeText>
             <ReferralNoticeText style={{ marginTop: '8px', fontSize: '13px' }}>
               Váš priateľ/ka dostane +10 bodov za odporúčanie!
@@ -1026,7 +1026,7 @@ export default function Instruction() {
               Nemôžete sa prihlásiť do aplikácie výskumu, kým vám administrátor váš účet neodblokuje.
             </BlockedMessage>
             <ContactInfo>
-              <strong>V prípade otázok z akého dôvodu bol váš účet zablokovaný, kontaktujte prosím administrátora</strong><br/>
+              <strong>V prípade otázky, z akého dôvodu bol váš účet zablokovaný, kontaktujte prosím administrátora</strong><br/>
               <strong>Email: roman.fiala@tvu.sk</strong>
             </ContactInfo>
             
@@ -1042,20 +1042,20 @@ export default function Instruction() {
 
         {/* 1. INFORMOVANÝ SÚHLAS */}
         <FormCard $hasError={!!errors.consent}>
-          <CheckboxContainer 
-            $disabled={isBlocked}
-            onClick={() => !isBlocked && setConsentGiven(!consentGiven)}
-          >
-            <Checkbox
-              type="checkbox"
-              checked={consentGiven}
-              disabled={isBlocked}
-              onChange={(e) => setConsentGiven(e.target.checked)}
-            />
-            <label>
-              SÚHLASÍM SO SPRACOVANÍM ÚDAJOV A PARTICIPÁCIOU NA VÝSKUME
-            </label>
-            <Note>
+          <div>
+            <CheckboxContainer 
+              $disabled={isBlocked}
+              onClick={() => !isBlocked && setConsentGiven(!consentGiven)}>
+              <Checkbox
+                type="checkbox"
+                checked={consentGiven}
+                disabled={isBlocked}
+                onChange={(e) => setConsentGiven(e.target.checked)}
+              />
+              <label>SÚHLASÍM SO SPRACOVANÍM ÚDAJOV A PARTICIPÁCIOU NA VÝSKUME</label>
+            </CheckboxContainer>
+            
+            <div style={{ fontSize: '0.9em', color: '#666', lineHeight: '1.6', marginTop: '15px', paddingLeft: '24px' }}>
               <strong>Prehlasujem, že:</strong><br/>
               <strong>Bol(a) som informovaný(á) o účele, priebehu a podmienkach výskumu prostredníctvom informačného listu.</strong><br/>
               <strong>Rozumiem, že v prípade porušenia podmienok výskumu, môžem byť z výskumu a súťaže o ceny vylúčený, následkom čoho bude zablokovanie môjho prístupu do aplikácie.</strong><br/>
@@ -1065,31 +1065,35 @@ export default function Instruction() {
               <strong>Rozumiem, že budú zaznamenávané moje interakcie s aplikáciou pre vedeckú analýzu.</strong><br/>
               <strong>Súhlasím s anonymizáciou a publikáciou mojich údajov v súhrnnej forme.</strong><br/>
               <strong>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</strong>
-            </Note>
-          </CheckboxContainer>
+            </div>
+          </div>
           {errors.consent && <ErrorText>{errors.consent}</ErrorText>}
         </FormCard>
+
+
 
         {/* 2. FORMAT PRIHLASOVACIEHO KÓDU */}
         <InfoBox>
           <InfoTitle>Inštrukcie pre prihlásenie:</InfoTitle>
           <InfoText>
             <ul>
-              <li>
-                <strong>Do výskumu sa ako respondenti budete prhlasovať pomocou identifikačného kódu respondenta (IKR)</strong><br/>
-                <strong>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom. Napr. <ExampleCode>ABCD01</ExampleCode></strong><br/>
-                <strong>Tento kód slúži na to aby bola zachovaná vaša anonymita a aby ste si kód pri ďalšom prihlásení nemuseli pamätať.</strong><br/>
-                <strong><ExampleCode>Prosím zadajte kód podľa následujúcich inštrukcií:</ExampleCode></strong><br/>
-                <strong><ExampleCode>Pre 1. znak: Zadajte prvé písmeno vášho mena.</ExampleCode></strong><br/>
-                <strong><ExampleCode>Pre 2. znak: Zadajte posledné písmeno vášho mena.</ExampleCode></strong><br/>
-                <strong><ExampleCode>Pre 3. znak: Zadajte druhé písmeno vášho priezviska.</ExampleCode></strong><br/>
-                <strong><ExampleCode>Pre 4. znak: Zadajte tretie písmeno vášho priezviska.</ExampleCode></strong><br/>
-                <strong><ExampleCode>Pre dvojčíslie: Zadajte číselne váš mesiac narodenia vo formáte MM (napr. pre 1. január zadajte 01).</ExampleCode></strong><br/>
-                <strong>Príklad: Jožko Mrkvička narodený v novembri = JORK11</strong><br/>
-                <strong><ExampleCode>V prípade ak ste sa do výskumu ešte neprihlásili a IKR už existuje, zadajte prosím:</ExampleCode></strong><br/>
-                <strong><ExampleCode>Namiesto 1. znaku: Zadajte 1. písmeno okresu v ktorom žijete.</ExampleCode></strong><br/>
-                <strong>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín= TORK11</strong><br/>
-              </li>
+               <li><strong>Do výskumu sa ako respondenti budete prihlasovať pomocou identifikačného kódu respondenta (IKR)</strong></li> 
+               <li><strong>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom. Napr. <ExampleCode>ABCD01</ExampleCode></strong></li> 
+               <li><strong>Tento kód slúži na to aby bola zachovaná vaša anonymita a aby ste si kód pri ďalšom prihlásení nemuseli pamätať.</strong></li> 
+               <li><strong>Prosím zadajte kód podľa následujúcich inštrukcií:</strong></li> 
+              <ul>
+                <li><strong>Pre 1. znak: Zadajte prvé písmeno vášho mena.</strong></li> 
+                <li><strong>Pre 2. znak: Zadajte posledné písmeno vášho mena.</strong></li> 
+                <li><strong>Pre 3. znak: Zadajte druhé písmeno vášho priezviska.</strong></li> 
+                <li><strong>Pre 4. znak: Zadajte tretie písmeno vášho priezviska.</strong></li> 
+                <li><strong>Pre dvojčíslie: Zadajte číselne váš mesiac narodenia vo formáte MM (napr. pre 1. január zadajte 01).</strong></li> 
+                <li><strong>Príklad: Jožko Mrkvička narodený v novembri = JORK11</strong></li> 
+              </ul>
+               <li><strong>V prípade ak ste sa do výskumu ešte neprihlásili a IKR už existuje, zadajte prosím:</strong></li> 
+              <ul>
+                <li><strong>Namiesto 1. znaku: Zadajte 1. písmeno okresu v ktorom žijete.</strong></li> 
+                <li><strong>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín= TORK11</strong></li> 
+              </ul>
             </ul>
           </InfoText>
         </InfoBox>
@@ -1119,17 +1123,17 @@ export default function Instruction() {
           <CompetitionTitle>Zapojte sa do súťaže o ceny</CompetitionTitle>
           <CompetitionText>
             <ul>
-              <li>
-                <strong>Pre zapojenie do súťaže je potrebné zadať e-mailovú adresu a absolovať predvýskum alebo prvú časť hlavného výskumu.</strong><br/>
-                <strong>Súťaž funguje na základe bodovacieho systému:</strong><br/>
-                <strong>Za absolvovanie predvýskumu získava účastník 50 bodov.</strong><br/>
-                <strong>Za absolvovanie prvej časti hlavného výskumu získava účastník 50 bodov.</strong><br/>
-                <strong>Za absolvovanie druhej časti hlavného výskumu (follow up meranie) získava účastník 25 bodov.</strong><br/>
-                <strong>Za odporúčanie ďalším účastníkom získava účastník 10 bodov za každého nového účastníka.</strong><br/>
-                <strong>Hlavnou cenou je darčekový poukaz v hodnote 30 € pre jedného výhercu.</strong><br/>
-                <strong>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10€ pre piatich výhercov.</strong><br/>
-                <strong>Viac informácií o súťaži nájdete v sekcii Pravidlá a podmienky súťaže.</strong><br/>
-              </li>
+                <li><strong>Pre zapojenie do súťaže je potrebné zadať e-mailovú adresu a absolovať predvýskum alebo prvú časť hlavného výskumu.</strong></li>
+                <li><strong>Súťaž funguje na základe bodovacieho systému:</strong></li>
+                <ul>
+                  <li><strong>Za absolvovanie predvýskumu získava účastník 50 bodov.</strong></li>
+                  <li><strong>Za absolvovanie prvej časti hlavného výskumu získava účastník 50 bodov.</strong></li>
+                  <li><strong>Za absolvovanie druhej časti hlavného výskumu (follow up meranie) získava účastník 25 bodov.</strong></li>
+                  <li><strong>Za odporúčanie ďalším účastníkom získava účastník 10 bodov za každého nového účastníka.</strong></li>
+                </ul>
+                <li><strong>Hlavnou cenou je darčekový poukaz v hodnote 30 € pre jedného výhercu.</strong></li>
+                <li><strong>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10€ pre piatich výhercov.</strong></li>
+                <li><strong>Viac informácií o súťaži nájdete v sekcii Pravidlá a podmienky súťaže.</strong></li>
             </ul>
           </CompetitionText>
           
@@ -1146,28 +1150,32 @@ export default function Instruction() {
           />
           {errors.email && <ErrorText>{errors.email}</ErrorText>}
             <Note>
-              <strong>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</strong><br/>
-              <strong>E-mailová adresa bude použitá výhradne na účely kontaktovania výhercov a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</strong><br/>
+              <ul>
+                <li><strong>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</strong></li>
+                <li><strong>E-mailová adresa bude použitá výhradne na účely kontaktovania výhercov a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</strong></li>
+              </ul>
             </Note>
         </CompetitionSection>
 
         {/* 5. INFORMOVANÝ SÚHLAS SO SÚŤAŽOU - zobrazí sa len ak je zadaný email */}
         {email && (
           <FormCard $hasError={!!errors.competitionConsent}>
-            <CheckboxContainer 
-              $disabled={isBlocked}
-              onClick={() => !isBlocked && setCompetitionConsent(!competitionConsent)}
-            >
-              <Checkbox
-                type="checkbox"
-                checked={competitionConsent}
-                disabled={isBlocked}
-                onChange={(e) => setCompetitionConsent(e.target.checked)}
-              />
-              <label>
-                SÚHLASÍM SO SPRACOVANÍM OSOBNÝCH ÚDAJOV A PARTICIPÁCIOU V SÚŤAŽI
-              </label>
-              <Note>
+            <div>
+              <CheckboxContainer 
+                $disabled={isBlocked}
+                onClick={() => !isBlocked && setCompetitionConsent(!competitionConsent)}>
+                <Checkbox
+                  type="checkbox"
+                  checked={competitionConsent}
+                  disabled={isBlocked}
+                  onChange={(e) => setCompetitionConsent(e.target.checked)}
+                />
+                <label>
+                  SÚHLASÍM SO SPRACOVANÍM OSOBNÝCH ÚDAJOV A PARTICIPÁCIOU V SÚŤAŽI
+                </label>
+              </CheckboxContainer>
+              
+              <div style={{ fontSize: '0.9em', color: '#666', lineHeight: '1.6', marginTop: '15px', paddingLeft: '24px' }}>
                 <strong>Prehlasujem, že:</strong><br/>
                 <strong>Súhlasím s účasťou v súťaži a potvrdzujem, že som si Pravidlá a podmienky súťaže prečítal/a, porozumel/a im a súhlasím s nimi.</strong><br/>
                 <strong>Rozumiem, že v prípade porušenia podmienok súťaže, môžem byť zo súťaže o ceny vylúčený.</strong><br/>
@@ -1175,14 +1183,16 @@ export default function Instruction() {
                 <strong>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</strong><br/>
                 <strong>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</strong><br/>
                 <strong>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</strong>
-              </Note>
-            </CheckboxContainer>
+              </div>
+              
+              <div style={{ fontSize: '0.9em', color: '#666', lineHeight: '1.6', marginTop: '12px', paddingLeft: '24px' }}>
+                <strong>Pre viac informácií si prečítajte prosím sekciu Pravidlá a podmienky súťaže</strong>
+              </div>
+            </div>
             {errors.competitionConsent && <ErrorText>{errors.competitionConsent}</ErrorText>}
-            <Note style={{ marginTop: '12px' }}>
-             <strong>Pre viac informácií si prečítajte prosím sekciu Pravidlá a podmienky súťaže</strong>
-            </Note>
           </FormCard>
         )}
+
 
         {/* 6. REFERRAL KÓD */}
         {!referralAlreadyUsed && (
