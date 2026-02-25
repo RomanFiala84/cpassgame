@@ -43,14 +43,10 @@ const Title = styled.h1`
   }
 `;
 
-const Subtitle = styled.p`
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 16px;
-  margin-bottom: 20px;
-  
-  @media (max-width: 480px) {
-    font-size: 14px;
-  }
+const InstructionsSection = styled.div`
+  width: 100%;
+  max-width: 800px; /* ✅ Zostáva 800px */
+  margin-bottom: 32px;
 `;
 
 const StatsCard = styled.div`
@@ -619,7 +615,7 @@ const MainMenu = () => {
       <Container>
         <Header>
           <Title>CP-PASS</Title>
-          <Subtitle>
+          <InstructionsSection>
             <ul>
               <li><strong>Ktorou časťou mám začať?</strong></li>
                 <ul>
@@ -639,7 +635,7 @@ const MainMenu = () => {
                     </ul>
                 </ul>
             </ul>
-          </Subtitle>
+          </InstructionsSection>
           <StatsCard>
             <StatItem>
               <StatValue>{userStats.totalPoints || 0}</StatValue>

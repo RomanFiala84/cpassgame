@@ -921,11 +921,11 @@ export default function Instruction() {
     },
     {
       id: 'podpora',
-      title: 'Čo ak sa budem počas výskumu cítiť znepokojení?',
+      title: 'Čo ak sa budem počas výskumu cítiť znepokojený/á',
       content: (
         <>
           <ul>
-            <li>Je úplne v poriadku mať z niektorých tém alebo tvrdení nepríjemný pocit -- dotýkajú sa citlivých spoločenských tém.</li>
+            <li>Je úplne v poriadku mať z niektorých tém alebo tvrdení nepríjemný pocit - dotýkajú sa citlivých spoločenských tém.</li>
             <ul>
               <li>Odporúčame o svojich pocitoch alebo otázkach hovoriť s niekým, komu dôverujete (priateľ, rodina, odborník).</li>
               <li>Ak máte pocit, že na vás podobné informácie dlhodobo pôsobia stresujúco alebo úzkostne, môže byť užitočné poradiť sa so psychológom alebo iným odborníkom.</li>
@@ -980,8 +980,8 @@ export default function Instruction() {
         {/* Expandable sekcie s inštrukciami */}
         <InstructionsSection>
           <WelcomeText>
-            <strong>Prečítajte si prosím pozorne podmienky a inštrukcie k výskumu.</strong>
-            <strong>Následne pokračujte prihlásením sa do výskumnej aplikácie.</strong>
+            <p><strong>Prečítajte si prosím pozorne podmienky a inštrukcie k výskumu.</strong></p>
+            <p><strong>Následne pokračujte prihlásením sa do výskumnej aplikácie.</strong></p>
           </WelcomeText>
           
           {instructionsSections.map(section => (
