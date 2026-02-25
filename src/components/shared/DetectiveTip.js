@@ -313,7 +313,7 @@ const CountdownTimer = styled.div`
 
 const DetectiveTip = ({ 
   tip, 
-  detectiveName = "Detektív Conan", 
+  detectiveName = "Inšpektor Kritan", 
   autoOpen = false,
   autoOpenDelay = 500,
   autoClose = false,

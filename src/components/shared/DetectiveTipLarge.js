@@ -372,7 +372,7 @@ const ActionButton = styled.button`
 
 const DetectiveTipLarge = ({
   tip,
-  detectiveName = "Detektív Conan",
+  detectiveName = "Inšpektor Kritan",
   imageUrl = "/images/detective.png",
   iconUrl = "/images/detective-icon.png",
   buttonText = "Rozumiem!",
@@ -498,9 +498,9 @@ const DetectiveTipLarge = ({
     <>
       <TipButton 
         onClick={handleToggle} 
-        title="Tip od detektíva"
+        title="Tip od Inšpektora Kritana"
         style={buttonStyle}
-        aria-label="Otvoriť tip od detektíva"
+        aria-label="Otvoriť tip od Inšpektora Kritana"
       >
         {!iconError ? (
           <DetectiveIcon 
@@ -531,7 +531,7 @@ const DetectiveTipLarge = ({
                   onClick={handleClose} 
                   disabled={!canClose}
                   aria-label="Zavrieť"
-                  title={!canClose ? `Čakaj ešte ${countdown}s` : 'Zavrieť'}
+                  title={!canClose ? `Prečítajte si prosím informácie ${countdown}s` : 'Zavrieť'}
                 >
                   ×
                 </CloseButton>
@@ -542,9 +542,9 @@ const DetectiveTipLarge = ({
               <ActionButton 
                 onClick={handleClose}
                 disabled={!canClose}
-                title={!canClose ? `Čakaj ešte ${countdown}s` : buttonText}
+                title={!canClose ? `Zostávajúci čas ${countdown}s` : buttonText}
               >
-                {!canClose ? `Čakaj ${countdown}s...` : buttonText}
+                {!canClose ? `Prečítajte si prosím informácie ${countdown}s...` : buttonText}
               </ActionButton>
             </ContentContainer>
             

@@ -6,8 +6,8 @@ import styled from 'styled-components';
 
 const Toggle = styled.button`
   position: fixed;
-  bottom: 20px; // ✅ Dolný roh
-  left: 20px;  // ✅ Pravá strana
+  top: 20px; // ✅ Dolný roh
+  right: 20px;  // ✅ Pravá strana
   z-index: 1100;
   padding: 10px 16px;
   border-radius: 12px;
@@ -61,7 +61,7 @@ const ThemeToggle = ({ themeName, onToggle }) => {
   return (
     <Toggle onClick={onToggle}>
       <Icon>{themeName === 'dark' ? '🌙' : '☀️'}</Icon>
-      {themeName === 'dark' ? 'Dark' : 'Light'}
+      {themeName === 'dark' ? 'Tmavý režim' : 'Svetlý režim'}
     </Toggle>
   );
 };

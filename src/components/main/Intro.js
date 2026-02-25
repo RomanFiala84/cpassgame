@@ -250,13 +250,13 @@ const Intro = () => {
   const getGroupDescription = (code) => {
     switch(code) {
       case '0':
-        return 'Kontrolná skupina';
+        return 'Oddelenie Columbo';
       case '1':
-        return 'Intervenčná skupina';
+        return 'Oddelenie Poirot';
       case '2':
-        return 'Preventívna skupina';
+        return 'Oddelenie Holmes';
       default:
-        return 'Výskumná skupina';
+        return 'Oddelenie';
     }
   };
 
@@ -264,13 +264,13 @@ const Intro = () => {
     <Layout showLevelDisplay={false}>
       <Container>
         <Header>
-          <Title>🔍 Conspiracy Pass</Title>
+          <Title>Aplikácia CP-PASS</Title>
           <Subtitle>Vitajte v detektívnej akadémii!</Subtitle>
         </Header>
         
         {isLoading ? (
           <GroupCard>
-            <GroupLabel>Načítavam priradenie...</GroupLabel>
+            <GroupLabel>Načítavam oddelenie...</GroupLabel>
             <GroupValue style={{ display: 'flex', justifyContent: 'center', padding: '20px 0' }}>
               <LoadingSpinner />
             </GroupValue>
@@ -278,23 +278,22 @@ const Intro = () => {
         ) : (
           <>
             <GroupCard>
-              <GroupLabel>{getGroupDescription(groupCode)}</GroupLabel>
-              <GroupValue>Skupina {groupCode}</GroupValue>
+              <GroupLabel>Vaše detektívne oddelenie je:</GroupLabel>
+              <GroupValue>{getGroupDescription(groupCode)}</GroupValue>
             </GroupCard>
 
+
             <Text>
-              Ste pripravení vydať sa na dobrodružstvo plné <strong>tajomstiev</strong> a <strong>odhaľovania pravdy</strong>? 
-              Vaše detektívne schopnosti budú testované v rôznych misiách.
+              Výborne boli ste priradení do oddelenia <strong>{getGroupDescription(groupCode)}</strong>!
+              Ste pripravení začať svoju cestu detektíva? Ak áno, poďme sa pozrieť, čo vás čaká v tejto aplikácii.
             </Text>
 
             <InfoSection>
-              <InfoTitle>🎯 Čo vás čaká</InfoTitle>
+              <InfoTitle>Čo vás čaká ?</InfoTitle>
               <InfoList>
-                <InfoItem>4 zaujímavé detektívne misie</InfoItem>
-                <InfoItem>Tréning kritického myslenia</InfoItem>
-                <InfoItem>Odhaľovanie dezinformácií a konšpirácií</InfoItem>
-                <InfoItem>Zbieranie bodov a levelovanie</InfoItem>
-                <InfoItem>Možnosť získať ceny v súťaži</InfoItem>
+                <InfoItem>4 zaujímavé detektívne misie!</InfoItem>
+                <InfoItem>Zbieranie bodov a levelovanie!</InfoItem>
+                <InfoItem>Možnosť získať ceny v súťaži!</InfoItem>
               </InfoList>
             </InfoSection>
 
@@ -304,7 +303,7 @@ const Intro = () => {
                 size="large"
                 onClick={handleContinue}
               >
-                🚀 Začať výcvik
+                Poďme na to!
               </StyledButton>
             </ButtonContainer>
           </>
@@ -317,12 +316,13 @@ const Intro = () => {
             imageUrl="/images/detective.png"
             iconUrl="/images/detective-icon.png"
             tip={`
-              <p>Vitajte, <strong>mladý detektíve</strong>!</p>
-              <p>Ja som detektív Conan a budem vašim sprievodcom na ceste odhaľovania pravdy a boja proti dezinformáciám.</p>
-              <p>Spoločne s mojím verným nemeckým ovčiakom preskúmame záhadné prípady a naučíme sa rozpoznávať <strong>manipuláciu a konšpiračné teórie</strong>.</p>
-              <p><em>Pripravte sa na detektívne dobrodružstvo! 🕵️‍♂️</em></p>
+              <p><strong>Ahoj, milý/á respondent/ka!</strong></p>
+              <p>Volám sa Inšpektor Kritan a budem vašim sprievodcom počas celého výskumu.</p>
+              <p>Počas tohto výskumu budete zastávať rolu detektíva.</p>
+              <p>Spoločne sa pokúsime zvládnuť čo najviac misií, za ktoré budete odmenený detektívnymi bodmi a získaním levelov.</p>
+              <p><em>Ak ste pripravený, poďme sa spolu pozrieť do ktorého oddelenia ste boli priradený!</em></p>
             `}
-            buttonText="🎯 Rozumiem, poďme na to!"
+            buttonText="Rozumiem, poďme na to!"
             autoOpen={true}
             autoOpenDelay={800}
             autoClose={false}

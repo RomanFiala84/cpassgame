@@ -201,6 +201,15 @@ const FormCard = styled.div`
   }
 `;
 
+const ConsentText = styled.div`
+  font-size: 0.9em;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  line-height: 1.6;
+  margin-top: 15px;
+  padding-left: 24px;
+`;
+
+
 const CheckboxContainer = styled.div`
   display: flex;
   align-items: center;
@@ -963,7 +972,7 @@ export default function Instruction() {
   return (
     <Layout showLevelDisplay={false}>
       <Container>
-        <Title><strong>CP-PASS</strong></Title>
+        <Title><strong>Vitajte v aplikácií CP-PASS</strong></Title>
         <Subtitle>
           <strong>Milá respondentka, milý respondent, ďakujeme vám za váš čas a ochotu zúčastniť sa v našom výskume.</strong>
         </Subtitle>
@@ -972,6 +981,7 @@ export default function Instruction() {
         <InstructionsSection>
           <WelcomeText>
             <strong>Prečítajte si prosím pozorne podmienky a inštrukcie k výskumu.</strong>
+            <strong>Následne pokračujte prihlásením sa do výskumnej aplikácie.</strong>
           </WelcomeText>
           
           {instructionsSections.map(section => (
@@ -1045,17 +1055,21 @@ export default function Instruction() {
               <label>SÚHLASÍM SO SPRACOVANÍM ÚDAJOV A PARTICIPÁCIOU NA VÝSKUME</label>
             </CheckboxContainer>
             
-            <div style={{ fontSize: '0.9em', color: '#666', lineHeight: '1.6', marginTop: '15px', paddingLeft: '24px' }}>
-              <strong>Prehlasujem, že:</strong><br/>
-              <strong>Bol(a) som informovaný(á) o účele, priebehu a podmienkach výskumu prostredníctvom informačného listu.</strong><br/>
-              <strong>Rozumiem, že v prípade porušenia podmienok výskumu, môžem byť z výskumu a súťaže o ceny vylúčený, následkom čoho bude zablokovanie môjho prístupu do aplikácie.</strong><br/>
-              <strong>Mám vedomosť o svojich právach a povinnostiach počas výskumu.</strong><br/>
-              <strong>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</strong><br/>
-              <strong>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</strong><br/>
-              <strong>Rozumiem, že budú zaznamenávané moje interakcie s aplikáciou pre vedeckú analýzu.</strong><br/>
-              <strong>Súhlasím s anonymizáciou a publikáciou mojich údajov v súhrnnej forme.</strong><br/>
-              <strong>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</strong>
-            </div>
+            <ConsentText>
+              <ul>
+                <li><strong>Prehlasujem, že:</strong></li>
+                <ul>
+                  <li><strong>Bol(a) som informovaný(á) o účele, priebehu a podmienkach výskumu prostredníctvom informačného listu.</strong></li>
+                  <li><strong>Rozumiem, že v prípade porušenia podmienok výskumu, môžem byť z výskumu a súťaže o ceny vylúčený, následkom čoho bude zablokovanie môjho prístupu do aplikácie.</strong></li>
+                  <li><strong>Mám vedomosť o svojich právach a povinnostiach počas výskumu.</strong></li>
+                  <li><strong>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</strong></li>
+                  <li><strong>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</strong></li>
+                  <li><strong>Rozumiem, že budú zaznamenávané moje interakcie s aplikáciou pre vedeckú analýzu.</strong></li>
+                  <li><strong>Súhlasím s anonymizáciou a publikáciou mojich údajov v súhrnnej forme.</strong></li>
+                  <li><strong>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</strong></li>
+                </ul>
+              </ul>
+            </ConsentText>
           </div>
           {errors.consent && <ErrorText>{errors.consent}</ErrorText>}
         </FormCard>
@@ -1165,19 +1179,19 @@ export default function Instruction() {
                 </label>
               </CheckboxContainer>
               
-              <div style={{ fontSize: '0.9em', color: '#666', lineHeight: '1.6', marginTop: '15px', paddingLeft: '24px' }}>
-                <strong>Prehlasujem, že:</strong><br/>
-                <strong>Súhlasím s účasťou v súťaži a potvrdzujem, že som si Pravidlá a podmienky súťaže prečítal/a, porozumel/a im a súhlasím s nimi.</strong><br/>
-                <strong>Rozumiem, že v prípade porušenia podmienok súťaže, môžem byť zo súťaže o ceny vylúčený.</strong><br/>
-                <strong>Mám vedomosť o svojich právach a povinnostiach počas súťaže.</strong><br/>
-                <strong>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</strong><br/>
-                <strong>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</strong><br/>
-                <strong>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</strong>
-              </div>
-              
-              <div style={{ fontSize: '0.9em', color: '#666', lineHeight: '1.6', marginTop: '12px', paddingLeft: '24px' }}>
-                <strong>Pre viac informácií si prečítajte prosím sekciu Pravidlá a podmienky súťaže</strong>
-              </div>
+              <ConsentText>
+                <ul>
+                  <li><strong>Prehlasujem, že:</strong></li>
+                  <ul>
+                    <li><strong>Súhlasím s účasťou v súťaži a potvrdzujem, že som si Pravidlá a podmienky súťaže prečítal/a, porozumel/a im a súhlasím s nimi.</strong></li>
+                    <li><strong>Rozumiem, že v prípade porušenia podmienok súťaže, môžem byť zo súťaže o ceny vylúčený.</strong></li>
+                    <li><strong>Mám vedomosť o svojich právach a povinnostiach počas súťaže.</strong></li>
+                    <li><strong>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</strong></li>
+                    <li><strong>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</strong></li>
+                    <li><strong>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</strong></li>
+                  </ul>
+                </ul>
+              </ConsentText>
             </div>
             {errors.competitionConsent && <ErrorText>{errors.competitionConsent}</ErrorText>}
           </FormCard>
