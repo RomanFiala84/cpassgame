@@ -10,7 +10,8 @@ const Wrapper = styled.div`
   position: fixed;
   top: 0;
   left: ${p => p.isOpen ? '0' : '-140px'};
-  height: 100vh;
+  height: auto; // ✅ ZMENENÉ z 100vh
+  max-height: 100vh; // ✅ PRIDANÉ pre prípad veľkého obsahu
   width: 140px;
   background: ${p => p.theme.CARD_BACKGROUND};
   border-right: 2px solid ${p => p.theme.ACCENT_COLOR};
@@ -37,6 +38,7 @@ const Wrapper = styled.div`
     gap: 8px;
   }
 `;
+
 
 // ═══════════════════════════════════════════════════════════════════════
 // TOGGLE BUTTON
