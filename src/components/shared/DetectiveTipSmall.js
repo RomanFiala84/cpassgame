@@ -283,7 +283,7 @@ const DetectiveTipSmall = ({
             onError={handleImageError}
           />
         ) : (
-          <DetectiveAvatarFallback>🕵️</DetectiveAvatarFallback>
+          <DetectiveAvatarFallback></DetectiveAvatarFallback>
         )}
         <DetectiveName>{detectiveName}</DetectiveName>
         <CloseButton 

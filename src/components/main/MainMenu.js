@@ -69,11 +69,6 @@ const InstructionCard = styled.div`
     display: flex;
     align-items: center;
     gap: 6px;
-    
-    &::before {
-      content: '💡';
-      font-size: 16px;
-    }
   }
   
   @media (max-width: 480px) {
@@ -218,11 +213,16 @@ const SectionTitle = styled.h2`
   }
 `;
 
+// ✅ UPRAVENÉ - Grid layout pre misie
 const MissionsList = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   margin-bottom: 24px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const MissionCard = styled.div`
@@ -231,14 +231,17 @@ const MissionCard = styled.div`
   border-radius: 12px;
   padding: 16px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 16px;
+  text-align: center;
+  gap: 12px;
   position: relative;
   cursor: ${p => p.locked ? 'not-allowed' : 'pointer'};
   opacity: ${p => p.locked ? 0.6 : 1};
   transition: all 0.2s ease;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   overflow: hidden;
+  min-height: 180px;
   
   /* Gradient overlay pre dokončené misie */
   ${p => p.completed && `
@@ -265,17 +268,15 @@ const MissionCard = styled.div`
   }
   
   @media (max-width: 480px) {
-    flex-direction: column;
-    text-align: center;
-    gap: 10px;
     padding: 14px;
+    min-height: 160px;
   }
 `;
 
 const MissionIcon = styled.div`
-  width: 56px;
-  height: 56px;
-  min-width: 56px;
+  width: 64px;
+  height: 64px;
+  min-width: 64px;
   background: linear-gradient(135deg, 
     ${p => p.theme.ACCENT_COLOR}, 
     ${p => p.theme.ACCENT_COLOR_2}
@@ -284,14 +285,14 @@ const MissionIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 32px;
   box-shadow: 0 2px 8px ${p => p.theme.ACCENT_COLOR}44;
   
   @media (max-width: 480px) {
-    width: 48px;
-    height: 48px;
-    min-width: 48px;
-    font-size: 24px;
+    width: 56px;
+    height: 56px;
+    min-width: 56px;
+    font-size: 28px;
   }
 `;
 
@@ -299,10 +300,10 @@ const MissionContent = styled.div`
   flex: 1;
   position: relative;
   z-index: 1;
-  
-  @media (max-width: 480px) {
-    text-align: center;
-  }
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 `;
 
 const MissionNumber = styled.div`
@@ -315,18 +316,19 @@ const MissionNumber = styled.div`
 `;
 
 const MissionTitle = styled.h3`
-  font-size: 16px;
+  font-size: 15px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   margin-bottom: 4px;
   font-weight: 600;
+  line-height: 1.3;
   
   @media (max-width: 480px) {
-    font-size: 15px;
+    font-size: 14px;
   }
 `;
 
 const MissionStatus = styled.div`
-  font-size: 12px;
+  font-size: 11px;
   color: ${p => p.completed ? '#10b981' : p.theme.SECONDARY_TEXT_COLOR};
   font-weight: 600;
   text-transform: uppercase;
@@ -338,12 +340,11 @@ const AdminButtons = styled.div`
   gap: 6px;
   position: relative;
   z-index: 1;
-  
-  @media (max-width: 480px) {
-    width: 100%;
-    justify-content: center;
-  }
+  width: 100%;
+  justify-content: center;
+  margin-top: 8px;
 `;
+
 
 const AdminButton = styled.button`
   background: ${p => p.$unlock ? '#10b981' : p.theme.ACCENT_COLOR};
@@ -382,6 +383,62 @@ const ButtonGroup = styled.div`
     }
   }
 `;
+
+// ✅ NOVÉ - Špeciálne styled buttony pre tieto akcie
+const InfoButton = styled(StyledButton)`
+  background: linear-gradient(135deg, 
+    ${p => p.theme.ACCENT_COLOR}22, 
+    ${p => p.theme.ACCENT_COLOR_2}22
+  );
+  border: 2px solid ${p => p.theme.ACCENT_COLOR};
+  color: ${p => p.theme.ACCENT_COLOR};
+  
+  &:hover {
+    background: linear-gradient(135deg, 
+      ${p => p.theme.ACCENT_COLOR}, 
+      ${p => p.theme.ACCENT_COLOR_2}
+    );
+    color: white;
+    transform: translateY(-2px);
+  }
+`;
+
+const ContestButton = styled(StyledButton)`
+  background: linear-gradient(135deg, 
+    #fbbf2422, 
+    #f59e0b22
+  );
+  border: 2px solid #f59e0b;
+  color: #f59e0b;
+  
+  &:hover {
+    background: linear-gradient(135deg, 
+      #fbbf24, 
+      #f59e0b
+    );
+    color: white;
+    transform: translateY(-2px);
+  }
+`;
+
+const LogoutButton = styled(StyledButton)`
+  background: linear-gradient(135deg, 
+    #ef444422, 
+    #dc262622
+  );
+  border: 2px solid #ef4444;
+  color: #ef4444;
+  
+  &:hover {
+    background: linear-gradient(135deg, 
+      #ef4444, 
+      #dc2626
+    );
+    color: white;
+    transform: translateY(-2px);
+  }
+`;
+
 
 const SharingSection = styled.div`
   background: linear-gradient(135deg, 
@@ -995,21 +1052,25 @@ const MainMenu = () => {
         </MissionsList>
 
         <ButtonGroup>
-          <StyledButton variant="ghost" size="medium" onClick={() => openModal('help')}>
+          <InfoButton size="medium" onClick={() => openModal('help')}>
             ❓ Pomoc
-          </StyledButton>
-          <StyledButton variant="ghost" size="medium" onClick={() => openModal('contest')}>
+          </InfoButton>
+          
+          <ContestButton size="medium" onClick={() => openModal('contest')}>
             🎁 Súťaž
-          </StyledButton>
+          </ContestButton>
+          
           {isAdmin && (
             <StyledButton variant="accent" size="medium" onClick={() => navigate('/admin')}>
-              ⚙️ Admin
+              ⚙️ Admin panel
             </StyledButton>
           )}
-          <StyledButton variant="danger" size="medium" onClick={handleLogout}>
-            🔒 Odhlásiť sa
-          </StyledButton>
+          
+          <LogoutButton size="medium" onClick={handleLogout}>
+            🚪 Odhlásiť sa
+          </LogoutButton>
         </ButtonGroup>
+
 
         <SharingSection>
           <SharingTitle>Zdieľajte výskum a získajte body!</SharingTitle>

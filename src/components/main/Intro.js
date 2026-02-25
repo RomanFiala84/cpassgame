@@ -282,24 +282,6 @@ const LoadingText = styled.div`
   font-weight: 500;
 `;
 
-const DepartmentBadge = styled.div`
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: ${p => p.theme.ACCENT_COLOR}22;
-  border: 2px solid ${p => p.theme.ACCENT_COLOR};
-  border-radius: 20px;
-  padding: 6px 16px;
-  margin: 12px 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: ${p => p.theme.ACCENT_COLOR};
-  
-  &::before {
-    content: '🕵️';
-    font-size: 18px;
-  }
-`;
 
 const Intro = () => {
   const navigate = useNavigate();
@@ -369,10 +351,6 @@ const Intro = () => {
               <GroupLabel>Vaše detektívne oddelenie</GroupLabel>
               <GroupValue>{getGroupDescription(groupCode)}</GroupValue>
             </GroupCard>
-
-            <DepartmentBadge>
-              Oddelenie {getGroupDescription(groupCode)}
-            </DepartmentBadge>
 
             <Text>
               Výborne! Boli ste priradení do oddelenia <strong>{getGroupDescription(groupCode)}</strong>.

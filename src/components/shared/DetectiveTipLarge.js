@@ -1,10 +1,8 @@
 // src/components/shared/DetectiveTipLarge.js
-// OPRAVENÁ VERZIA - Delay len pri prvom otvorení
-
+// KOMPLETNÁ OPTIMALIZOVANÁ VERZIA - BEZ CLOSE BUTTON
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
-
 
 // =====================
 // STYLED COMPONENTS - OPTIMALIZOVANÁ VERZIA
@@ -82,41 +80,40 @@ const DetectiveIconFallback = styled.div`
   }
 `;
 
-const Badge = styled.div`
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  width: 22px;
-  height: 22px;
-  background: #ff4444;
-  border-radius: 50%;
-  border: 2px solid ${p => p.theme.CARD_BACKGROUND};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: bold;
-  color: white;
-  animation: pulse 2s infinite;
-  box-shadow: 0 2px 8px rgba(255, 68, 68, 0.5);
+const TextBadge = styled.div`
+  position: fixed;
+  bottom: 8px;
+  right: 16px;
+  background: ${p => p.theme.CARD_BACKGROUND};
+  border: 2px solid ${p => p.theme.ACCENT_COLOR};
+  border-radius: 8px;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  color: ${p => p.theme.ACCENT_COLOR};
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  z-index: 998;
+  pointer-events: none;
+  animation: badgePulse 2s ease-in-out infinite;
   
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.15); }
+  @keyframes badgePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
   }
   
   @media (max-width: 768px) {
-    width: 18px;
-    height: 18px;
-    font-size: 10px;
-    top: -3px;
-    right: -3px;
+    bottom: 4px;
+    right: 12px;
+    font-size: 8px;
+    padding: 2px 6px;
   }
   
   @media (max-width: 480px) {
-    width: 16px;
-    height: 16px;
-    font-size: 9px;
+    bottom: 2px;
+    right: 12px;
+    font-size: 7px;
+    padding: 2px 5px;
   }
 `;
 
@@ -264,6 +261,9 @@ const DetectiveImageContainer = styled.div`
   );
   overflow: hidden;
   order: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   
   /* Dekoratívny pattern */
   &::before {
@@ -279,6 +279,7 @@ const DetectiveImageContainer = styled.div`
       transparent 60%
     );
     pointer-events: none;
+    z-index: 1;
   }
   
   @media (max-width: 768px) {
@@ -295,8 +296,19 @@ const DetectiveImageContainer = styled.div`
 const DetectiveImage = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
+  position: relative;
+  z-index: 2;
+  padding: 10px;
+  
+  @media (max-width: 768px) {
+    padding: 8px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 6px;
+  }
 `;
 
 const DetectiveImageFallback = styled.div`
@@ -306,6 +318,8 @@ const DetectiveImageFallback = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 100px;
+  position: relative;
+  z-index: 2;
   
   @media (max-width: 768px) {
     font-size: 80px;
@@ -319,7 +333,7 @@ const DetectiveImageFallback = styled.div`
 const Header = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   margin-bottom: 16px;
   padding-bottom: 12px;
   border-bottom: 2px solid ${p => p.theme.BORDER_COLOR};
@@ -344,35 +358,6 @@ const DetectiveName = styled.div`
     &::before {
       font-size: 20px;
     }
-  }
-`;
-
-const CloseButton = styled.button`
-  background: ${p => p.disabled ? 'transparent' : p.theme.BORDER_COLOR}44;
-  border: none;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 24px;
-  cursor: ${p => p.disabled ? 'not-allowed' : 'pointer'};
-  padding: 0;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: all 0.2s ease;
-  opacity: ${p => p.disabled ? 0.3 : 1};
-  
-  &:hover {
-    background: ${p => p.disabled ? 'transparent' : p.theme.ACCENT_COLOR};
-    color: ${p => p.disabled ? p.theme.SECONDARY_TEXT_COLOR : '#ffffff'};
-    transform: ${p => p.disabled ? 'none' : 'rotate(90deg)'};
-  }
-  
-  @media (max-width: 480px) {
-    font-size: 22px;
-    width: 26px;
-    height: 26px;
   }
 `;
 
@@ -471,7 +456,9 @@ const ActionButton = styled.button`
   }
 `;
 
-
+// =====================
+// COMPONENT
+// =====================
 
 const DetectiveTipLarge = ({
   tip,
@@ -483,7 +470,7 @@ const DetectiveTipLarge = ({
   autoOpenDelay = 500,
   autoClose = false,
   autoCloseDelay = 8000,
-  showBadge = false,
+  showBadge = true,
   position = 'right',
   minReadTime = 10000,
   onOpen,
@@ -496,9 +483,7 @@ const DetectiveTipLarge = ({
   const [canClose, setCanClose] = useState(false);
   const [countdown, setCountdown] = useState(minReadTime / 1000);
   
-  // ✅ NOVÉ: Track či bol tip už otvorený
   const hasBeenOpenedRef = useRef(false);
-
 
   const handleClose = useCallback(() => {
     if (!canClose) return;
@@ -511,19 +496,15 @@ const DetectiveTipLarge = ({
     }, 400);
   }, [canClose, onClose]);
 
-
-  // ✅ UPRAVENÉ: Countdown len ak je prvé otvorenie
   useEffect(() => {
     if (!isOpen) return;
     
-    // ✅ Ak už bol otvorený, povoliť zatvoriť hneď
     if (hasBeenOpenedRef.current) {
       setCanClose(true);
       setCountdown(0);
       return;
     }
     
-    // ✅ Prvé otvorenie - countdown
     hasBeenOpenedRef.current = true;
     setCanClose(false);
     setCountdown(minReadTime / 1000);
@@ -542,7 +523,6 @@ const DetectiveTipLarge = ({
     return () => clearInterval(interval);
   }, [isOpen, minReadTime]);
 
-
   useEffect(() => {
     if (autoOpen) {
       const timer = setTimeout(() => {
@@ -553,7 +533,6 @@ const DetectiveTipLarge = ({
     }
   }, [autoOpen, autoOpenDelay, onOpen]);
 
-
   useEffect(() => {
     if (isOpen && autoClose && canClose) {
       const timer = setTimeout(() => {
@@ -562,7 +541,6 @@ const DetectiveTipLarge = ({
       return () => clearTimeout(timer);
     }
   }, [isOpen, autoClose, autoCloseDelay, canClose, handleClose]);
-
 
   const handleToggle = useCallback(() => {
     if (isOpen) {
@@ -573,16 +551,13 @@ const DetectiveTipLarge = ({
     }
   }, [isOpen, handleClose, onOpen]);
 
-
   const handleImageError = () => {
     setImageError(true);
   };
 
-
   const handleIconError = () => {
     setIconError(true);
   };
-
 
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget && canClose) {
@@ -590,15 +565,14 @@ const DetectiveTipLarge = ({
     }
   };
 
-
   if (!tip) return null;
 
-
-  const buttonStyle = position === 'left' ? { left: '20px', right: 'auto' } : {};
-
+  const buttonStyle = position === 'left' ? { left: '16px', right: 'auto' } : {};
+  const badgeStyle = position === 'left' ? { left: '16px', right: 'auto' } : {};
 
   return (
     <>
+      {/* BUTTON */}
       <TipButton 
         onClick={handleToggle} 
         title="Tip od Inšpektora Kritana"
@@ -614,13 +588,19 @@ const DetectiveTipLarge = ({
         ) : (
           <DetectiveIconFallback>🕵️</DetectiveIconFallback>
         )}
-        {showBadge && !isOpen && <Badge>!</Badge>}
       </TipButton>
       
+      {/* TEXTOVÝ BADGE POD IKONKOU */}
+      {showBadge && !isOpen && (
+        <TextBadge style={badgeStyle}>
+          Tip od {detectiveName}
+        </TextBadge>
+      )}
+      
+      {/* MODAL */}
       {(isOpen || isClosing) && (
         <Overlay $isClosing={isClosing} onClick={handleOverlayClick}>
           <ModalContainer $isClosing={isClosing}>
-            {/* ✅ Countdown len pri prvom otvorení */}
             {!canClose && (
               <CountdownBadge>
                 ⏱️ {countdown}s
@@ -630,14 +610,6 @@ const DetectiveTipLarge = ({
             <ContentContainer>
               <Header>
                 <DetectiveName>{detectiveName}</DetectiveName>
-                <CloseButton 
-                  onClick={handleClose} 
-                  disabled={!canClose}
-                  aria-label="Zavrieť"
-                  title={!canClose ? `Prečítajte si prosím informácie ${countdown}s` : 'Zavrieť'}
-                >
-                  ×
-                </CloseButton>
               </Header>
               
               <TipText dangerouslySetInnerHTML={{ __html: tip }} />
@@ -668,6 +640,5 @@ const DetectiveTipLarge = ({
     </>
   );
 };
-
 
 export default DetectiveTipLarge;
