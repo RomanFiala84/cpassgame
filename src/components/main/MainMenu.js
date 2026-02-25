@@ -91,11 +91,6 @@ const SubNote = styled.div`
   font-size: 13px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   line-height: 1.5;
-  
-  &:before {
-    content: "ℹ️";
-    margin-right: 6px;
-  }
 `;
 
 const InstructionsWrapper = styled.div`
@@ -912,19 +907,16 @@ const MainMenu = () => {
                   <h3>Čo ak sa počas výskumu cítim znepokojený/á?</h3>
                   
                   <ul>
-                    <li>Je úplne v poriadku mať z niektorých tém alebo tvrdení nepríjemný pocit - dotýkajú sa citlivých spoločenských tém.
-                      <ul>
-                        <li>Odporúčame o svojich pocitoch alebo otázkach hovoriť s niekým, komu dôverujete (priateľ, rodina, odborník).</li>
-                        <li>Ak máte pocit, že na vás podobné informácie dlhodobo pôsobia stresujúco alebo úzkostne, môže byť užitočné poradiť sa so psychológom alebo iným odborníkom.</li>
-                      </ul>
-                    </li>
-                    <li>Dostupné zdroje pomoci:
+                    <li>Je úplne v poriadku mať z niektorých tém alebo tvrdení nepríjemný pocit - dotýkajú sa citlivých spoločenských tém.</li>
+                    <li>Odporúčame o svojich pocitoch alebo otázkach hovoriť s niekým, komu dôverujete (priateľ, rodina, odborník).</li>
+                    <li>Ak máte pocit, že na vás podobné informácie dlhodobo pôsobia stresujúco alebo úzkostne, môže byť užitočné poradiť sa so psychológom alebo iným odborníkom.</li>
+                    <h4>Dostupné zdroje pomoci:
                       <ul>
                         <li>Kontakt na výskumníka - <a href="mailto:roman.fiala@tvu.sk">roman.fiala@tvu.sk</a></li>
                         <li>IPčko - <a href="https://ipcko.sk" target="_blank" rel="noopener noreferrer">https://ipcko.sk</a></li>
                         <li>Linka dôvery - <a href="https://www.linkanezabudka.sk" target="_blank" rel="noopener noreferrer">https://www.linkanezabudka.sk</a></li>
                       </ul>
-                    </li>
+                    </h4>
                   </ul>
                 </>
               )}
