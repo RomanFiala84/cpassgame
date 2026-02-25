@@ -1081,8 +1081,8 @@ export default function Instruction() {
           <InfoTitle>Inštrukcie pre prihlásenie:</InfoTitle>
           <InfoText>
             <ul>
-               <li><strong>Do výskumu sa ako respondenti budete prihlasovať pomocou identifikačného kódu respondenta (IKR)</strong></li> 
-               <li><strong>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom, napr. ABCD01</strong></li> 
+               <li><strong>Do výskumu sa ako respondenti budete prihlasovať pomocou identifikačného kódu respondenta (IKR).</strong></li> 
+               <li><strong>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom, napr. ABCD01.</strong></li> 
                <li><strong>Tento kód slúži na to aby bola zachovaná vaša anonymita a aby ste si kód pri ďalšom prihlásení nemuseli pamätať.</strong></li> 
                <li><strong>Prosím zadajte kód podľa následujúcich inštrukcií:</strong></li> 
               <ul>
@@ -1091,12 +1091,12 @@ export default function Instruction() {
                 <li><strong>Pre 3. znak: Zadajte druhé písmeno vášho priezviska.</strong></li> 
                 <li><strong>Pre 4. znak: Zadajte tretie písmeno vášho priezviska.</strong></li> 
                 <li><strong>Pre dvojčíslie: Zadajte číselne váš mesiac narodenia vo formáte MM (napr. pre 1. január zadajte 01).</strong></li> 
-                <li><strong>Príklad: Jožko Mrkvička narodený v novembri = JORK11</strong></li> 
+                <li><strong>Príklad: Jožko Mrkvička narodený v novembri = JORK11.</strong></li> 
               </ul>
                <li><strong>V prípade ak ste sa do výskumu ešte neprihlásili a IKR už existuje, zadajte prosím:</strong></li> 
               <ul>
                 <li><strong>Namiesto 1. znaku: Zadajte 1. písmeno okresu v ktorom žijete.</strong></li> 
-                <li><strong>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín= TORK11</strong></li> 
+                <li><strong>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín = TORK11.</strong></li> 
               </ul>
             </ul>
           </InfoText>

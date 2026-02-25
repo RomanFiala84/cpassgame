@@ -1,13 +1,11 @@
 // src/styles/ThemeToggle.js
-// VERZIA - Pravý dolný roh
-
 import React from 'react';
 import styled from 'styled-components';
 
 const Toggle = styled.button`
   position: fixed;
-  top: 20px; // ✅ Dolný roh
-  right: 20px;  // ✅ Pravá strana
+  top: 20px;
+  right: 20px;
   z-index: 1100;
   padding: 10px 16px;
   border-radius: 12px;
@@ -34,26 +32,35 @@ const Toggle = styled.button`
     transform: translateY(0);
   }
   
-  @media (max-width: 50px) {
-    bottom: 15px;
+  @media (max-width: 768px) {
+    top: 15px;
     right: 15px;
-    padding: 8px 12px;
-    font-size: 14px;
+    padding: 10px; /* ✅ Rovnaký padding pre kruhový tvar */
+    border-radius: 50%; /* ✅ Kruhové tlačidlo */
   }
   
-  @media (max-width: 50px) {
-    bottom: 10px;
+  @media (max-width: 480px) {
+    top: 10px;
     right: 10px;
-    padding: 8px 12px;
-    font-size: 14px;
+    padding: 8px;
   }
 `;
 
 const Icon = styled.span`
   font-size: 20px;
   
-  @media (max-width: 50px) {
-    font-size: 18px;
+  @media (max-width: 768px) {
+    font-size: 22px; /* ✅ Trochu väčšia ikona na mobile */
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 20px;
+  }
+`;
+
+const Label = styled.span`
+  @media (max-width: 768px) {
+    display: none; /* ✅ Skryje text na mobiloch */
   }
 `;
 
@@ -61,7 +68,7 @@ const ThemeToggle = ({ themeName, onToggle }) => {
   return (
     <Toggle onClick={onToggle}>
       <Icon>{themeName === 'dark' ? '🌙' : '☀️'}</Icon>
-      {themeName === 'dark' ? 'Tmavý režim' : 'Svetlý režim'}
+      <Label>{themeName === 'dark' ? 'Tmavý režim' : 'Svetlý režim'}</Label>
     </Toggle>
   );
 };

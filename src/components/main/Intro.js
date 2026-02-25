@@ -250,11 +250,11 @@ const Intro = () => {
   const getGroupDescription = (code) => {
     switch(code) {
       case '0':
-        return 'Oddelenie Columbo';
+        return 'Columbo';
       case '1':
-        return 'Oddelenie Poirot';
+        return 'Poirot';
       case '2':
-        return 'Oddelenie Holmes';
+        return 'Holmes';
       default:
         return 'Oddelenie';
     }
@@ -312,12 +312,13 @@ const Intro = () => {
         {/* ✅ Detective Tip - zobrazí sa len po načítaní dát */}
         {showTip && !isLoading && (
           <DetectiveTipLarge
-            detectiveName="Detektív Conan"
+            detectiveName="Inšpektor Kritan"
             imageUrl="/images/detective.png"
             iconUrl="/images/detective-icon.png"
             tip={`
               <p><strong>Ahoj, milý/á respondent/ka!</strong></p>
               <p>Volám sa Inšpektor Kritan a budem vašim sprievodcom počas celého výskumu.</p>
+              <p>Ak budete potrebovať pomoc, môžete sa kedykoľvek obrátiť na mňa. Nájdete ma vždy v pravom dolnom rohu obrazovky</p>
               <p>Počas tohto výskumu budete zastávať rolu detektíva.</p>
               <p>Spoločne sa pokúsime zvládnuť čo najviac misií, za ktoré budete odmenený detektívnymi bodmi a získaním levelov.</p>
               <p><em>Ak ste pripravený, poďme sa spolu pozrieť do ktorého oddelenia ste boli priradený!</em></p>

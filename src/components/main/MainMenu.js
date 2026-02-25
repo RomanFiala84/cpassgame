@@ -450,10 +450,10 @@ const CloseButton = styled.button`
 `;
 
 const makeMissionList = (p) => [
-  { id: 0, title: 'Špeciálny agent', route: '/mission0/intro', completed: !!p.mission0_completed, locked: !p.mission0_unlocked, icon: '🎯' },
-  { id: 1, title: 'Misia 1', route: '/mission1/intro', completed: !!p.mission1_completed, locked: !p.mission1_unlocked, icon: '🔍' },
-  { id: 2, title: 'Misia 2', route: '/mission2/intro', completed: !!p.mission2_completed, locked: !p.mission2_unlocked, icon: '🕵️' },
-  { id: 3, title: 'Misia 3', route: '/mission3/intro', completed: !!p.mission3_completed, locked: !p.mission3_unlocked, icon: '🎭' }
+  { id: 0, title: 'Misia 0 (Predvýskum)', route: '/mission0/intro', completed: !!p.mission0_completed, locked: !p.mission0_unlocked, icon: '🎯' },
+  { id: 1, title: 'Misia 1 (Úvodný dotazník)', route: '/mission1/intro', completed: !!p.mission1_completed, locked: !p.mission1_unlocked, icon: '🔍' },
+  { id: 2, title: 'Misia 2 (Prvá časť hlavného výskumu)', route: '/mission2/intro', completed: !!p.mission2_completed, locked: !p.mission2_unlocked, icon: '🕵️' },
+  { id: 3, title: 'Misia 3 (Druhá časť hlavného výskumu)', route: '/mission3/intro', completed: !!p.mission3_completed, locked: !p.mission3_unlocked, icon: '🎭' }
 ];
 
 const MainMenu = () => {
@@ -576,37 +576,83 @@ const MainMenu = () => {
 
   // ✅ NOVÝ - Príbeh a inštrukcie pre DetectiveTip
   const detectiveStory = `
-    <p>Vitajte, <strong>kolega</strong>! 🕵️</p>
+    <p>Potrebujete pomôcť?</p>
+  
+    <ul>
+      <li><strong>Ktorou časťou mám začať?</strong></li>
+        <ul>
+          <li>Ak sa účastníte predvýskumu začnite prosím Misiou 0.</li>
+            <ul>
+              <li>Po ukončení predvýskumu bude táto misia uzamknutá a účasť v nej už nebude možná.</li>
+            </ul>
+          <li>Ak sa účastníte prvej časti hlavného výskumu začnite prosím Misiou 1 a pokračujete Misiou 2.</li>
+            <ul>
+              <li>Po ukončení predvýskumu budú tieto misie neustále odomknuté.</li>
+              <li>Pre spustenie týchto misií nie je potrebné mať absolvovanú Misiu 0.</li>
+            </ul>
+          <li>Ak sa účastníte druhej časti hlavného výskumu pokračujte prosím Misiou 3.</li>
+            <ul>
+              <li>Po ukončení prvej časti hlavného výskumu bude táto misia neustále odomknutá.</li>
+              <li>Pred spustením Misie 3 si prosím skontrulujte v hlavnom menu, či máte dokočenú Misiu 1 a Misiu 2.</li>
+            </ul>
+        </ul>
+    </ul>
     
-    <p>Svet je plný <em>tajomstiev a záhad</em>, ktoré čakajú na odhalenie. Vaša úloha je preskúmať informácie, rozlíšiť pravdu od klamstiev a stať sa majstrom v <strong>kritickém myslení</strong>.</p>
-    
-    <p><strong>Ako to funguje?</strong></p>
-    <p>• Dokončením každej misie získate <strong>25 bodov</strong><br/>
-    • Zdieľajte svoj kód s priateľmi a získajte <strong>+10 bodov</strong> za každého<br/>
-    • Odomknite ďalšie misie a posúvajte sa vyššie v rankingu</p>
-    
-    <p>Pripravený? <strong>Začnime pátrať!</strong> 🔍</p>
+    <ul> 
+      <li><strong>Čo nájdem v hlavnom menu?</strong></li>
+        <ul>
+            <li>Bočný panel s aktuálnou detektívnou úrovňou a bodmi.</li>
+            <li>Panel s aktuálnym progresom misií a celkový počet nazbiernaných bodov.</li>
+            <li>Zonzam všetkých misií.</li>
+            <li>Odkaz na pomoc.</li>
+            <li>Odkaz na pravidlá a podmienky súťaže.</li>
+            <li>Možnosť odhlásenia z aplikácie.</li>
+            <li>Zonzam všetkých misií.</li>
+            <li>Váš osobný refferal kód, ktorý môžete zdieľať s priateľmi.</li>
+        </ul>
+    </ul>
+
   `;
 
   return (
     <Layout>
       <Container>
         <Header>
-          <Title>🕵️ Conspiracy Pass</Title>
-          <Subtitle>Staňte sa detektívom a odhaľte pravdu</Subtitle>
+          <Title>CP-PASS</Title>
+          <Subtitle>
+            <ul>
+              <li><strong>Ktorou časťou mám začať?</strong></li>
+                <ul>
+                  <li>Ak sa účastníte predvýskumu začnite prosím Misiou 0.</li>
+                    <ul>
+                      <li>Po ukončení predvýskumu bude táto misia uzamknutá a účasť v nej už nebude možná.</li>
+                    </ul>
+                  <li>Ak sa účastníte prvej časti hlavného výskumu začnite prosím Misiou 1 a pokračujete Misiou 2.</li>
+                    <ul>
+                      <li>Po ukončení predvýskumu budú tieto misie neustále odomknuté.</li>
+                      <li>Pre spustenie týchto misií nie je potrebné mať absolvovanú Misiu 0.</li>
+                    </ul>
+                  <li>Ak sa účastníte druhej časti hlavného výskumu pokračujte prosím Misiou 3.</li>
+                    <ul>
+                      <li>Po ukončení prvej časti hlavného výskumu bude táto misia neustále odomknutá.</li>
+                      <li>Pred spustením Misie 3 si prosím skontrulujte v hlavnom menu, či máte dokočenú Misiu 1 a Misiu 2.</li>
+                    </ul>
+                </ul>
+            </ul>
+          </Subtitle>
           <StatsCard>
             <StatItem>
               <StatValue>{userStats.totalPoints || 0}</StatValue>
-              <StatLabel>Celkové body</StatLabel>
+              <StatLabel>Celkové získané body:</StatLabel>
             </StatItem>
             <StatItem>
               <StatValue>{missions.filter(m => m.completed).length}/4</StatValue>
-              <StatLabel>Dokončené misie</StatLabel>
+              <StatLabel>Počet dokončených misií:</StatLabel>
             </StatItem>
           </StatsCard>
         </Header>
 
-        <SectionTitle>📋 Misie</SectionTitle>
+        <SectionTitle>Misie (časti výskumu):</SectionTitle>
         <MissionsList>
           {missions.map(m => (
             <MissionCard
@@ -620,7 +666,7 @@ const MainMenu = () => {
                 <MissionNumber>Misia {m.id}</MissionNumber>
                 <MissionTitle>{m.title}</MissionTitle>
                 <MissionStatus completed={m.completed}>
-                  {m.locked ? '🔒 Uzamknuté' : m.completed ? '✅ Dokončené' : '▶️ Začať'}
+                  {m.locked ? '🔒 Misia je uzamknutá' : m.completed ? '✅ Misia je dokončená' : '▶️ Spustiť misiu'}
                 </MissionStatus>
               </MissionContent>
               {isAdmin && (
@@ -651,34 +697,34 @@ const MainMenu = () => {
         </MissionsList>
 
         <ButtonGroup>
-          <StyledButton variant="ghost" size="small" onClick={() => openModal('help')}>
+          <StyledButton variant="ghost" size="medium" onClick={() => openModal('help')}>
             ❓ Pomoc
           </StyledButton>
-          <StyledButton variant="ghost" size="small" onClick={() => openModal('contest')}>
+          <StyledButton variant="ghost" size="medium" onClick={() => openModal('contest')}>
             🎁 Súťaž
           </StyledButton>
           {isAdmin && (
-            <StyledButton variant="accent" size="small" onClick={() => navigate('/admin')}>
+            <StyledButton variant="accent" size="medium" onClick={() => navigate('/admin')}>
               ⚙️ Admin
             </StyledButton>
           )}
-          <StyledButton variant="danger" size="small" onClick={handleLogout}>
-            🔒 Odhlásiť
+          <StyledButton variant="danger" size="medium" onClick={handleLogout}>
+            🔒 Odhlásiť sa
           </StyledButton>
         </ButtonGroup>
 
         <SharingSection>
-          <SharingTitle>🎁 Zdieľajte a získajte body!</SharingTitle>
+          <SharingTitle>Zdieľajte výskum a získajte body!</SharingTitle>
           
           <SharingCodeDisplay>
-            <SharingCodeLabel>Váš zdieľací kód:</SharingCodeLabel>
+            <SharingCodeLabel>Váš refferal kód:</SharingCodeLabel>
             <SharingCode>
               {userProgress?.sharing_code || '━━━━━━'}
             </SharingCode>
           </SharingCodeDisplay>
           
           <LinkDisplay>
-            <LinkLabel>🔗 Link s automatickým kódom:</LinkLabel>
+            <LinkLabel>🔗 Link s automatickým zadaním kódu:</LinkLabel>
             <LinkText>{generateReferralLink()}</LinkText>
           </LinkDisplay>
           
@@ -687,30 +733,30 @@ const MainMenu = () => {
               variant="accent"
               onClick={handleCopyCode}
             >
-              {copySuccess === 'code' ? '✅ Kód skopírovaný!' : '📋 Kopírovať kód'}
+              {copySuccess === 'code' ? '✅ Kód bol skopírovaný!' : '📋 Kopírovať iba kód'}
             </StyledButton>
             <StyledButton 
               variant="success"
               onClick={handleCopyLink}
             >
-              {copySuccess === 'link' ? '✅ Link skopírovaný!' : '🔗 Kopírovať link'}
+              {copySuccess === 'link' ? '✅ Link bol skopírovaný!' : '🔗 Kopírovať link s kódom'}
             </StyledButton>
           </ShareButtonsGroup>
           
           <SharingInfo>
             Zdieľajte kód alebo link s priateľmi!<br/>
-            Za každého nového používateľa získate <strong>+10 bodov</strong> 🎉
+            Za každého nového respondenta získate <strong>+10 bodov</strong>
           </SharingInfo>
           
           {userProgress?.referrals_count > 0 && (
             <ReferralStats>
               <ReferralStat>
                 <ReferralStatValue>{userProgress.referrals_count}</ReferralStatValue>
-                <ReferralStatLabel>Odporúčaní</ReferralStatLabel>
+                <ReferralStatLabel>Počet odporúčaní</ReferralStatLabel>
               </ReferralStat>
               <ReferralStat>
                 <ReferralStatValue>+{userProgress.referrals_count * 10}</ReferralStatValue>
-                <ReferralStatLabel>Bonus bodov</ReferralStatLabel>
+                <ReferralStatLabel>Počet bonusových bodov</ReferralStatLabel>
               </ReferralStat>
             </ReferralStats>
           )}
@@ -719,10 +765,10 @@ const MainMenu = () => {
         {/* ✅ NOVÉ - DetectiveTipLarge namiesto Export tlačidla */}
         <DetectiveTipLarge
           tip={detectiveStory}
-          detectiveName="Detektív Conan"
+          detectiveName="Inšpektor Kritan"
           imageUrl="/images/detective.png"
           iconUrl="/images/detective-icon.png"
-          buttonText="Rozumiem, poďme pátrať! 🔍"
+          buttonText="Rozumiem!"
           autoOpen={false}
           showBadge={true}
           position="right"
@@ -734,17 +780,113 @@ const MainMenu = () => {
               <CloseButton onClick={closeModal}>×</CloseButton>
               {modal.type === 'help' && (
                 <>
-                  <h3>❓ Pomoc</h3>
-                  <p>Kontakt: support@example.com</p>
-                  <p>V prípade problémov nás neváhajte kontaktovať.</p>
+                  <h3>Čo ak sa počas výskumu cítim znepokojený/á?</h3>
+                  <ul>
+                    <li>Je úplne v poriadku mať z niektorých tém alebo tvrdení nepríjemný pocit - dotýkajú sa citlivých spoločenských tém.</li>
+                    <ul>
+                      <li>Odporúčame o svojich pocitoch alebo otázkach hovoriť s niekým, komu dôverujete (priateľ, rodina, odborník).</li>
+                      <li>Ak máte pocit, že na vás podobné informácie dlhodobo pôsobia stresujúco alebo úzkostne, môže byť užitočné poradiť sa so psychológom alebo iným odborníkom.</li>
+                    </ul>
+                    <li>Dostupné zdroje pomoci:</li>
+                    <ul>
+                      <li>Kontakt na výskumníka - <a href="mailto:roman.fiala@tvu.sk">roman.fiala@tvu.sk</a></li>
+                      <li>IPčko - <a href="https://ipcko.sk" target="_blank" rel="noopener noreferrer">https://ipcko.sk</a></li>
+                      <li>Linka dôvery - <a href="https://www.linkanezabudka.sk" target="_blank" rel="noopener noreferrer">https://www.linkanezabudka.sk</a></li>
+                    </ul>
+                  </ul>
                 </>
               )}
               {modal.type === 'contest' && (
                 <>
-                  <h3>🎁 Súťaž o ceny</h3>
-                  <p><strong>1. miesto:</strong> iPad</p>
-                  <p><strong>2. miesto:</strong> Bezdrôtové slúchadlá</p>
-                  <p><strong>3. miesto:</strong> Poukážka 50€</p>
+                  <h3>🎁 Pravidlá a podmienky súťaže:</h3>
+                  <p>Organizátor súťaže:</p>
+                  <ul>
+                    <li>Organizátorom súťaže je hlavný zodpovedný riešiteľ výskumu - Roman Fiala.</li>
+                  </ul>
+
+                  <p>Účastníci súťaže:</p>
+                  <ul>
+                    <li>Súťaže sa môžu zúčastniť osoby, ktoré dovŕšili 18 rokov a vyjadrili informovaný súhlas s účasťou vo výskume.</li>
+                  </ul>
+
+                  <p>Podmienky zaradenia do žrebovania:</p>
+                  <ul>
+                    <li>Podmienky účasti uvedené v tejto časti sú zároveň podmienkami na získanie minimálneho počtu 50 bodov potrebných na zaradenie do žrebovania.</li>
+                    <li>Účastník bude zaradený do žrebovania o ceny, ak:
+                      <ul>
+                        <li>Absolvuje aspoň jednu z požadovaných častí výskumu: Predvýskum alebo prvú časť hlavného výskumu.</li>
+                        <li>Pravdivo a úplne vyplní všetky povinné položky predvýskumu alebo prvej časti hlavného výskumu.</li>
+                        <li>Poskytne kontaktný e-mail určený výhradne na účely súťaže, ktorý nie je spájaný s výskumnými dátami.</li>
+                      </ul>
+                    </li>
+                    <li>Účasť v súťaži nie je podmienkou účasti vo výskume, respondent sa môže zúčastniť výskumu aj bez poskytnutia kontaktného e-mailu.</li>
+                  </ul>
+
+                  <p>Trvanie súťaže:</p>
+                  <ul>
+                    <li>Súťaž prebieha v období od spustenia predvýskumu -- marec 2026 do ukončenia hlavného výskumu -- apríl 2026.</li>
+                    <li>Pozor - predvýskum bude dostupný iba do spustenia hlavného výskumu, to znamená že po jeho spustení predvýskum už nebude možné absolvovať.</li>
+                    <li>Do žrebovania budú zaradení len účastníci, ktorí splnia podmienky účasti v tomto časovom intervale.</li>
+                  </ul>
+
+                  <p>Bodovanie účasti v súťaži:</p>
+                  <ul>
+                    <li>Každý získaný bod predstavuje jeden žreb v súťaži. Účastník s vyšším počtom bodov tak má vyššiu pravdepodobnosť výhry. Minimálnou podmienkou zaradenia do žrebovania je získanie minimálne 50 bodov.</li>
+                    <li>Za absolvovanie predvýskumu získava účastník 50 bodov.</li>
+                    <li>Za absolvovanie prvej časti hlavného výskumu získava účastník 50 bodov.</li>
+                    <li>Za absolvovanie druhej časti hlavného výskumu (follow-up meranie) získava účastník 25 bodov.</li>
+                    <li>Za odporúčanie ďalším účastníkom 10 bodov za nového účastníka.
+                      <ul>
+                        <li>Každý účastník, ktorý absolvuje aspoň predvýskum alebo prvú časť hlavného výskumu, získa jedinečný referral kód.</li>
+                        <li>Ak nový účastník pri vstupe do štúdie uvedie referral kód osoby, ktorá ho pozvala, a sám splní podmienky účasti, osoba, ktorá referral kód zdieľala, získa za každé takéto platné odporúčanie 10 bodov.</li>
+                        <li>Za toho istého nového účastníka možno referral kód započítať len raz a len jednému odporúčateľovi.</li>
+                        <li>Referral kód nemá vplyv na samotný priebeh výskumu, slúži iba na pridelenie bodov do súťaže.</li>
+                      </ul>
+                    </li>
+                  </ul>
+
+                  <p>Výhry:</p>
+                  <ul>
+                    <li>Hlavnou cenou je darčekový poukaz v hodnote 30 € pre jedného výhercu.</li>
+                    <li>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10 € pre piatich výhercov.</li>
+                    <li>Výhercovia si určia v ktorom obchode si chcú uplatniť darčekový poukaz a na základe toho im bude poukaz poskytnutý.</li>
+                    <li>Organizátor si vyhradzuje právo zmeniť typ ceny za inú v rovnakej alebo vyššej hodnote (napr. iný typ poukážky), ak pôvodnú cenu nebude možné zabezpečiť.</li>
+                  </ul>
+
+                  <p>Žrebovanie výhercov:</p>
+                  <ul>
+                    <li>Žrebovanie prebehne najneskôr do 10 dní po ukončení hlavného výskumu.</li>
+                    <li>Žrebovanie bude realizované náhodným výberom z databázy e-mailových adries účastníkov, ktorí splnili podmienky účasti.</li>
+                    <li>Žrebovanie vykoná organizátor za prítomnosti svedkov a bude zaznamenané na videozáznam s časovou stopou.</li>
+                  </ul>
+
+                  <p>Oznámenie a odovzdanie výhry:</p>
+                  <ul>
+                    <li>Výhercovia budú kontaktovaní e-mailom najneskôr do 5 dní od žrebovania.</li>
+                    <li>Ak výherca do 10 pracovných dní od odoslania e-mailu nereaguje alebo odmietne výhru, cena môže byť pridelená náhradníkovi, ktorý bude vyžrebovaný rovnakým spôsobom.</li>
+                    <li>Výhra bude odovzdaná elektronicky formou poukazu.</li>
+                  </ul>
+
+                  <p>Ochrana osobných údajov:</p>
+                  <ul>
+                    <li>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</li>
+                    <li>Údaje budú použité výhradne na účely kontaktovania výhercu a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</li>
+                    <li>Spracovanie osobných údajov prebieha v súlade s GDPR a zákonom č. 18/2018 Z. z.</li>
+                  </ul>
+
+                  <p>Vylúčenie zo súťaže:</p>
+                  <ul>
+                    <li>Organizátor si vyhradzuje právo vylúčiť účastníka zo súťaže, ak:</li>
+                    <ul>
+                      <li>Porušil tieto pravidlá a podmienky súťaže.</li>
+                      <li>Uviedol zjavne nepravdivé údaje alebo iným spôsobom zneužil mechanizmus súťaže (napr. viacnásobná registrácia s rôznymi e-mailmi).</li>
+                    </ul>
+                  </ul>
+
+                  <p>Zodpovednosť organizátora:</p>
+                  <ul>
+                    <li>Organizátor nezodpovedá za technické problémy (napr. výpadky internetu, poruchy zariadenia účastníka), ktoré znemožnia alebo skomplikujú účasť v súťaži alebo dokončenie výskumu.</li>
+                  </ul>
                 </>
               )}
             </ModalContent>
