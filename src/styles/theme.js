@@ -5,7 +5,7 @@ const darkTheme = {
   // 🌙 TMAVÝ REŽIM - Čierna + Fialová
   BACKGROUND_COLOR: '#0a0a0a',           // Hlboká čierna
   PRIMARY_TEXT_COLOR: '#ffffff',         // Biela
-  SECONDARY_TEXT_COLOR: '#b8b8b8',       // Svetlošedá
+  SECONDARY_TEXT_COLOR: '#ffffff',       // Svetlošedá
   
   // Akcentové farby - Fialová škála
   ACCENT_COLOR: '#9d4edd',               // Jasná fialová (hlavná)
@@ -29,7 +29,7 @@ const lightTheme = {
   // ☀️ SVETLÝ REŽIM - Béžová + Tyrkysová
   BACKGROUND_COLOR: '#faf7f2',           // Svetlá béžová
   PRIMARY_TEXT_COLOR: '#1a1a1a',         // Tmavošedá (nie čierna)
-  SECONDARY_TEXT_COLOR: '#6b6b6b',       // Strednošedá
+  SECONDARY_TEXT_COLOR: '#1a1a1a',       // Strednošedá
   
   // Akcentové farby - Tyrkysová škála
   ACCENT_COLOR: '#14b8a6',               // Tyrkysová (hlavná)

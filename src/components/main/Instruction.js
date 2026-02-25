@@ -322,16 +322,6 @@ const InfoText = styled.div`
   }
 `;
 
-const ExampleCode = styled.code`
-  background: ${p => p.theme.INPUT_BACKGROUND};
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-family: 'Courier New', monospace;
-  color: ${p => p.theme.ACCENT_COLOR};
-  font-weight: 700;
-  font-size: 25px;
-  letter-spacing: 1px;
-`;
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -973,7 +963,7 @@ export default function Instruction() {
   return (
     <Layout showLevelDisplay={false}>
       <Container>
-        <Title><ExampleCode><strong>CP-PASS</strong></ExampleCode></Title>
+        <Title><strong>CP-PASS</strong></Title>
         <Subtitle>
           <strong>Milá respondentka, milý respondent, ďakujeme vám za váš čas a ochotu zúčastniť sa v našom výskume.</strong>
         </Subtitle>
