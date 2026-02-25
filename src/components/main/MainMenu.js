@@ -43,9 +43,64 @@ const Title = styled.h1`
   }
 `;
 
-const InstructionsSection = styled.div`
+const InstructionCard = styled.div`
+  background: ${p => p.theme.CARD_BACKGROUND};
+  border-left: 4px solid ${p => p.theme.ACCENT_COLOR};
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  
+  h4 {
+    color: ${p => p.theme.ACCENT_COLOR};
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+`;
+
+const InstructionList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  
+  li {
+    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+    padding: 8px 0 8px 24px;
+    position: relative;
+    line-height: 1.6;
+    
+    &:before {
+      content: "▸";
+      position: absolute;
+      left: 8px;
+      color: ${p => p.theme.ACCENT_COLOR};
+      font-weight: bold;
+    }
+  }
+`;
+
+const SubNote = styled.div`
+  background: ${p => p.theme.ACCENT_COLOR}11;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-top: 8px;
+  font-size: 13px;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  line-height: 1.5;
+  
+  &:before {
+    content: "ℹ️";
+    margin-right: 6px;
+  }
+`;
+
+const InstructionsWrapper = styled.div`
   width: 100%;
-  max-width: 800px; /* ✅ Zostáva 800px */
+  max-width: 800px;
   margin-bottom: 32px;
 `;
 
@@ -615,27 +670,34 @@ const MainMenu = () => {
       <Container>
         <Header>
           <Title>CP-PASS</Title>
-          <InstructionsSection>
-            <ul>
-              <li><strong>Ktorou časťou mám začať?</strong></li>
-                <ul>
-                  <li>Ak sa účastníte predvýskumu začnite prosím Misiou 0.</li>
-                    <ul>
-                      <li>Po ukončení predvýskumu bude táto misia uzamknutá a účasť v nej už nebude možná.</li>
-                    </ul>
-                  <li>Ak sa účastníte prvej časti hlavného výskumu začnite prosím Misiou 1 a pokračujete Misiou 2.</li>
-                    <ul>
-                      <li>Po ukončení predvýskumu budú tieto misie neustále odomknuté.</li>
-                      <li>Pre spustenie týchto misií nie je potrebné mať absolvovanú Misiu 0.</li>
-                    </ul>
-                  <li>Ak sa účastníte druhej časti hlavného výskumu pokračujte prosím Misiou 3.</li>
-                    <ul>
-                      <li>Po ukončení prvej časti hlavného výskumu bude táto misia neustále odomknutá.</li>
-                      <li>Pred spustením Misie 3 si prosím skontrulujte v hlavnom menu, či máte dokočenú Misiu 1 a Misiu 2.</li>
-                    </ul>
-                </ul>
-            </ul>
-          </InstructionsSection>
+          <InstructionsWrapper>
+            <InstructionCard>
+              <h4>Ktorou časťou mám začať?</h4>
+              
+              <InstructionList>
+                <li><strong>Ak sa účastníte predvýskumu - začnite prosím Misiou 0.</strong></li>
+              </InstructionList>
+              <SubNote>
+                Po ukončení predvýskumu bude táto misia uzamknutá a účasť v nej už nebude možná.
+              </SubNote>
+              
+              <InstructionList style={{ marginTop: '12px' }}>
+                <li><strong>Ak sa účastníte prvej časti hlavného výskumu - začnite prosím Misiou 1 a pokračujete Misiou 2.</strong></li>
+              </InstructionList>
+              <SubNote>
+                Po ukončení predvýskumu budú tieto misie neustále odomknuté.<br/>
+                Pre spustenie týchto misií nie je potrebné mať absolvovanú Misiu 0.
+              </SubNote>
+              
+              <InstructionList style={{ marginTop: '12px' }}>
+                <li><strong>Ak sa účastníte druhej časti hlavného výskumu - pokračujte prosím Misiou 3.</strong></li>
+              </InstructionList>
+              <SubNote>
+                Po ukončení prvej časti hlavného výskumu bude táto misia neustále odomknutá.<br/>
+                Pred spustením Misie 3 si prosím skontrulujte v hlavnom menu, či máte dokočenú Misiu 1 a Misiu 2.
+              </SubNote>
+            </InstructionCard>
+          </InstructionsWrapper>
           <StatsCard>
             <StatItem>
               <StatValue>{userStats.totalPoints || 0}</StatValue>
