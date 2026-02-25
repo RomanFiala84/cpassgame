@@ -830,13 +830,15 @@ export default function Instruction() {
       title: 'Čo je cieľom predvýskumu a hlavného výskumu?',
       content: (
         <>
-          <li>Predvýskum:</li>
-           <ul> 
-            <li>Predtým ako spustíme hlavný výskum, potrebujeme overiť, že všetky otázky a tvrdenia v dotazníku sú zrozumiteľné a jednoznačné.</li>
-          </ul>
-          <li>Hlavný výskum:</li>
           <ul>
-            <li>Cieľom nášho hlavného výskumu je lepšie porozumieť tomu, ako ľudia na Slovensku vnímajú inštitúcie Európskej únie, ako im dôverujú a aké faktory s tým súvisia. V našom výskume sme sa preto zameriavame na to ako informácie o fungovaní EÚ a jej prínosoch môžu pôsobiť na presvedčenia a mieru dôvery v inštitúcie EÚ.</li>
+            <li>Predvýskum:</li>
+            <ul> 
+              <li>Predtým ako spustíme hlavný výskum, potrebujeme overiť, že všetky otázky a tvrdenia v dotazníku sú zrozumiteľné a jednoznačné.</li>
+            </ul>
+            <li>Hlavný výskum:</li>
+            <ul>
+              <li>Cieľom nášho hlavného výskumu je lepšie porozumieť tomu, ako ľudia na Slovensku vnímajú inštitúcie Európskej únie, ako im dôverujú a aké faktory s tým súvisia. V našom výskume sme sa preto zameriavame na to ako informácie o fungovaní EÚ a jej prínosoch môžu pôsobiť na presvedčenia a mieru dôvery v inštitúcie EÚ.</li>
+            </ul>
           </ul>
         </>
       )
@@ -849,13 +851,13 @@ export default function Instruction() {
           <ul>
             <li>V predvýskume prejdete sériou otázok a tvrdení - dotazník (5-10 minút).</li>
             <li>Pri hodnotení neexistujú správne ani nesprávne odpovede a po každom bloku otázok vás požiadame o spätnú väzbu.</li>
-          </ul>
-          <li>Budeme sa pýtať napríklad na:</li>
-          <ul>
-            <li>Zrozumiteľnosť: Bola otázka alebo tvrdenie významovo jasná? Rozumeli ste všetkým použitým slovám?</li>
-            <li>Jednoznačnosť: Mohli by ste si otázku vyložiť viacerými spôsobmi?</li>
-            <li>Významová zhoda: Pri niektorých položkách vám ukážeme dva rôzne spôsoby formulácie toho istého tvrdenia. Budeme sa pýtať, či podľa vás znamenajú to isté, alebo sa v niečom líšia.</li>
-            <li>Hodnotiaca stupnica: Bola stupnica odpovedí zrozumiteľná a mali ste pocit, že dokážete vyjadriť svoj skutočný postoj?</li>
+            <li>Budeme sa pýtať napríklad na:</li>
+            <ul>
+              <li>Zrozumiteľnosť: Bola otázka alebo tvrdenie významovo jasná? Rozumeli ste všetkým použitým slovám?</li>
+              <li>Jednoznačnosť: Mohli by ste si otázku vyložiť viacerými spôsobmi?</li>
+              <li>Významová zhoda: Pri niektorých položkách vám ukážeme dva rôzne spôsoby formulácie toho istého tvrdenia. Budeme sa pýtať, či podľa vás znamenajú to isté, alebo sa v niečom líšia.</li>
+              <li>Hodnotiaca stupnica: Bola stupnica odpovedí zrozumiteľná a mali ste pocit, že dokážete vyjadriť svoj skutočný postoj?</li>
+            </ul>
           </ul>
         </>
       )
@@ -865,15 +867,16 @@ export default function Instruction() {
       title: 'Ako bude prebiehať hlavný výskum?',
       content: (
         <>
-          <li>Výskum prebieha online formou interaktívnej aplikácie.</li>
-          <li>Pozostáva z troch fáz:
-            <ul>
-              <li>Úvodný dotazník (5-10 minút)</li>
-              <li>Misia 1 (10-15 minút) - Prebehne bezprostredne po dokončení úvodného dotazníka</li>
-              <li>Misia 2 (10-15 minút) - Prebehne po piatich dňoch od dokončenia Misie 1</li>
-            </ul>
-          </li>
-          <li>Počas výskumu budeme automaticky zaznamenávať vaše interakcie s aplikáciou pre účely výskumu.</li>
+          <ul>
+            <li>Výskum prebieha online formou interaktívnej aplikácie.</li>
+            <li>Pozostáva z troch fáz:</li>
+              <ul>
+                <li>Úvodný dotazník (5-10 minút)</li>
+                <li>Misia 1 (10-15 minút) - Prebehne bezprostredne po dokončení úvodného dotazníka</li>
+                <li>Misia 2 (10-15 minút) - Prebehne po piatich dňoch od dokončenia Misie 1</li>
+              </ul>
+            <li>Počas výskumu budeme automaticky zaznamenávať vaše interakcie s aplikáciou pre účely výskumu.</li>
+          </ul>
         </>
       )
     },
@@ -922,16 +925,18 @@ export default function Instruction() {
       title: 'Čo ak sa budem počas výskumu cítiť znepokojení?',
       content: (
         <>
-          <li>Je úplne v poriadku mať z niektorých tém alebo tvrdení nepríjemný pocit -- dotýkajú sa citlivých spoločenských tém.</li>
           <ul>
-            <li>Odporúčame o svojich pocitoch alebo otázkach hovoriť s niekým, komu dôverujete (priateľ, rodina, odborník).</li>
-            <li>Ak máte pocit, že na vás podobné informácie dlhodobo pôsobia stresujúco alebo úzkostne, môže byť užitočné poradiť sa so psychológom alebo iným odborníkom.</li>
-          </ul>
-          <li>Dostupné zdroje pomoci:</li>
-          <ul>
-            <li>Kontakt na výskumníka - <a href="mailto:roman.fiala@tvu.sk">roman.fiala@tvu.sk</a></li>
-            <li>IPčko - <a href="https://ipcko.sk" target="_blank" rel="noopener noreferrer">https://ipcko.sk</a></li>
-            <li>Linka dôvery - <a href="https://www.linkanezabudka.sk" target="_blank" rel="noopener noreferrer">https://www.linkanezabudka.sk</a></li>
+            <li>Je úplne v poriadku mať z niektorých tém alebo tvrdení nepríjemný pocit -- dotýkajú sa citlivých spoločenských tém.</li>
+            <ul>
+              <li>Odporúčame o svojich pocitoch alebo otázkach hovoriť s niekým, komu dôverujete (priateľ, rodina, odborník).</li>
+              <li>Ak máte pocit, že na vás podobné informácie dlhodobo pôsobia stresujúco alebo úzkostne, môže byť užitočné poradiť sa so psychológom alebo iným odborníkom.</li>
+            </ul>
+            <li>Dostupné zdroje pomoci:</li>
+            <ul>
+              <li>Kontakt na výskumníka - <a href="mailto:roman.fiala@tvu.sk">roman.fiala@tvu.sk</a></li>
+              <li>IPčko - <a href="https://ipcko.sk" target="_blank" rel="noopener noreferrer">https://ipcko.sk</a></li>
+              <li>Linka dôvery - <a href="https://www.linkanezabudka.sk" target="_blank" rel="noopener noreferrer">https://www.linkanezabudka.sk</a></li>
+            </ul>
           </ul>
         </>
       )
@@ -941,8 +946,10 @@ export default function Instruction() {
       title: 'Súťaž',
       content: (
         <>
-          <li>Súťaž bude vyhodnotená na základe stanovených pravidiel do 10 dní od ukončenia hlavného výskumu.</li>
-          <li>Podrobné informácie o bodovaní, cenách a podmienkach účasti nájdete nižšie v sekcii Pravidlá a podmienky súťaže.</li>
+          <ul>
+            <li>Súťaž bude vyhodnotená na základe stanovených pravidiel do 10 dní od ukončenia hlavného výskumu.</li>
+            <li>Podrobné informácie o bodovaní, cenách a podmienkach účasti nájdete nižšie v sekcii Pravidlá a podmienky súťaže.</li>
+          </ul>
         </>
       )
     },
@@ -951,11 +958,13 @@ export default function Instruction() {
       title: 'Kontakt',
       content: (
         <>
-          <li>V prípade, že máte otázky k samotnému výskumu, môžete nás kontaktovať na uvedenom e‑maile -- radi vám poskytneme doplňujúce informácie.</li>
-          <li>Výskumník: Roman Fiala<br/>
-          Psychológia, 3. roč. Bc.<br/>
-          Katedra psychológie, Filozofická fakulta, Trnavská univerzita v Trnave</li>
-          <li>Email: <a href="mailto:roman.fiala@tvu.sk">roman.fiala@tvu.sk</a></li>
+          <ul> 
+            <li>V prípade, že máte otázky k samotnému výskumu, môžete nás kontaktovať na uvedenom e‑maile -- radi vám poskytneme doplňujúce informácie.</li>
+            <li>Výskumník: Roman Fiala<br/>
+            Psychológia, 3. roč. Bc.<br/>
+            Katedra psychológie, Filozofická fakulta, Trnavská univerzita v Trnave
+            Email: <a href="mailto:roman.fiala@tvu.sk">roman.fiala@tvu.sk</a></li>
+          </ul>
         </>
       )
     }
@@ -964,9 +973,9 @@ export default function Instruction() {
   return (
     <Layout showLevelDisplay={false}>
       <Container>
-        <Title>CP-PASS</Title>
+        <Title><strong>CP-PASS</strong></Title>
         <Subtitle>
-          Milá respondentka, milý respondent, ďakujeme vám za váš čas a ochotu zúčastniť sa v našom výskume.
+          <strong>Milá respondentka, milý respondent, ďakujeme vám za váš čas a ochotu zúčastniť sa v našom výskume.</strong>
         </Subtitle>
 
         {/* Expandable sekcie s inštrukciami */}
@@ -1046,15 +1055,17 @@ export default function Instruction() {
             <label>
               SÚHLASÍM SO SPRACOVANÍM ÚDAJOV A PARTICIPÁCIOU NA VÝSKUME
             </label>
-            <li>Prehlasujem, že:</li>
-            <li>Bol(a) som informovaný(á) o účele, priebehu a podmienkach výskumu prostredníctvom informačného listu.</li>
-            <li>Rozumiem, že v prípade porušenia podmienok výskumu, môžem byť z výskumu a súťaže o ceny vylúčený, následkom čoho bude zablokovanie môjho prístupu do aplikácie.</li>
-            <li>Mám vedomosť o svojich právach a povinnostiach počas výskumu.</li>
-            <li>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</li>
-            <li>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</li>
-            <li>Rozumiem, že budú zaznamenávané moje interakcie s aplikáciou pre vedeckú analýzu.</li>
-            <li>Súhlasím s anonymizáciou a publikáciou mojich údajov v súhrnnej forme.</li>
-            <li>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</li>
+            <Note>
+              <strong>Prehlasujem, že:</strong><br/>
+              <strong>Bol(a) som informovaný(á) o účele, priebehu a podmienkach výskumu prostredníctvom informačného listu.</strong><br/>
+              <strong>Rozumiem, že v prípade porušenia podmienok výskumu, môžem byť z výskumu a súťaže o ceny vylúčený, následkom čoho bude zablokovanie môjho prístupu do aplikácie.</strong><br/>
+              <strong>Mám vedomosť o svojich právach a povinnostiach počas výskumu.</strong><br/>
+              <strong>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</strong><br/>
+              <strong>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</strong><br/>
+              <strong>Rozumiem, že budú zaznamenávané moje interakcie s aplikáciou pre vedeckú analýzu.</strong><br/>
+              <strong>Súhlasím s anonymizáciou a publikáciou mojich údajov v súhrnnej forme.</strong><br/>
+              <strong>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</strong>
+            </Note>
           </CheckboxContainer>
           {errors.consent && <ErrorText>{errors.consent}</ErrorText>}
         </FormCard>
@@ -1063,25 +1074,29 @@ export default function Instruction() {
         <InfoBox>
           <InfoTitle>Inštrukcie pre prihlásenie:</InfoTitle>
           <InfoText>
-            <strong>Do výskumu sa ako respondenti budete prhlasovať pomocou identifikačného kódu respondenta (IKR)</strong><br/>
-            <strong>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom. Napr. <ExampleCode>ABCD01</ExampleCode></strong><br/>
-            <strong>Tento kód slúži na to aby bola zachovaná vaša anonymita a aby ste si kód pri ďalšom prihlásení nemuseli pamätať.</strong><br/>
-            <strong>Prosím zadajte kód podľa následujúcich inštrukcií:</strong><br/>
-            <strong>Pre 1. znak: Zadajte prvé písmeno vášho mena.</strong><br/>
-            <strong>Pre 2. znak: Zadajte posledné písmeno vášho mena.</strong><br/>
-            <strong>Pre 3. znak: Zadajte druhé písmeno vášho priezviska.</strong><br/>
-            <strong>Pre 4. znak: Zadajte tretie písmeno vášho priezviska .</strong><br/>
-            <strong>Pre dvojčíslie: Zadajte číselne váš mesiac narodenia vo formáte MM (napr. pre 1. január zadajte 01).</strong><br/>
-            <strong>Príklad: Jožko Mrkvička narodený v novembri = <ExampleCode>JORK11</ExampleCode></strong><br/>
-            <strong>V prípade ak ste sa do výskumu ešte neprihlásili a IKR už existuje, zadajte prosím:</strong><br/>
-            <strong>Namiesto 1. znaku: Zadajte 1. písmeno okresu v ktorom žijete.</strong><br/>
-            <strong>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín= <ExampleCode>TORK11</ExampleCode></strong><br/>
+            <ul>
+              <li>
+                <strong>Do výskumu sa ako respondenti budete prhlasovať pomocou identifikačného kódu respondenta (IKR)</strong><br/>
+                <strong>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom. Napr. <ExampleCode>ABCD01</ExampleCode></strong><br/>
+                <strong>Tento kód slúži na to aby bola zachovaná vaša anonymita a aby ste si kód pri ďalšom prihlásení nemuseli pamätať.</strong><br/>
+                <strong><ExampleCode>Prosím zadajte kód podľa následujúcich inštrukcií:</ExampleCode></strong><br/>
+                <strong><ExampleCode>Pre 1. znak: Zadajte prvé písmeno vášho mena.</ExampleCode></strong><br/>
+                <strong><ExampleCode>Pre 2. znak: Zadajte posledné písmeno vášho mena.</ExampleCode></strong><br/>
+                <strong><ExampleCode>Pre 3. znak: Zadajte druhé písmeno vášho priezviska.</ExampleCode></strong><br/>
+                <strong><ExampleCode>Pre 4. znak: Zadajte tretie písmeno vášho priezviska.</ExampleCode></strong><br/>
+                <strong><ExampleCode>Pre dvojčíslie: Zadajte číselne váš mesiac narodenia vo formáte MM (napr. pre 1. január zadajte 01).</ExampleCode></strong><br/>
+                <strong>Príklad: Jožko Mrkvička narodený v novembri = JORK11</strong><br/>
+                <strong><ExampleCode>V prípade ak ste sa do výskumu ešte neprihlásili a IKR už existuje, zadajte prosím:</ExampleCode></strong><br/>
+                <strong><ExampleCode>Namiesto 1. znaku: Zadajte 1. písmeno okresu v ktorom žijete.</ExampleCode></strong><br/>
+                <strong>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín= TORK11</strong><br/>
+              </li>
+            </ul>
           </InfoText>
         </InfoBox>
 
         {/* 3. KÓD ÚČASTNÍKA */}
         <FormCard $hasError={!!errors.participant || !!errors.blocked}>
-          <InputLabel htmlFor="participant-code">Zadajte váš identifikačný kód respondenta *</InputLabel>
+          <InputLabel htmlFor="participant-code">Zadajte váš identifikačný kód respondenta pre prihlásenie:</InputLabel>
           <Input
             id="participant-code"
             type="text"
@@ -1103,15 +1118,19 @@ export default function Instruction() {
         <CompetitionSection>
           <CompetitionTitle>Zapojte sa do súťaže o ceny</CompetitionTitle>
           <CompetitionText>
-             <strong>Pre zapojenie do súťaže je potrebné zadať e-mailovú adresu a absolovať predvýskum alebo prvú časť hlavného výskumu.</strong><br/>
-             <strong>Súťaž funguje na základe bodovacieho systému:</strong><br/>
-             <strong>Za absolvovanie predvýskumu získava účastník 50 bodov.</strong><br/>
-             <strong>Za absolvovanie prvej časti hlavného výskumu získava účastník 50 bodov.</strong><br/>
-             <strong>Za absolvovanie druhej časti hlavného výskumu (follow up meranie) získava účastník 25 bodov.</strong><br/>
-             <strong>Za odporúčanie ďalším účastníkom získava účastník 10 bodov za každého nového účastníka.</strong><br/>
-             <strong>Hlavnou cenou je darčekový poukaz v hodnote 30 € pre jedného výhercu.</strong><br/>
-             <strong>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10€ pre piatich výhercov.</strong><br/>
-             <strong>Viac informácií o súťaži nájdete v sekcii Pravidlá a podmienky súťaže.</strong><br/>
+            <ul>
+              <li>
+                <strong>Pre zapojenie do súťaže je potrebné zadať e-mailovú adresu a absolovať predvýskum alebo prvú časť hlavného výskumu.</strong><br/>
+                <strong>Súťaž funguje na základe bodovacieho systému:</strong><br/>
+                <strong>Za absolvovanie predvýskumu získava účastník 50 bodov.</strong><br/>
+                <strong>Za absolvovanie prvej časti hlavného výskumu získava účastník 50 bodov.</strong><br/>
+                <strong>Za absolvovanie druhej časti hlavného výskumu (follow up meranie) získava účastník 25 bodov.</strong><br/>
+                <strong>Za odporúčanie ďalším účastníkom získava účastník 10 bodov za každého nového účastníka.</strong><br/>
+                <strong>Hlavnou cenou je darčekový poukaz v hodnote 30 € pre jedného výhercu.</strong><br/>
+                <strong>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10€ pre piatich výhercov.</strong><br/>
+                <strong>Viac informácií o súťaži nájdete v sekcii Pravidlá a podmienky súťaže.</strong><br/>
+              </li>
+            </ul>
           </CompetitionText>
           
           <InputLabel htmlFor="email">Zadajte prosím e-mailovú adresu pre zapojenie do súťaže (nepovinné)</InputLabel>
@@ -1126,8 +1145,10 @@ export default function Instruction() {
             autoComplete="email"
           />
           {errors.email && <ErrorText>{errors.email}</ErrorText>}
-            <strong>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</strong><br/>
-            <strong>E-mailová adresa bude použitá výhradne na účely kontaktovania výhercov a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</strong><br/>
+            <Note>
+              <strong>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</strong><br/>
+              <strong>E-mailová adresa bude použitá výhradne na účely kontaktovania výhercov a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</strong><br/>
+            </Note>
         </CompetitionSection>
 
         {/* 5. INFORMOVANÝ SÚHLAS SO SÚŤAŽOU - zobrazí sa len ak je zadaný email */}
@@ -1146,14 +1167,15 @@ export default function Instruction() {
               <label>
                 SÚHLASÍM SO SPRACOVANÍM OSOBNÝCH ÚDAJOV A PARTICIPÁCIOU V SÚŤAŽI
               </label>
-              <li>Prehlasujem, že:</li>
-              <li>Súhlasím s účasťou v súťaži a potvrdzujem, že som si Pravidlá a podmienky súťaže prečítal/a, porozumel/a im a súhlasím s nimi.</li>
-              <li>Rozumiem, že v prípade porušenia podmienok súťaže, môžem byť zo súťaže o ceny vylúčený.</li>
-              <li>Mám vedomosť o svojich právach a povinnostiach počas súťaže.</li>
-              <li>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</li>
-              <li>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</li>
-              <li>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</li>
-
+              <Note>
+                <strong>Prehlasujem, že:</strong><br/>
+                <strong>Súhlasím s účasťou v súťaži a potvrdzujem, že som si Pravidlá a podmienky súťaže prečítal/a, porozumel/a im a súhlasím s nimi.</strong><br/>
+                <strong>Rozumiem, že v prípade porušenia podmienok súťaže, môžem byť zo súťaže o ceny vylúčený.</strong><br/>
+                <strong>Mám vedomosť o svojich právach a povinnostiach počas súťaže.</strong><br/>
+                <strong>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</strong><br/>
+                <strong>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</strong><br/>
+                <strong>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</strong>
+              </Note>
             </CheckboxContainer>
             {errors.competitionConsent && <ErrorText>{errors.competitionConsent}</ErrorText>}
             <Note style={{ marginTop: '12px' }}>
@@ -1248,12 +1270,12 @@ export default function Instruction() {
                 </ul>
 
                 <h3>Bodovanie účasti v súťaži:</h3>
-                <p>Každý získaný bod predstavuje jeden žreb v súťaži. Účastník s vyšším počtom bodov tak má vyššiu pravdepodobnosť výhry. Minimálnou podmienkou zaradenia do žrebovania je získanie minimálne 50 bodov.</p>
                 <ul>
-                  <li>Za absolvovanie predvýskumu získava účastník <strong>50 bodov</strong>.</li>
-                  <li>Za absolvovanie prvej časti hlavného výskumu získava účastník <strong>50 bodov</strong>.</li>
-                  <li>Za absolvovanie druhej časti hlavného výskumu (follow-up meranie) získava účastník <strong>25 bodov</strong>.</li>
-                  <li>Za odporúčanie ďalším účastníkom <strong>10 bodov</strong> za nového účastníka.
+                  <li>Každý získaný bod predstavuje jeden žreb v súťaži. Účastník s vyšším počtom bodov tak má vyššiu pravdepodobnosť výhry. Minimálnou podmienkou zaradenia do žrebovania je získanie minimálne 50 bodov.</li>
+                  <li>Za absolvovanie predvýskumu získava účastník 50 bodov.</li>
+                  <li>Za absolvovanie prvej časti hlavného výskumu získava účastník 50 bodov.</li>
+                  <li>Za absolvovanie druhej časti hlavného výskumu (follow-up meranie) získava účastník 25 bodov.</li>
+                  <li>Za odporúčanie ďalším účastníkom 10 bodov za nového účastníka.
                     <ul>
                       <li>Každý účastník, ktorý absolvuje aspoň predvýskum alebo prvú časť hlavného výskumu, získa jedinečný referral kód.</li>
                       <li>Ak nový účastník pri vstupe do štúdie uvedie referral kód osoby, ktorá ho pozvala, a sám splní podmienky účasti, osoba, ktorá referral kód zdieľala, získa za každé takéto platné odporúčanie 10 bodov.</li>
@@ -1265,8 +1287,8 @@ export default function Instruction() {
 
                 <h3>Výhry:</h3>
                 <ul>
-                  <li>Hlavnou cenou je darčekový poukaz v hodnote <strong>30 €</strong> pre jedného výhercu.</li>
-                  <li>Vedľajšími cenami sú darčekové poukazy, každý v hodnote <strong>10 €</strong> pre piatich výhercov.</li>
+                  <li>Hlavnou cenou je darčekový poukaz v hodnote 30 € pre jedného výhercu.</li>
+                  <li>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10 € pre piatich výhercov.</li>
                   <li>Výhercovia si určia v ktorom obchode si chcú uplatniť darčekový poukaz a na základe toho im bude poukaz poskytnutý.</li>
                   <li>Organizátor si vyhradzuje právo zmeniť typ ceny za inú v rovnakej alebo vyššej hodnote (napr. iný typ poukážky), ak pôvodnú cenu nebude možné zabezpečiť.</li>
                 </ul>
@@ -1293,10 +1315,12 @@ export default function Instruction() {
                 </ul>
 
                 <h3>Vylúčenie zo súťaže:</h3>
-                <p>Organizátor si vyhradzuje právo vylúčiť účastníka zo súťaže, ak:</p>
                 <ul>
-                  <li>Porušil tieto pravidlá a podmienky súťaže.</li>
-                  <li>Uviedol zjavne nepravdivé údaje alebo iným spôsobom zneužil mechanizmus súťaže (napr. viacnásobná registrácia s rôznymi e-mailmi).</li>
+                  <li>Organizátor si vyhradzuje právo vylúčiť účastníka zo súťaže, ak:</li>
+                  <ul>
+                    <li>Porušil tieto pravidlá a podmienky súťaže.</li>
+                    <li>Uviedol zjavne nepravdivé údaje alebo iným spôsobom zneužil mechanizmus súťaže (napr. viacnásobná registrácia s rôznymi e-mailmi).</li>
+                  </ul>
                 </ul>
 
                 <h3>Zodpovednosť organizátora:</h3>
