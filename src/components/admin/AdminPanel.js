@@ -1,5 +1,5 @@
 // src/components/admin/AdminPanel.js
-// FINÁLNA VERZIA - S template generation na fixné rozmery (1200×2000)
+// FINÁLNA VERZIA - S individuálnou správou misií pre respondentov
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +10,10 @@ import { useUserStats } from '../../contexts/UserStatsContext';
 import * as XLSX from 'xlsx';
 import { generateAndUploadComponentTemplate } from '../../utils/trackingHelpers';
 
-// Styled components (všetky zostávajú rovnaké)
+// =====================
+// STYLED COMPONENTS
+// =====================
+
 const Container = styled.div`
   padding: 20px;
   max-width: 1400px;
@@ -242,7 +245,7 @@ const MissionButtons = styled.div`
 
 const DangerSection = styled(Section)`
   border-color: ${p => p.theme.ERROR_COLOR || '#ef4444'};
-  background: ${p => `${p.theme.ERROR_COLOR || '#ef4444'}11`};
+  background: ${p => p.theme.ERROR_COLOR || '#ef4444'}11;
 `;
 
 const DeleteRow = styled.div`
@@ -295,7 +298,7 @@ const LoadingSpinner = styled.div`
   color: white;
   font-size: 18px;
   
-  &::before {
+  &:before {
     content: '⏳';
     display: block;
     font-size: 48px;
@@ -390,11 +393,78 @@ const ProgressText = styled.div`
   font-weight: 500;
 `;
 
+// ✅ NOVÉ - Styled components pre individuálnu správu misií
+const UserMissionControl = styled.div`
+  margin-top: 16px;
+  padding: 16px;
+  background: ${p => p.theme.INPUT_BACKGROUND}44;
+  border-radius: 8px;
+  border: 1px solid ${p => p.theme.BORDER_COLOR};
+`;
+
+const UserSelect = styled.select`
+  width: 100%;
+  padding: 10px;
+  background: ${p => p.theme.INPUT_BACKGROUND};
+  border: 2px solid ${p => p.theme.BORDER_COLOR};
+  border-radius: 8px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  font-size: 14px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  
+  &:focus {
+    outline: none;
+    border-color: ${p => p.theme.ACCENT_COLOR};
+  }
+  
+  option {
+    background: ${p => p.theme.CARD_BACKGROUND};
+    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  }
+`;
+
+const UserMissionGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const UserMissionCard = styled.div`
+  background: ${p => p.theme.CARD_BACKGROUND};
+  border: 2px solid ${p => p.unlocked ? '#10b981' : p.theme.BORDER_COLOR};
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const MissionStatusBadge = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: ${p => p.unlocked ? '#10b98122' : p.theme.BORDER_COLOR}44;
+  color: ${p => p.unlocked ? '#10b981' : p.theme.SECONDARY_TEXT_COLOR};
+  width: fit-content;
+`;
+
+// =====================
 // ADMIN PANEL KOMPONENT
+// =====================
+
 const AdminPanel = () => {
   const navigate = useNavigate();
   const { dataManager, userId } = useUserStats();
-
+  
   const [stats, setStats] = useState({
     total: 0,
     blocked: 0,
@@ -406,7 +476,7 @@ const AdminPanel = () => {
     mission2Complete: 0,
     mission3Complete: 0
   });
-
+  
   const [allUsers, setAllUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
@@ -414,6 +484,19 @@ const AdminPanel = () => {
   const [trackingLoading, setTrackingLoading] = useState(false);
   const [generatingTemplates, setGeneratingTemplates] = useState(false);
   const [templateProgress, setTemplateProgress] = useState('');
+  
+  // ✅ NOVÉ - State pre individuálnu správu misií
+  const [selectedUser, setSelectedUser] = useState('');
+  const [userMissions, setUserMissions] = useState({
+    mission0_unlocked: false,
+    mission0_completed: false,
+    mission1_unlocked: false,
+    mission1_completed: false,
+    mission2_unlocked: false,
+    mission2_completed: false,
+    mission3_unlocked: false,
+    mission3_completed: false
+  });
 
   const loadStats = useCallback(async () => {
     setLoading(true);
@@ -425,14 +508,15 @@ const AdminPanel = () => {
     setStats({
       total: participants.length,
       blocked: participants.filter(p => p.blocked).length,
-      group0: participants.filter(p => p.group_assignment === '0').length,
-      group1: participants.filter(p => p.group_assignment === '1').length,
-      group2: participants.filter(p => p.group_assignment === '2').length,
+      group0: participants.filter(p => p.groupassignment === 0).length,
+      group1: participants.filter(p => p.groupassignment === 1).length,
+      group2: participants.filter(p => p.groupassignment === 2).length,
       mission0Complete: participants.filter(p => p.mission0_completed).length,
       mission1Complete: participants.filter(p => p.mission1_completed).length,
       mission2Complete: participants.filter(p => p.mission2_completed).length,
       mission3Complete: participants.filter(p => p.mission3_completed).length
     });
+    
     setLoading(false);
   }, [dataManager]);
 
@@ -441,9 +525,8 @@ const AdminPanel = () => {
     try {
       const response = await fetch('/api/admin-tracking-components');
       const data = await response.json();
-
       if (data.success) {
-        setTrackingComponents(data.components || []);
+        setTrackingComponents(data.components);
       } else {
         console.error('Failed to load tracking components:', data.message);
       }
@@ -459,6 +542,7 @@ const AdminPanel = () => {
       navigate('/');
       return;
     }
+    
     loadStats();
     loadTrackingComponents();
   }, [userId, dataManager, navigate, loadStats, loadTrackingComponents]);
@@ -472,34 +556,32 @@ const AdminPanel = () => {
     return `${(ms / 1000).toFixed(1)}s`;
   };
 
-  // ✅ FINÁLNA FUNKCIA - handleGenerateTemplates (1920px template generation)
   const handleGenerateTemplates = async () => {
     const confirmed = window.confirm(
-      '📸 Vygenerovať component template screenshots?\n\n' +
-      'Proces bude plne automatizovaný:\n' +
-      '- Všetky templates budú mať šírku 1920px a dynamickú výšku\n' +
-      '- Okná sa otvoria a zatvoria automaticky\n' +
-      '- Počas procesu NEMANIPULUJTE s oknom\n\n' +
-      'Komponenty na vygenerovanie:\n' +
-      '• PostsA1, PostsB1 (Mission 1)\n' +
-      '• PostsA2, PostsB2 (Mission 2)\n' +
-      '• PostsA3, PostsB3 (Mission 3)\n\n' +
-      'Pokračovať?'
+      `Vygenerovať component template screenshots?\n\n` +
+      `Proces bude plne automatizovaný:\n` +
+      `- Všetky templates budú mať šírku 1920px a dynamickú výšku\n` +
+      `- Okná sa otvoria a zatvoria automaticky\n` +
+      `- Počas procesu NEMANIPULUJTE s oknom\n\n` +
+      `Komponenty na vygenerovanie:\n` +
+      `• PostsA1, PostsB1 (Mission 1)\n` +
+      `• PostsA2, PostsB2 (Mission 2)\n` +
+      `• PostsA3, PostsB3 (Mission 3)\n\n` +
+      `Pokračovať?`
     );
-
+    
     if (!confirmed) return;
 
     setGeneratingTemplates(true);
     setTemplateProgress('Pripravujem generovanie templates...');
 
-    // Definícia komponentov
     const components = [
-      { id: 'postsA1_mission1', type: 'post', name: 'PostsA1', path: '/mission1/postsa' },
-      { id: 'postsB1_mission1', type: 'post', name: 'PostsB1', path: '/mission1/postsb' },
-      { id: 'postsA2_mission2', type: 'post', name: 'PostsA2', path: '/mission2/postsa' },
-      { id: 'postsB2_mission2', type: 'post', name: 'PostsB2', path: '/mission2/postsb' },
-      { id: 'postsA3_mission3', type: 'post', name: 'PostsA3', path: '/mission3/postsa' },
-      { id: 'postsB3_mission3', type: 'post', name: 'PostsB3', path: '/mission3/postsb' },
+      { id: 'postsA1mission1', type: 'post', name: 'PostsA1', path: '/mission1/postsa' },
+      { id: 'postsB1mission1', type: 'post', name: 'PostsB1', path: '/mission1/postsb' },
+      { id: 'postsA2mission2', type: 'post', name: 'PostsA2', path: '/mission2/postsa' },
+      { id: 'postsB2mission2', type: 'post', name: 'PostsB2', path: '/mission2/postsb' },
+      { id: 'postsA3mission3', type: 'post', name: 'PostsA3', path: '/mission3/postsa' },
+      { id: 'postsB3mission3', type: 'post', name: 'PostsB3', path: '/mission3/postsb' }
     ];
 
     let successCount = 0;
@@ -509,61 +591,54 @@ const AdminPanel = () => {
     try {
       for (let i = 0; i < components.length; i++) {
         const comp = components[i];
-        setTemplateProgress(`📸 Spracúvam ${i + 1}/${components.length}: ${comp.name}...`);
+        setTemplateProgress(`Spracúvam ${i + 1}/${components.length}: ${comp.name}...`);
 
         try {
-          // ✅ OPRAVA - Väčšie okno pre 1920px screenshot
           const fullPath = `${window.location.origin}${comp.path}`;
           const newWindow = window.open(
-            fullPath, 
-            '_blank', 
+            fullPath,
+            '_blank',
             'width=1920,height=2500,scrollbars=yes,resizable=yes'
           );
 
           if (!newWindow) {
-            throw new Error('Popup bolo zablokované! Povoľte popupy pre túto stránku.');
+            throw new Error('Popup bolo zablokované! Povolte popupy pre túto stránku.');
           }
 
-          // ✅ Počkaj 10 sekúnd na úplné načítanie
-          console.log(`⏳ Čakám 10s na načítanie ${comp.name}...`);
+          console.log(`Čakám 10s na načítanie ${comp.name}...`);
           await new Promise(resolve => setTimeout(resolve, 10000));
 
-          // ✅ Scroll check
           try {
             if (newWindow.document && newWindow.document.body) {
               const bodyHeight = newWindow.document.body.scrollHeight;
-              console.log(`📏 Body height: ${bodyHeight}px`);
+              console.log(`Body height: ${bodyHeight}px`);
               
               if (bodyHeight > 0) {
-                console.log('⬇️ Scrolling down...');
+                console.log('Scrolling down...');
                 newWindow.scrollTo(0, bodyHeight);
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 
-                console.log('⬆️ Scrolling back to top...');
+                console.log('Scrolling back to top...');
                 newWindow.scrollTo(0, 0);
                 await new Promise(resolve => setTimeout(resolve, 1000));
               }
             }
           } catch (scrollError) {
-            console.warn('⚠️ Scroll check failed:', scrollError);
+            console.warn('Scroll check failed:', scrollError);
           }
 
-          // ✅ ŽIADNY window.confirm() - priamo urob screenshot
-          console.log(`📸 Robím screenshot ${comp.name} (1920px)...`);
-
-          // Nájdi container v child okne
-          const container = newWindow.document.querySelector('[class*="Container"]') || newWindow.document.body;
+          console.log(`Robím screenshot ${comp.name} (1920px)...`);
           
+          const container = newWindow.document.querySelector('.Container') || newWindow.document.body;
           if (!container) {
             throw new Error('Container element not found in popup');
           }
 
-          console.log('📏 Container dimensions:', {
+          console.log('Container dimensions:', {
             scrollWidth: container.scrollWidth,
             scrollHeight: container.scrollHeight
           });
 
-          // ✅ Použi helper funkciu (generuje 1920px template)
           const templateUrl = await generateAndUploadComponentTemplate(
             container,
             comp.id,
@@ -574,36 +649,35 @@ const AdminPanel = () => {
             throw new Error('Failed to upload template');
           }
 
-          console.log(`✅ Template uploaded for ${comp.name} (1920px):`, templateUrl);
-
-          results.push({ 
-            component: comp.name, 
-            status: 'success', 
+          console.log(`Template uploaded for ${comp.name} (1920px):`, templateUrl);
+          results.push({
+            component: comp.name,
+            status: 'success',
             url: templateUrl,
             dimensions: `${container.scrollWidth}×${container.scrollHeight}`
           });
           successCount++;
 
-          // Zatvor okno
           newWindow.close();
 
-          // Krátka pauza medzi komponentami
           await new Promise(resolve => setTimeout(resolve, 1500));
 
         } catch (error) {
-          console.error(`❌ Failed to generate template for ${comp.name}:`, error);
-          results.push({ component: comp.name, status: 'failed', error: error.message });
+          console.error(`Failed to generate template for ${comp.name}:`, error);
+          results.push({
+            component: comp.name,
+            status: 'failed',
+            error: error.message
+          });
           failCount++;
         }
       }
 
-      // Finálny report
-      let reportMessage = `📸 Generovanie templates dokončené!\n\n`;
+      let reportMessage = 'Generovanie templates dokončené!\n\n';
       reportMessage += `✅ Úspešné: ${successCount}\n`;
       reportMessage += `❌ Neúspešné: ${failCount}\n\n`;
       reportMessage += `Všetky templates majú šírku 1920px a dynamickú výšku\n\n`;
-      reportMessage += `Detaily:\n`;
-      
+      reportMessage += 'Detaily:\n';
       results.forEach(r => {
         if (r.status === 'success') {
           reportMessage += `✅ ${r.component}: ${r.dimensions}\n`;
@@ -613,22 +687,16 @@ const AdminPanel = () => {
       });
 
       alert(reportMessage);
-
-      // Refresh tracking components
       await loadTrackingComponents();
 
     } catch (error) {
-      console.error('❌ Template generation error:', error);
-      alert(`❌ Chyba: ${error.message}`);
+      console.error('Template generation error:', error);
+      alert(`Chyba: ${error.message}`);
     } finally {
       setGeneratingTemplates(false);
       setTemplateProgress('');
     }
   };
-
-
-
-
 
   const handleToggleBlock = async (participantCode, currentBlockedState) => {
     const action = currentBlockedState ? 'odblokovať' : 'blokovať';
@@ -636,16 +704,15 @@ const AdminPanel = () => {
 
     try {
       await dataManager.setBlockedState(participantCode, !currentBlockedState);
-      alert(`✅ Používateľ ${currentBlockedState ? 'odblokovaný' : 'blokovaný'}!`);
+      alert(`Používateľ ${currentBlockedState ? 'odblokovaný' : 'blokovaný'}!`);
       await loadStats();
     } catch (error) {
-      alert(`❌ Chyba: ${error.message}`);
+      alert(`Chyba: ${error.message}`);
     }
   };
 
   const handleExportExcel = async () => {
     setIsExporting(true);
-    
     try {
       await dataManager.fetchAllParticipantsData();
       const allData = dataManager.getAllParticipantsData();
@@ -664,9 +731,11 @@ const AdminPanel = () => {
         if (p.responses) {
           Object.entries(p.responses).forEach(([componentId, componentData]) => {
             allComponentIds.add(componentId);
+            
             if (!questionIdsByComponent[componentId]) {
               questionIdsByComponent[componentId] = new Set();
             }
+            
             if (componentData.answers) {
               Object.keys(componentData.answers).forEach(qId => {
                 questionIdsByComponent[componentId].add(qId);
@@ -677,26 +746,26 @@ const AdminPanel = () => {
       });
 
       const rows = participants.map(p => {
-        const missionPoints = p.user_stats_mission_points || 0;
+        const missionPoints = p.userstats?.missionpoints || 0;
         const bonusPoints = (p.referrals_count || 0) * 10;
         const totalPoints = missionPoints + bonusPoints;
-        
+
         const row = {
-          'Kód účastníka': p.participant_code || '',
+          'Kód účastníka': p.participantcode,
           'Blokovaný': p.blocked ? 'ÁNO' : 'NIE',
-          'Blokovaný dňa': p.blocked_at ? new Date(p.blocked_at).toLocaleString('sk-SK') : '',
-          'Skupina': p.group_assignment || '',
-          'Sharing kód': p.sharing_code || '',
-          'Použitý referral kód': p.used_referral_code || '',
-          'Odporučil ho': p.referred_by || '',
-          'Počet odporučení': p.referrals_count || 0,
-          'Odporučení používatelia': (p.referred_users || []).join(', '),
+          'Blokovaný dňa': p.blockedat ? new Date(p.blockedat).toLocaleString('sk-SK') : '',
+          'Skupina': p.groupassignment,
+          'Sharing kód': p.sharing_code,
+          'Použitý referral kód': p.used_referral_code,
+          'Odporučil ho': p.referred_by,
+          'Počet odporúčaní': p.referrals_count || 0,
+          'Odporúčení používatelia': (p.referred_users || []).join(', '),
           'Registrovaný': p.timestamp_start ? new Date(p.timestamp_start).toLocaleString('sk-SK') : '',
-          'Posledná aktualizácia': p.timestamp_last_update ? new Date(p.timestamp_last_update).toLocaleString('sk-SK') : '',
+          'Posledná aktualizácia': p.timestamp_lastupdate ? new Date(p.timestamp_lastupdate).toLocaleString('sk-SK') : '',
           'Body za misie': missionPoints,
           'Bonusové body': bonusPoints,
           'Celkové body': totalPoints,
-          'Level': p.user_stats_level || 1,
+          'Level': p.userstats?.level || 1,
           'Inštrukcie dokončené': p.instruction_completed ? 'ÁNO' : 'NIE',
           'Intro dokončené': p.intro_completed ? 'ÁNO' : 'NIE',
           'Návštevy hlavného menu': p.mainmenu_visits || 0,
@@ -708,15 +777,16 @@ const AdminPanel = () => {
           'Misia 2 - Dokončená': p.mission2_completed ? 'ÁNO' : 'NIE',
           'Misia 3 - Odomknutá': p.mission3_unlocked ? 'ÁNO' : 'NIE',
           'Misia 3 - Dokončená': p.mission3_completed ? 'ÁNO' : 'NIE',
-          'Všetky misie dokončené': p.all_missions_completed ? 'ÁNO' : 'NIE',
+          'Všetky misie dokončené': p.all_missions_completed ? 'ÁNO' : 'NIE'
         };
 
         allComponentIds.forEach(componentId => {
           const componentData = p.responses?.[componentId];
+          
           if (componentData) {
             const questionIds = questionIdsByComponent[componentId];
             questionIds.forEach(qId => {
-              const columnName = `[${componentId}] ${qId}`;
+              const columnName = `${componentId}_${qId}`;
               const answer = componentData.answers?.[qId];
               
               if (Array.isArray(answer)) {
@@ -727,24 +797,25 @@ const AdminPanel = () => {
                 row[columnName] = answer ?? '';
               }
             });
-
+            
             if (componentData.metadata) {
-              row[`[${componentId}] Začiatok`] = componentData.metadata.started_at 
-                ? new Date(componentData.metadata.started_at).toLocaleString('sk-SK') 
+              row[`${componentId}_Začiatok`] = componentData.metadata.startedat 
+                ? new Date(componentData.metadata.startedat).toLocaleString('sk-SK') 
                 : '';
-              row[`[${componentId}] Koniec`] = componentData.metadata.completed_at 
-                ? new Date(componentData.metadata.completed_at).toLocaleString('sk-SK') 
+              row[`${componentId}_Koniec`] = componentData.metadata.completedat 
+                ? new Date(componentData.metadata.completedat).toLocaleString('sk-SK') 
                 : '';
-              row[`[${componentId}] Čas (sekundy)`] = componentData.metadata.time_spent_seconds || '';
-              row[`[${componentId}] Zariadenie`] = componentData.metadata.device || '';
+              row[`${componentId}_Čas (sekundy)`] = componentData.metadata.timespentseconds;
+              row[`${componentId}_Zariadenie`] = componentData.metadata.device;
             }
           }
         });
+
         return row;
       });
 
       const ws = XLSX.utils.json_to_sheet(rows);
-      
+
       if (rows.length > 0) {
         const headers = Object.keys(rows[0]);
         const colWidths = headers.map(header => {
@@ -755,20 +826,20 @@ const AdminPanel = () => {
           return { wch: Math.min(maxLen + 2, 50) };
         });
         ws['!cols'] = colWidths;
+        ws['!freeze'] = { xSplit: 1, ySplit: 1 };
       }
-      ws['!freeze'] = { xSplit: 1, ySplit: 1 };
 
       const summaryData = [
-        ['=== CELKOVÁ ŠTATISTIKA ==='],
+        ['CELKOVÉ ŠTATISTIKY', ''],
         [''],
         ['Štatistika', 'Hodnota'],
         ['Celkový počet účastníkov', participants.length],
         ['Blokovaní', participants.filter(p => p.blocked).length],
         ['Aktívni', participants.filter(p => !p.blocked).length],
         [''],
-        ['Skupina 0', participants.filter(p => p.group_assignment === '0').length],
-        ['Skupina 1', participants.filter(p => p.group_assignment === '1').length],
-        ['Skupina 2', participants.filter(p => p.group_assignment === '2').length],
+        ['Skupina 0', participants.filter(p => p.groupassignment === 0).length],
+        ['Skupina 1', participants.filter(p => p.groupassignment === 1).length],
+        ['Skupina 2', participants.filter(p => p.groupassignment === 2).length],
         [''],
         ['Misia 0 dokončená', participants.filter(p => p.mission0_completed).length],
         ['Misia 1 dokončená', participants.filter(p => p.mission1_completed).length],
@@ -776,50 +847,64 @@ const AdminPanel = () => {
         ['Misia 3 dokončená', participants.filter(p => p.mission3_completed).length],
         ['Všetky misie dokončené', participants.filter(p => p.all_missions_completed).length],
         [''],
-        ['Celkové body (misie)', participants.reduce((sum, p) => sum + (p.user_stats_mission_points || 0), 0)],
+        ['Celkové body (misie)', participants.reduce((sum, p) => sum + (p.userstats?.missionpoints || 0), 0)],
         ['Celkové bonusové body', participants.reduce((sum, p) => sum + ((p.referrals_count || 0) * 10), 0)],
-        ['Priemerné body na používateľa', Math.round(participants.reduce((sum, p) => {
-          const mp = p.user_stats_mission_points || 0;
-          const bp = (p.referrals_count || 0) * 10;
-          return sum + mp + bp;
-        }, 0) / participants.length)],
+        ['Priemerné body na používateľa', Math.round(
+          participants.reduce((sum, p) => {
+            const mp = p.userstats?.missionpoints || 0;
+            const bp = (p.referrals_count || 0) * 10;
+            return sum + mp + bp;
+          }, 0) / participants.length
+        )],
         [''],
         [''],
-        ['=== ZOZNAM VŠETKÝCH POUŽÍVATEĽOV ==='],
+        ['ZOZNAM VŠETKÝCH POUŽÍVATEĽOV', ''],
         [''],
-        ['Kód účastníka', 'Skupina', 'Celkové body', 'Status', 'Všetky misie', 'Registrovaný'],
+        ['Kód účastníka', 'Skupina', 'Celkové body', 'Status', 'Všetky misie', 'Registrovaný']
       ];
 
       participants.forEach(p => {
-        const missionPoints = p.user_stats_mission_points || 0;
+        const missionPoints = p.userstats?.missionpoints || 0;
         const bonusPoints = (p.referrals_count || 0) * 10;
         const totalPoints = missionPoints + bonusPoints;
         
         summaryData.push([
-          p.participant_code,
-          p.group_assignment,
+          p.participantcode,
+          p.groupassignment,
           totalPoints,
           p.blocked ? 'BLOKOVANÝ' : 'Aktívny',
           p.all_missions_completed ? 'ÁNO' : 'NIE',
           p.timestamp_start ? new Date(p.timestamp_start).toLocaleDateString('sk-SK') : ''
         ]);
       });
-      
+
       const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
-      wsSummary['!cols'] = [{ wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }];
+      wsSummary['!cols'] = [
+        { wch: 25 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 15 }
+      ];
 
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Účastníci');
-      XLSX.utils.book_append_sheet(wb, wsSummary, 'Súhrn');
-      
+      XLSX.utils.book_append_sheet(wb, wsSummary, 'Shrnutí');
+
       const now = new Date();
       const filename = `conspiracy_export_${now.toISOString().slice(0, 10)}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}.xlsx`;
+      
       XLSX.writeFile(wb, filename);
-      
-      alert(`✅ Export úspešný!\n\n📊 ${rows.length} účastníkov\n📝 ${allComponentIds.size} komponentov\n📄 2 sheety (Účastníci + Súhrn)`);
-      
+
+      alert(
+        `Export úspešný!\n\n` +
+        `${rows.length} účastníkov\n` +
+        `${allComponentIds.size} komponentov\n` +
+        `2 sheety: "Účastníci" + "Shrnutí"`
+      );
     } catch (error) {
-      console.error('❌ Chyba pri exporte:', error);
+      console.error('Chyba pri exporte:', error);
       alert(`Chyba pri exporte: ${error.message}`);
     } finally {
       setIsExporting(false);
@@ -828,6 +913,7 @@ const AdminPanel = () => {
 
   const handleUnlockMission = async (missionId) => {
     if (!window.confirm(`Odomknúť misiu ${missionId} pre všetkých?`)) return;
+
     try {
       await dataManager.unlockMissionForAll(missionId);
       alert(`✅ Misia ${missionId} odomknutá!`);
@@ -839,6 +925,7 @@ const AdminPanel = () => {
 
   const handleLockMission = async (missionId) => {
     if (!window.confirm(`Zamknúť misiu ${missionId} pre všetkých?`)) return;
+
     try {
       await dataManager.lockMissionForAll(missionId);
       alert(`✅ Misia ${missionId} zamknutá!`);
@@ -848,8 +935,106 @@ const AdminPanel = () => {
     }
   };
 
+  // ✅ NOVÉ - Handler pre výber používateľa
+  const handleUserSelect = (e) => {
+    const code = e.target.value;
+    setSelectedUser(code);
+    
+    if (code) {
+      const user = allUsers.find(u => u.participantcode === code);
+      if (user) {
+        setUserMissions({
+          mission0_unlocked: user.mission0_unlocked || false,
+          mission0_completed: user.mission0_completed || false,
+          mission1_unlocked: user.mission1_unlocked || false,
+          mission1_completed: user.mission1_completed || false,
+          mission2_unlocked: user.mission2_unlocked || false,
+          mission2_completed: user.mission2_completed || false,
+          mission3_unlocked: user.mission3_unlocked || false,
+          mission3_completed: user.mission3_completed || false
+        });
+      }
+    }
+  };
+
+  // ✅ NOVÉ - Handler pre individuálne odomknutie misie
+  const handleUnlockUserMission = async (missionId) => {
+    if (!selectedUser) {
+      alert('Prosím vyberte používateľa!');
+      return;
+    }
+    
+    if (!window.confirm(`Odomknúť Misiu ${missionId} pre používateľa ${selectedUser}?`)) {
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      await dataManager.unlockMissionForUser(selectedUser, missionId);
+      alert(`✅ Misia ${missionId} odomknutá pre ${selectedUser}!`);
+      await loadStats();
+      
+      // Refresh user missions display
+      const user = allUsers.find(u => u.participantcode === selectedUser);
+      if (user) {
+        setUserMissions({
+          mission0_unlocked: user.mission0_unlocked || false,
+          mission0_completed: user.mission0_completed || false,
+          mission1_unlocked: user.mission1_unlocked || false,
+          mission1_completed: user.mission1_completed || false,
+          mission2_unlocked: user.mission2_unlocked || false,
+          mission2_completed: user.mission2_completed || false,
+          mission3_unlocked: user.mission3_unlocked || false,
+          mission3_completed: user.mission3_completed || false
+        });
+      }
+    } catch (error) {
+      alert(`❌ Chyba: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ NOVÉ - Handler pre individuálne zamknutie misie
+  const handleLockUserMission = async (missionId) => {
+    if (!selectedUser) {
+      alert('Prosím vyberte používateľa!');
+      return;
+    }
+    
+    if (!window.confirm(`Zamknúť Misiu ${missionId} pre používateľa ${selectedUser}?`)) {
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      await dataManager.lockMissionForUser(selectedUser, missionId);
+      alert(`✅ Misia ${missionId} zamknutá pre ${selectedUser}!`);
+      await loadStats();
+      
+      // Refresh user missions display
+      const user = allUsers.find(u => u.participantcode === selectedUser);
+      if (user) {
+        setUserMissions({
+          mission0_unlocked: user.mission0_unlocked || false,
+          mission0_completed: user.mission0_completed || false,
+          mission1_unlocked: user.mission1_unlocked || false,
+          mission1_completed: user.mission1_completed || false,
+          mission2_unlocked: user.mission2_unlocked || false,
+          mission2_completed: user.mission2_completed || false,
+          mission3_unlocked: user.mission3_unlocked || false,
+          mission3_completed: user.mission3_completed || false
+        });
+      }
+    } catch (error) {
+      alert(`❌ Chyba: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleDeleteProgress = async () => {
-    if (!window.confirm('⚠️ VYMAZAŤ PROGRESS DB (všetci používatelia)?\n\nTáto akcia je nevratná!')) return;
+    if (!window.confirm('❌ VYMAZAŤ PROGRESS DB (všetci používatelia)?\n\nTáto akcia je NEVRATNÁ!')) return;
     if (!window.confirm('Ste si istý? Všetky progress dáta budú natrvalo vymazané!')) return;
 
     try {
@@ -873,7 +1058,7 @@ const AdminPanel = () => {
   };
 
   const handleDeleteResponses = async () => {
-    if (!window.confirm('⚠️ VYMAZAŤ RESPONSES DB (všetky odpovede)?\n\nTáto akcia je nevratná!')) return;
+    if (!window.confirm('❌ VYMAZAŤ RESPONSES DB (všetky odpovede)?\n\nTáto akcia je NEVRATNÁ!')) return;
     if (!window.confirm('Ste si istý? Všetky response dáta budú natrvalo vymazané!')) return;
 
     try {
@@ -895,7 +1080,7 @@ const AdminPanel = () => {
   };
 
   const handleDeleteTracking = async () => {
-    if (!window.confirm('⚠️ VYMAZAŤ TRACKING DB (všetky tracking dáta)?\n\nTáto akcia je nevratná!')) return;
+    if (!window.confirm('❌ VYMAZAŤ TRACKING DB (všetky tracking dáta)?\n\nTáto akcia je NEVRATNÁ!')) return;
     if (!window.confirm('Ste si istý? Všetky tracking dáta budú natrvalo vymazané!')) return;
 
     try {
@@ -918,12 +1103,18 @@ const AdminPanel = () => {
   };
 
   const handleDeleteAll = async () => {
-    if (!window.confirm('⚠️ VYMAZAŤ VŠETKY DATABÁZY?\n\n- Progress DB\n- Responses DB\n- Tracking DB\n\nTáto akcia je NEVRATNÁ!')) return;
+    if (!window.confirm(
+      '❌ VYMAZAŤ VŠETKY DATABÁZY?\n\n' +
+      '- Progress DB\n' +
+      '- Responses DB\n' +
+      '- Tracking DB\n\n' +
+      'Táto akcia je NEVRATNÁ!'
+    )) return;
+    
     if (!window.confirm('Ste si ABSOLÚTNE istý? Všetky dáta vo VŠETKÝCH databázach budú natrvalo vymazané!')) return;
     if (!window.confirm('POSLEDNÉ VAROVANIE! Táto akcia je nevratná. Pokračovať?')) return;
 
     setLoading(true);
-    
     try {
       await fetch('/api/progress?code=all', {
         method: 'DELETE',
@@ -944,7 +1135,13 @@ const AdminPanel = () => {
       });
 
       dataManager.clearAllData();
-      alert('✅ Všetky databázy vymazané!\n\n- Progress DB\n- Responses DB\n- Tracking DB');
+      alert(
+        '✅ Všetky databázy vymazané!\n\n' +
+        '- Progress DB ✓\n' +
+        '- Responses DB ✓\n' +
+        '- Tracking DB ✓'
+      );
+      
       await loadStats();
       await loadTrackingComponents();
     } catch (error) {
@@ -978,7 +1175,7 @@ const AdminPanel = () => {
         )}
 
         <Header>
-          <Title>⚙️ Admin Panel</Title>
+          <Title>Admin Panel</Title>
           <RefreshButton variant="accent" size="small" onClick={loadStats}>
             🔄 Obnoviť dáta
           </RefreshButton>
@@ -991,34 +1188,42 @@ const AdminPanel = () => {
               <StatLabel>Celkom účastníkov</StatLabel>
               <StatValue>{stats.total}</StatValue>
             </StatCard>
+            
             <StatCard style={{ borderColor: '#ef4444' }}>
               <StatLabel>Blokovaní</StatLabel>
               <StatValue style={{ color: '#ef4444' }}>{stats.blocked}</StatValue>
             </StatCard>
+            
             <StatCard>
               <StatLabel>Skupina 0</StatLabel>
               <StatValue>{stats.group0}</StatValue>
             </StatCard>
+            
             <StatCard>
               <StatLabel>Skupina 1</StatLabel>
               <StatValue>{stats.group1}</StatValue>
             </StatCard>
+            
             <StatCard>
               <StatLabel>Skupina 2</StatLabel>
               <StatValue>{stats.group2}</StatValue>
             </StatCard>
+            
             <StatCard>
               <StatLabel>Misia 0</StatLabel>
               <StatValue>{stats.mission0Complete}</StatValue>
             </StatCard>
+            
             <StatCard>
               <StatLabel>Misia 1</StatLabel>
               <StatValue>{stats.mission1Complete}</StatValue>
             </StatCard>
+            
             <StatCard>
               <StatLabel>Misia 2</StatLabel>
               <StatValue>{stats.mission2Complete}</StatValue>
             </StatCard>
+            
             <StatCard>
               <StatLabel>Misia 3</StatLabel>
               <StatValue>{stats.mission3Complete}</StatValue>
@@ -1027,29 +1232,30 @@ const AdminPanel = () => {
         </Section>
 
         <TrackingSection>
-          <SectionTitle>🔥 Tracking Heatmaps</SectionTitle>
+          <SectionTitle>🔥 Tracking & Heatmaps</SectionTitle>
+          
           <InfoText>
             Zobrazenie agregovaných heatmap pohybov myši od všetkých používateľov pre jednotlivé komponenty.
-            Všetky templates sú štandardizované na 1200×2000px.
+            Všetky templates sú štandardizované na 1920×2000px.
           </InfoText>
           
-          {/* ✅ TLAČIDLO - Generate Templates */}
           <ButtonGroup>
             <StyledButton
               variant="accent"
               onClick={handleGenerateTemplates}
               disabled={generatingTemplates}
             >
-              📸 Generate Component Templates (1200×2000px)
+              🎨 Generate Component Templates (1920×2000px)
             </StyledButton>
+            
             <StyledButton
               variant="outline"
               onClick={handleOpenTracking}
             >
-              🔍 View All Heatmaps
+              📊 View All Heatmaps
             </StyledButton>
           </ButtonGroup>
-
+          
           {generatingTemplates && (
             <ProgressText>{templateProgress}</ProgressText>
           )}
@@ -1058,7 +1264,8 @@ const AdminPanel = () => {
             <InfoText>Načítavam tracking komponenty...</InfoText>
           ) : trackingComponents.length === 0 ? (
             <InfoText>
-              Žiadne tracking dáta zatiaľ nie sú dostupné. Tracking dáta sa zbierajú automaticky, keď používatelia prejdú cez tracked komponenty.
+              Žiadne tracking dáta zatiaľ nie sú dostupné. Tracking dáta sa zbierajú automaticky,
+              keď používatelia prejdú cez tracked komponenty.
             </InfoText>
           ) : (
             <TrackingGrid>
@@ -1070,19 +1277,21 @@ const AdminPanel = () => {
                     </TrackingBadge>
                     {component.contentId}
                   </TrackingTitle>
+                  
                   <TrackingMeta>
                     <div>👥 {component.usersCount} users</div>
                     <div>📍 {component.totalPoints?.toLocaleString()} points</div>
                     <div>⏱️ {formatTime(component.avgHoverTime)} avg</div>
-                    <div>📊 {component.recordsCount} records</div>
+                    <div>📝 {component.recordsCount} records</div>
                   </TrackingMeta>
+                  
                   <StyledButton
                     variant="outline"
                     size="small"
                     fullWidth
                     onClick={handleOpenTracking}
                   >
-                    🔍 View Heatmap
+                    View Heatmap
                   </StyledButton>
                 </TrackingCard>
               ))}
@@ -1092,35 +1301,37 @@ const AdminPanel = () => {
 
         <GridLayout>
           <Section>
-            <SectionTitle>💾 Export dát</SectionTitle>
+            <SectionTitle>📤 Export dát</SectionTitle>
             <InfoText>
-              Export obsahuje 2 sheety: detailné dáta všetkých účastníkov a súhrn so štatistikami + zoznamom ID používateľov.
+              Export obsahuje 2 sheety: detailné dáta všetkých účastníkov a shrnutie
+              so štatistikami + zoznamom ID používateľov.
             </InfoText>
-            <StyledButton 
+            <StyledButton
               variant="success"
               fullWidth
               loading={isExporting}
               onClick={handleExportExcel}
             >
-              {isExporting ? 'Exportujem...' : '📥 Export do Excel'}
+              {isExporting ? '⏳ Exportujem...' : '📊 Export do Excel'}
             </StyledButton>
           </Section>
 
           <Section>
-            <SectionTitle>🔓 Správa misií</SectionTitle>
+            <SectionTitle>🔓 Správa misií (globálne)</SectionTitle>
             <InfoText>Odomknúť/zamknúť misie pre všetkých.</InfoText>
+            
             {[0, 1, 2, 3].map(missionId => (
               <MissionRow key={missionId}>
                 <MissionLabel>🎯 Misia {missionId}</MissionLabel>
                 <MissionButtons>
-                  <StyledButton 
+                  <StyledButton
                     variant="success"
                     size="small"
                     onClick={() => handleUnlockMission(missionId)}
                   >
                     🔓 Odomknúť
                   </StyledButton>
-                  <StyledButton 
+                  <StyledButton
                     variant="outline"
                     size="small"
                     onClick={() => handleLockMission(missionId)}
@@ -1133,8 +1344,88 @@ const AdminPanel = () => {
           </Section>
         </GridLayout>
 
+        {/* ✅ NOVÁ SEKCIA - Individuálna správa misií */}
+        <Section>
+          <SectionTitle>🎯 Individuálna správa misií</SectionTitle>
+          
+          <InfoText>
+            Odomknite/zamknite konkrétne misie pre jednotlivých respondentov.
+          </InfoText>
+          
+          <UserMissionControl>
+            <UserSelect
+              value={selectedUser}
+              onChange={handleUserSelect}
+            >
+              <option value="">-- Vyberte používateľa --</option>
+              {allUsers
+                .sort((a, b) => a.participantcode.localeCompare(b.participantcode))
+                .map(u => (
+                  <option key={u.participantcode} value={u.participantcode}>
+                    {u.participantcode} (Skupina {u.groupassignment})
+                    {u.blocked ? ' - BLOKOVANÝ' : ''}
+                  </option>
+                ))
+              }
+            </UserSelect>
+            
+            {selectedUser && (
+              <UserMissionGrid>
+                {[0, 1, 2, 3].map(missionId => (
+                  <UserMissionCard
+                    key={missionId}
+                    unlocked={userMissions[`mission${missionId}_unlocked`]}
+                  >
+                    <div style={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between', 
+                      alignItems: 'center',
+                      marginBottom: '8px'
+                    }}>
+                      <strong>Misia {missionId}</strong>
+                      <MissionStatusBadge unlocked={userMissions[`mission${missionId}_unlocked`]}>
+                        {userMissions[`mission${missionId}_unlocked`] ? '🔓 Odomknutá' : '🔒 Zamknutá'}
+                      </MissionStatusBadge>
+                    </div>
+                    
+                    {userMissions[`mission${missionId}_completed`] && (
+                      <div style={{ 
+                        fontSize: '11px', 
+                        color: '#10b981',
+                        fontWeight: 600
+                      }}>
+                        ✅ Dokončená
+                      </div>
+                    )}
+                    
+                    <MissionButtons>
+                      <StyledButton
+                        variant="success"
+                        size="small"
+                        onClick={() => handleUnlockUserMission(missionId)}
+                        disabled={userMissions[`mission${missionId}_unlocked`]}
+                      >
+                        🔓 Odomknúť
+                      </StyledButton>
+                      <StyledButton
+                        variant="outline"
+                        size="small"
+                        onClick={() => handleLockUserMission(missionId)}
+                        disabled={!userMissions[`mission${missionId}_unlocked`]}
+                      >
+                        🔒 Zamknúť
+                      </StyledButton>
+                    </MissionButtons>
+                  </UserMissionCard>
+                ))}
+              </UserMissionGrid>
+            )}
+          </UserMissionControl>
+        </Section>
+
         <Section>
           <SectionTitle>👥 Zoznam účastníkov ({allUsers.length})</SectionTitle>
+          
           {allUsers.length === 0 ? (
             <InfoText>Žiadni účastníci v databáze.</InfoText>
           ) : (
@@ -1159,32 +1450,32 @@ const AdminPanel = () => {
                 </thead>
                 <tbody>
                   {allUsers.map(u => {
-                    const missionPoints = u.user_stats_mission_points || 0;
+                    const missionPoints = u.userstats?.missionpoints || 0;
                     const bonusPoints = (u.referrals_count || 0) * 10;
                     const totalPoints = missionPoints + bonusPoints;
-                    const isBlocked = u.blocked || false;
+                    const isBlocked = u.blocked === true;
                     
                     return (
-                      <tr key={u.participant_code}>
-                        <Td blocked={isBlocked}>{u.participant_code}</Td>
-                        <Td blocked={isBlocked}>{isBlocked ? '🚫' : '✅'}</Td>
-                        <Td blocked={isBlocked}>{u.group_assignment}</Td>
+                      <tr key={u.participantcode}>
+                        <Td blocked={isBlocked}>{u.participantcode}</Td>
+                        <Td blocked={isBlocked}>{isBlocked ? '🔴' : '🟢'}</Td>
+                        <Td blocked={isBlocked}>{u.groupassignment}</Td>
                         <Td blocked={isBlocked}>{missionPoints}</Td>
                         <Td blocked={isBlocked}>{bonusPoints}</Td>
                         <Td blocked={isBlocked}><strong>{totalPoints}</strong></Td>
                         <Td blocked={isBlocked}>{u.referrals_count || 0}</Td>
-                        <Td blocked={isBlocked}>{u.mission0_completed ? '✔' : '–'}</Td>
-                        <Td blocked={isBlocked}>{u.mission1_completed ? '✔' : '–'}</Td>
-                        <Td blocked={isBlocked}>{u.mission2_completed ? '✔' : '–'}</Td>
-                        <Td blocked={isBlocked}>{u.mission3_completed ? '✔' : '–'}</Td>
+                        <Td blocked={isBlocked}>{u.mission0_completed ? '✅' : '❌'}</Td>
+                        <Td blocked={isBlocked}>{u.mission1_completed ? '✅' : '❌'}</Td>
+                        <Td blocked={isBlocked}>{u.mission2_completed ? '✅' : '❌'}</Td>
+                        <Td blocked={isBlocked}>{u.mission3_completed ? '✅' : '❌'}</Td>
                         <Td blocked={isBlocked}>{u.timestamp_start?.slice(0, 10)}</Td>
                         <Td blocked={isBlocked}>
                           <BlockButton
-                            variant={isBlocked ? "outline" : "danger"}
+                            variant={isBlocked ? 'outline' : 'danger'}
                             size="small"
-                            onClick={() => handleToggleBlock(u.participant_code, isBlocked)}
+                            onClick={() => handleToggleBlock(u.participantcode, isBlocked)}
                           >
-                            {isBlocked ? '✅ Odblokovať' : '🚫 Blokovať'}
+                            {isBlocked ? '🔓 Odblokovať' : '🔒 Blokovať'}
                           </BlockButton>
                         </Td>
                       </tr>
@@ -1198,46 +1489,50 @@ const AdminPanel = () => {
 
         <DangerSection>
           <SectionTitle style={{ color: '#ef4444' }}>⚠️ Danger Zone - Mazanie databáz</SectionTitle>
+          
           <InfoText>
             Tieto akcie sú <strong>NEVRATNÉ</strong> a vymažú dáta z jednotlivých databáz alebo zo všetkých naraz!
           </InfoText>
           
           <DeleteRow>
             <DeleteLabel>
-              🗂️ Progress DB <span>(používatelia, progress, blokovanie)</span>
+              📊 Progress DB
+              <span>(používatelia, progress, blokovanie)</span>
             </DeleteLabel>
-            <StyledButton 
+            <StyledButton
               variant="danger"
               size="small"
               onClick={handleDeleteProgress}
             >
-              🗑️ Vymazať Progress
+              ❌ Vymazať Progress
             </StyledButton>
           </DeleteRow>
           
           <DeleteRow>
             <DeleteLabel>
-              📝 Responses DB <span>(odpovede na otázky)</span>
+              📝 Responses DB
+              <span>(odpovede na otázky)</span>
             </DeleteLabel>
-            <StyledButton 
+            <StyledButton
               variant="danger"
               size="small"
               onClick={handleDeleteResponses}
             >
-              🗑️ Vymazať Responses
+              ❌ Vymazať Responses
             </StyledButton>
           </DeleteRow>
           
           <DeleteRow>
             <DeleteLabel>
-              🖱️ Tracking DB <span>(mouse tracking, heatmapy)</span>
+              🖱️ Tracking DB
+              <span>(mouse tracking, heatmapy)</span>
             </DeleteLabel>
-            <StyledButton 
+            <StyledButton
               variant="danger"
               size="small"
               onClick={handleDeleteTracking}
             >
-              🗑️ Vymazať Tracking
+              ❌ Vymazať Tracking
             </StyledButton>
           </DeleteRow>
           
@@ -1245,20 +1540,24 @@ const AdminPanel = () => {
           
           <DeleteRow style={{ borderColor: '#ef4444', borderWidth: '2px' }}>
             <DeleteLabel style={{ fontSize: '18px' }}>
-              💥 VYMAZAŤ VŠETKO <span>(všetky 3 databázy)</span>
+              💥 VYMAZAŤ VŠETKO
+              <span>(všetky 3 databázy)</span>
             </DeleteLabel>
-            <StyledButton 
+            <StyledButton
               variant="danger"
               onClick={handleDeleteAll}
             >
-              🔥 Vymazať VŠETKY databázy
+              💀 Vymazať VŠETKY databázy
             </StyledButton>
           </DeleteRow>
         </DangerSection>
 
         <ButtonGroup>
-          <StyledButton variant="ghost" onClick={() => navigate('/mainmenu')}>
-            ← Späť na hlavné menu
+          <StyledButton
+            variant="ghost"
+            onClick={() => navigate('/mainmenu')}
+          >
+            ⬅️ Späť na hlavné menu
           </StyledButton>
         </ButtonGroup>
       </Container>

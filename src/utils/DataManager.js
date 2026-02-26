@@ -360,6 +360,69 @@ class DataManager {
     }
   }
 
+  // V tvojom DataManager pridaj tieto metódy:
+
+  /**
+   * Odomkne konkrétnu misiu pre jedného respondenta
+   */
+  async unlockMissionForUser(participantCode, missionId) {
+    try {
+      const response = await fetch('/api/progress', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: participantCode,
+          [`mission${missionId}_unlocked`]: true
+        })
+      });
+      
+      if (!response.ok) throw new Error('Failed to unlock mission');
+      
+      // Aktualizuj aj lokálne dáta
+      const central = this.getAllParticipantsData();
+      if (central[participantCode]) {
+        central[participantCode][`mission${missionId}_unlocked`] = true;
+        localStorage.setItem(this.centralStorageKey, JSON.stringify(central));
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error unlocking mission:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Zamkne konkrétnu misiu pre jedného respondenta
+   */
+  async lockMissionForUser(participantCode, missionId) {
+    try {
+      const response = await fetch('/api/progress', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: participantCode,
+          [`mission${missionId}_unlocked`]: false
+        })
+      });
+      
+      if (!response.ok) throw new Error('Failed to lock mission');
+      
+      // Aktualizuj aj lokálne dáta
+      const central = this.getAllParticipantsData();
+      if (central[participantCode]) {
+        central[participantCode][`mission${missionId}_unlocked`] = false;
+        localStorage.setItem(this.centralStorageKey, JSON.stringify(central));
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error locking mission:', error);
+      throw error;
+    }
+  }
+
+
   async fetchAllParticipantsData() {
     try {
       console.log('📥 Načítavam všetkých používateľov z backendu...');

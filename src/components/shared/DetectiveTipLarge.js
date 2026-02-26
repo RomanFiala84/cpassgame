@@ -1,12 +1,15 @@
 // src/components/shared/DetectiveTipLarge.js
-// KOMPLETNÁ OPTIMALIZOVANÁ VERZIA - BEZ CLOSE BUTTON
+// KOMPLETNÁ OPTIMALIZOVANÁ VERZIA - BEZ CLOSE BUTTON, BEZ TEXT BADGE
+
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 
+
 // =====================
 // STYLED COMPONENTS - OPTIMALIZOVANÁ VERZIA
 // =====================
+
 
 const TipButton = styled.button`
   position: fixed;
@@ -36,17 +39,18 @@ const TipButton = styled.button`
   }
   
   @media (max-width: 768px) {
-    width: 56px;
-    height: 56px;
+    width: 64px;
+    height: 64px;
     bottom: 12px;
     right: 12px;
   }
   
   @media (max-width: 480px) {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
   }
 `;
+
 
 const DetectiveIcon = styled.img`
   width: 110%;
@@ -63,59 +67,24 @@ const DetectiveIcon = styled.img`
   }
 `;
 
+
 const DetectiveIconFallback = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
+  font-size: 40px;
   
   @media (max-width: 768px) {
-    font-size: 26px;
+    font-size: 32px;
   }
   
   @media (max-width: 480px) {
-    font-size: 22px;
+    font-size: 28px;
   }
 `;
 
-const TextBadge = styled.div`
-  position: fixed;
-  bottom: 8px;
-  right: 16px;
-  background: ${p => p.theme.CARD_BACKGROUND};
-  border: 2px solid ${p => p.theme.ACCENT_COLOR};
-  border-radius: 8px;
-  padding: 3px 8px;
-  font-size: 10px;
-  font-weight: 600;
-  color: ${p => p.theme.ACCENT_COLOR};
-  white-space: nowrap;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  z-index: 998;
-  pointer-events: none;
-  animation: badgePulse 2s ease-in-out infinite;
-  
-  @keyframes badgePulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
-  }
-  
-  @media (max-width: 768px) {
-    bottom: 4px;
-    right: 12px;
-    font-size: 8px;
-    padding: 2px 6px;
-  }
-  
-  @media (max-width: 480px) {
-    bottom: 2px;
-    right: 12px;
-    font-size: 7px;
-    padding: 2px 5px;
-  }
-`;
 
 const Overlay = styled.div`
   position: fixed;
@@ -143,6 +112,7 @@ const Overlay = styled.div`
     to { opacity: 0; }
   }
 `;
+
 
 const ModalContainer = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
@@ -192,6 +162,7 @@ const ModalContainer = styled.div`
   }
 `;
 
+
 const CountdownBadge = styled.div`
   position: absolute;
   top: 12px;
@@ -216,6 +187,7 @@ const CountdownBadge = styled.div`
     right: 10px;
   }
 `;
+
 
 const ContentContainer = styled.div`
   width: 50%;
@@ -250,6 +222,7 @@ const ContentContainer = styled.div`
     padding: 16px;
   }
 `;
+
 
 const DetectiveImageContainer = styled.div`
   position: relative;
@@ -293,14 +266,15 @@ const DetectiveImageContainer = styled.div`
   }
 `;
 
+
 const DetectiveImage = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: contain; /* ✅ SPÄŤ contain */
   object-position: center;
   position: relative;
   z-index: 2;
-  padding: 10px;
+  padding: 10px; /* ✅ SPÄŤ padding */
   
   @media (max-width: 768px) {
     padding: 8px;
@@ -310,6 +284,8 @@ const DetectiveImage = styled.img`
     padding: 6px;
   }
 `;
+
+
 
 const DetectiveImageFallback = styled.div`
   width: 100%;
@@ -330,6 +306,7 @@ const DetectiveImageFallback = styled.div`
   }
 `;
 
+
 const Header = styled.div`
   display: flex;
   align-items: center;
@@ -338,6 +315,7 @@ const Header = styled.div`
   padding-bottom: 12px;
   border-bottom: 2px solid ${p => p.theme.BORDER_COLOR};
 `;
+
 
 const DetectiveName = styled.div`
   font-size: 20px;
@@ -360,6 +338,7 @@ const DetectiveName = styled.div`
     }
   }
 `;
+
 
 const TipText = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
@@ -400,6 +379,7 @@ const TipText = styled.div`
     }
   }
 `;
+
 
 const ActionButton = styled.button`
   width: 100%;
@@ -456,9 +436,11 @@ const ActionButton = styled.button`
   }
 `;
 
+
 // =====================
 // COMPONENT
 // =====================
+
 
 const DetectiveTipLarge = ({
   tip,
@@ -470,7 +452,6 @@ const DetectiveTipLarge = ({
   autoOpenDelay = 500,
   autoClose = false,
   autoCloseDelay = 8000,
-  showBadge = true,
   position = 'right',
   minReadTime = 10000,
   onOpen,
@@ -485,6 +466,7 @@ const DetectiveTipLarge = ({
   
   const hasBeenOpenedRef = useRef(false);
 
+
   const handleClose = useCallback(() => {
     if (!canClose) return;
     
@@ -495,6 +477,7 @@ const DetectiveTipLarge = ({
       if (onClose) onClose();
     }, 400);
   }, [canClose, onClose]);
+
 
   useEffect(() => {
     if (!isOpen) return;
@@ -523,6 +506,7 @@ const DetectiveTipLarge = ({
     return () => clearInterval(interval);
   }, [isOpen, minReadTime]);
 
+
   useEffect(() => {
     if (autoOpen) {
       const timer = setTimeout(() => {
@@ -533,6 +517,7 @@ const DetectiveTipLarge = ({
     }
   }, [autoOpen, autoOpenDelay, onOpen]);
 
+
   useEffect(() => {
     if (isOpen && autoClose && canClose) {
       const timer = setTimeout(() => {
@@ -541,6 +526,7 @@ const DetectiveTipLarge = ({
       return () => clearTimeout(timer);
     }
   }, [isOpen, autoClose, autoCloseDelay, canClose, handleClose]);
+
 
   const handleToggle = useCallback(() => {
     if (isOpen) {
@@ -551,13 +537,16 @@ const DetectiveTipLarge = ({
     }
   }, [isOpen, handleClose, onOpen]);
 
+
   const handleImageError = () => {
     setImageError(true);
   };
 
+
   const handleIconError = () => {
     setIconError(true);
   };
+
 
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget && canClose) {
@@ -565,14 +554,16 @@ const DetectiveTipLarge = ({
     }
   };
 
+
   if (!tip) return null;
 
+
   const buttonStyle = position === 'left' ? { left: '16px', right: 'auto' } : {};
-  const badgeStyle = position === 'left' ? { left: '16px', right: 'auto' } : {};
+
 
   return (
     <>
-      {/* BUTTON */}
+      {/* BUTTON - BEZ BADGE */}
       <TipButton 
         onClick={handleToggle} 
         title="Tip od Inšpektora Kritana"
@@ -589,13 +580,6 @@ const DetectiveTipLarge = ({
           <DetectiveIconFallback>🕵️</DetectiveIconFallback>
         )}
       </TipButton>
-      
-      {/* TEXTOVÝ BADGE POD IKONKOU */}
-      {showBadge && !isOpen && (
-        <TextBadge style={badgeStyle}>
-          Tip od {detectiveName}
-        </TextBadge>
-      )}
       
       {/* MODAL */}
       {(isOpen || isClosing) && (
@@ -640,5 +624,6 @@ const DetectiveTipLarge = ({
     </>
   );
 };
+
 
 export default DetectiveTipLarge;
