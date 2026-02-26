@@ -463,7 +463,7 @@ const MissionStatusBadge = styled.div`
 
 const AdminPanel = () => {
   const navigate = useNavigate();
-  const { dataManager, userId } = useUserStats();
+  const { dataManager} = useUserStats();
   
   const [stats, setStats] = useState({
     total: 0,
@@ -537,15 +537,21 @@ const AdminPanel = () => {
     }
   }, []);
 
+  // ✅ SPRÁVNE - kontroluj sessionStorage namiesto userId
   useEffect(() => {
-    if (!dataManager.isAdmin(userId)) {
-      navigate('/');
+    const code = sessionStorage.getItem('participantCode');
+    
+    if (!code || !dataManager.isAdmin(code)) {
+      console.log('❌ Not admin - redirect to /instruction');
+      navigate('/instruction');
       return;
     }
     
+    console.log('✅ Admin access granted');
     loadStats();
     loadTrackingComponents();
-  }, [userId, dataManager, navigate, loadStats, loadTrackingComponents]);
+  }, [dataManager, navigate, loadStats, loadTrackingComponents]); // ❌ ODSTRÁŇ userId z dependencies
+
 
   const handleOpenTracking = () => {
     navigate('/admin/tracking');
