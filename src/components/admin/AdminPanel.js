@@ -1,5 +1,5 @@
 // src/components/admin/AdminPanel.js
-// FINÁLNA VERZIA - S template generation na fixné rozmery (1200×2000)
+// ✅ FINÁLNA VERZIA - S individuálnou správou misií + template generation
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +10,10 @@ import { useUserStats } from '../../contexts/UserStatsContext';
 import * as XLSX from 'xlsx';
 import { generateAndUploadComponentTemplate } from '../../utils/trackingHelpers';
 
-// Styled components (všetky zostávajú rovnaké)
+// =====================
+// STYLED COMPONENTS
+// =====================
+
 const Container = styled.div`
   padding: 20px;
   max-width: 1400px;
@@ -390,10 +393,77 @@ const ProgressText = styled.div`
   font-weight: 500;
 `;
 
+// ✅ NOVÉ - Individuálna správa misií
+const UserMissionControl = styled.div`
+  margin-top: 16px;
+  padding: 16px;
+  background: ${p => p.theme.INPUT_BACKGROUND}44;
+  border-radius: 8px;
+  border: 1px solid ${p => p.theme.BORDER_COLOR};
+`;
+
+const UserSelect = styled.select`
+  width: 100%;
+  padding: 10px;
+  background: ${p => p.theme.INPUT_BACKGROUND};
+  border: 2px solid ${p => p.theme.BORDER_COLOR};
+  border-radius: 8px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  font-size: 14px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  
+  &:focus {
+    outline: none;
+    border-color: ${p => p.theme.ACCENT_COLOR};
+  }
+  
+  option {
+    background: ${p => p.theme.CARD_BACKGROUND};
+    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  }
+`;
+
+const UserMissionGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const UserMissionCard = styled.div`
+  background: ${p => p.theme.CARD_BACKGROUND};
+  border: 2px solid ${p => p.unlocked ? '#10b981' : p.theme.BORDER_COLOR};
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const MissionStatusBadge = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: ${p => p.unlocked ? '#10b98122' : `${p.theme.BORDER_COLOR}44`};
+  color: ${p => p.unlocked ? '#10b981' : p.theme.SECONDARY_TEXT_COLOR};
+  width: fit-content;
+`;
+
+// =====================
 // ADMIN PANEL KOMPONENT
+// =====================
+
 const AdminPanel = () => {
   const navigate = useNavigate();
-  const { dataManager, userId } = useUserStats();
+  const { dataManager, userId } = useUserStats(); // ✅ userId zostáva
 
   const [stats, setStats] = useState({
     total: 0,
@@ -414,6 +484,19 @@ const AdminPanel = () => {
   const [trackingLoading, setTrackingLoading] = useState(false);
   const [generatingTemplates, setGeneratingTemplates] = useState(false);
   const [templateProgress, setTemplateProgress] = useState('');
+
+  // ✅ NOVÉ - State pre individuálnu správu misií
+  const [selectedUser, setSelectedUser] = useState('');
+  const [userMissions, setUserMissions] = useState({
+    mission0_unlocked: false,
+    mission0_completed: false,
+    mission1_unlocked: false,
+    mission1_completed: false,
+    mission2_unlocked: false,
+    mission2_completed: false,
+    mission3_unlocked: false,
+    mission3_completed: false
+  });
 
   const loadStats = useCallback(async () => {
     setLoading(true);
@@ -441,7 +524,6 @@ const AdminPanel = () => {
     try {
       const response = await fetch('/api/admin-tracking-components');
       const data = await response.json();
-
       if (data.success) {
         setTrackingComponents(data.components || []);
       } else {
@@ -454,11 +536,15 @@ const AdminPanel = () => {
     }
   }, []);
 
+  // ✅ OPRAVENÉ - userId zostáva, kontroluje sa normálne
   useEffect(() => {
-    if (!dataManager.isAdmin(userId)) {
-      navigate('/');
+    if (!userId || !dataManager.isAdmin(userId)) {
+      console.log('❌ Not admin - redirect to /instruction');
+      navigate('/instruction');
       return;
     }
+    
+    console.log('✅ Admin access granted');
     loadStats();
     loadTrackingComponents();
   }, [userId, dataManager, navigate, loadStats, loadTrackingComponents]);
@@ -472,7 +558,120 @@ const AdminPanel = () => {
     return `${(ms / 1000).toFixed(1)}s`;
   };
 
-  // ✅ FINÁLNA FUNKCIA - handleGenerateTemplates (1920px template generation)
+  // ✅ NOVÝ - Handler pre výber používateľa
+  const handleUserSelect = (e) => {
+    const code = e.target.value;
+    setSelectedUser(code);
+    
+    if (code) {
+      const user = allUsers.find(u => u.participant_code === code);
+      if (user) {
+        setUserMissions({
+          mission0_unlocked: user.mission0_unlocked || false,
+          mission0_completed: user.mission0_completed || false,
+          mission1_unlocked: user.mission1_unlocked || false,
+          mission1_completed: user.mission1_completed || false,
+          mission2_unlocked: user.mission2_unlocked || false,
+          mission2_completed: user.mission2_completed || false,
+          mission3_unlocked: user.mission3_unlocked || false,
+          mission3_completed: user.mission3_completed || false
+        });
+      }
+    }
+  };
+
+  // ✅ NOVÝ - Handler pre individuálne odomknutie misie
+  const handleUnlockUserMission = async (missionId) => {
+    if (!selectedUser) {
+      alert('Prosím vyberte používateľa!');
+      return;
+    }
+    
+    if (!window.confirm(`Odomknúť Misiu ${missionId} pre používateľa ${selectedUser}?`)) {
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      await dataManager.unlockMissionForUser(selectedUser, missionId);
+      alert(`✅ Misia ${missionId} odomknutá pre ${selectedUser}!`);
+      await loadStats();
+      
+      // Refresh user missions display
+      const updatedUsers = allUsers.map(u => {
+        if (u.participant_code === selectedUser) {
+          return { ...u, [`mission${missionId}_unlocked`]: true };
+        }
+        return u;
+      });
+      setAllUsers(updatedUsers);
+      
+      const user = updatedUsers.find(u => u.participant_code === selectedUser);
+      if (user) {
+        setUserMissions({
+          mission0_unlocked: user.mission0_unlocked || false,
+          mission0_completed: user.mission0_completed || false,
+          mission1_unlocked: user.mission1_unlocked || false,
+          mission1_completed: user.mission1_completed || false,
+          mission2_unlocked: user.mission2_unlocked || false,
+          mission2_completed: user.mission2_completed || false,
+          mission3_unlocked: user.mission3_unlocked || false,
+          mission3_completed: user.mission3_completed || false
+        });
+      }
+    } catch (error) {
+      alert(`❌ Chyba: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ NOVÝ - Handler pre individuálne zamknutie misie
+  const handleLockUserMission = async (missionId) => {
+    if (!selectedUser) {
+      alert('Prosím vyberte používateľa!');
+      return;
+    }
+    
+    if (!window.confirm(`Zamknúť Misiu ${missionId} pre používateľa ${selectedUser}?`)) {
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      await dataManager.lockMissionForUser(selectedUser, missionId);
+      alert(`✅ Misia ${missionId} zamknutá pre ${selectedUser}!`);
+      await loadStats();
+      
+      // Refresh user missions display
+      const updatedUsers = allUsers.map(u => {
+        if (u.participant_code === selectedUser) {
+          return { ...u, [`mission${missionId}_unlocked`]: false };
+        }
+        return u;
+      });
+      setAllUsers(updatedUsers);
+      
+      const user = updatedUsers.find(u => u.participant_code === selectedUser);
+      if (user) {
+        setUserMissions({
+          mission0_unlocked: user.mission0_unlocked || false,
+          mission0_completed: user.mission0_completed || false,
+          mission1_unlocked: user.mission1_unlocked || false,
+          mission1_completed: user.mission1_completed || false,
+          mission2_unlocked: user.mission2_unlocked || false,
+          mission2_completed: user.mission2_completed || false,
+          mission3_unlocked: user.mission3_unlocked || false,
+          mission3_completed: user.mission3_completed || false
+        });
+      }
+    } catch (error) {
+      alert(`❌ Chyba: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleGenerateTemplates = async () => {
     const confirmed = window.confirm(
       '📸 Vygenerovať component template screenshots?\n\n' +
@@ -492,7 +691,6 @@ const AdminPanel = () => {
     setGeneratingTemplates(true);
     setTemplateProgress('Pripravujem generovanie templates...');
 
-    // Definícia komponentov
     const components = [
       { id: 'postsA1_mission1', type: 'post', name: 'PostsA1', path: '/mission1/postsa' },
       { id: 'postsB1_mission1', type: 'post', name: 'PostsB1', path: '/mission1/postsb' },
@@ -512,7 +710,6 @@ const AdminPanel = () => {
         setTemplateProgress(`📸 Spracúvam ${i + 1}/${components.length}: ${comp.name}...`);
 
         try {
-          // ✅ OPRAVA - Väčšie okno pre 1920px screenshot
           const fullPath = `${window.location.origin}${comp.path}`;
           const newWindow = window.open(
             fullPath, 
@@ -524,11 +721,9 @@ const AdminPanel = () => {
             throw new Error('Popup bolo zablokované! Povoľte popupy pre túto stránku.');
           }
 
-          // ✅ Počkaj 10 sekúnd na úplné načítanie
           console.log(`⏳ Čakám 10s na načítanie ${comp.name}...`);
           await new Promise(resolve => setTimeout(resolve, 10000));
 
-          // ✅ Scroll check
           try {
             if (newWindow.document && newWindow.document.body) {
               const bodyHeight = newWindow.document.body.scrollHeight;
@@ -548,10 +743,8 @@ const AdminPanel = () => {
             console.warn('⚠️ Scroll check failed:', scrollError);
           }
 
-          // ✅ ŽIADNY window.confirm() - priamo urob screenshot
           console.log(`📸 Robím screenshot ${comp.name} (1920px)...`);
 
-          // Nájdi container v child okne
           const container = newWindow.document.querySelector('[class*="Container"]') || newWindow.document.body;
           
           if (!container) {
@@ -563,7 +756,6 @@ const AdminPanel = () => {
             scrollHeight: container.scrollHeight
           });
 
-          // ✅ Použi helper funkciu (generuje 1920px template)
           const templateUrl = await generateAndUploadComponentTemplate(
             container,
             comp.id,
@@ -584,10 +776,7 @@ const AdminPanel = () => {
           });
           successCount++;
 
-          // Zatvor okno
           newWindow.close();
-
-          // Krátka pauza medzi komponentami
           await new Promise(resolve => setTimeout(resolve, 1500));
 
         } catch (error) {
@@ -597,7 +786,6 @@ const AdminPanel = () => {
         }
       }
 
-      // Finálny report
       let reportMessage = `📸 Generovanie templates dokončené!\n\n`;
       reportMessage += `✅ Úspešné: ${successCount}\n`;
       reportMessage += `❌ Neúspešné: ${failCount}\n\n`;
@@ -613,8 +801,6 @@ const AdminPanel = () => {
       });
 
       alert(reportMessage);
-
-      // Refresh tracking components
       await loadTrackingComponents();
 
     } catch (error) {
@@ -625,10 +811,6 @@ const AdminPanel = () => {
       setTemplateProgress('');
     }
   };
-
-
-
-
 
   const handleToggleBlock = async (participantCode, currentBlockedState) => {
     const action = currentBlockedState ? 'odblokovať' : 'blokovať';
@@ -1033,7 +1215,6 @@ const AdminPanel = () => {
             Všetky templates sú štandardizované na 1200×2000px.
           </InfoText>
           
-          {/* ✅ TLAČIDLO - Generate Templates */}
           <ButtonGroup>
             <StyledButton
               variant="accent"
@@ -1107,7 +1288,7 @@ const AdminPanel = () => {
           </Section>
 
           <Section>
-            <SectionTitle>🔓 Správa misií</SectionTitle>
+            <SectionTitle>🔓 Správa misií (globálne)</SectionTitle>
             <InfoText>Odomknúť/zamknúť misie pre všetkých.</InfoText>
             {[0, 1, 2, 3].map(missionId => (
               <MissionRow key={missionId}>
@@ -1132,6 +1313,89 @@ const AdminPanel = () => {
             ))}
           </Section>
         </GridLayout>
+
+        {/* ✅ NOVÁ SEKCIA - Individuálna správa misií */}
+        <Section>
+          <SectionTitle>🎯 Individuálna správa misií</SectionTitle>
+          <InfoText>
+            Odomknite/zamknite konkrétne misie pre jednotlivých respondentov.
+          </InfoText>
+          
+          <UserMissionControl>
+            <UserSelect 
+              value={selectedUser} 
+              onChange={handleUserSelect}
+            >
+              <option value="">-- Vyberte používateľa --</option>
+              {allUsers
+                .sort((a, b) => a.participant_code.localeCompare(b.participant_code))
+                .map(u => (
+                  <option 
+                    key={u.participant_code} 
+                    value={u.participant_code}
+                  >
+                    {u.participant_code} (Skupina {u.group_assignment})
+                    {u.blocked ? ' - BLOKOVANÝ' : ''}
+                  </option>
+                ))}
+            </UserSelect>
+            
+            {selectedUser && (
+              <UserMissionGrid>
+                {[0, 1, 2, 3].map(missionId => (
+                  <UserMissionCard 
+                    key={missionId}
+                    unlocked={userMissions[`mission${missionId}_unlocked`]}
+                  >
+                    <div style={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between', 
+                      alignItems: 'center',
+                      marginBottom: '8px'
+                    }}>
+                      <strong>Misia {missionId}</strong>
+                      <MissionStatusBadge 
+                        unlocked={userMissions[`mission${missionId}_unlocked`]}
+                      >
+                        {userMissions[`mission${missionId}_unlocked`] ? '🔓 Odomknutá' : '🔒 Zamknutá'}
+                      </MissionStatusBadge>
+                    </div>
+                    
+                    {userMissions[`mission${missionId}_completed`] && (
+                      <div style={{ 
+                        fontSize: '11px', 
+                        color: '#10b981',
+                        fontWeight: 600 
+                      }}>
+                        ✅ Dokončená
+                      </div>
+                    )}
+                    
+                    <MissionButtons>
+                      <StyledButton
+                        variant="success"
+                        size="small"
+                        onClick={() => handleUnlockUserMission(missionId)}
+                        disabled={userMissions[`mission${missionId}_unlocked`]}
+                      >
+                        Odomknúť
+                      </StyledButton>
+                      
+                      <StyledButton
+                        variant="outline"
+                        size="small"
+                        onClick={() => handleLockUserMission(missionId)}
+                        disabled={!userMissions[`mission${missionId}_unlocked`]}
+                      >
+                        Zamknúť
+                      </StyledButton>
+                    </MissionButtons>
+                  </UserMissionCard>
+                ))}
+              </UserMissionGrid>
+            )}
+          </UserMissionControl>
+        </Section>
 
         <Section>
           <SectionTitle>👥 Zoznam účastníkov ({allUsers.length})</SectionTitle>

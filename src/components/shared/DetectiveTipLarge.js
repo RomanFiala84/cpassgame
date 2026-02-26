@@ -270,7 +270,7 @@ const DetectiveImageContainer = styled.div`
 const DetectiveImage = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: contain; /* ✅ SPÄŤ contain */
+  object-fit: cover; /* ✅ SPÄŤ contain */
   object-position: center;
   position: relative;
   z-index: 2;

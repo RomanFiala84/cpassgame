@@ -1,5 +1,5 @@
 // src/components/shared/DetectiveTip.js
-// UPRAVENÁ VERZIA - Textový badge namiesto červeného
+// ✅ VERZIA BEZ TEXTOVÉHO BADGE
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
@@ -77,43 +77,6 @@ const DetectiveIconFallback = styled.div`
   
   @media (max-width: 480px) {
     font-size: 22px;
-  }
-`;
-
-const TextBadge = styled.div`
-  position: fixed;
-  bottom: 8px;
-  right: 16px;
-  background: ${p => p.theme.CARD_BACKGROUND};
-  border: 2px solid ${p => p.theme.ACCENT_COLOR};
-  border-radius: 8px;
-  padding: 3px 8px;
-  font-size: 10px;
-  font-weight: 600;
-  color: ${p => p.theme.ACCENT_COLOR};
-  white-space: nowrap;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  z-index: 998;
-  pointer-events: none;
-  animation: badgePulse 2s ease-in-out infinite;
-  
-  @keyframes badgePulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
-  }
-  
-  @media (max-width: 768px) {
-    bottom: 4px;
-    right: 12px;
-    font-size: 8px;
-    padding: 2px 6px;
-  }
-  
-  @media (max-width: 480px) {
-    bottom: 2px;
-    right: 12px;
-    font-size: 7px;
-    padding: 2px 5px;
   }
 `;
 
@@ -371,6 +334,9 @@ const CountdownTimer = styled.div`
   }
 `;
 
+// =====================
+// KOMPONENT
+// =====================
 
 const DetectiveTip = ({ 
   tip, 
@@ -379,7 +345,6 @@ const DetectiveTip = ({
   autoOpenDelay = 500,
   autoClose = false,
   autoCloseDelay = 8000,
-  showBadge = true, // ✅ Teraz ovláda textový badge
   position = 'right',
   minReadTime = 10000,
   onOpen,
@@ -470,7 +435,6 @@ const DetectiveTip = ({
 
   const buttonStyle = position === 'left' ? { left: '20px', right: 'auto' } : {};
   const bubbleStyle = position === 'left' ? { left: '20px', right: 'auto' } : {};
-  const badgeStyle = position === 'left' ? { left: '20px', right: 'auto' } : {};
 
   return (
     <>
@@ -490,13 +454,6 @@ const DetectiveTip = ({
           <DetectiveIconFallback>🕵️</DetectiveIconFallback>
         )}
       </TipButton>
-      
-      {/* ✅ NOVÝ: Textový badge pod ikonkou */}
-      {showBadge && !isOpen && (
-        <TextBadge style={badgeStyle}>
-          Tip od {detectiveName}
-        </TextBadge>
-      )}
       
       {(isOpen || isClosing) && (
         <TipBubble style={bubbleStyle} $isClosing={isClosing}>

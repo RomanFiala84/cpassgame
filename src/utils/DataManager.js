@@ -360,64 +360,104 @@ class DataManager {
     }
   }
 
-  // V tvojom DataManager pridaj tieto metódy:
-
   /**
-   * Odomkne konkrétnu misiu pre jedného respondenta
-   */
-  async unlockMissionForUser(participantCode, missionId) {
-    try {
-      const response = await fetch('/api/progress', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          code: participantCode,
-          [`mission${missionId}_unlocked`]: true
-        })
-      });
+ * ✅ Odomkne konkrétnu misiu pre jedného respondenta
+ */
+async unlockMissionForUser(participantCode, missionId) {
+  const normalizedCode = participantCode.toUpperCase().trim();
+  
+  try {
+    console.log(`🔓 Odomykám misiu ${missionId} pre ${normalizedCode}...`);
+    
+    const response = await fetch(this.apiBase, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        code: normalizedCode,
+        [`mission${missionId}_unlocked`]: true
+      })
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `Failed to unlock mission: ${response.status}`);
+    }
+    
+    console.log(`✅ Server: Misia ${missionId} odomknutá pre ${normalizedCode}`);
+    
+    // Aktualizuj lokálne dáta
+    const central = this.getAllParticipantsData();
+    if (central[normalizedCode]) {
+      central[normalizedCode][`mission${missionId}_unlocked`] = true;
+      localStorage.setItem(this.centralStorageKey, JSON.stringify(central));
       
-      if (!response.ok) throw new Error('Failed to unlock mission');
-      
-      // Aktualizuj aj lokálne dáta
-      const central = this.getAllParticipantsData();
-      if (central[participantCode]) {
-        central[participantCode][`mission${missionId}_unlocked`] = true;
-        localStorage.setItem(this.centralStorageKey, JSON.stringify(central));
+      // Aktualizuj aj cache
+      if (this.cache.has(normalizedCode)) {
+        const cached = this.cache.get(normalizedCode);
+        cached[`mission${missionId}_unlocked`] = true;
+        this.cache.set(normalizedCode, cached);
       }
       
-      return true;
-    } catch (error) {
-      console.error('Error unlocking mission:', error);
-      throw error;
+      console.log(`✅ Lokálne: Misia ${missionId} odomknutá pre ${normalizedCode}`);
     }
+    
+    // Refresh všetkých dát
+    await this.fetchAllParticipantsData();
+    
+    return true;
+  } catch (error) {
+    console.error(`❌ Error unlocking mission ${missionId} for ${normalizedCode}:`, error);
+    throw error;
   }
+}
 
   /**
-   * Zamkne konkrétnu misiu pre jedného respondenta
+   * ✅ Zamkne konkrétnu misiu pre jedného respondenta
    */
   async lockMissionForUser(participantCode, missionId) {
+    const normalizedCode = participantCode.toUpperCase().trim();
+    
     try {
-      const response = await fetch('/api/progress', {
+      console.log(`🔒 Zamykám misiu ${missionId} pre ${normalizedCode}...`);
+      
+      const response = await fetch(this.apiBase, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          code: participantCode,
+          code: normalizedCode,
           [`mission${missionId}_unlocked`]: false
         })
       });
       
-      if (!response.ok) throw new Error('Failed to lock mission');
-      
-      // Aktualizuj aj lokálne dáta
-      const central = this.getAllParticipantsData();
-      if (central[participantCode]) {
-        central[participantCode][`mission${missionId}_unlocked`] = false;
-        localStorage.setItem(this.centralStorageKey, JSON.stringify(central));
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to lock mission: ${response.status}`);
       }
+      
+      console.log(`✅ Server: Misia ${missionId} zamknutá pre ${normalizedCode}`);
+      
+      // Aktualizuj lokálne dáta
+      const central = this.getAllParticipantsData();
+      if (central[normalizedCode]) {
+        central[normalizedCode][`mission${missionId}_unlocked`] = false;
+        localStorage.setItem(this.centralStorageKey, JSON.stringify(central));
+        
+        // Aktualizuj aj cache
+        if (this.cache.has(normalizedCode)) {
+          const cached = this.cache.get(normalizedCode);
+          cached[`mission${missionId}_unlocked`] = false;
+          this.cache.set(normalizedCode, cached);
+        }
+        
+        console.log(`✅ Lokálne: Misia ${missionId} zamknutá pre ${normalizedCode}`);
+      }
+      
+      // Refresh všetkých dát
+      await this.fetchAllParticipantsData();
       
       return true;
     } catch (error) {
-      console.error('Error locking mission:', error);
+      console.error(`❌ Error locking mission ${missionId} for ${normalizedCode}:`, error);
       throw error;
     }
   }
