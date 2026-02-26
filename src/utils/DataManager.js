@@ -582,28 +582,28 @@ class DataManager {
     }
   }
 
+  // ✅ OPRAVENÉ - vráti boolean
   async syncToServer(participantCode, data) {
-    const normalizedCode = participantCode.toUpperCase().trim(); // ✅ PRIDANÉ
-    
     try {
-      const resp = await fetch(`${this.apiBase}?code=${normalizedCode}`, {
-        method: 'PUT',
+      const response = await fetch(this.apiBase, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
 
-      if (!resp.ok) {
-        console.warn(`Sync failed for ${normalizedCode}: HTTP ${resp.status}`);
-        return false;
+      if (response.ok) {
+        console.log(`✅ Synced ${participantCode} - blocked: ${data.blocked || false}`);
+        return true; // ✅ Úspech
+      } else {
+        console.warn(`⚠️ Server error syncing ${participantCode}:`, response.status);
+        return false; // ✅ Server error
       }
-
-      console.log(`✅ Synced ${normalizedCode} - blocked: ${data.blocked}`);
-      return true;
     } catch (error) {
-      console.warn('Sync na server zlyhal:', error.message);
-      return false;
+      console.error(`❌ Sync failed for ${participantCode}:`, error);
+      return false; // ✅ Network error
     }
   }
+
 
   async validateAndFixData(data, participantCode) {
     const normalizedCode = participantCode.toUpperCase().trim(); // ✅ PRIDANÉ
@@ -805,7 +805,8 @@ class DataManager {
     this.cache.set(normalizedCode, data);
     localStorage.setItem(`fullProgress_${normalizedCode}`, JSON.stringify(data));
     this.saveToCentralStorage(normalizedCode, data);
-    await this.syncToServer(normalizedCode, data);
+    const synced = await this.syncToServer(normalizedCode, data);
+    return synced;
   }
 
   updateLocalProgress(participantCode, progressData) {

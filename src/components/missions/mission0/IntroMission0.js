@@ -20,15 +20,28 @@ const IntroMission0 = () => {
   const { dataManager, userId } = useUserStats();
 
   useEffect(() => {
-    const recordStart = async () => {
+  const recordStart = async () => {
+    if (!userId) return;
+
+    try {
       const prog = await dataManager.loadUserProgress(userId);
-      if (!prog.mission0_timestamp_start) {
-        prog.mission0_timestamp_start = new Date().toISOString();
+      if (!prog) {
+        console.error(`❌ Failed to load progress for ${userId}`);
+        return;
+      }
+
+      const timestampKey = `mission${0}_timestamp_start`; // X = 0, 1, 2, 3
+      if (!prog[timestampKey]) {
+        prog[timestampKey] = new Date().toISOString();
         await dataManager.saveProgress(userId, prog);
       }
-    };
-    recordStart();
-  }, [dataManager, userId]);
+    } catch (error) {
+      console.error('❌ Error recording mission start:', error);
+    }
+  };
+
+  recordStart();
+}, [dataManager, userId]);
 
   const handleContinue = () => navigate('/mission0/questionnaire');
 
