@@ -31,40 +31,89 @@ export const UserStatsProvider = ({ children }) => {
   const isLoadingRef = useRef(false);
   const lastLoadedUserIdRef = useRef(null);
 
+  // ✅ PO - Bezpečné spracovanie null
   const login = useCallback(async (id) => {
     try {
       console.log(`🔐 Login attempt for: ${id}`);
       
       const userData = await dataManager.loadUserProgress(id, true);
       
-      if (userData?.blocked) {
-        console.log(`❌ Login zamietnutý: Účastník ${id} je blokovaný`);
-        sessionStorage.removeItem('participantCode');
-        return { success: false, blocked: true, message: 'Účet je blokovaný administrátorom' };
+      // ✅ Kontrola či userData existuje
+      if (!userData) {
+        console.error(`❌ Login failed: Nepodarilo sa načítať používateľa ${id}`);
+        return { 
+          success: false, 
+          blocked: false, 
+          error: 'Nepodarilo sa načítať používateľa. Skúste to znova.' 
+        };
       }
       
+      // Kontrola blocked stavu
+      if (userData.blocked) {
+        console.log(`❌ Login zamietnutý: Účastník ${id} je blokovaný`);
+        sessionStorage.removeItem('participantCode');
+        return { 
+          success: false, 
+          blocked: true, 
+          message: 'Účet je blokovaný administrátorom' 
+        };
+      }
+      
+      // ✅ Teraz vieme, že userData existuje a nie je null
       sessionStorage.setItem('participantCode', id);
       setUserId(id);
+      
       userData.instruction_completed = true;
       userData.current_progress_step = 'intro';
-      await dataManager.saveProgress(id, userData);
       
+      const saved = await dataManager.saveProgress(id, userData);
+      if (!saved) {
+        console.warn('⚠️ Progress not saved to server, but login successful');
+      }
+      
+      console.log(`✅ Login successful for: ${id}`);
       return { success: true, blocked: false };
+      
     } catch (error) {
-      return { success: false, blocked: false, error: error.message };
+      console.error('❌ Login error:', error);
+      return { 
+        success: false, 
+        blocked: false, 
+        error: error.message || 'Neočakávaná chyba pri prihlásení' 
+      };
     }
   }, [dataManager]);
 
+
+  // ✅ PO - Vyčistí VŠETKY intervaly a listenery
   const logout = useCallback(() => {
+    console.log('🚪 Logging out and cleaning up resources...');
+    
+    // Vyčisti sessionStorage
     sessionStorage.removeItem('participantCode');
+    
+    // Resetuj state
     setUserId(null);
     lastLoadedUserIdRef.current = null;
     
+    // ✅ Vyčisti auto-refresh interval
     if (autoRefreshIntervalRef.current) {
       clearInterval(autoRefreshIntervalRef.current);
       autoRefreshIntervalRef.current = null;
+      console.log('✅ Auto-refresh interval cleared');
     }
     
+    // ✅ Vyčisti polling interval z useEffect (riadok 108)
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+      console.log('✅ Polling interval cleared');
+    }
+    
+    // Resetuj loading flag
+    isLoadingRef.current = false;
+    
+    // Resetuj stats
     setUserStats({
       level: 1,
       points: 0,
@@ -75,7 +124,10 @@ export const UserStatsProvider = ({ children }) => {
       referrals: 0,
       eligibleForRaffle: false
     });
+    
+    console.log('✅ Logout complete');
   }, []);
+
 
   useEffect(() => {
     const updateUserId = () => {
@@ -175,17 +227,6 @@ export const UserStatsProvider = ({ children }) => {
   }, [userId, dataManager]);
 
   useEffect(() => {
-    const handleStorage = (e) => {
-      if (e.key === dataManager.centralStorageKey) {
-        console.log('📡 Storage changed, refreshing stats');
-        loadUserStats();
-      }
-    };
-    window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
-  }, [dataManager.centralStorageKey, loadUserStats]);
-
-  useEffect(() => {
     if (!userId || isLoadingRef.current) return;
 
     if (lastLoadedUserIdRef.current !== userId) {
@@ -196,14 +237,22 @@ export const UserStatsProvider = ({ children }) => {
     console.log('⏰ Starting 60s auto-refresh timer for mission unlock detection');
     
     autoRefreshIntervalRef.current = setInterval(async () => {
-      console.log('🔄 Auto-refresh: Načítavam fresh data zo servera...');
+      if (isLoadingRef.current) {
+        console.log('⏭️ Skip refresh - still loading');
+        return;
+      }
+      
+      isLoadingRef.current = true;
       try {
         await dataManager.loadUserProgress(userId, true);
         await loadUserStats(true);
       } catch (error) {
         console.error('❌ Auto-refresh error:', error);
+      } finally {
+        isLoadingRef.current = false;
       }
     }, 60000);
+
 
     return () => {
       if (autoRefreshIntervalRef.current) {

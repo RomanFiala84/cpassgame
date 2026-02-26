@@ -447,8 +447,6 @@ class DataManager {
     }
   }
 
-
-
   async fetchAllParticipantsData() {
     try {
       console.log('📥 Načítavam všetkých používateľov z backendu...');
@@ -810,6 +808,32 @@ class DataManager {
     await this.syncToServer(normalizedCode, data);
   }
 
+  updateLocalProgress(participantCode, progressData) {
+  if (!participantCode || !progressData) return;
+  
+  const normalizedCode = participantCode.toUpperCase().trim();
+  
+  console.log(`🔄 Aktualizujem lokálny progress pre ${normalizedCode}`);
+  
+  // Aktualizuj cache
+  this.cache.set(normalizedCode, progressData);
+  
+  // Aktualizuj localStorage
+  localStorage.setItem(`fullProgress_${normalizedCode}`, JSON.stringify(progressData));
+  
+  // Aktualizuj centrálne úložisko
+  this.saveToCentralStorage(normalizedCode, progressData);
+  
+  // Trigger storage event pre real-time sync
+  window.dispatchEvent(new StorageEvent('storage', {
+    key: `fullProgress_${normalizedCode}`,
+    newValue: JSON.stringify(progressData),
+    url: window.location.href
+  }));
+  
+  console.log(`✅ Lokálny progress aktualizovaný pre ${normalizedCode}`);
+  }
+
   async loadComponentData(participantCode, componentKey) {
     if (!participantCode) return {};
     const normalizedCode = participantCode.toUpperCase().trim(); // ✅ PRIDANÉ
@@ -876,8 +900,11 @@ class DataManager {
   }
 
   isAdmin(code) {
-    const normalizedCode = code.toUpperCase().trim(); // ✅ PRIDANÉ
-    return normalizedCode === this.adminUserId;
+  // ✅ KRITICKÁ OPRAVA - kontrola null/undefined
+  if (!code) return false;
+  
+  const normalizedCode = code.toUpperCase().trim();
+  return normalizedCode === this.adminUserId;
   }
 
   _cacheAndStore(participantCode, data) {
