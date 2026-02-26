@@ -983,7 +983,7 @@ const AdminPanel = () => {
         <Section>
           <SectionTitle>👥 Účastníci ({allUsers.length})</SectionTitle>
           <InfoText>
-            Klikni 🔒/🔓 pre individuálnu správu misií.
+            Klikni 🔒/🔓 pre individuálnu správu misií. ✅ = dokončená misia.
           </InfoText>
           {allUsers.length === 0 ? (
             <InfoText>Žiadni účastníci.</InfoText>
@@ -999,10 +999,15 @@ const AdminPanel = () => {
                     <Th>Bon</Th>
                     <Th>∑</Th>
                     <Th>Ref</Th>
-                    <Th>M0</Th>
-                    <Th>M1</Th>
-                    <Th>M2</Th>
-                    <Th>M3</Th>
+                    {/* ✅ 2 stĺpce pre každú misiu: unlock + completed */}
+                    <Th>M0🔓</Th>
+                    <Th>M0✅</Th>
+                    <Th>M1🔓</Th>
+                    <Th>M1✅</Th>
+                    <Th>M2🔓</Th>
+                    <Th>M2✅</Th>
+                    <Th>M3🔓</Th>
+                    <Th>M3✅</Th>
                     <Th>Reg</Th>
                     <Th>Akcia</Th>
                   </tr>
@@ -1024,33 +1029,48 @@ const AdminPanel = () => {
                         <Td blocked={isBlocked}><strong>{totalPoints}</strong></Td>
                         <Td blocked={isBlocked}>{u.referrals_count || 0}</Td>
                         
+                        {/* ✅ Pre každú misiu 2 stĺpce: unlock button + completed status */}
                         {[0, 1, 2, 3].map(missionId => (
-                          <Td key={missionId} blocked={isBlocked}>
-                            <MissionToggleButton
-                              unlocked={u[`mission${missionId}_unlocked`]}
-                              completed={u[`mission${missionId}_completed`]}
-                              onClick={() => handleToggleMissionForUser(
-                                u.participant_code, 
-                                missionId, 
-                                u[`mission${missionId}_unlocked`]
-                              )}
-                              disabled={isBlocked}
-                              title={
-                                u[`mission${missionId}_completed`] 
-                                  ? `M${missionId} hotová` 
-                                  : u[`mission${missionId}_unlocked`] 
+                          <React.Fragment key={missionId}>
+                            {/* Unlock/Lock button */}
+                            <Td blocked={isBlocked}>
+                              <MissionToggleButton
+                                unlocked={u[`mission${missionId}_unlocked`]}
+                                completed={false}
+                                onClick={() => handleToggleMissionForUser(
+                                  u.participant_code, 
+                                  missionId, 
+                                  u[`mission${missionId}_unlocked`]
+                                )}
+                                disabled={isBlocked}
+                                title={
+                                  u[`mission${missionId}_unlocked`] 
                                     ? `Zamknúť M${missionId}` 
                                     : `Odomknúť M${missionId}`
-                              }
-                            >
-                              {u[`mission${missionId}_completed`] 
-                                ? '✅' 
-                                : u[`mission${missionId}_unlocked`] 
-                                  ? '🔓' 
-                                  : '🔒'
-                              }
-                            </MissionToggleButton>
-                          </Td>
+                                }
+                              >
+                                {u[`mission${missionId}_unlocked`] ? '🔓' : '🔒'}
+                              </MissionToggleButton>
+                            </Td>
+                            
+                            {/* Completed status (read-only) */}
+                            <Td blocked={isBlocked}>
+                              <span 
+                                style={{ 
+                                  fontSize: '16px',
+                                  display: 'inline-block',
+                                  opacity: u[`mission${missionId}_completed`] ? 1 : 0.3
+                                }}
+                                title={
+                                  u[`mission${missionId}_completed`] 
+                                    ? `M${missionId} dokončená` 
+                                    : `M${missionId} nedokončená`
+                                }
+                              >
+                                {u[`mission${missionId}_completed`] ? '✅' : '⬜'}
+                              </span>
+                            </Td>
+                          </React.Fragment>
                         ))}
                         
                         <Td blocked={isBlocked}>{u.timestamp_start?.slice(0, 10)}</Td>
@@ -1071,6 +1091,7 @@ const AdminPanel = () => {
             </TableWrapper>
           )}
         </Section>
+
 
         {/* DANGER ZONE */}
         <DangerSection>

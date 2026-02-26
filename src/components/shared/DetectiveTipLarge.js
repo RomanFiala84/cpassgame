@@ -180,40 +180,6 @@ const CountdownBadge = styled.div`
   }
 `;
 
-const ContentContainer = styled.div`
-  width: 50%;
-  padding: 24px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  order: 1;
-  
-  /* Custom scrollbar */
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: ${p => p.theme.BORDER_COLOR}33;
-    border-radius: 3px;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: ${p => p.theme.ACCENT_COLOR};
-    border-radius: 3px;
-  }
-  
-  @media (max-width: 768px) {
-    width: 100%;
-    padding: 20px;
-    order: 2;
-  }
-  
-  @media (max-width: 480px) {
-    padding: 16px;
-  }
-`;
-
 const DetectiveImageContainer = styled.div`
   position: relative;
   width: 50%;
@@ -309,16 +275,58 @@ const DetectiveName = styled.div`
   }
 `;
 
+// src/components/shared/DetectiveTipLarge.js
+// ✅ OPRAVA - ContentContainer s lepším paddingom a spacing
+
+const ContentContainer = styled.div`
+  width: 50%;
+  padding: 24px;
+  padding-bottom: 28px; // ✅ PRIDAJ - Extra padding pre button
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  order: 1;
+  
+  /* Custom scrollbar */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: ${p => p.theme.BORDER_COLOR}33;
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: ${p => p.theme.ACCENT_COLOR};
+    border-radius: 3px;
+  }
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 20px;
+    padding-bottom: 24px; // ✅ PRIDAJ
+    order: 2;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 16px;
+    padding-bottom: 20px; // ✅ PRIDAJ
+  }
+`;
+
 const TipText = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   font-size: 15px;
   line-height: 1.7;
-  margin-bottom: 16px;
+  margin-bottom: 20px; // ✅ ZVÄČŠI z 16px na 20px
   flex: 1;
+  overflow-y: auto; // ✅ PRIDAJ - Scroll len pre text ak je dlhý
   
   @media (max-width: 480px) {
     font-size: 14px;
     line-height: 1.6;
+    margin-bottom: 16px;
   }
   
   strong {
@@ -367,6 +375,8 @@ const ActionButton = styled.button`
   opacity: ${p => p.disabled ? 0.6 : 1};
   position: relative;
   overflow: hidden;
+  flex-shrink: 0; // ✅ PRIDAJ - Button sa nesmie zmenšiť
+  margin-top: auto; // ✅ PRIDAJ - Tlačí sa na spodok
   
   /* Shine effect */
   &::before {
@@ -403,6 +413,7 @@ const ActionButton = styled.button`
     font-size: 14px;
   }
 `;
+
 
 // =====================
 // COMPONENT

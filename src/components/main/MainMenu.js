@@ -139,7 +139,6 @@ const StatsCard = styled.div`
   position: relative;
   overflow: hidden;
   
-  /* Decentný gradient */
   &::before {
     content: '';
     position: absolute;
@@ -213,7 +212,6 @@ const SectionTitle = styled.h2`
   }
 `;
 
-// ✅ UPRAVENÉ - Grid layout pre misie
 const MissionsList = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -243,7 +241,6 @@ const MissionCard = styled.div`
   overflow: hidden;
   min-height: 180px;
   
-  /* Gradient overlay pre dokončené misie */
   ${p => p.completed && `
     &::before {
       content: '';
@@ -345,7 +342,6 @@ const AdminButtons = styled.div`
   margin-top: 8px;
 `;
 
-
 const AdminButton = styled.button`
   background: ${p => p.$unlock ? '#10b981' : p.theme.ACCENT_COLOR};
   color: #fff;
@@ -384,7 +380,6 @@ const ButtonGroup = styled.div`
   }
 `;
 
-// ✅ NOVÉ - Špeciálne styled buttony pre tieto akcie
 const InfoButton = styled(StyledButton)`
   background: linear-gradient(135deg, 
     ${p => p.theme.ACCENT_COLOR}22, 
@@ -439,7 +434,6 @@ const LogoutButton = styled(StyledButton)`
   }
 `;
 
-
 const SharingSection = styled.div`
   background: linear-gradient(135deg, 
     ${p => p.theme.ACCENT_COLOR}22, 
@@ -454,7 +448,6 @@ const SharingSection = styled.div`
   position: relative;
   overflow: hidden;
   
-  /* Dekoratívny gradient */
   &::before {
     content: '';
     position: absolute;
@@ -796,7 +789,6 @@ const CloseButton = styled.button`
   }
 `;
 
-
 const makeMissionList = (p) => [
   { id: 0, title: 'Misia 0 (Predvýskum)', route: '/mission0/intro', completed: !!p.mission0_completed, locked: !p.mission0_unlocked, icon: '🎯' },
   { id: 1, title: 'Misia 1 (Úvodný dotazník)', route: '/mission1/intro', completed: !!p.mission1_completed, locked: !p.mission1_unlocked, icon: '🔍' },
@@ -814,9 +806,32 @@ const MainMenu = () => {
   const [userProgress, setUserProgress] = useState(null);
   const isAdmin = dataManager.isAdmin(userId);
 
+  // ✅ NOVÉ - Kontrola auth pri načítaní stránky
+  useEffect(() => {
+    const checkAuth = () => {
+      const storedCode = sessionStorage.getItem('participantCode');
+      
+      if (!userId && !storedCode) {
+        console.log('🚫 No authentication found, redirecting to instruction');
+        navigate('/instruction');
+        return false;
+      }
+      
+      return true;
+    };
+
+    if (!checkAuth()) return;
+  }, [userId, navigate]);
+
   useEffect(() => {
     if (!userId) {
-      navigate('/instruction');
+      console.log('⚠️ No userId in MainMenu, checking sessionStorage...');
+      const storedCode = sessionStorage.getItem('participantCode');
+      
+      if (!storedCode) {
+        console.log('🚫 No stored code, redirecting to instruction');
+        navigate('/instruction');
+      }
       return;
     }
 
@@ -842,6 +857,12 @@ const MainMenu = () => {
     const handleStorage = (e) => {
       if (e.key === dataManager.centralStorageKey) {
         loadData();
+      }
+      
+      // ✅ NOVÉ - Sleduj zmeny participantCode
+      if (e.key === 'participantCode' && !e.newValue) {
+        console.log('🚪 participantCode removed, logging out');
+        navigate('/instruction');
       }
     };
     window.addEventListener('storage', handleStorage);
@@ -917,12 +938,23 @@ const MainMenu = () => {
 
   const openModal = (type) => setModal({ open: true, type });
   const closeModal = () => setModal({ open: false, type: '' });
+  
+  // ✅ UPRAVENÉ - Potvrď logout a vyčisti všetko
   const handleLogout = () => {
-    logout();
-    navigate('/instruction');
+    if (window.confirm('🚪 Naozaj sa chcete odhlásiť?')) {
+      console.log('🚪 Logging out...');
+      
+      // Vyčisti sessionStorage
+      sessionStorage.removeItem('participantCode');
+      
+      // Zavolaj logout z contextu
+      logout();
+      
+      // Presmeruj
+      navigate('/instruction', { replace: true });
+    }
   };
 
-  // ✅ NOVÝ - Príbeh a inštrukcie pre DetectiveTip
   const detectiveStory = `
     <p>Potrebujete pomôcť?</p>
   
@@ -959,8 +991,20 @@ const MainMenu = () => {
             <li>Váš osobný refferal kód, ktorý môžete zdieľať s priateľmi.</li>
         </ul>
     </ul>
-
   `;
+
+  // ✅ NOVÉ - Loading state
+  if (!userId && !userProgress) {
+    return (
+      <Layout showLevelDisplay={false}>
+        <Container>
+          <Header>
+            <Title>Načítavam...</Title>
+          </Header>
+        </Container>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -1071,7 +1115,6 @@ const MainMenu = () => {
           </LogoutButton>
         </ButtonGroup>
 
-
         <SharingSection>
           <SharingTitle>Zdieľajte výskum a získajte body!</SharingTitle>
           
@@ -1121,7 +1164,6 @@ const MainMenu = () => {
           )}
         </SharingSection>
 
-        {/* ✅ NOVÉ - DetectiveTipLarge namiesto Export tlačidla */}
         <DetectiveTipLarge
           tip={detectiveStory}
           detectiveName="Inšpektor Kritan"

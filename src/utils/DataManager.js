@@ -363,104 +363,90 @@ class DataManager {
   /**
  * ✅ Odomkne konkrétnu misiu pre jedného respondenta
  */
-async unlockMissionForUser(participantCode, missionId) {
-  const normalizedCode = participantCode.toUpperCase().trim();
-  
-  try {
-    console.log(`🔓 Odomykám misiu ${missionId} pre ${normalizedCode}...`);
-    
-    const response = await fetch(this.apiBase, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        code: normalizedCode,
-        [`mission${missionId}_unlocked`]: true
-      })
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || `Failed to unlock mission: ${response.status}`);
-    }
-    
-    console.log(`✅ Server: Misia ${missionId} odomknutá pre ${normalizedCode}`);
-    
-    // Aktualizuj lokálne dáta
-    const central = this.getAllParticipantsData();
-    if (central[normalizedCode]) {
-      central[normalizedCode][`mission${missionId}_unlocked`] = true;
-      localStorage.setItem(this.centralStorageKey, JSON.stringify(central));
-      
-      // Aktualizuj aj cache
-      if (this.cache.has(normalizedCode)) {
-        const cached = this.cache.get(normalizedCode);
-        cached[`mission${missionId}_unlocked`] = true;
-        this.cache.set(normalizedCode, cached);
-      }
-      
-      console.log(`✅ Lokálne: Misia ${missionId} odomknutá pre ${normalizedCode}`);
-    }
-    
-    // Refresh všetkých dát
-    await this.fetchAllParticipantsData();
-    
-    return true;
-  } catch (error) {
-    console.error(`❌ Error unlocking mission ${missionId} for ${normalizedCode}:`, error);
-    throw error;
-  }
-}
+  // V DataManager.js - oprav unlockMissionForUser funkciu:
 
-  /**
-   * ✅ Zamkne konkrétnu misiu pre jedného respondenta
-   */
-  async lockMissionForUser(participantCode, missionId) {
-    const normalizedCode = participantCode.toUpperCase().trim();
-    
+  async unlockMissionForUser(participantCode, missionId) {
     try {
-      console.log(`🔒 Zamykám misiu ${missionId} pre ${normalizedCode}...`);
+      console.log(`🔓 Unlocking mission ${missionId} for ${participantCode}`);
       
-      const response = await fetch(this.apiBase, {
+      // ✅ OPRAVA - najprv načítaj aktuálneho používateľa
+      const currentProgress = await this.loadUserProgress(participantCode, true);
+      
+      if (!currentProgress) {
+        throw new Error(`User ${participantCode} not found`);
+      }
+
+      const updatedProgress = {
+        ...currentProgress, // ✅ DÔLEŽITÉ - zachovaj existujúce dáta
+        [`mission${missionId}_unlocked`]: true
+      };
+
+      const response = await fetch(`/api/progress?code=${participantCode}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          code: normalizedCode,
-          [`mission${missionId}_unlocked`]: false
-        })
+        body: JSON.stringify(updatedProgress)
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to lock mission: ${response.status}`);
+        throw new Error(errorData.error || 'Failed to unlock mission');
       }
+
+      const result = await response.json();
       
-      console.log(`✅ Server: Misia ${missionId} zamknutá pre ${normalizedCode}`);
+      // ✅ Aktualizuj cache
+      this.updateLocalProgress(participantCode, result.progress);
       
-      // Aktualizuj lokálne dáta
-      const central = this.getAllParticipantsData();
-      if (central[normalizedCode]) {
-        central[normalizedCode][`mission${missionId}_unlocked`] = false;
-        localStorage.setItem(this.centralStorageKey, JSON.stringify(central));
-        
-        // Aktualizuj aj cache
-        if (this.cache.has(normalizedCode)) {
-          const cached = this.cache.get(normalizedCode);
-          cached[`mission${missionId}_unlocked`] = false;
-          this.cache.set(normalizedCode, cached);
-        }
-        
-        console.log(`✅ Lokálne: Misia ${missionId} zamknutá pre ${normalizedCode}`);
-      }
-      
-      // Refresh všetkých dát
-      await this.fetchAllParticipantsData();
-      
-      return true;
+      console.log(`✅ Mission ${missionId} unlocked for ${participantCode}`);
+      return result;
     } catch (error) {
-      console.error(`❌ Error locking mission ${missionId} for ${normalizedCode}:`, error);
+      console.error(`❌ Error unlocking mission ${missionId} for ${participantCode}:`, error);
       throw error;
     }
   }
+
+  // A rovnako aj lockMissionForUser:
+  async lockMissionForUser(participantCode, missionId) {
+    try {
+      console.log(`🔒 Locking mission ${missionId} for ${participantCode}`);
+      
+      // ✅ OPRAVA - najprv načítaj aktuálneho používateľa
+      const currentProgress = await this.loadUserProgress(participantCode, true);
+      
+      if (!currentProgress) {
+        throw new Error(`User ${participantCode} not found`);
+      }
+
+      const updatedProgress = {
+        ...currentProgress, // ✅ DÔLEŽITÉ - zachovaj existujúce dáta
+        [`mission${missionId}_unlocked`]: false,
+        [`mission${missionId}_completed`]: false // ✅ reset aj completed
+      };
+
+      const response = await fetch(`/api/progress?code=${participantCode}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedProgress)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to lock mission');
+      }
+
+      const result = await response.json();
+      
+      // ✅ Aktualizuj cache
+      this.updateLocalProgress(participantCode, result.progress);
+      
+      console.log(`✅ Mission ${missionId} locked for ${participantCode}`);
+      return result;
+    } catch (error) {
+      console.error(`❌ Error locking mission ${missionId} for ${participantCode}:`, error);
+      throw error;
+    }
+  }
+
 
 
   async fetchAllParticipantsData() {
