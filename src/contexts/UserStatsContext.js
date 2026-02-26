@@ -61,7 +61,7 @@ export const UserStatsProvider = ({ children }) => {
       
       // ✅ Teraz vieme, že userData existuje a nie je null
       sessionStorage.setItem('participantCode', id);
-      setUserId(id);
+      
       
       userData.instruction_completed = true;
       userData.current_progress_step = 'intro';
