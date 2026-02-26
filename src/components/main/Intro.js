@@ -282,35 +282,45 @@ const LoadingText = styled.div`
   font-weight: 500;
 `;
 
-
 const Intro = () => {
   const navigate = useNavigate();
-  const { dataManager, userId } = useUserStats();
+  const { dataManager } = useUserStats();
   const [groupCode, setGroupCode] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [showTip, setShowTip] = useState(false);
 
+  // ✅ OPRAVENÉ - použije sessionStorage namiesto userId state
   useEffect(() => {
     const loadGroup = async () => {
-      if (userId) {
-        try {
-          const prog = await dataManager.loadUserProgress(userId);
-          setGroupCode(prog.group_assignment || '0');
-          
-          setTimeout(() => {
-            setShowTip(true);
-          }, 300);
-        } catch (error) {
-          console.error('Error loading user progress:', error);
-          setGroupCode('0');
-        } finally {
-          setIsLoading(false);
-        }
+      // ✅ Načítaj participantCode priamo zo sessionStorage
+      const participantCode = sessionStorage.getItem('participantCode');
+      
+      if (!participantCode) {
+        console.warn('⚠️ No participantCode in Intro, redirecting to instruction...');
+        navigate('/instruction');
+        return;
+      }
+      
+      try {
+        console.log(`📊 Loading group assignment for: ${participantCode}`);
+        const prog = await dataManager.loadUserProgress(participantCode);
+        
+        // ✅ Skupina sa zachová - NIKDY sa nezmení po prvom nastavení
+        setGroupCode(prog.group_assignment || '0');
+        
+        setTimeout(() => {
+          setShowTip(true);
+        }, 300);
+      } catch (error) {
+        console.error('❌ Error loading user progress:', error);
+        setGroupCode('0');
+      } finally {
+        setIsLoading(false);
       }
     };
     
     loadGroup();
-  }, [userId, dataManager]);
+  }, [dataManager, navigate]); // ✅ Odstránené userId dependency
 
   const handleContinue = () => {
     navigate('/mainmenu');
