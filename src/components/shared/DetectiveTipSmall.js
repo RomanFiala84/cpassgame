@@ -1,10 +1,8 @@
 // src/components/shared/DetectiveTipSmall.js
-// Inline nápoveda - vizuálne rovnaká ako DetectiveTip bubble
-
+// ✅ OPRAVENÁ VERZIA - Avatar bez okrajov, bez badge
 
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
-
 
 // =====================
 // STYLED COMPONENTS - OPTIMALIZOVANÁ VERZIA
@@ -86,10 +84,11 @@ const DetectiveAvatar = styled.img`
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  object-fit: cover;
+  object-fit: cover; /* ✅ COVER namiesto contain */
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}33;
   transition: transform 0.3s ease;
+  flex-shrink: 0; /* ✅ PRIDANÉ - zabráni zmenšeniu */
   
   &:hover {
     transform: scale(1.1) rotate(5deg);
@@ -112,6 +111,7 @@ const DetectiveAvatarFallback = styled.div`
   justify-content: center;
   font-size: 18px;
   box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}33;
+  flex-shrink: 0; /* ✅ PRIDANÉ */
   
   @media (max-width: 480px) {
     width: 32px;
@@ -146,6 +146,7 @@ const CloseButton = styled.button`
   justify-content: center;
   line-height: 1;
   transition: all 0.2s ease;
+  flex-shrink: 0; /* ✅ PRIDANÉ */
   
   &:hover {
     background: ${p => p.theme.ACCENT_COLOR};
@@ -214,8 +215,6 @@ const TipText = styled.div`
   }
 `;
 
-
-
 const DetectiveTipSmall = ({ 
   tip, 
   detectiveName = "Inšpektor Kritan",
@@ -230,7 +229,6 @@ const DetectiveTipSmall = ({
   const [isClosing, setIsClosing] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-
   const handleClose = useCallback(() => {
     setIsClosing(true);
     setTimeout(() => {
@@ -239,7 +237,6 @@ const DetectiveTipSmall = ({
       if (onClose) onClose();
     }, 400);
   }, [onClose]);
-
 
   useEffect(() => {
     if (autoOpen && autoOpenDelay > 0) {
@@ -252,7 +249,6 @@ const DetectiveTipSmall = ({
     }
   }, [autoOpen, autoOpenDelay, onOpen]);
 
-
   useEffect(() => {
     if (isVisible && autoClose) {
       const timer = setTimeout(() => {
@@ -263,15 +259,12 @@ const DetectiveTipSmall = ({
     }
   }, [isVisible, autoClose, autoCloseDelay, handleClose]);
 
-
   const handleImageError = () => {
     console.warn('Detective image failed to load, using fallback');
     setImageError(true);
   };
 
-
   if (!tip || !isVisible) return null;
-
 
   return (
     <TipContainer $isClosing={isClosing}>
@@ -283,7 +276,7 @@ const DetectiveTipSmall = ({
             onError={handleImageError}
           />
         ) : (
-          <DetectiveAvatarFallback></DetectiveAvatarFallback>
+          <DetectiveAvatarFallback>🕵️</DetectiveAvatarFallback>
         )}
         <DetectiveName>{detectiveName}</DetectiveName>
         <CloseButton 
@@ -297,6 +290,5 @@ const DetectiveTipSmall = ({
     </TipContainer>
   );
 };
-
 
 export default DetectiveTipSmall;

@@ -1,5 +1,5 @@
 // src/components/shared/DetectiveTip.js
-// ✅ VERZIA BEZ TEXTOVÉHO BADGE
+// ✅ OPRAVENÁ VERZIA - Avatar bez okrajov
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
@@ -183,9 +183,10 @@ const DetectiveAvatar = styled.img`
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  object-fit: cover;
+  object-fit: cover; /* ✅ COVER namiesto contain */
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}33;
+  flex-shrink: 0; /* ✅ PRIDANÉ - zabráni zmenšeniu */
   
   @media (max-width: 480px) {
     width: 32px;
@@ -204,6 +205,7 @@ const DetectiveAvatarFallback = styled.div`
   justify-content: center;
   font-size: 18px;
   box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}33;
+  flex-shrink: 0; /* ✅ PRIDANÉ */
   
   @media (max-width: 480px) {
     width: 32px;
@@ -271,6 +273,7 @@ const CloseButton = styled.button`
   line-height: 1;
   transition: all 0.2s ease;
   opacity: ${p => p.disabled ? 0.3 : 1};
+  flex-shrink: 0; /* ✅ PRIDANÉ */
   
   &:hover {
     background: ${p => p.disabled ? 'transparent' : p.theme.ACCENT_COLOR};

@@ -1,5 +1,11 @@
 // src/contexts/UserStatsContext.js
-// FINÁLNA VERZIA - Bez aggressive refresh, body sa nebudú resetovať
+// ✅ FINÁLNY BODOVÝ SYSTÉM:
+// - Mission 0 (Predvýskum): 50 bodov
+// - Mission 1 (Hlavný výskum 1): 25 bodov
+// - Mission 2 (Hlavný výskum 2): 25 bodov
+// - Mission 3 (Hlavný výskum 3): 25 bodov
+// - Referral: 10 bodov za každého nového účastníka
+// - Minimálne na žrebovanie: 50 bodov
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import DataManager from '../utils/DataManager';
@@ -16,43 +22,49 @@ export const UserStatsProvider = ({ children }) => {
     bonusPoints: 0,
     totalPoints: 0,
     completedMissions: [],
-    referrals: 0
+    referrals: 0,
+    eligibleForRaffle: false
   });
 
   const intervalRef = useRef(null);
+  const autoRefreshIntervalRef = useRef(null);
   const isLoadingRef = useRef(false);
   const lastLoadedUserIdRef = useRef(null);
 
   const login = useCallback(async (id) => {
-  try {
-    console.log(`🔐 Login attempt for: ${id}`);
-    
-    // ✅ KONTROLA BLOKOVANIA
-    const userData = await dataManager.loadUserProgress(id, true);
-    
-    if (userData?.blocked) {
-      console.log(`❌ Login zamietnutý: Účastník ${id} je blokovaný`);
-      sessionStorage.removeItem('participantCode');
-      return { success: false, blocked: true, message: 'Účet je blokovaný administrátorom' };
+    try {
+      console.log(`🔐 Login attempt for: ${id}`);
+      
+      const userData = await dataManager.loadUserProgress(id, true);
+      
+      if (userData?.blocked) {
+        console.log(`❌ Login zamietnutý: Účastník ${id} je blokovaný`);
+        sessionStorage.removeItem('participantCode');
+        return { success: false, blocked: true, message: 'Účet je blokovaný administrátorom' };
+      }
+      
+      sessionStorage.setItem('participantCode', id);
+      setUserId(id);
+      userData.instruction_completed = true;
+      userData.current_progress_step = 'intro';
+      await dataManager.saveProgress(id, userData);
+      
+      return { success: true, blocked: false };
+    } catch (error) {
+      return { success: false, blocked: false, error: error.message };
     }
-    
-    // Pokračuj normálne
-    sessionStorage.setItem('participantCode', id);
-    setUserId(id);
-    userData.instruction_completed = true;
-    userData.current_progress_step = 'intro';
-    await dataManager.saveProgress(id, userData);
-    
-    return { success: true, blocked: false };
-  } catch (error) {
-    return { success: false, blocked: false, error: error.message };
-  }
-}, [dataManager]);
+  }, [dataManager]);
 
   const logout = useCallback(() => {
     sessionStorage.removeItem('participantCode');
     setUserId(null);
     lastLoadedUserIdRef.current = null;
+    
+    if (autoRefreshIntervalRef.current) {
+      clearInterval(autoRefreshIntervalRef.current);
+      autoRefreshIntervalRef.current = null;
+    }
+    
     setUserStats({
       level: 1,
       points: 0,
@@ -60,11 +72,11 @@ export const UserStatsProvider = ({ children }) => {
       bonusPoints: 0,
       totalPoints: 0,
       completedMissions: [],
-      referrals: 0
+      referrals: 0,
+      eligibleForRaffle: false
     });
   }, []);
 
-  // ✅ Monitor userId changes
   useEffect(() => {
     const updateUserId = () => {
       const currentId = sessionStorage.getItem('participantCode');
@@ -91,32 +103,66 @@ export const UserStatsProvider = ({ children }) => {
     };
   }, [userId, logout]);
 
-  // ✅ OPRAVENÉ - Load user stats (bez aggressive refresh)
-  const loadUserStats = useCallback(async () => {
+  // ✅ FINÁLNA FUNKCIA - Výpočet bodov
+  const calculatePoints = (progress) => {
+    let missionPoints = 0;
+    const completedMissions = progress.completedMissions || [];
+
+    // ✅ Mission 0 (Predvýskum) = 50 bodov
+    if (completedMissions.includes('mission0')) {
+      missionPoints += 50;
+    }
+
+    // ✅ Mission 1 = 25 bodov
+    if (completedMissions.includes('mission1')) {
+      missionPoints += 25;
+    }
+
+    // ✅ Mission 2 = 25 bodov
+    if (completedMissions.includes('mission2')) {
+      missionPoints += 25;
+    }
+
+    // ✅ Mission 3 = 25 bodov
+    if (completedMissions.includes('mission3')) {
+      missionPoints += 25;
+    }
+
+    // ✅ Bonus body za referraly (10 bodov/referral)
+    const bonusPoints = (progress.referrals_count || 0) * 10;
+    
+    const totalPoints = missionPoints + bonusPoints;
+
+    // ✅ Level (každých 25 bodov = 1 level, max 5)
+    const level = Math.min(Math.floor(totalPoints / 25) + 1, 5);
+
+    // ✅ Oprávnenie na žrebovanie (min 50 bodov)
+    const eligibleForRaffle = totalPoints >= 50;
+
+    return {
+      level,
+      points: totalPoints,
+      missionPoints,
+      bonusPoints,
+      totalPoints,
+      eligibleForRaffle,
+      completedMissions,
+      referrals: progress.referrals_count || 0
+    };
+  };
+
+  const loadUserStats = useCallback(async (forceRefresh = false) => {
     if (!userId || isLoadingRef.current) return;
 
     isLoadingRef.current = true;
 
     try {
-      console.log(`📊 Loading stats for: ${userId}`);
+      console.log(`📊 Loading stats for: ${userId}${forceRefresh ? ' (forced)' : ''}`);
 
-      const progress = await dataManager.loadUserProgress(userId);
+      const progress = await dataManager.loadUserProgress(userId, forceRefresh);
       if (progress) {
-        const missionPoints = progress.user_stats_mission_points || 0;
-        const bonusPoints = (progress.referrals_count || 0) * 10;
-        const totalPoints = missionPoints + bonusPoints;
-        const level = Math.min(Math.floor(missionPoints / 25) + 1, 5);
-
-        const updatedStats = {
-          level,
-          points: totalPoints,
-          missionPoints,
-          bonusPoints,
-          totalPoints,
-          referrals: progress.referrals_count || 0,
-          completedMissions: Array.isArray(progress.completedMissions) ? progress.completedMissions : []
-        };
-
+        const updatedStats = calculatePoints(progress);
+        
         setUserStats(updatedStats);
         lastLoadedUserIdRef.current = userId;
         console.log(`✅ Stats loaded for ${userId}:`, updatedStats);
@@ -128,7 +174,6 @@ export const UserStatsProvider = ({ children }) => {
     }
   }, [userId, dataManager]);
 
-  // ✅ Storage listener - refresh only when localStorage changes
   useEffect(() => {
     const handleStorage = (e) => {
       if (e.key === dataManager.centralStorageKey) {
@@ -140,7 +185,6 @@ export const UserStatsProvider = ({ children }) => {
     return () => window.removeEventListener('storage', handleStorage);
   }, [dataManager.centralStorageKey, loadUserStats]);
 
-  // ✅ OPRAVENÉ - Load only on userId change, NO aggressive interval
   useEffect(() => {
     if (!userId || isLoadingRef.current) return;
 
@@ -149,14 +193,27 @@ export const UserStatsProvider = ({ children }) => {
       loadUserStats();
     }
 
-    // ❌ ODSTRÁNENÉ - Aggressive 10s interval
-    // const interval = setInterval(() => {
-    //   loadUserStats();
-    // }, 10000);
-    // return () => clearInterval(interval);
-  }, [userId, loadUserStats]);
+    console.log('⏰ Starting 60s auto-refresh timer for mission unlock detection');
+    
+    autoRefreshIntervalRef.current = setInterval(async () => {
+      console.log('🔄 Auto-refresh: Načítavam fresh data zo servera...');
+      try {
+        await dataManager.loadUserProgress(userId, true);
+        await loadUserStats(true);
+      } catch (error) {
+        console.error('❌ Auto-refresh error:', error);
+      }
+    }, 60000);
 
-  // ✅ Initial load
+    return () => {
+      if (autoRefreshIntervalRef.current) {
+        console.log('🛑 Stopping auto-refresh timer');
+        clearInterval(autoRefreshIntervalRef.current);
+        autoRefreshIntervalRef.current = null;
+      }
+    };
+  }, [userId, loadUserStats, dataManager]);
+
   useEffect(() => {
     if (userId && !isLoadingRef.current && lastLoadedUserIdRef.current !== userId) {
       loadUserStats();
@@ -169,7 +226,7 @@ export const UserStatsProvider = ({ children }) => {
       return false;
     }
 
-    console.log(`🎯 Adding 25 points for mission: ${missionId} for: ${userId}`);
+    console.log(`🎯 Adding points for mission: ${missionId} for: ${userId}`);
 
     try {
       const progress = await dataManager.loadUserProgress(userId);
@@ -179,31 +236,21 @@ export const UserStatsProvider = ({ children }) => {
         return false;
       }
 
-      const currentMissionPoints = progress.user_stats_mission_points || 0;
-      const newMissionPoints = Math.min(currentMissionPoints + 25, 100);
-      const newLevel = Math.min(Math.floor(newMissionPoints / 25) + 1, 5);
       const newCompletedMissions = [...(progress.completedMissions || []), missionId];
-      const bonusPoints = (progress.referrals_count || 0) * 10;
-      const totalPoints = newMissionPoints + bonusPoints;
-
-      const newStats = {
-        level: newLevel,
-        points: totalPoints,
-        missionPoints: newMissionPoints,
-        bonusPoints,
-        totalPoints,
-        completedMissions: newCompletedMissions,
-        referrals: progress.referrals_count || 0
-      };
 
       const updatedProgress = {
         ...progress,
-        user_stats_mission_points: newMissionPoints,
-        user_stats_level: newLevel,
-        user_stats_points: totalPoints,
         completedMissions: newCompletedMissions,
         [`${missionId}_completed`]: true
       };
+
+      // ✅ Prepočítaj body s novým systémom
+      const newStats = calculatePoints(updatedProgress);
+
+      // ✅ Ulož do progress
+      updatedProgress.user_stats_mission_points = newStats.missionPoints;
+      updatedProgress.user_stats_level = newStats.level;
+      updatedProgress.user_stats_points = newStats.totalPoints;
 
       await dataManager.saveProgress(userId, updatedProgress);
       setUserStats(newStats);
@@ -227,26 +274,17 @@ export const UserStatsProvider = ({ children }) => {
     try {
       const progress = await dataManager.loadUserProgress(userId);
       const newReferralsCount = (progress.referrals_count || 0) + 1;
-      const bonusPoints = newReferralsCount * 10;
-      const missionPoints = progress.user_stats_mission_points || 0;
-      const totalPoints = missionPoints + bonusPoints;
-      const level = Math.min(Math.floor(missionPoints / 25) + 1, 5);
-
-      const newStats = {
-        level,
-        points: totalPoints,
-        missionPoints,
-        bonusPoints,
-        totalPoints,
-        completedMissions: progress.completedMissions || [],
-        referrals: newReferralsCount
-      };
 
       const updatedProgress = {
         ...progress,
-        referrals_count: newReferralsCount,
-        user_stats_points: totalPoints
+        referrals_count: newReferralsCount
       };
+
+      // ✅ Prepočítaj body s novým systémom
+      const newStats = calculatePoints(updatedProgress);
+
+      // ✅ Ulož do progress
+      updatedProgress.user_stats_points = newStats.totalPoints;
 
       await dataManager.saveProgress(userId, updatedProgress);
       setUserStats(newStats);
@@ -272,13 +310,19 @@ export const UserStatsProvider = ({ children }) => {
   const refreshUserStats = useCallback(async () => {
     if (userId) {
       console.log('🔄 Manual refresh stats for:', userId);
-      await loadUserStats();
+      await dataManager.loadUserProgress(userId, true);
+      await loadUserStats(true);
     }
-  }, [userId, loadUserStats]);
+  }, [userId, loadUserStats, dataManager]);
 
   const clearAllData = useCallback(() => {
     dataManager.clearAllData();
     lastLoadedUserIdRef.current = null;
+    
+    if (autoRefreshIntervalRef.current) {
+      clearInterval(autoRefreshIntervalRef.current);
+      autoRefreshIntervalRef.current = null;
+    }
   }, [dataManager]);
 
   return (

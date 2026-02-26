@@ -1,7 +1,7 @@
 /**
  * /api/progress.js
- * KOMPLETNÁ OPRAVENÁ VERZIA - správne responses merge + náhodné skupiny + informovaný súhlas
- * Upravené pre Vercel
+ * ✅ OPRAVENÁ VERZIA - fix pre individuálne odomykanie misií
+ * Správne responses merge + náhodné skupiny + informovaný súhlas
  */
 
 import { MongoClient } from 'mongodb';
@@ -89,7 +89,7 @@ const getGlobalMissionsState = async (db) => {
 // 🧩 5️⃣ Helper – vytvorenie nového používateľa
 //
 const createNewParticipant = async (code, db) => {
-  const group = assignRandomGroup();  // ✅ Náhodná skupina
+  const group = assignRandomGroup();
   const globalState = await getGlobalMissionsState(db);
   
   const newUser = {
@@ -124,7 +124,7 @@ const createNewParticipant = async (code, db) => {
     sharing_code: null,
     referral_code: null,
     
-    // ✅ PRIDANÉ: Informovaný súhlas a súťaž
+    // Informovaný súhlas a súťaž
     informed_consent_given: false,
     informed_consent_timestamp: null,
     competition_consent_given: false,
@@ -133,7 +133,6 @@ const createNewParticipant = async (code, db) => {
     used_referral_code: null,
     blocked: false,
     
-    // ✅ Inicializuj responses objekt
     responses: {}
   };
   
@@ -203,7 +202,7 @@ export default async function handler(req, res) {
       const data = req.body;
 
       try {
-        // 🔒 / 🔓 Admin operácie
+        // 🔒 / 🔓 Admin operácie - BATCH unlock/lock
         if (code === 'missions-lock' || code === 'missions-unlock') {
           const lock = code === 'missions-lock';
           console.log(`${lock ? '🔒' : '🔓'} ${lock ? 'Zamykám' : 'Odomykám'} misiu ${data.missionId}`);
@@ -250,7 +249,11 @@ export default async function handler(req, res) {
         // 💾 Bežný update / auto-registrácia
         console.log(`💾 Ukladám progres pre ${code}`);
         
-        const { participant_code, _id, createdAt, ...dataToUpdate } = data;
+        // ✅ FIX: Nepoužívaj destructuring - zachováme všetky fieldy
+        const dataToUpdate = { ...data };
+        delete dataToUpdate.participant_code;
+        delete dataToUpdate._id;
+        delete dataToUpdate.createdAt;
 
         // Načítaj existujúci dokument
         const existing = await col.findOne({ participant_code: code });
@@ -292,7 +295,6 @@ export default async function handler(req, res) {
             sharing_code: null,
             referral_code: null,
             
-            // ✅ PRIDANÉ: Informovaný súhlas a súťaž
             informed_consent_given: false,
             informed_consent_timestamp: null,
             competition_consent_given: false,
@@ -303,7 +305,7 @@ export default async function handler(req, res) {
             
             responses: {},
             
-            // Merge s dataToUpdate
+            // ✅ Merge s dataToUpdate (obsahuje mission fieldy!)
             ...dataToUpdate
           };
           
@@ -313,7 +315,7 @@ export default async function handler(req, res) {
           return res.status(200).json(newUser);
         }
         
-        // ✅ Existujúci používateľ - smart merge pre responses
+        // ✅ Existujúci používateľ - smart merge
         console.log(`📝 Aktualizujem existujúceho používateľa ${code}`);
         
         // Deep merge pre responses objekt
@@ -321,7 +323,6 @@ export default async function handler(req, res) {
         
         if (dataToUpdate.responses) {
           Object.entries(dataToUpdate.responses).forEach(([componentId, componentData]) => {
-            // Merge každý komponent samostatne
             if (componentData && typeof componentData === 'object') {
               mergedResponses[componentId] = componentData;
             }
@@ -329,7 +330,7 @@ export default async function handler(req, res) {
           console.log(`📊 Merging responses components: ${Object.keys(dataToUpdate.responses).join(', ')}`);
         }
         
-        // Priprav update data
+        // ✅ FIX: Priprav update data so všetkými fieldmi
         const updateData = {
           ...dataToUpdate,
           responses: mergedResponses,
@@ -337,27 +338,16 @@ export default async function handler(req, res) {
           timestamp_last_update: new Date().toISOString()
         };
         
-        // Vymaž responses z dataToUpdate ak je prázdny
-        delete updateData.responses;
-        
+        // ✅ FIX: Jednoduchý $set s celým updateData objektom
         await col.updateOne(
           { participant_code: code },
-          { 
-            $set: {
-              ...updateData,
-              // Nastav responses samostatne aby sa zachoval merge
-              ...Object.keys(mergedResponses).reduce((acc, key) => {
-                acc[`responses.${key}`] = mergedResponses[key];
-                return acc;
-              }, {})
-            }
-          }
+          { $set: updateData }
         );
 
         const updated = await col.findOne({ participant_code: code });
         console.log(`✅ Aktualizovaný používateľ ${code}`);
         
-        // Debug log pre responses
+        // Debug log
         if (updated.responses && Object.keys(updated.responses).length > 0) {
           console.log(`📊 Responses components uložené: ${Object.keys(updated.responses).join(', ')}`);
         }
@@ -392,7 +382,6 @@ export default async function handler(req, res) {
         }
 
         if (code === 'all') {
-          // Vymaž všetkých používateľov
           const result = await col.deleteMany({});
           
           // Reset globálneho stavu misií
