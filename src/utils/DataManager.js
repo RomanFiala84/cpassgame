@@ -583,26 +583,30 @@ class DataManager {
   }
 
   // ✅ OPRAVENÉ - vráti boolean
+  // ✅ OPRAVENÉ
   async syncToServer(participantCode, data) {
+    const normalizedCode = participantCode.toUpperCase().trim(); // ✅ PRIDAJ TOTO
+    
     try {
-      const response = await fetch(this.apiBase, {
+      const response = await fetch(`${this.apiBase}?code=${normalizedCode}`, { // ✅ PRIDAJ ?code=
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
 
       if (response.ok) {
-        console.log(`✅ Synced ${participantCode} - blocked: ${data.blocked || false}`);
-        return true; // ✅ Úspech
+        console.log(`✅ Synced ${normalizedCode} - blocked: ${data.blocked || false}`);
+        return true;
       } else {
-        console.warn(`⚠️ Server error syncing ${participantCode}:`, response.status);
-        return false; // ✅ Server error
+        console.warn(`⚠️ Server error syncing ${normalizedCode}:`, response.status);
+        return false;
       }
     } catch (error) {
-      console.error(`❌ Sync failed for ${participantCode}:`, error);
-      return false; // ✅ Network error
+      console.error(`❌ Sync failed for ${normalizedCode}:`, error);
+      return false;
     }
   }
+
 
 
   async validateAndFixData(data, participantCode) {
