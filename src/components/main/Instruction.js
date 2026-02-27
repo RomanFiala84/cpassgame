@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import Layout from '../../styles/Layout';
 import StyledButton from '../../styles/StyledButton';
 import { useUserStats } from '../../contexts/UserStatsContext';
-
+import {GradientCircleList} from '../../styles/StyledList';
 // =====================
 // STYLED COMPONENTS
 // =====================
@@ -695,13 +695,13 @@ export default function Instruction() {
     }
     
     if (!consentGiven) {
-      e.consent = 'Pre zapojenie sa do výskumu je potrebné poskytnúť informovaný súhlas s podmienkami výskumu.';
+      e.consent = 'Ak sa chcete zapojiť do výskumu je potrebné poskytnúť informovaný súhlas s podmienkami výskumu.';
       if (!firstErrorRef) firstErrorRef = consentRef;
     }
     
     const codeValidation = validateParticipantCode(participantCode);
     if (!codeValidation.valid) {
-      e.participant = 'Zadali ste neplatný formát identifikačného kódu respondenta. Zadajte identifikačný kód podľa inštrukcií.';
+      e.participant = 'Zadali ste neplatný formát identifikačného kódu respondenta. Zadajte identifikačný kód respondenta podľa inštrukcií.';
       if (!firstErrorRef) firstErrorRef = participantCodeRef;
     }
     
@@ -722,7 +722,7 @@ export default function Instruction() {
         }
       } catch (error) {
         console.error('❌ Error checking email:', error);
-        e.email = 'Nepodarilo sa overiť e-mail. Skúste to znova.';
+        e.email = 'Nepodarilo sa overiť e-mailovú adresu. Skúste to znova prosím.';
         if (!firstErrorRef) firstErrorRef = emailRef;
       }
     }
@@ -730,14 +730,14 @@ export default function Instruction() {
     
     // Ak je zadaný email, súhlas so súťažou je povinný
     if (email && !competitionConsent) {
-      e.competitionConsent = 'Pre zapojenie sa do súťaže je potrebné poskytnúť informovaný súhlas s pravidlami a podmienkami súťaže.';
+      e.competitionConsent = 'Ak sa chcete zapojiť do súťaže je potrebné poskytnúť informovaný súhlas s pravidlami a podmienkami súťaže.';
       if (!firstErrorRef) firstErrorRef = competitionConsentRef;
     }
     
     // ✅ OPRAVENÉ
     if (hasReferral) {
       if (referralAlreadyUsed) {
-        e.referral = 'Už ste použili referral kód.';
+        e.referral = 'Už ste použili referral kód. Viacnásobné použitie referral kódu nie je povolené.';
         if (!firstErrorRef) firstErrorRef = referralRef;
       } else if (!referralCode || !/^[A-Z0-9]{6}$/.test(referralCode.trim())) {
         e.referral = 'Referral kód musí mať presne 6 znakov.';
@@ -751,13 +751,13 @@ export default function Instruction() {
           } else {
             const userSharingCode = await dataManager.getUserSharingCode(participantCode.toUpperCase());
             if (userSharingCode && userSharingCode === referralCode.trim().toUpperCase()) {
-              e.referral = 'Nemôžete použiť svoj vlastný referral kód!';
+              e.referral = 'Nemôžete použiť svoj vlastný referral kód.';
               if (!firstErrorRef) firstErrorRef = referralRef;
             }
           }
         } catch (error) {
           console.error('❌ Error validating referral:', error);
-          e.referral = 'Nepodarilo sa overiť referral kód. Skúste to znova.';
+          e.referral = 'Nepodarilo sa overiť referral kód. Skúste to znova prosím.';
           if (!firstErrorRef) firstErrorRef = referralRef;
         }
       }
@@ -852,7 +852,7 @@ const handleStart = async () => {
           blockedWarningRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 100);
       } else {
-        setErrors({ general: loginResult.message || 'Chyba pri prihlásení' });
+        setErrors({ general: loginResult.message || 'Chyba pri prihlásení.' });
       }
       return; // ✅ finally blok sa postará o reset
     }
@@ -866,7 +866,7 @@ const handleStart = async () => {
     
   } catch (error) {
     console.error('❌ Unexpected error in handleStart:', error);
-    setErrors({ general: 'Neočakávaná chyba. Skúste to znova.' });
+    setErrors({ general: 'Neočakávaná chyba. Skúste to znova prosím.' });
   } finally {
     // ✅ 3. VŽDY resetuj flagy
     setIsLoading(false);
@@ -894,7 +894,7 @@ const handleStart = async () => {
       id: 'podmienky',
       title: 'Aké sú podmienky účasti vo výskume?',
       content: (
-        <>
+        <GradientCircleList>
           <ul>
             <li>Účasť je určená len pre dospelé osoby (18 a viac rokov), ktoré sú schopné samostatne posúdiť informácie o výskume a rozhodnúť sa o svojej účasti.</li>
             <li>Pre účasť je ďalej potrebné, aby účastník pochádzal/a zo Slovenska, prípadne mal/a trvalý/dlhodobý pobyt na území Slovenskej republiky.</li>
@@ -902,14 +902,14 @@ const handleStart = async () => {
             <li>Pre lepšie spracovanie dát vás prosíme aby ste použili počítač alebo notebook, ak použijete mobilný telefón alebo tablet neobmedzí to vašu účasť vo výskume.</li>
             <li>V prípade porušenia podmienok výskumu, môžete byť z výskumu a súťaže o ceny vylúčený, následkom čoho bude zablokovanie vášho prístupu do aplikácie.</li>
           </ul>
-        </>
+        </GradientCircleList>
       )
     },
     {
       id: 'ciel',
       title: 'Čo je cieľom predvýskumu a hlavného výskumu?',
       content: (
-        <>
+        <GradientCircleList>
           <ul>
             <li>Predvýskum:</li>
             <ul> 
@@ -920,14 +920,14 @@ const handleStart = async () => {
               <li>Cieľom nášho hlavného výskumu je lepšie porozumieť tomu, ako ľudia na Slovensku vnímajú inštitúcie Európskej únie, ako im dôverujú a aké faktory s tým súvisia. V našom výskume sme sa preto zameriavame na to ako informácie o fungovaní EÚ a jej prínosoch môžu pôsobiť na presvedčenia a mieru dôvery v inštitúcie EÚ.</li>
             </ul>
           </ul>
-        </>
+        </GradientCircleList>
       )
     },
     {
       id: 'priebehPred',
       title: 'Ako bude prebiehať predvýskum?',
       content: (
-        <>
+        <GradientCircleList>
           <ul>
             <li>V predvýskume prejdete sériou otázok a tvrdení - dotazník (5-10 minút).</li>
             <li>Pri hodnotení neexistujú správne ani nesprávne odpovede a po každom bloku otázok vás požiadame o spätnú väzbu.</li>
@@ -939,14 +939,14 @@ const handleStart = async () => {
               <li>Hodnotiaca stupnica: Bola stupnica odpovedí zrozumiteľná a mali ste pocit, že dokážete vyjadriť svoj skutočný postoj?</li>
             </ul>
           </ul>
-        </>
+        </GradientCircleList>
       )
     },
     {
       id: 'priebehHlavny',
       title: 'Ako bude prebiehať hlavný výskum?',
       content: (
-        <>
+        <GradientCircleList>
           <ul>
             <li>Výskum prebieha online formou interaktívnej aplikácie.</li>
             <li>Pozostáva z troch fáz:</li>
@@ -957,14 +957,14 @@ const handleStart = async () => {
               </ul>
             <li>Počas výskumu budeme automaticky zaznamenávať vaše interakcie s aplikáciou pre účely výskumu.</li>
           </ul>
-        </>
+        </GradientCircleList>
       )
     },
     {
       id: 'spracovanie',
       title: 'Ako budú spracované výsledky a chránené vaše údaje?',
       content: (
-        <>
+        <GradientCircleList>
           <ul>
             <li>Odpovede, ktoré nám poskytnete vyplnením dotazníka, budú použité výhradne na výskumné účely.</li>
             <li>Výsledky budú spracované a zverejňované len v anonymizovanej, súhrnnej forme, takže z nich nebude možné spätne identifikovať konkrétnu osobu.</li>
@@ -972,39 +972,39 @@ const handleStart = async () => {
             <li>Všetky údaje sú anonymné, dôverné a uložené v zabezpečenej databáze, ku ktorej má prístup len výskumný tím.</li>
             <li>Ak poskytnete e‑mailovú adresu kvôli zapojeniu sa do súťaže alebo do ďalšej časti výskumu, bude použitá výhradne na tieto účely a po ukončení súťaže a výskumu bude bezprostredne vymazaná.</li>
           </ul>
-        </>
+        </GradientCircleList>
       )
     },
     {
       id: 'odstupenie',
       title: 'Môžem odstúpiť?',
       content: (
-        <>
+        <GradientCircleList>
           <ul>
             <li>Áno. Účasť je dobrovoľná a môžete kedykoľvek odstúpiť bez udania dôvodu.</li>
             <li>Môžete tiež požiadať o vymazanie údajov, ktoré budú odstránené najneskôr do 7 dní po ukončení výskumu.</li>
           </ul>
-        </>
+        </GradientCircleList>
       )
     },
     {
       id: 'rizika',
       title: 'Aké sú riziká účasti vo výskume?',
       content: (
-        <>
+        <GradientCircleList>
           <ul>
             <li>Účasť nepredstavuje žiadne závažné riziká.</li>
             <li>Niektoré tvrdenia sa dotýkajú citlivých spoločenských tém, čo môže vyvolať mierne emocionálne napätie.</li>
             <li>Ak pocítite akúkoľvek nepohodu, môžete účasť kedykoľvek ukončiť, prípadne využiť niektorý z kontaktov pre pomoc uvedených nižšie.</li>
           </ul>
-        </>
+        </GradientCircleList>
       )
     },
     {
       id: 'podpora',
       title: 'Čo ak sa budem počas výskumu cítiť znepokojený/á',
       content: (
-        <>
+        <GradientCircleList>
           <ul>
             <li>Je úplne v poriadku mať z niektorých tém alebo tvrdení nepríjemný pocit - dotýkajú sa citlivých spoločenských tém.</li>
             <ul>
@@ -1018,26 +1018,26 @@ const handleStart = async () => {
               <li>Linka dôvery - <a href="https://www.linkanezabudka.sk" target="_blank" rel="noopener noreferrer">https://www.linkanezabudka.sk</a></li>
             </ul>
           </ul>
-        </>
+        </GradientCircleList>
       )
     },
     {
       id: 'sutaz',
       title: 'Súťaž',
       content: (
-        <>
+        <GradientCircleList>
           <ul>
             <li>Súťaž bude vyhodnotená na základe stanovených pravidiel do 10 dní od ukončenia hlavného výskumu.</li>
             <li>Podrobné informácie o bodovaní, cenách a podmienkach účasti nájdete nižšie v sekcii Pravidlá a podmienky súťaže.</li>
           </ul>
-        </>
+        </GradientCircleList>
       )
     },
     {
       id: 'kontakt',
       title: 'Kontakt',
       content: (
-        <>
+        <GradientCircleList>
           <ul> 
             <li>V prípade, že máte otázky k samotnému výskumu, môžete nás kontaktovať na uvedenom e‑maile -- radi vám poskytneme doplňujúce informácie.</li>
             <li>Výskumník: Roman Fiala<br/>
@@ -1045,7 +1045,7 @@ const handleStart = async () => {
             Katedra psychológie, Filozofická fakulta, Trnavská univerzita v Trnave<br/>
             Email: <a href="mailto:roman.fiala@tvu.sk">roman.fiala@tvu.sk</a></li>
           </ul>
-        </>
+        </GradientCircleList>
       )
     }
   ];
@@ -1099,7 +1099,7 @@ const handleStart = async () => {
         {isBlocked && (
           <BlockedWarning ref={blockedWarningRef}>
             <BlockedIcon>🚫</BlockedIcon>
-            <BlockedTitle>Váš prístup bol zamietnutý</BlockedTitle>
+            <BlockedTitle>Váš prístup do aplikáciebol zamietnutý.</BlockedTitle>
             <BlockedMessage>
               Váš účet <strong>{participantCode}</strong> bol zablokovaný administrátorom.
             </BlockedMessage>
@@ -1107,7 +1107,7 @@ const handleStart = async () => {
               Nemôžete sa prihlásiť do aplikácie výskumu, kým vám administrátor váš účet neodblokuje.
             </BlockedMessage>
             <ContactInfo>
-              <strong>V prípade otázky, z akého dôvodu bol váš účet zablokovaný, kontaktujte prosím administrátora</strong><br/>
+              <strong>V prípade ak sa chcete dozvedieť z akého dôvodu bol váš účet zablokovaný alebo pokračovať vo výskume, kontaktujte prosím administrátora.</strong><br/>
               <strong>Email: roman.fiala@tvu.sk</strong>
             </ContactInfo>
             
@@ -1133,23 +1133,25 @@ const handleStart = async () => {
                 disabled={isBlocked}
                 onChange={(e) => setConsentGiven(e.target.checked)}
               />
-              <label>SÚHLASÍM SO SPRACOVANÍM ÚDAJOV A PARTICIPÁCIOU NA VÝSKUME</label>
+              <label>SÚHLASÍM SO SPRACOVANÍM ÚDAJOV A PARTICIPÁCIOU VO VÝSKUME</label>
             </CheckboxContainer>
             
             <ConsentText>
-              <ul>
-                <li><strong>Prehlasujem, že:</strong></li>
+              <GradientCircleList>
                 <ul>
-                  <li><strong>Bol(a) som informovaný(á) o účele, priebehu a podmienkach výskumu prostredníctvom informačného listu.</strong></li>
-                  <li><strong>Rozumiem, že v prípade porušenia podmienok výskumu, môžem byť z výskumu a súťaže o ceny vylúčený, následkom čoho bude zablokovanie môjho prístupu do aplikácie.</strong></li>
-                  <li><strong>Mám vedomosť o svojich právach a povinnostiach počas výskumu.</strong></li>
-                  <li><strong>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</strong></li>
-                  <li><strong>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</strong></li>
-                  <li><strong>Rozumiem, že budú zaznamenávané moje interakcie s aplikáciou pre vedeckú analýzu.</strong></li>
-                  <li><strong>Súhlasím s anonymizáciou a publikáciou mojich údajov v súhrnnej forme.</strong></li>
-                  <li><strong>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</strong></li>
+                  <li><strong>Prehlasujem, že:</strong></li>
+                  <ul>
+                    <li><strong>Bol(a) som informovaný(á) o účele, priebehu a podmienkach výskumu prostredníctvom informačného listu.</strong></li>
+                    <li><strong>Rozumiem, že v prípade porušenia podmienok výskumu, môžem byť z výskumu a súťaže o ceny vylúčený, následkom čoho bude zablokovanie môjho prístupu do aplikácie.</strong></li>
+                    <li><strong>Mám vedomosť o svojich právach a povinnostiach počas výskumu.</strong></li>
+                    <li><strong>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</strong></li>
+                    <li><strong>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</strong></li>
+                    <li><strong>Rozumiem, že budú zaznamenávané moje interakcie s aplikáciou pre vedeckú analýzu.</strong></li>
+                    <li><strong>Súhlasím s anonymizáciou a publikáciou mojich údajov v súhrnnej forme.</strong></li>
+                    <li><strong>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</strong></li>
+                  </ul>
                 </ul>
-              </ul>
+              </GradientCircleList>
             </ConsentText>
           </div>
           {errors.consent && <ErrorText>{errors.consent}</ErrorText>}
@@ -1159,25 +1161,27 @@ const handleStart = async () => {
         <InfoBox>
           <InfoTitle>Inštrukcie pre prihlásenie:</InfoTitle>
           <InfoText>
-            <ul>
-               <li><strong>Do výskumu sa ako respondenti budete prihlasovať pomocou identifikačného kódu respondenta (IKR).</strong></li> 
-               <li><strong>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom, napr. ABCD01.</strong></li> 
-               <li><strong>Tento kód slúži na to aby bola zachovaná vaša anonymita a aby ste si kód pri ďalšom prihlásení nemuseli pamätať.</strong></li> 
-               <li><strong>Prosím zadajte kód podľa následujúcich inštrukcií:</strong></li> 
+            <GradientCircleList>
               <ul>
-                <li><strong>Pre 1. znak: Zadajte prvé písmeno vášho mena.</strong></li> 
-                <li><strong>Pre 2. znak: Zadajte posledné písmeno vášho mena.</strong></li> 
-                <li><strong>Pre 3. znak: Zadajte druhé písmeno vášho priezviska.</strong></li> 
-                <li><strong>Pre 4. znak: Zadajte tretie písmeno vášho priezviska.</strong></li> 
-                <li><strong>Pre dvojčíslie: Zadajte číselne váš mesiac narodenia vo formáte MM (napr. pre 1. január zadajte 01).</strong></li> 
-                <li><strong>Príklad: Jožko Mrkvička narodený v novembri = JORK11.</strong></li> 
+                <li><strong>Do výskumu sa ako respondenti budete prihlasovať pomocou identifikačného kódu respondenta (IKR).</strong></li> 
+                <li><strong>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom.</strong></li> 
+                <li><strong>Tento kód slúži na to aby bola zachovaná vaša anonymita a aby ste si kód pri ďalšom prihlásení nemuseli pamätať.</strong></li> 
+                <li><strong>Prosím zadajte kód podľa následujúcich inštrukcií:</strong></li> 
+                <ul>
+                  <li><strong>Pre 1. znak: Zadajte prvé písmeno vášho mena.</strong></li> 
+                  <li><strong>Pre 2. znak: Zadajte posledné písmeno vášho mena.</strong></li> 
+                  <li><strong>Pre 3. znak: Zadajte druhé písmeno vášho priezviska.</strong></li> 
+                  <li><strong>Pre 4. znak: Zadajte tretie písmeno vášho priezviska.</strong></li> 
+                  <li><strong>Pre dvojčíslie: Zadajte číselne váš mesiac narodenia vo formáte MM (napr. pre 1. január zadajte 01).</strong></li> 
+                  <li><strong>Príklad: Jožko Mrkvička narodený v novembri = JORK11.</strong></li> 
+                </ul>
+                <li><strong>V prípade ak ste sa do výskumu ešte neprihlásili a IKR už existuje, zadajte prosím:</strong></li> 
+                <ul>
+                  <li><strong>Namiesto 1. znaku: Zadajte 1. písmeno okresu v ktorom žijete.</strong></li> 
+                  <li><strong>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín = TORK11.</strong></li> 
+                </ul>
               </ul>
-               <li><strong>V prípade ak ste sa do výskumu ešte neprihlásili a IKR už existuje, zadajte prosím:</strong></li> 
-              <ul>
-                <li><strong>Namiesto 1. znaku: Zadajte 1. písmeno okresu v ktorom žijete.</strong></li> 
-                <li><strong>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín = TORK11.</strong></li> 
-              </ul>
-            </ul>
+            </GradientCircleList>
           </InfoText>
         </InfoBox>
 
@@ -1205,19 +1209,21 @@ const handleStart = async () => {
         <CompetitionSection ref={emailRef}>
           <CompetitionTitle>Zapojte sa do súťaže o ceny</CompetitionTitle>
           <CompetitionText>
-            <ul>
-                <li><strong>Pre zapojenie do súťaže je potrebné zadať e-mailovú adresu a absolovať predvýskum alebo prvú časť hlavného výskumu.</strong></li>
-                <li><strong>Súťaž funguje na základe bodovacieho systému:</strong></li>
-                <ul>
-                  <li><strong>Za absolvovanie predvýskumu získava účastník 50 bodov.</strong></li>
-                  <li><strong>Za absolvovanie prvej časti hlavného výskumu získava účastník 50 bodov.</strong></li>
-                  <li><strong>Za absolvovanie druhej časti hlavného výskumu (follow up meranie) získava účastník 25 bodov.</strong></li>
-                  <li><strong>Za odporúčanie ďalším účastníkom získava účastník 10 bodov za každého nového účastníka.</strong></li>
-                </ul>
-                <li><strong>Hlavnou cenou je darčekový poukaz v hodnote 30 € pre jedného výhercu.</strong></li>
-                <li><strong>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10€ pre piatich výhercov.</strong></li>
-                <li><strong>Viac informácií o súťaži nájdete v sekcii Pravidlá a podmienky súťaže.</strong></li>
-            </ul>
+            <GradientCircleList>
+              <ul>
+                  <li><strong>Pre zapojenie do súťaže je potrebné zadať e-mailovú adresu a absolovať predvýskum alebo prvú časť hlavného výskumu.</strong></li>
+                  <li><strong>Súťaž funguje na základe bodovacieho systému:</strong></li>
+                  <ul>
+                    <li><strong>Za absolvovanie predvýskumu získava účastník 50 bodov.</strong></li>
+                    <li><strong>Za absolvovanie prvej časti hlavného výskumu získava účastník 50 bodov.</strong></li>
+                    <li><strong>Za absolvovanie druhej časti hlavného výskumu (follow up meranie) získava účastník 25 bodov.</strong></li>
+                    <li><strong>Za odporúčanie ďalším účastníkom získava účastník 10 bodov za každého nového účastníka.</strong></li>
+                  </ul>
+                  <li><strong>Hlavnou cenou je darčekový poukaz v hodnote 30 € pre jedného výhercu.</strong></li>
+                  <li><strong>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10€ pre piatich výhercov.</strong></li>
+                  <li><strong>Viac informácií o súťaži nájdete v sekcii Pravidlá a podmienky súťaže.</strong></li>
+              </ul>
+            </GradientCircleList>
           </CompetitionText>
           
           <InputLabel htmlFor="email">Zadajte prosím e-mailovú adresu pre zapojenie do súťaže (nepovinné)</InputLabel>
@@ -1233,10 +1239,12 @@ const handleStart = async () => {
           />
           {errors.email && <ErrorText>{errors.email}</ErrorText>}
             <Note>
-              <ul>
-                <li><strong>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</strong></li>
-                <li><strong>E-mailová adresa bude použitá výhradne na účely kontaktovania výhercov a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</strong></li>
-              </ul>
+              <GradientCircleList>
+                <ul>
+                  <li><strong>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</strong></li>
+                  <li><strong>E-mailová adresa bude použitá výhradne na účely kontaktovania výhercov a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</strong></li>
+                </ul>
+             </GradientCircleList>
             </Note>
         </CompetitionSection>
 
@@ -1259,17 +1267,19 @@ const handleStart = async () => {
               </CheckboxContainer>
               
               <ConsentText>
-                <ul>
-                  <li><strong>Prehlasujem, že:</strong></li>
+                <GradientCircleList>
                   <ul>
-                    <li><strong>Súhlasím s účasťou v súťaži a potvrdzujem, že som si Pravidlá a podmienky súťaže prečítal/a, porozumel/a im a súhlasím s nimi.</strong></li>
-                    <li><strong>Rozumiem, že v prípade porušenia podmienok súťaže, môžem byť zo súťaže o ceny vylúčený.</strong></li>
-                    <li><strong>Mám vedomosť o svojich právach a povinnostiach počas súťaže.</strong></li>
-                    <li><strong>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</strong></li>
-                    <li><strong>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</strong></li>
-                    <li><strong>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</strong></li>
+                    <li><strong>Prehlasujem, že:</strong></li>
+                    <ul>
+                      <li><strong>Súhlasím s účasťou v súťaži a potvrdzujem, že som si Pravidlá a podmienky súťaže prečítal/a, porozumel/a im a súhlasím s nimi.</strong></li>
+                      <li><strong>Rozumiem, že v prípade porušenia podmienok súťaže, môžem byť zo súťaže o ceny vylúčený.</strong></li>
+                      <li><strong>Mám vedomosť o svojich právach a povinnostiach počas súťaže.</strong></li>
+                      <li><strong>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</strong></li>
+                      <li><strong>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</strong></li>
+                      <li><strong>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</strong></li>
+                    </ul>
                   </ul>
-                </ul>
+               </GradientCircleList>
               </ConsentText>
             </div>
             {errors.competitionConsent && <ErrorText>{errors.competitionConsent}</ErrorText>}
@@ -1311,7 +1321,7 @@ const handleStart = async () => {
                 {errors.referral && <ErrorText>{errors.referral}</ErrorText>}
                 <Note>
                   {referralFromUrl 
-                    ? 'Kód bol vyplnený automaticky z odkazu' 
+                    ? 'Kód bol vyplnený automaticky z odkazu.' 
                     : 'Zadajte 6-znakový kód ktorý vám bol poskytnutý respondentom od ktorého ste prišli do nášho výskumu.'}
                 </Note>
               </>
@@ -1331,84 +1341,86 @@ const handleStart = async () => {
             </AccordionHeader>
             <AccordionContent $isOpen={openSections['rules']}>
               <AccordionInner $isOpen={openSections['rules']}>
-                <h3>Organizátor súťaže</h3>
-                <ul>
-                  <li>Organizátorom súťaže je hlavný zodpovedný riešiteľ výskumu - Roman Fiala.</li>
-                </ul>
-
-                <h3>Účastníci súťaže</h3>
-                <ul>
-                  <li>Súťaže sa môžu zúčastniť osoby, ktoré dovŕšili 18 rokov a vyjadrili informovaný súhlas s účasťou vo výskume.</li>
-                </ul>
-
-                <h3>Podmienky zaradenia do rebríčka</h3>
-                <ul>
-                  <li>Podmienky účasti uvedené v tejto časti sú zároveň podmienkami na získanie minimálneho počtu 50 bodov potrebných na zaradenie do rebríčka.</li>
-                  <li>Účastník bude zaradený do rebríčka o ceny, ak:</li>
+                <GradientCircleList>
+                  <h3>Organizátor súťaže</h3>
                   <ul>
-                    <li>Absolvuje aspoň jednu z požadovaných častí výskumu (Predvýskum alebo prvá časť hlavného výskumu).</li>
-                    <li>Pravdivo a plne vypĺňa všetky povinné položky predvýskumu alebo prvej časti hlavného výskumu.</li>
-                    <li>Poskytne kontaktný e-mail určený výhradne na účely súťaže, ktorý nie je spájaný s výskumnými dátami.</li>
+                    <li>Organizátorom súťaže je hlavný zodpovedný riešiteľ výskumu - Roman Fiala.</li>
                   </ul>
-                  <li>Účasť v súťaži nie je podmienkou účasti vo výskume, respondent sa môže zúčastniť výskumu aj bez poskytnutia kontaktného e-mailu.</li>
-                </ul>
 
-                <h3>Bodovací systém</h3>
-                <ul>
-                  <li>Za absolvovanie predvýskumu získava účastník 50 bodov.</li>
-                  <li>Za absolvovanie prvej časti hlavného výskumu získava účastník 50 bodov.</li>
-                  <li>Za absolvovanie druhej časti hlavného výskumu (follow up meranie po 5 dňoch) získava účastník 25 bodov.</li>
-                  <li>Za odporúčanie ďalším účastníkom získava účastník 10 bodov za každého nového účastníka, ktorý sa do výskumu zapojí prostredníctvom jeho referral kódu.</li>
-                </ul>
-
-                <h3>Ceny</h3>
-                <ul>
-                  <li>Hlavná cena: Darčekový poukaz v hodnote 30 € pre jedného výhercu.</li>
-                  <li>Vedľajšie ceny: Päť darčekových poukazov, každý v hodnote 10 €.</li>
-                  <li>Darčekové poukazy budú použiteľné vo vybraných obchodných reťazcoch alebo online obchodoch (špecifikácia bude oznámená výhercom).</li>
-                </ul>
-
-                <h3>Výber výhercov</h3>
-                <ul>
-                  <li>Výhercovia budú vybraní na základe počtu získaných bodov.</li>
-                  <li>V prípade rovnosti bodov bude rozhodovať čas dokončenia prvej časti výskumu (skorší čas má prednosť).</li>
-                  <li>Hlavnú cenu získa účastník s najvyšším počtom bodov.</li>
-                  <li>Vedľajšie ceny získajú účastníci na 2. až 6. mieste v rebríčku.</li>
-                </ul>
-
-                <h3>Oznámenie výhry a odovzdanie cien</h3>
-                <ul>
-                  <li>Výhercovia budú kontaktovaní e-mailom do 10 dní od ukončenia hlavného výskumu.</li>
-                  <li>Výherca je povinný potvrdiť prijatie výhry do 7 dní od odoslania oznámenia.</li>
-                  <li>V prípade, že výherca nepotvrdí prijatie výhry v stanovenej lehote, cena prepadá a bude presunutá na ďalšieho účastníka v poradí.</li>
-                  <li>Darčekové poukazy budú doručené elektronicky na e-mailovú adresu výhercu.</li>
-                </ul>
-
-                <h3>Vylúčenie zo súťaže</h3>
-                <ul>
-                  <li>Účastník môže byť vylúčený zo súťaže v prípade:</li>
+                  <h3>Účastníci súťaže</h3>
                   <ul>
-                    <li>Podvodného konania alebo porušenia pravidiel súťaže.</li>
-                    <li>Poskytnutia nepravdivých údajov.</li>
-                    <li>Vytvorenia viacerých účtov jedným účastníkom.</li>
-                    <li>Zneužitia referral systému (napr. samopozvánky, falošné účty).</li>
+                    <li>Súťaže sa môžu zúčastniť osoby, ktoré dovŕšili 18 rokov a vyjadrili informovaný súhlas s účasťou vo výskume.</li>
                   </ul>
-                  <li>Rozhodnutie o vylúčení je v kompetencii organizátora a je konečné.</li>
-                </ul>
 
-                <h3>Ochrana osobných údajov</h3>
-                <ul>
-                  <li>Kontaktné e-maily budú použité výhradne na účely súťaže a kontaktovania výhercov.</li>
-                  <li>E-mailové adresy nebudú zdieľané s tretími stranami.</li>
-                  <li>Po ukončení súťaže a odovzdaní výhry budú všetky kontaktné údaje bezpečne zlikvidované.</li>
-                </ul>
+                  <h3>Podmienky zaradenia do rebríčka</h3>
+                  <ul>
+                    <li>Podmienky účasti uvedené v tejto časti sú zároveň podmienkami na získanie minimálneho počtu 50 bodov potrebných na zaradenie do rebríčka.</li>
+                    <li>Účastník bude zaradený do rebríčka o ceny, ak:</li>
+                    <ul>
+                      <li>Absolvuje aspoň jednu z požadovaných častí výskumu (Predvýskum alebo prvá časť hlavného výskumu).</li>
+                      <li>Pravdivo a plne vypĺňa všetky povinné položky predvýskumu alebo prvej časti hlavného výskumu.</li>
+                      <li>Poskytne kontaktný e-mail určený výhradne na účely súťaže, ktorý nie je spájaný s výskumnými dátami.</li>
+                    </ul>
+                    <li>Účasť v súťaži nie je podmienkou účasti vo výskume, respondent sa môže zúčastniť výskumu aj bez poskytnutia kontaktného e-mailu.</li>
+                  </ul>
 
-                <h3>Záverečné ustanovenia</h3>
-                <ul>
-                  <li>Organizátor si vyhradzuje právo zmeniť pravidlá súťaže v prípade nepredvídateľných okolností.</li>
-                  <li>Účastníci budú o prípadných zmenách informovaní e-mailom.</li>
-                  <li>Účasťou v súťaži účastník potvrdzuje, že si prečítal pravidlá a súhlasí s nimi.</li>
-                </ul>
+                  <h3>Bodovací systém</h3>
+                  <ul>
+                    <li>Za absolvovanie predvýskumu získava účastník 50 bodov.</li>
+                    <li>Za absolvovanie prvej časti hlavného výskumu získava účastník 50 bodov.</li>
+                    <li>Za absolvovanie druhej časti hlavného výskumu (follow up meranie po 5 dňoch) získava účastník 25 bodov.</li>
+                    <li>Za odporúčanie ďalším účastníkom získava účastník 10 bodov za každého nového účastníka, ktorý sa do výskumu zapojí prostredníctvom jeho referral kódu.</li>
+                  </ul>
+
+                  <h3>Ceny</h3>
+                  <ul>
+                    <li>Hlavná cena: Darčekový poukaz v hodnote 30 € pre jedného výhercu.</li>
+                    <li>Vedľajšie ceny: Päť darčekových poukazov, každý v hodnote 10 €.</li>
+                    <li>Darčekové poukazy budú použiteľné vo vybraných obchodných reťazcoch alebo online obchodoch (špecifikácia bude oznámená výhercom).</li>
+                  </ul>
+
+                  <h3>Výber výhercov</h3>
+                  <ul>
+                    <li>Výhercovia budú vybraní na základe počtu získaných bodov.</li>
+                    <li>V prípade rovnosti bodov bude rozhodovať čas dokončenia prvej časti výskumu (skorší čas má prednosť).</li>
+                    <li>Hlavnú cenu získa účastník s najvyšším počtom bodov.</li>
+                    <li>Vedľajšie ceny získajú účastníci na 2. až 6. mieste v rebríčku.</li>
+                  </ul>
+
+                  <h3>Oznámenie výhry a odovzdanie cien</h3>
+                  <ul>
+                    <li>Výhercovia budú kontaktovaní e-mailom do 10 dní od ukončenia hlavného výskumu.</li>
+                    <li>Výherca je povinný potvrdiť prijatie výhry do 7 dní od odoslania oznámenia.</li>
+                    <li>V prípade, že výherca nepotvrdí prijatie výhry v stanovenej lehote, cena prepadá a bude presunutá na ďalšieho účastníka v poradí.</li>
+                    <li>Darčekové poukazy budú doručené elektronicky na e-mailovú adresu výhercu.</li>
+                  </ul>
+
+                  <h3>Vylúčenie zo súťaže</h3>
+                  <ul>
+                    <li>Účastník môže byť vylúčený zo súťaže v prípade:</li>
+                    <ul>
+                      <li>Podvodného konania alebo porušenia pravidiel súťaže.</li>
+                      <li>Poskytnutia nepravdivých údajov.</li>
+                      <li>Vytvorenia viacerých účtov jedným účastníkom.</li>
+                      <li>Zneužitia referral systému (napr. samopozvánky, falošné účty).</li>
+                    </ul>
+                    <li>Rozhodnutie o vylúčení je v kompetencii organizátora a je konečné.</li>
+                  </ul>
+
+                  <h3>Ochrana osobných údajov</h3>
+                  <ul>
+                    <li>Kontaktné e-maily budú použité výhradne na účely súťaže a kontaktovania výhercov.</li>
+                    <li>E-mailové adresy nebudú zdieľané s tretími stranami.</li>
+                    <li>Po ukončení súťaže a odovzdaní výhry budú všetky kontaktné údaje bezpečne zlikvidované.</li>
+                  </ul>
+
+                  <h3>Záverečné ustanovenia</h3>
+                  <ul>
+                    <li>Organizátor si vyhradzuje právo zmeniť pravidlá súťaže v prípade nepredvídateľných okolností.</li>
+                    <li>Účastníci budú o prípadných zmenách informovaní e-mailom.</li>
+                    <li>Účasťou v súťaži účastník potvrdzuje, že si prečítal pravidlá a súhlasí s nimi.</li>
+                  </ul>
+                </GradientCircleList>
               </AccordionInner>
             </AccordionContent>
           </RulesAccordion>
