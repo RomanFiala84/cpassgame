@@ -1399,12 +1399,12 @@ const handleStart = async () => {
                   <h3>Vylúčenie zo súťaže</h3>
                   
                   <li>Účastník môže byť vylúčený zo súťaže v prípade:</li>
-                  <ul>
+             
                     <li>Podvodného konania alebo porušenia pravidiel súťaže.</li>
                     <li>Poskytnutia nepravdivých údajov.</li>
                     <li>Vytvorenia viacerých účtov jedným účastníkom.</li>
                     <li>Zneužitia referral systému (napr. samopozvánky, falošné účty).</li>
-                  </ul>
+                
                   <li>Rozhodnutie o vylúčení je v kompetencii organizátora a je konečné.</li>
                 
                   <h3>Ochrana osobných údajov</h3>

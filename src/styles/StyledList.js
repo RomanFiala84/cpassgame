@@ -126,7 +126,8 @@ export const GradientCircleList = styled.ul`
   padding-left: 0;
   margin: ${props => props.margin || '12px 0'};
   
-  li {
+  /* PRVÁ ÚROVEŇ - veľké gradient odrážky */
+  > li {
     padding-left: ${props => props.size === 'small' ? '28px' : '32px'};
     position: relative;
     margin-bottom: ${props => props.gap || '12px'};
@@ -155,7 +156,48 @@ export const GradientCircleList = styled.ul`
       box-shadow: 0 2px 8px ${props => props.theme.ACCENT_COLOR}66;
     }
     
-    @media (max-width: 480px) {
+    /* ✅ VNORENÉ <ul> */
+    ul {
+      margin-top: 8px;
+      margin-bottom: 8px;
+      padding-left: 0;
+      list-style: none; /* Vypni default odrážky */
+      
+      /* DRUHÁ ÚROVEŇ - menšie gradient odrážky */
+      li {
+        padding-left: 20px; /* Menší padding */
+        margin-bottom: 6px;
+        font-size: 0.95em; /* Mierne menší text */
+        position: relative;
+        
+        /* Menšia gradient odrážka */
+        &::before {
+          content: '';
+          display: block;
+          position: absolute;
+          left: 0;
+          top: 7px;
+          width: 8px; /* Menšia ako hlavná odrážka */
+          height: 8px;
+          border-radius: 50%;
+          background: linear-gradient(
+            135deg,
+            ${props => props.theme.ACCENT_COLOR},
+            ${props => props.theme.ACCENT_COLOR_2}
+          );
+          transition: all 0.3s ease;
+        }
+        
+        &:hover::before {
+          transform: scale(1.2);
+          box-shadow: 0 1px 6px ${props => props.theme.ACCENT_COLOR}66;
+        }
+      }
+    }
+  }
+  
+  @media (max-width: 480px) {
+    > li {
       padding-left: 24px;
       font-size: ${props => props.fontSize || '13px'};
       
@@ -164,9 +206,21 @@ export const GradientCircleList = styled.ul`
         height: 10px;
         top: 5px;
       }
+      
+      ul li {
+        padding-left: 18px;
+        font-size: 12px;
+        
+        &::before {
+          width: 7px;
+          height: 7px;
+          top: 6px;
+        }
+      }
     }
   }
 `;
+
 
 // ═══════════════════════════════════════════════════
 // 4️⃣ ARROW LIST (→)
