@@ -134,10 +134,10 @@ const Cube = styled.div`
   height: ${props => props.$size}px;
   background: linear-gradient(
     135deg,
-    rgba(139, 0, 0, ${props => props.$baseOpacity}),
-    rgba(220, 38, 38, ${props => props.$baseOpacity})
+    rgba(220, 38, 38, ${props => props.$baseOpacity}), /* ✅ Červená */
+    rgba(37, 99, 235, ${props => props.$baseOpacity})  /* ✅ Modrá */
   );
-  border: 1px solid rgba(185, 28, 28, ${props => props.$borderOpacity / 100});
+  border: 1px solid rgba(147, 51, 234, ${props => props.$borderOpacity / 100}); /* ✅ Fialový border (mix) */
   border-radius: ${props => props.$borderRadius}px;
   animation: 
     ${floatSimple} ${props => props.$duration}s ease-in-out infinite,
@@ -145,7 +145,9 @@ const Cube = styled.div`
   animation-delay: ${props => props.$delay}s;
   left: ${props => props.$left}%;
   top: ${props => props.$top}%;
-  box-shadow: 0 0 ${props => props.$glowSize}px rgba(139, 0, 0, ${props => props.$glowOpacity / 100});
+  box-shadow: 
+    0 0 ${props => props.$glowSize}px rgba(220, 38, 38, ${props => props.$glowOpacity / 100}), /* ✅ Červený glow */
+    0 0 ${props => props.$glowSize * 1.5}px rgba(37, 99, 235, ${props => props.$glowOpacity / 100 * 0.6}); /* ✅ Modrý glow */
   will-change: transform;
   
   @media (max-width: 768px) {
@@ -161,6 +163,7 @@ const Cube = styled.div`
     box-shadow: none;
   }
 `;
+
 
 // =====================
 // COMPONENT

@@ -1,4 +1,4 @@
-//HOTOVO
+//UPRAVA
 // ✅ OPRAVENÁ VERZIA - Avatar bez okrajov, bez badge
 
 import React, { useState, useEffect, useCallback } from 'react';

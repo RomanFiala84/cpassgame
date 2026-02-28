@@ -185,8 +185,16 @@ const CountdownBadge = styled.div`
 const DetectiveImageContainer = styled.div`
   position: relative;
   width: 50%;
-  min-height: 320px; /* ✅ Ešte menšie pre kompaktné okno */
-  /* ... zvyšok kódu ... */
+  min-height: 320px; /* ✅ Kompaktné okno */
+  background: linear-gradient(135deg, 
+    ${p => p.theme.ACCENT_COLOR}33, 
+    ${p => p.theme.ACCENT_COLOR_2}33
+  );
+  overflow: hidden;
+  order: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   
   @media (max-width: 768px) {
     width: 100%;
@@ -200,6 +208,7 @@ const DetectiveImageContainer = styled.div`
 `;
 
 
+
 const DetectiveImage = styled.img`
   width: calc(100% - 32px);
   height: calc(100% - 32px);
@@ -207,16 +216,17 @@ const DetectiveImage = styled.img`
   object-position: center;
   position: relative;
   z-index: 2;
-  border-radius: 20px; /* ✅ VÄČŠIE zaoblenie pre prirodzený vzhľad */
+  border-radius: 20px; /* ✅ Jemné zaoblenie */
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15); /* ✅ Jemný tieň */
   margin: 16px;
-  /* ✅ ODSTRÁNENÉ - border (bez rámčeka) */
-  /* ✅ ODSTRÁNENÉ - box-shadow (bez tieňa) */
+  /* ✅ BEZ borderu - prirodzený okraj obrázka zostáva */
   
   @media (max-width: 768px) {
     width: calc(100% - 24px);
     height: calc(100% - 24px);
     margin: 12px;
     border-radius: 16px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.12);
   }
   
   @media (max-width: 480px) {
@@ -224,6 +234,7 @@ const DetectiveImage = styled.img`
     height: calc(100% - 20px);
     margin: 10px;
     border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   }
 `;
 
