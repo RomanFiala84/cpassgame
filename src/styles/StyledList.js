@@ -1,17 +1,11 @@
 // src/styles/StyledList.js
-// ✅ FINÁLNA VERZIA - Gradient odrážky s farbami z theme
-
 import styled from 'styled-components';
 
-// =====================
-// Hlavný gradient list (väčšie odrážky)
-// =====================
 export const GradientCircleList = styled.ul`
   list-style: none;
   padding-left: 0;
   margin: 0;
   
-  /* ✅ Priame deti LI (hlavné odrážky) */
   > li {
     padding-left: 28px;
     position: relative;
@@ -21,7 +15,6 @@ export const GradientCircleList = styled.ul`
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};
     list-style: none;
     
-    /* ✅ VÄČŠIA odrážka (12px) */
     &::before {
       content: '';
       position: absolute;
@@ -82,9 +75,7 @@ export const GradientCircleList = styled.ul`
   }
 `;
 
-// =====================
-// Vnorený list item (menšie odrážky)
-// =====================
+// ✅ OPRAVENÝ NestedListItem s support pre strong a a
 export const NestedListItem = styled.div`
   padding-left: 52px;
   font-size: 14px;
@@ -93,7 +84,6 @@ export const NestedListItem = styled.div`
   margin-bottom: 10px;
   line-height: 1.6;
   
-  /* ✅ MENŠIA odrážka (8px namiesto 12px) - ale rovnaký gradient */
   &::before {
     content: '';
     position: absolute;
@@ -109,6 +99,22 @@ export const NestedListItem = styled.div`
     );
     box-shadow: 0 2px 4px ${props => props.theme.ACCENT_COLOR}33;
     opacity: 1;
+  }
+  
+  /* ✅ PRIDANÉ - support pre strong */
+  strong {
+    color: ${props => props.theme.ACCENT_COLOR};
+    font-weight: 600;
+  }
+  
+  /* ✅ PRIDANÉ - support pre linky */
+  a {
+    color: ${props => props.theme.ACCENT_COLOR};
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
   }
   
   @media (max-width: 768px) {

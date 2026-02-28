@@ -1,65 +1,84 @@
 // src/components/shared/AnimatedBackground.js
-// ✅ FINÁLNA VERZIA - Subtílny efekt, bez chýb
+// ✅ VÝRAZNÁ ANIMÁCIA - Bordové farby namiesto fialových
 
 import React, { useMemo } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 // =====================
-// ANIMÁCIE - SUBTÍLNE
+// ANIMÁCIE - VÝRAZNÉ ako Sibyl
 // =====================
 
-const floatSubtle = keyframes`
-  0%, 100% {
-    transform: translateY(0) translateX(0);
+const floatDynamic = keyframes`
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-40px) translateX(30px) rotate(90deg) scale(1.1);
   }
   50% {
-    transform: translateY(-20px) translateX(10px);
+    transform: translateY(-20px) translateX(-20px) rotate(180deg) scale(0.9);
+  }
+  75% {
+    transform: translateY(30px) translateX(20px) rotate(270deg) scale(1.05);
+  }
+  100% {
+    transform: translateY(0) translateX(0) rotate(360deg) scale(1);
+  }
+`;
+
+const pulse = keyframes`
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 20px rgba(139, 0, 0, 0.4);
+  }
+  50% {
+    opacity: 0.7;
+    box-shadow: 0 0 40px rgba(139, 0, 0, 0.6);
   }
 `;
 
 // =====================
-// KONŠTANTY - MIMO komponentu
+// KONŠTANTY
 // =====================
 
 const SPEEDS = {
-  slow: 15,
-  normal: 12,
-  fast: 8
+  slow: 20,
+  normal: 15,
+  fast: 10
 };
 
 const COMPLEXITY_SETTINGS = {
   low: {
-    minSize: 40,
-    maxSize: 60,
-    minOpacity: 10,        // ✅ zmenené z 3 na 10
-    maxOpacity: 15,        // ✅ zmenené z 5 na 15
-    baseOpacity: 0.50,     // ✅ zmenené z 0.25 na 0.50
-    glowSize: 15,          // ✅ zväčšené z 10 na 15
-    glowOpacity: '15',     // ✅ zmenené z '08' na '15'
-    borderOpacity: '25'    // ✅ zmenené z '15' na '25'
+    minSize: 50,
+    maxSize: 80,
+    minOpacity: 60,        // ✅ Oveľa vyššia priehľadnosť
+    maxOpacity: 90,
+    baseOpacity: 0.85,
+    glowSize: 30,
+    glowOpacity: '60',
+    borderOpacity: '80'
   },
   medium: {
-    minSize: 35,
-    maxSize: 70,
-    minOpacity: 12,        // ✅ zmenené z 4 na 12
-    maxOpacity: 20,        // ✅ zmenené z 8 na 20
-    baseOpacity: 0.60,     // ✅ zmenené z 0.35 na 0.60
-    glowSize: 18,          // ✅ zväčšené z 12 na 18
-    glowOpacity: '1a',     // ✅ zmenené z '0a' na '1a'
-    borderOpacity: '30'    // ✅ zmenené z '18' na '30'
+    minSize: 45,
+    maxSize: 90,
+    minOpacity: 65,
+    maxOpacity: 95,
+    baseOpacity: 0.90,
+    glowSize: 35,
+    glowOpacity: '70',
+    borderOpacity: '90'
   },
   high: {
-    minSize: 30,
-    maxSize: 80,
-    minOpacity: 15,        // ✅ zmenené z 6 na 15
-    maxOpacity: 25,        // ✅ zmenené z 12 na 25
-    baseOpacity: 0.70,     // ✅ zmenené z 0.45 na 0.70
-    glowSize: 20,          // ✅ zväčšené z 15 na 20
-    glowOpacity: '20',     // ✅ zmenené z '0d' na '20'
-    borderOpacity: '35'    // ✅ zmenené z '1c' na '35'
+    minSize: 40,
+    maxSize: 100,
+    minOpacity: 70,
+    maxOpacity: 100,
+    baseOpacity: 0.95,
+    glowSize: 40,
+    glowOpacity: '80',
+    borderOpacity: '95'
   }
 };
-
 
 // =====================
 // STYLED COMPONENTS
@@ -77,24 +96,43 @@ const BackgroundContainer = styled.div`
   background: ${props => props.theme.BACKGROUND_COLOR};
 `;
 
+// ✅ BORDOVÉ FARBY namiesto fialových
 const Cube = styled.div`
   position: absolute;
   width: ${props => props.$size}px;
   height: ${props => props.$size}px;
   background: linear-gradient(
     135deg,
-    ${props => props.theme.ACCENT_COLOR}${props => props.$opacity},
-    ${props => props.theme.ACCENT_COLOR_2}${props => props.$opacity}
+    rgba(139, 0, 0, ${props => props.$baseOpacity}),      /* ✅ Tmavá bordová */
+    rgba(220, 38, 38, ${props => props.$baseOpacity})      /* ✅ Svetlá bordová */
   );
-  border: 1px solid ${props => props.theme.ACCENT_COLOR}${props => props.$borderOpacity};
+  border: 2px solid rgba(185, 28, 28, ${props => props.$borderOpacity / 100});  /* ✅ Bordový border */
   border-radius: ${props => props.$borderRadius}px;
-  animation: ${floatSubtle} ${props => props.$duration}s ease-in-out infinite;
+  animation: 
+    ${floatDynamic} ${props => props.$duration}s ease-in-out infinite,
+    ${pulse} ${props => props.$duration * 0.6}s ease-in-out infinite;
   animation-delay: ${props => props.$delay}s;
   opacity: ${props => props.$baseOpacity};
   left: ${props => props.$left}%;
   top: ${props => props.$top}%;
-  box-shadow: 0 0 ${props => props.$glowSize}px ${props => props.theme.ACCENT_COLOR}${props => props.$glowOpacity};
-  will-change: transform;
+  box-shadow: 
+    0 0 ${props => props.$glowSize}px rgba(139, 0, 0, ${props => props.$glowOpacity / 100}),
+    inset 0 0 ${props => props.$glowSize / 2}px rgba(220, 38, 38, 0.3);
+  will-change: transform, opacity;
+  backdrop-filter: blur(2px);
+  
+  /* ✅ Reflexný efekt */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 40%;
+    height: 40%;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    filter: blur(8px);
+  }
   
   @media (max-width: 768px) {
     width: ${props => props.$size * 0.75}px;
@@ -112,11 +150,11 @@ const Cube = styled.div`
 // =====================
 
 const AnimatedBackground = ({ 
-  cubeCount = 12,
+  cubeCount = 15,  // ✅ Viac kociek pre výraznejší efekt
   animationSpeed = 'normal',
-  complexity = 'low'
+  complexity = 'medium'
 }) => {
-  const settings = COMPLEXITY_SETTINGS[complexity] || COMPLEXITY_SETTINGS.low;
+  const settings = COMPLEXITY_SETTINGS[complexity] || COMPLEXITY_SETTINGS.medium;
   const duration = SPEEDS[animationSpeed] || SPEEDS.normal;
 
   const cubes = useMemo(() => {
@@ -130,10 +168,10 @@ const AnimatedBackground = ({
         left: Math.random() * 100,
         top: Math.random() * 100,
         delay: Math.random() * duration,
-        duration: duration + Math.random() * 6,
-        opacity: opacity.toString(16).padStart(2, '0'),
+        duration: duration + Math.random() * 8,
+        opacity: opacity,
         baseOpacity: settings.baseOpacity,
-        borderRadius: Math.random() * 6 + 3,
+        borderRadius: Math.random() * 12 + 6,
         borderOpacity: settings.borderOpacity,
         glowSize: settings.glowSize,
         glowOpacity: settings.glowOpacity

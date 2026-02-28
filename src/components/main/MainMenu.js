@@ -906,60 +906,68 @@ const MainMenu = () => {
     }
   };
 
-  const detectiveStory = `
-    <>
-      
-      <GradientCircleList>
-        <li><strong>Ktorou časťou mám začať?</strong></li>
-      </GradientCircleList>
-      
-      <NestedListItem>
-        Ak sa účastníte predvýskumu začnite prosím Misiou 0.
-      </NestedListItem>
-      <NestedListItem style={{ paddingLeft: '20px', fontSize: '0.95em' }}>
-        Po ukončení predvýskumu bude táto misia uzamknutá a účasť v nej už nebude možná.
-      </NestedListItem>
-      
-      <NestedListItem>
-        Ak sa účastníte prvej časti hlavného výskumu začnite prosím Misiou 1 a pokračujete Misiou 2.
-      </NestedListItem>
-      <NestedListItem style={{ paddingLeft: '20px', fontSize: '0.95em' }}>
-        Po ukončení predvýskumu budú tieto misie neustále odomknuté.
-      </NestedListItem>
-      <NestedListItem style={{ paddingLeft: '20px', fontSize: '0.95em' }}>
-        Pre spustenie týchto misií nie je potrebné mať absolvovanú Misiu 0.
-      </NestedListItem>
-      
-      <NestedListItem>
-        Ak sa účastníte druhej časti hlavného výskumu pokračujte prosím Misiou 3.
-      </NestedListItem>
-      <NestedListItem style={{ paddingLeft: '20px', fontSize: '0.95em' }}>
-        Po ukončení prvej časti hlavného výskumu bude táto misia neustále odomknutá.
-      </NestedListItem>
-      <NestedListItem style={{ paddingLeft: '20px', fontSize: '0.95em' }}>
-        Pred spustením Misie 3 si prosím skontrolujte v hlavnom menu, či máte dokončenú Misiu 1 a Misiu 2.
-      </NestedListItem>
-      
-      <GradientCircleList style={{ marginTop: '16px' }}>
-        <li><strong>Čo nájdem v hlavnom menu?</strong></li>
-      </GradientCircleList>
-      
-      <NestedListItem>Bočný panel s aktuálnou detektívnou úrovňou a bodmi.</NestedListItem>
-      <NestedListItem>Panel s aktuálnym progresom misií a celkový počet nazbieraných bodov.</NestedListItem>
-      <NestedListItem>Zoznam všetkých misií.</NestedListItem>
-      <NestedListItem>Odkaz na pomoc.</NestedListItem>
-      <NestedListItem>Odkaz na pravidlá a podmienky súťaže.</NestedListItem>
-      <NestedListItem>Možnosť odhlásenia z aplikácie.</NestedListItem>
-      <NestedListItem>Váš osobný referral kód, ktorý môžete zdieľať s priateľmi.</NestedListItem>
-    </>
-  `;
+ const detectiveStory = `
+  <div style="margin-bottom: 20px;">
+    <p style="font-weight: 600; color: var(--accent-color); margin-bottom: 12px; font-size: 15px;">
+      Ktorou časťou mám začať?
+    </p>
+    
+    <div style="margin-bottom: 16px;">
+      <p style="margin-bottom: 8px; line-height: 1.6;">
+        • Ak sa účastníte <strong>predvýskumu</strong> začnite prosím <strong>Misiou 0</strong>.
+      </p>
+      <p style="padding-left: 20px; font-size: 0.95em; color: var(--secondary-text); margin-bottom: 4px; line-height: 1.5;">
+        ↳ Po ukončení predvýskumu bude táto misia uzamknutá a účasť v nej už nebude možná.
+      </p>
+    </div>
+    
+    <div style="margin-bottom: 16px;">
+      <p style="margin-bottom: 8px; line-height: 1.6;">
+        • Ak sa účastníte <strong>prvej časti hlavného výskumu</strong> začnite prosím <strong>Misiou 1</strong> a pokračujete <strong>Misiou 2</strong>.
+      </p>
+      <p style="padding-left: 20px; font-size: 0.95em; color: var(--secondary-text); margin-bottom: 4px; line-height: 1.5;">
+        ↳ Po ukončení predvýskumu budú tieto misie neustále odomknuté.
+      </p>
+      <p style="padding-left: 20px; font-size: 0.95em; color: var(--secondary-text); margin-bottom: 4px; line-height: 1.5;">
+        ↳ Pre spustenie týchto misií nie je potrebné mať absolvovanú Misiu 0.
+      </p>
+    </div>
+    
+    <div style="margin-bottom: 16px;">
+      <p style="margin-bottom: 8px; line-height: 1.6;">
+        • Ak sa účastníte <strong>druhej časti hlavného výskumu</strong> pokračujte prosím <strong>Misiou 3</strong>.
+      </p>
+      <p style="padding-left: 20px; font-size: 0.95em; color: var(--secondary-text); margin-bottom: 4px; line-height: 1.5;">
+        ↳ Po ukončení prvej časti hlavného výskumu bude táto misia neustále odomknutá.
+      </p>
+      <p style="padding-left: 20px; font-size: 0.95em; color: var(--secondary-text); margin-bottom: 4px; line-height: 1.5;">
+        ↳ Pred spustením Misie 3 si prosím skontrolujte v hlavnom menu, či máte dokončenú Misiu 1 a Misiu 2.
+      </p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 24px;">
+    <p style="font-weight: 600; color: var(--accent-color); margin-bottom: 12px; font-size: 15px;">
+      Čo nájdem v hlavnom menu?
+    </p>
+    
+    <p style="margin-bottom: 6px; line-height: 1.6;">• Bočný panel s aktuálnou detektívnou úrovňou a bodmi.</p>
+    <p style="margin-bottom: 6px; line-height: 1.6;">• Panel s aktuálnym progresom misií a celkový počet nazbieraných bodov.</p>
+    <p style="margin-bottom: 6px; line-height: 1.6;">• Zoznam všetkých misií.</p>
+    <p style="margin-bottom: 6px; line-height: 1.6;">• Odkaz na pomoc.</p>
+    <p style="margin-bottom: 6px; line-height: 1.6;">• Odkaz na pravidlá a podmienky súťaže.</p>
+    <p style="margin-bottom: 6px; line-height: 1.6;">• Možnosť odhlásenia z aplikácie.</p>
+    <p style="margin-bottom: 6px; line-height: 1.6;">• Váš osobný referral kód, ktorý môžete zdieľať s priateľmi.</p>
+  </div>
+`;
+
 
   // ✅ NOVÉ - Loading state
   if (!userId && !userProgress) {
     return (
       <Layout showLevelDisplay={false}  showAnimatedBackground={true}
-  cubeCount={12}
-  animationSpeed="slow"
+  cubeCount={15}
+  animationSpeed="normal"
   complexity="medium">
         <Container>
           <Header>

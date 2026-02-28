@@ -341,8 +341,8 @@ const Intro = () => {
 
   return (
     <Layout showLevelDisplay={false} showAnimatedBackground={true}
-  cubeCount={12}
-  animationSpeed="slow"
+  cubeCount={15}
+  animationSpeed="normal"
   complexity="medium">
       <Container>
         <Header>
@@ -397,13 +397,33 @@ const Intro = () => {
             imageUrl="/images/detective.png"
             iconUrl="/images/detective-icon.png"
             tip={`
-              <p><strong>Ahoj, milý/á respondent/ka!</strong></p>
-              <p>Volám sa Inšpektor Kritan a budem vašim sprievodcom počas celého výskumu.</p>
-              <p>Ak budete potrebovať pomoc, môžete sa kedykoľvek obrátiť na mňa. Nájdete ma vždy v pravom dolnom rohu obrazovky</p>
-              <p>Počas tohto výskumu budete zastávať rolu detektíva.</p>
-              <p>Spoločne sa pokúsime zvládnuť čo najviac misií, za ktoré budete odmenený detektívnymi bodmi a získaním levelov.</p>
-              <p><em>Ak ste pripravený, poďme sa spolu pozrieť do ktorého oddelenia ste boli priradený!</em></p>
+              <p style="font-size: 16px; font-weight: 700; color: #8b5cf6; margin-bottom: 12px;">
+                Ahoj, milý/á respondent/ka!
+              </p>
+              
+              <p style="margin-bottom: 10px; line-height: 1.6;">
+                Volám sa Inšpektor Kritan a budem vašim sprievodcom počas celého výskumu.
+              </p>
+              
+              <p style="margin-bottom: 10px; line-height: 1.6;">
+                Ak budete potrebovať pomoc, môžete sa kedykoľvek obrátiť na mňa. 
+                Nájdete ma vždy v <strong>pravom dolnom rohu obrazovky</strong>
+              </p>
+              
+              <div style="background: rgba(139, 92, 246, 0.1); padding: 12px; border-radius: 8px; margin: 16px 0;">
+                <p style="margin-bottom: 8px;">
+                  <strong>Počas tohto výskumu:</strong>
+                </p>
+                <p style="padding-left: 20px; margin-bottom: 4px;">• Budete zastávať rolu detektíva</p>
+                <p style="padding-left: 20px; margin-bottom: 4px;">• Získate detektívne body a levely</p>
+                <p style="padding-left: 20px;">• Môžete súťažiť o ceny</p>
+              </div>
+              
+              <p style="margin-top: 16px; font-style: italic; color: #c084fc;">
+                Ak ste pripravený, poďme sa spolu pozrieť do ktorého oddelenia ste boli priradený!
+              </p>
             `}
+
             buttonText="Rozumiem, poďme na to!"
             autoOpen={true}
             autoOpenDelay={800}
