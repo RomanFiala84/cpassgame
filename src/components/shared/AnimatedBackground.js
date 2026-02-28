@@ -1,81 +1,62 @@
 // src/components/shared/AnimatedBackground.js
-// ✅ FINÁLNA VERZIA - OPRAVENÁ animation property
+// ✅ FINÁLNA VERZIA - Subtílny efekt, bez chýb
 
 import React, { useMemo } from 'react';
-import styled, { keyframes, css } from 'styled-components'; // ✅ PRIDAJ css
+import styled, { keyframes } from 'styled-components';
 
 // =====================
-// ANIMÁCIE
+// ANIMÁCIE - SUBTÍLNE
 // =====================
 
-const float = keyframes`
+const floatSubtle = keyframes`
   0%, 100% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateY(0) translateX(0);
   }
   50% {
-    transform: translateY(-30px) rotate(180deg);
-  }
-`;
-
-const rotate = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-`;
-
-const pulse = keyframes`
-  0%, 100% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.1);
+    transform: translateY(-20px) translateX(10px);
   }
 `;
 
 // =====================
-// KONŠTANTY
+// KONŠTANTY - MIMO komponentu
 // =====================
-
-const ANIMATION_TYPES = ['float', 'rotate', 'pulse', 'combined'];
 
 const SPEEDS = {
-  slow: 12,
-  normal: 8,
-  fast: 5
+  slow: 15,
+  normal: 12,
+  fast: 8
 };
 
 const COMPLEXITY_SETTINGS = {
   low: {
-    minSize: 30,
-    maxSize: 50,
-    minOpacity: 10,
-    maxOpacity: 20,
-    baseOpacity: 0.5,
-    glowSize: 15,
-    glowOpacity: '15'
+    minSize: 40,
+    maxSize: 60,
+    minOpacity: 3,
+    maxOpacity: 5,
+    baseOpacity: 0.25,
+    glowSize: 10,
+    glowOpacity: '08',
+    borderOpacity: '15'
   },
   medium: {
-    minSize: 20,
-    maxSize: 60,
-    minOpacity: 15,
-    maxOpacity: 25,
-    baseOpacity: 0.6,
-    glowSize: 20,
-    glowOpacity: '20'
+    minSize: 35,
+    maxSize: 70,
+    minOpacity: 4,
+    maxOpacity: 8,
+    baseOpacity: 0.35,
+    glowSize: 12,
+    glowOpacity: '0a',
+    borderOpacity: '18'
   },
   high: {
-    minSize: 15,
-    maxSize: 70,
-    minOpacity: 20,
-    maxOpacity: 30,
-    baseOpacity: 0.7,
-    glowSize: 25,
-    glowOpacity: '25'
+    minSize: 30,
+    maxSize: 80,
+    minOpacity: 6,
+    maxOpacity: 12,
+    baseOpacity: 0.45,
+    glowSize: 15,
+    glowOpacity: '0d',
+    borderOpacity: '1c'
   }
 };
 
@@ -95,7 +76,6 @@ const BackgroundContainer = styled.div`
   background: ${props => props.theme.BACKGROUND_COLOR};
 `;
 
-// ✅ OPRAVA - Použitie css helper pre animáciu
 const Cube = styled.div`
   position: absolute;
   width: ${props => props.$size}px;
@@ -105,40 +85,19 @@ const Cube = styled.div`
     ${props => props.theme.ACCENT_COLOR}${props => props.$opacity},
     ${props => props.theme.ACCENT_COLOR_2}${props => props.$opacity}
   );
-  border: 1px solid ${props => props.theme.ACCENT_COLOR}30;
+  border: 1px solid ${props => props.theme.ACCENT_COLOR}${props => props.$borderOpacity};
   border-radius: ${props => props.$borderRadius}px;
-  
-  /* ✅ OPRAVA - css helper namiesto arrow funkcie */
-  ${props => {
-    if (props.$animationType === 'float') {
-      return css`
-        animation: ${float} ${props.$duration}s ease-in-out infinite;
-      `;
-    } else if (props.$animationType === 'rotate') {
-      return css`
-        animation: ${rotate} ${props.$duration}s linear infinite;
-      `;
-    } else if (props.$animationType === 'pulse') {
-      return css`
-        animation: ${pulse} ${props.$duration}s ease-in-out infinite;
-      `;
-    }
-    return css`
-      animation: ${float} ${props.$duration}s ease-in-out infinite, 
-                 ${rotate} ${props.$duration * 2}s linear infinite;
-    `;
-  }}
-  
+  animation: ${floatSubtle} ${props => props.$duration}s ease-in-out infinite;
   animation-delay: ${props => props.$delay}s;
   opacity: ${props => props.$baseOpacity};
   left: ${props => props.$left}%;
   top: ${props => props.$top}%;
   box-shadow: 0 0 ${props => props.$glowSize}px ${props => props.theme.ACCENT_COLOR}${props => props.$glowOpacity};
-  will-change: transform, opacity;
+  will-change: transform;
   
   @media (max-width: 768px) {
-    width: ${props => props.$size * 0.8}px;
-    height: ${props => props.$size * 0.8}px;
+    width: ${props => props.$size * 0.75}px;
+    height: ${props => props.$size * 0.75}px;
   }
   
   @media (max-width: 480px) {
@@ -152,11 +111,11 @@ const Cube = styled.div`
 // =====================
 
 const AnimatedBackground = ({ 
-  cubeCount = 15,
+  cubeCount = 12,
   animationSpeed = 'normal',
-  complexity = 'medium'
+  complexity = 'low'
 }) => {
-  const settings = COMPLEXITY_SETTINGS[complexity] || COMPLEXITY_SETTINGS.medium;
+  const settings = COMPLEXITY_SETTINGS[complexity] || COMPLEXITY_SETTINGS.low;
   const duration = SPEEDS[animationSpeed] || SPEEDS.normal;
 
   const cubes = useMemo(() => {
@@ -170,11 +129,11 @@ const AnimatedBackground = ({
         left: Math.random() * 100,
         top: Math.random() * 100,
         delay: Math.random() * duration,
-        duration: duration + Math.random() * 4,
+        duration: duration + Math.random() * 6,
         opacity: opacity.toString(16).padStart(2, '0'),
         baseOpacity: settings.baseOpacity,
-        borderRadius: Math.random() * 8 + 2,
-        animationType: ANIMATION_TYPES[Math.floor(Math.random() * ANIMATION_TYPES.length)],
+        borderRadius: Math.random() * 6 + 3,
+        borderOpacity: settings.borderOpacity,
         glowSize: settings.glowSize,
         glowOpacity: settings.glowOpacity
       };
@@ -194,7 +153,7 @@ const AnimatedBackground = ({
           $opacity={cube.opacity}
           $baseOpacity={cube.baseOpacity}
           $borderRadius={cube.borderRadius}
-          $animationType={cube.animationType}
+          $borderOpacity={cube.borderOpacity}
           $glowSize={cube.glowSize}
           $glowOpacity={cube.glowOpacity}
         />

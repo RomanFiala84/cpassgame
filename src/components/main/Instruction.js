@@ -204,14 +204,6 @@ const ConsentText = styled.div`
   line-height: 1.5;
   margin-top: 12px;
   padding-left: 20px;
-  
-  ul {
-    margin: 4px 0;
-  }
-  
-  li {
-    margin-bottom: 4px;
-  }
 `;
 
 const CheckboxContainer = styled.div`
@@ -302,13 +294,6 @@ const Note = styled.div`
   margin-top: 6px;
   line-height: 1.4;
   
-  ul {
-    margin: 4px 0;
-  }
-  
-  li {
-    margin-bottom: 4px;
-  }
 `;
 
 const InfoBox = styled.div`
@@ -339,14 +324,6 @@ const InfoText = styled.div`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   font-size: 13px;
   line-height: 1.6;
-  
-  ul {
-    margin: 4px 0;
-  }
-  
-  li {
-    margin-bottom: 4px;
-  }
   
   strong {
     color: ${p => p.theme.PRIMARY_TEXT_COLOR};
@@ -500,13 +477,6 @@ const CompetitionText = styled.p`
   line-height: 1.5;
   margin-bottom: 12px;
   
-  ul {
-    margin: 4px 0;
-  }
-  
-  li {
-    margin-bottom: 4px;
-  }
 `;
 
 const EmailInput = styled(Input)`

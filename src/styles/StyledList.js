@@ -1,4 +1,6 @@
 // src/styles/StyledList.js
+// ✅ FINÁLNA VERZIA - Gradient odrážky s farbami z theme
+
 import styled from 'styled-components';
 
 // =====================
@@ -31,10 +33,9 @@ export const GradientCircleList = styled.ul`
       background: linear-gradient(
         135deg,
         ${props => props.theme.ACCENT_COLOR},
-        ${props => props.theme.ACCENT_COLOR_2}
+        ${props => props.theme.ACCENT_COLOR_2 || props.theme.ACCENT_COLOR}
       );
       box-shadow: 0 2px 4px ${props => props.theme.ACCENT_COLOR}33;
-      /* ✅ PLNÁ OPACITY */
       opacity: 1;
     }
     
@@ -86,11 +87,10 @@ export const GradientCircleList = styled.ul`
 // =====================
 export const NestedListItem = styled.div`
   padding-left: 52px;
-  /* ✅ ROVNAKÁ veľkosť písma ako GradientCircleList */
   font-size: 14px;
-  color: ${props => props.theme.PRIMARY_TEXT_COLOR}; /* ✅ ROVNAKÁ farba ako hlavné odrážky */
+  color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   position: relative;
-  margin-bottom: 10px; /* ✅ ROVNAKÝ margin ako hlavné odrážky */
+  margin-bottom: 10px;
   line-height: 1.6;
   
   /* ✅ MENŠIA odrážka (8px namiesto 12px) - ale rovnaký gradient */
@@ -105,20 +105,19 @@ export const NestedListItem = styled.div`
     background: linear-gradient(
       135deg,
       ${props => props.theme.ACCENT_COLOR},
-      ${props => props.theme.ACCENT_COLOR_2}
+      ${props => props.theme.ACCENT_COLOR_2 || props.theme.ACCENT_COLOR}
     );
     box-shadow: 0 2px 4px ${props => props.theme.ACCENT_COLOR}33;
-    /* ✅ PLNÁ OPACITY - rovnaká ako hlavné odrážky */
     opacity: 1;
   }
   
   @media (max-width: 768px) {
     padding-left: 40px;
-    font-size: 13px; /* ✅ ROVNAKÁ ako GradientCircleList */
+    font-size: 13px;
     
     &::before {
       left: 24px;
-      width: 6px; /* ✅ Proporčne menšia */
+      width: 6px;
       height: 6px;
       top: 8px;
     }
@@ -126,11 +125,11 @@ export const NestedListItem = styled.div`
   
   @media (max-width: 480px) {
     padding-left: 32px;
-    font-size: 12px; /* ✅ ROVNAKÁ ako GradientCircleList */
+    font-size: 12px;
     
     &::before {
       left: 20px;
-      width: 5px; /* ✅ Proporčne menšia */
+      width: 5px;
       height: 5px;
       top: 7px;
     }

@@ -1,17 +1,17 @@
 // src/styles/theme.js
-// OPTIMALIZOVANÁ FAREBNÁ PALETA - Kráľovská fialová (dark) + Kráľovská modrá (light)
+// ✅ FINÁLNA VERZIA - Obe témy fialové, optimalizované pre čitateľnosť
 
 const darkTheme = {
   // 🌙 TMAVÝ REŽIM - Uhlovo šedá + Kráľovská fialová
-  BACKGROUND_COLOR: '#2f2f2f',           // Uhlovo šedá
-  SECONDARY_BACKGROUND: '#3a3a3a',       // Tieňovo šedá (karty)
-  PRIMARY_TEXT_COLOR: '#ffffff',         // Čisto biela
-  SECONDARY_TEXT_COLOR: '#ffffff',       // Svetlejšia biela pre sekundárny text
+  BACKGROUND_COLOR: '#2f2f2f',
+  SECONDARY_BACKGROUND: '#3a3a3a',
+  PRIMARY_TEXT_COLOR: '#ffffff',
+  SECONDARY_TEXT_COLOR: '#e0e0e0',
   
-// Akcentové farby - Rubínová červená škála 🔴
- ACCENT_COLOR: '#b565d8',          // Sýtejšia fialová (hlavná)
-  ACCENT_COLOR_2: '#d084f0',        // Svetlejšia sýta
-  ACCENT_COLOR_3: '#9b4ec7',        // Tmavšia sýta
+  // ✅ Akcentové farby - Kráľovská fialová škála 💜
+  ACCENT_COLOR: '#b565d8',
+  ACCENT_COLOR_2: '#d084f0',
+  ACCENT_COLOR_3: '#9b4ec7',
   
   CARD_BACKGROUND: '#3a3a3a',
   INPUT_BACKGROUND: '#424242',
@@ -19,35 +19,34 @@ const darkTheme = {
   BORDER_COLOR: '#4a4a4a',
   HOVER_OVERLAY: 'rgba(181, 101, 216, 0.18)',
   
-  
   // Stavové farby
-  SUCCESS_COLOR: '#50c878',              // Smaragdovo zelená
-  ERROR_COLOR: '#ff0000ff',                // Rubínovo červená
-  WARNING_COLOR: '#ff8c00',              // Pomarančovo oranžová
+  SUCCESS_COLOR: '#50c878',
+  ERROR_COLOR: '#ff0000',
+  WARNING_COLOR: '#ff8c00',
 };
 
 const lightTheme = {
-  // ☀️ SVETLÝ REŽIM - Perlovo biela + Kráľovská modrá
-  BACKGROUND_COLOR: '#f8f8ff',           // Perlovo biela
-  SECONDARY_BACKGROUND: '#ffffff',       // Jasnejšia biela (karty)
-  PRIMARY_TEXT_COLOR: '#000000',         // Čisto čierna
-  SECONDARY_TEXT_COLOR: '#000000',       // Tmavošedá pre sekundárny text
+  // ☀️ SVETLÝ REŽIM - Perlovo biela + Kráľovská fialová
+  BACKGROUND_COLOR: '#f8f8ff',
+  SECONDARY_BACKGROUND: '#ffffff',
+  PRIMARY_TEXT_COLOR: '#000000',
+  SECONDARY_TEXT_COLOR: '#4a4a4a',
   
-  // Akcentové farby - Kráľovská modrá škála
-  ACCENT_COLOR: '#b565d8',          // Sýtejšia fialová (hlavná)
-  ACCENT_COLOR_2: '#d084f0',        // Svetlejšia sýta
-  ACCENT_COLOR_3: '#9b4ec7',        // Tmavšia sýta
+  // ✅ Akcentové farby - Kráľovská fialová škála 💜 (ROVNAKÉ AKO DARK)
+  ACCENT_COLOR: '#b565d8',
+  ACCENT_COLOR_2: '#d084f0',
+  ACCENT_COLOR_3: '#9b4ec7',
   
-  CARD_BACKGROUND: '#3a3a3a',
-  INPUT_BACKGROUND: '#424242',
+  CARD_BACKGROUND: '#ffffff',
+  INPUT_BACKGROUND: '#ffffff',
   BUTTON_COLOR: '#b565d8',
-  BORDER_COLOR: '#4a4a4a',
-  HOVER_OVERLAY: 'rgba(181, 101, 216, 0.18)',
+  BORDER_COLOR: '#d8d0e8', // ✅ Svetlo fialová border (namiesto modrej)
+  HOVER_OVERLAY: 'rgba(181, 101, 216, 0.15)',
   
   // Stavové farby
-  SUCCESS_COLOR: '#50c878',              // Smaragdovo zelená
-  ERROR_COLOR: '#ff0000ff',                // Rubínovo červená
-  WARNING_COLOR: '#ff8c00',              // Pomarančovo oranžová
+  SUCCESS_COLOR: '#50c878',
+  ERROR_COLOR: '#ff0000',
+  WARNING_COLOR: '#ff8c00',
 };
 
 export { lightTheme, darkTheme };
