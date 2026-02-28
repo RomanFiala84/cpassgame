@@ -1,5 +1,5 @@
 // src/components/main/Instruction.js
-// FINÁLNA VERZIA s kontrolou duplicitných emailov A AUTOSCROLLOM
+// ✅ FINÁLNA VERZIA - s lokálnymi zoznamami a správnym zarovnaním
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -7,9 +7,86 @@ import styled from 'styled-components';
 import Layout from '../../styles/Layout';
 import StyledButton from '../../styles/StyledButton';
 import { useUserStats } from '../../contexts/UserStatsContext';
-import {GradientCircleList, NestedListItem} from '../../styles/StyledList';
+
 // =====================
-// STYLED COMPONENTS
+// LOKÁLNE STYLED COMPONENTS PRE ZOZNAMY
+// =====================
+
+const LocalList = styled.ul`
+  list-style: none;
+  padding-left: 20px; /* ✅ ZMENENÉ z 25px na 20px */
+  margin: 0;
+  
+  > li {
+    padding-left: 0;
+    position: relative;
+    margin-bottom: 10px;
+    font-size: 13px; /* ✅ Zosúladené s AccordionInner */
+    line-height: 1.6;
+    color: ${props => props.theme.SECONDARY_TEXT_COLOR};
+    
+    &::before {
+      content: '•';
+      position: absolute;
+      left: -15px; /* ✅ ZMENENÉ z -20px na -15px pre lepšie zarovnanie */
+      top: 0;
+      color: ${props => props.theme.ACCENT_COLOR};
+      font-size: 13px;
+      line-height: 1.6;
+      font-weight: bold;
+    }
+    
+    strong {
+      color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+      font-weight: 600;
+    }
+    
+    a {
+      color: ${props => props.theme.ACCENT_COLOR};
+      text-decoration: none;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+`;
+
+const LocalNestedItem = styled.div`
+  padding-left: 20px; /* ✅ ZMENENÉ z 25px na 20px */
+  font-size: 13px; /* ✅ Zosúladené s AccordionInner */
+  color: ${props => props.theme.SECONDARY_TEXT_COLOR};
+  position: relative;
+  margin-bottom: 10px;
+  line-height: 1.6;
+  
+  &::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: ${props => props.theme.ACCENT_COLOR};
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  
+  strong {
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+    font-weight: 600;
+  }
+  
+  a {
+    color: ${props => props.theme.ACCENT_COLOR};
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
+
+// =====================
+// OSTATNÉ STYLED COMPONENTS
 // =====================
 
 const Container = styled.div`
@@ -170,8 +247,6 @@ const AccordionInner = styled.div`
   }
 `;
 
-
-
 const FormCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px solid ${p => p.$hasError ? '#ef4444' : p.theme.BORDER_COLOR};
@@ -199,7 +274,6 @@ const ConsentText = styled.div`
   line-height: 1.5;
   margin-top: 12px;
 `;
-
 
 const CheckboxContainer = styled.div`
   display: flex;
@@ -491,7 +565,6 @@ const RulesAccordion = styled(AccordionItem)`
   }
 `;
 
-
 // =====================
 // MAIN COMPONENT
 // =====================
@@ -515,7 +588,6 @@ export default function Instruction() {
   const [referralFromUrl, setReferralFromUrl] = useState(false);
   const [openSections, setOpenSections] = useState({});
   
-  // ✅ VŠETKY REF-y PRE AUTOSCROLL
   const consentRef = useRef(null);
   const participantCodeRef = useRef(null);
   const emailRef = useRef(null);
@@ -551,7 +623,6 @@ export default function Instruction() {
     checkExistingSession();
   }, [dataManager]);
 
-  // URL referral check
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const refCode = urlParams.get('ref');
@@ -647,7 +718,6 @@ export default function Instruction() {
     }
   };
 
-  // ✅ OPRAVENÁ VALIDÁCIA S AUTOSCROLLOM
   const validate = async () => {
     const e = {};
     let firstErrorRef = null;
@@ -669,14 +739,11 @@ export default function Instruction() {
       if (!firstErrorRef) firstErrorRef = participantCodeRef;
     }
     
-    // Email validácia
     if (email && !validateEmail(email)) {
       e.email = 'Prosím zadajte e-mailovú adresu v správnom formáte.';
       if (!firstErrorRef) firstErrorRef = emailRef;
     }
     
-    // Kontrola duplicitného emailu
-    // ✅ OPRAVENÉ - pridaj error handling
     if (email && validateEmail(email)) {
       try {
         const exists = await dataManager.checkEmailExists(email);
@@ -691,14 +758,11 @@ export default function Instruction() {
       }
     }
 
-    
-    // Ak je zadaný email, súhlas so súťažou je povinný
     if (email && !competitionConsent) {
       e.competitionConsent = 'Ak sa chcete zapojiť do súťaže je potrebné poskytnúť informovaný súhlas s pravidlami a podmienkami súťaže.';
       if (!firstErrorRef) firstErrorRef = competitionConsentRef;
     }
     
-    // ✅ OPRAVENÉ
     if (hasReferral) {
       if (referralAlreadyUsed) {
         e.referral = 'Už ste použili referral kód. Viacnásobné použitie referral kódu nie je povolené.';
@@ -726,9 +790,7 @@ export default function Instruction() {
         }
       }
     }
-
     
-    // ✅ AUTOSCROLL NA PRVÚ CHYBU
     if (firstErrorRef && Object.keys(e).length > 0) {
       setTimeout(() => {
         firstErrorRef.current?.scrollIntoView({ 
@@ -741,104 +803,93 @@ export default function Instruction() {
     return e;
   };
 
-// ✅ OPRAVENÉ
-const handleStart = async () => {
-  // ✅ 1. Ochrana proti double-click
-  if (isProcessing) {
-    console.log('⏭️ Already processing, ignoring click');
-    return;
-  }
-  
-  // ✅ 2. Nastav oba flagy
-  setIsProcessing(true);
-  setIsLoading(true);
-  
-  try {
-    const e = await validate();
-    setErrors(e);
-    
-    if (Object.keys(e).length > 0) {
-      return; // ✅ finally blok sa postará o reset
+  const handleStart = async () => {
+    if (isProcessing) {
+      console.log('⏭️ Already processing, ignoring click');
+      return;
     }
-
-    const codeValidation = validateParticipantCode(participantCode);
-    const upperCode = participantCode.toUpperCase();
     
-    // Ulož informovaný súhlas PRED login
+    setIsProcessing(true);
+    setIsLoading(true);
+    
     try {
-      const userData = await dataManager.loadUserProgress(upperCode);
+      const e = await validate();
+      setErrors(e);
       
-      userData.informed_consent_given = consentGiven;
-      userData.informed_consent_timestamp = new Date().toISOString();
+      if (Object.keys(e).length > 0) {
+        return;
+      }
+
+      const codeValidation = validateParticipantCode(participantCode);
+      const upperCode = participantCode.toUpperCase();
       
-      if (email && competitionConsent) {
-        userData.competition_consent_given = true;
-        userData.competition_consent_timestamp = new Date().toISOString();
+      try {
+        const userData = await dataManager.loadUserProgress(upperCode);
+        
+        userData.informed_consent_given = consentGiven;
+        userData.informed_consent_timestamp = new Date().toISOString();
+        
+        if (email && competitionConsent) {
+          userData.competition_consent_given = true;
+          userData.competition_consent_timestamp = new Date().toISOString();
+        }
+        
+        await dataManager.saveProgress(upperCode, userData);
+        console.log(`✅ Súhlasy uložené pre ${upperCode}`);
+        
+      } catch (error) {
+        console.error('Error saving consents:', error);
+      }
+
+      if (email && validateEmail(email) && competitionConsent) {
+        try {
+          await dataManager.saveCompetitionEmail(upperCode, email);
+          console.log(`✅ Email pre súťaž uložený: ${email}`);
+        } catch (error) {
+          console.error('Email save error:', error);
+        }
       }
       
-      await dataManager.saveProgress(upperCode, userData);
-      console.log(`✅ Súhlasy uložené pre ${upperCode}`);
+      if (hasReferral && !referralAlreadyUsed && referralCode.trim()) {
+        try {
+          await dataManager.processReferral(upperCode, referralCode.trim().toUpperCase());
+        } catch (error) {
+          console.error('Referral processing error:', error);
+          setErrors({ referral: 'Chyba pri spracovaní referral kódu. Zadajte kód znova.' });
+          return;
+        }
+      }
+      
+      const loginResult = await login(upperCode);
+      
+      if (!loginResult.success) {
+        if (loginResult.blocked) {
+          setIsBlocked(true);
+          setParticipantCode(upperCode);
+          setErrors({ blocked: 'Tento účet bol zablokovaný administrátorom.' });
+          setTimeout(() => {
+            blockedWarningRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 100);
+        } else {
+          setErrors({ general: loginResult.message || 'Chyba pri prihlásení.' });
+        }
+        return;
+      }
+      
+      if (codeValidation.type === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/intro');
+      }
       
     } catch (error) {
-      console.error('Error saving consents:', error);
+      console.error('❌ Unexpected error in handleStart:', error);
+      setErrors({ general: 'Neočakávaná chyba. Skúste to znova prosím.' });
+    } finally {
+      setIsLoading(false);
+      setIsProcessing(false);
     }
-
-    // Ulož email ak je validný
-    if (email && validateEmail(email) && competitionConsent) {
-      try {
-        await dataManager.saveCompetitionEmail(upperCode, email);
-        console.log(`✅ Email pre súťaž uložený: ${email}`);
-      } catch (error) {
-        console.error('Email save error:', error);
-      }
-    }
-    
-    // Spracuj referral kód
-    if (hasReferral && !referralAlreadyUsed && referralCode.trim()) {
-      try {
-        await dataManager.processReferral(upperCode, referralCode.trim().toUpperCase());
-      } catch (error) {
-        console.error('Referral processing error:', error);
-        setErrors({ referral: 'Chyba pri spracovaní referral kódu. Zadajte kód znova.' });
-        return; // ✅ finally blok sa postará o reset
-      }
-    }
-    
-    // Spracuj výsledok loginu
-    const loginResult = await login(upperCode);
-    
-    if (!loginResult.success) {
-      if (loginResult.blocked) {
-        setIsBlocked(true);
-        setParticipantCode(upperCode);
-        setErrors({ blocked: 'Tento účet bol zablokovaný administrátorom.' });
-        setTimeout(() => {
-          blockedWarningRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 100);
-      } else {
-        setErrors({ general: loginResult.message || 'Chyba pri prihlásení.' });
-      }
-      return; // ✅ finally blok sa postará o reset
-    }
-    
-    // Redirect len ak je prihlásenie úspešné
-    if (codeValidation.type === 'admin') {
-      navigate('/admin');
-    } else {
-      navigate('/intro');
-    }
-    
-  } catch (error) {
-    console.error('❌ Unexpected error in handleStart:', error);
-    setErrors({ general: 'Neočakávaná chyba. Skúste to znova prosím.' });
-  } finally {
-    // ✅ 3. VŽDY resetuj flagy
-    setIsLoading(false);
-    setIsProcessing(false);
-  }
-};
-
-
+  };
 
   const handleClearCode = () => {
     setParticipantCode('');
@@ -858,13 +909,13 @@ const handleStart = async () => {
       id: 'podmienky',
       title: 'Aké sú podmienky účasti vo výskume?',
       content: (
-      <GradientCircleList>
+      <LocalList>
         <li>Účasť je určená len pre dospelé osoby (18 a viac rokov), ktoré sú schopné samostatne posúdiť informácie o výskume a rozhodnúť sa o svojej účasti.</li>
         <li>Pre účasť je ďalej potrebné, aby účastník pochádzal/a zo Slovenska, prípadne mal/a trvalý/dlhodobý pobyt na území Slovenskej republiky.</li>
         <li>Pozorne si prečítajte každú otázku a tvrdenie, odpovedajte prosím úprimne. Veľmi dlho nad otázkami a tvrdeniami nepremýšľajte. Pri jednotlivých položkách nie sú správne alebo nesprávne odpovede.</li>
         <li>Pre lepšie spracovanie dát vás prosíme aby ste použili počítač alebo notebook, ak použijete mobilný telefón alebo tablet neobmedzí to vašu účasť vo výskume.</li>
         <li>V prípade porušenia podmienok výskumu, môžete byť z výskumu a súťaže o ceny vylúčený, následkom čoho bude zablokovanie vášho prístupu do aplikácie.</li>
-      </GradientCircleList>
+      </LocalList>
       )
     },
     {
@@ -872,19 +923,19 @@ const handleStart = async () => {
       title: 'Čo je cieľom predvýskumu a hlavného výskumu?',
       content: (
       <>
-        <GradientCircleList>
+        <LocalList>
           <li>Predvýskum:</li>
-        </GradientCircleList>
-        <NestedListItem>
+        </LocalList>
+        <LocalNestedItem>
           Predtým ako spustíme hlavný výskum, potrebujeme overiť, že všetky otázky a tvrdenia v dotazníku sú zrozumiteľné a jednoznačné.
-        </NestedListItem>
+        </LocalNestedItem>
         
-        <GradientCircleList>
+        <LocalList>
           <li>Hlavný výskum:</li>
-        </GradientCircleList>
-        <NestedListItem>
+        </LocalList>
+        <LocalNestedItem>
           Cieľom nášho hlavného výskumu je lepšie porozumieť tomu, ako ľudia na Slovensku vnímajú inštitúcie Európskej únie, ako im dôverujú a aké faktory s tým súvisia. V našom výskume sme sa preto zameriavame na to ako informácie o fungovaní EÚ a jej prínosoch môžu pôsobiť na presvedčenia a mieru dôvery v inštitúcie EÚ.
-        </NestedListItem>
+        </LocalNestedItem>
       </>
       )
     },
@@ -893,24 +944,24 @@ const handleStart = async () => {
       title: 'Ako bude prebiehať predvýskum?',
       content: (
       <>
-        <GradientCircleList>
+        <LocalList>
           <li>V predvýskume prejdete sériou otázok a tvrdení - dotazník (5-10 minút).</li>
           <li>Pri hodnotení neexistujú správne ani nesprávne odpovede a po každom bloku otázok vás požiadame o spätnú väzbu.</li>
           <li>Budeme sa pýtať napríklad na:</li>
-        </GradientCircleList>
+        </LocalList>
         
-        <NestedListItem>
+        <LocalNestedItem>
           Zrozumiteľnosť: Bola otázka alebo tvrdenie významovo jasná? Rozumeli ste všetkým použitým slovám?
-        </NestedListItem>
-        <NestedListItem>
+        </LocalNestedItem>
+        <LocalNestedItem>
           Jednoznačnosť: Mohli by ste si otázku vyložiť viacerými spôsobmi?
-        </NestedListItem>
-        <NestedListItem>
+        </LocalNestedItem>
+        <LocalNestedItem>
           Významová zhoda: Pri niektorých položkách vám ukážeme dva rôzne spôsoby formulácie toho istého tvrdenia. Budeme sa pýtať, či podľa vás znamenajú to isté, alebo sa v niečom líšia.
-        </NestedListItem>
-        <NestedListItem>
+        </LocalNestedItem>
+        <LocalNestedItem>
           Hodnotiaca stupnica: Bola stupnica odpovedí zrozumiteľná a mali ste pocit, že dokážete vyjadriť svoj skutočný postoj?
-        </NestedListItem>
+        </LocalNestedItem>
       </>
       )
     },
@@ -919,24 +970,24 @@ const handleStart = async () => {
       title: 'Ako bude prebiehať hlavný výskum?',
       content: (
       <>
-        <GradientCircleList>
+        <LocalList>
           <li>Výskum prebieha online formou interaktívnej aplikácie.</li>
           <li>Pozostáva z troch fáz:</li>
-        </GradientCircleList>
+        </LocalList>
         
-        <NestedListItem>
+        <LocalNestedItem>
           Úvodný dotazník (5-10 minút)
-        </NestedListItem>
-        <NestedListItem>
+        </LocalNestedItem>
+        <LocalNestedItem>
           Misia 1 (10-15 minút) - Prebehne bezprostredne po dokončení úvodného dotazníka
-        </NestedListItem>
-        <NestedListItem>
+        </LocalNestedItem>
+        <LocalNestedItem>
           Misia 2 (10-15 minút) - Prebehne po piatich dňoch od dokončenia Misie 1
-        </NestedListItem>
+        </LocalNestedItem>
         
-        <GradientCircleList>
+        <LocalList>
           <li>Počas výskumu budeme automaticky zaznamenávať vaše interakcie s aplikáciou pre účely výskumu.</li>
-        </GradientCircleList>
+        </LocalList>
       </>
       )
     },
@@ -944,34 +995,34 @@ const handleStart = async () => {
       id: 'spracovanie',
       title: 'Ako budú spracované výsledky a chránené vaše údaje?',
       content: (
-      <GradientCircleList>
+      <LocalList>
         <li>Odpovede, ktoré nám poskytnete vyplnením dotazníka, budú použité výhradne na výskumné účely.</li>
         <li>Výsledky budú spracované a zverejňované len v anonymizovanej, súhrnnej forme, takže z nich nebude možné spätne identifikovať konkrétnu osobu.</li>
         <li>V dotazníku neuvádzate žiadne osobné identifikačné údaje ani IP adresu a namiesto mena si vytvoríte jedinečný kód.</li>
         <li>Všetky údaje sú anonymné, dôverné a uložené v zabezpečenej databáze, ku ktorej má prístup len výskumný tím.</li>
         <li>Ak poskytnete e‑mailovú adresu kvôli zapojeniu sa do súťaže alebo do ďalšej časti výskumu, bude použitá výhradne na tieto účely a po ukončení súťaže a výskumu bude bezprostredne vymazaná.</li>
-      </GradientCircleList>
+      </LocalList>
       )
     },
     {
       id: 'odstupenie',
       title: 'Môžem odstúpiť?',
       content: (
-      <GradientCircleList>
+      <LocalList>
         <li>Áno. Účasť je dobrovoľná a môžete kedykoľvek odstúpiť bez udania dôvodu.</li>
         <li>Môžete tiež požiadať o vymazanie údajov, ktoré budú odstránené najneskôr do 7 dní po ukončení výskumu.</li>
-      </GradientCircleList>
+      </LocalList>
       )
     },
     {
       id: 'rizika',
       title: 'Aké sú riziká účasti vo výskume?',
       content: (
-      <GradientCircleList>
+      <LocalList>
         <li>Účasť nepredstavuje žiadne závažné riziká.</li>
         <li>Niektoré tvrdenia sa dotýkajú citlivých spoločenských tém, čo môže vyvolať mierne emocionálne napätie.</li>
         <li>Ak pocítite akúkoľvek nepohodu, môžete účasť kedykoľvek ukončiť, prípadne využiť niektorý z kontaktov pre pomoc uvedených nižšie.</li>
-      </GradientCircleList>
+      </LocalList>
       )
     },
     {
@@ -979,30 +1030,30 @@ const handleStart = async () => {
       title: 'Čo ak sa budem počas výskumu cítiť znepokojený/á',
       content: (
       <>
-        <GradientCircleList>
+        <LocalList>
           <li>Je úplne v poriadku mať z niektorých tém alebo tvrdení nepríjemný pocit - dotýkajú sa citlivých spoločenských tém.</li>
-        </GradientCircleList>
+        </LocalList>
         
-        <NestedListItem>
+        <LocalNestedItem>
           Odporúčame o svojich pocitoch hovoriť s niekým, komu dôverujete (priateľ, rodina, odborník).
-        </NestedListItem>
-        <NestedListItem>
+        </LocalNestedItem>
+        <LocalNestedItem>
           Ak máte pocit, že na vás podobné informácie dlhodobo pôsobia stresujúco alebo úzkostne, môže byť užitočné poradiť sa so psychológom alebo iným odborníkom.
-        </NestedListItem>
+        </LocalNestedItem>
 
-        <GradientCircleList>
+        <LocalList>
           <li>Dostupné zdroje pomoci:</li>
-        </GradientCircleList>
+        </LocalList>
         
-        <NestedListItem>
+        <LocalNestedItem>
           Kontakt na výskumníka - <a href="mailto:roman.fiala@tvu.sk">roman.fiala@tvu.sk</a>
-        </NestedListItem>
-        <NestedListItem>
+        </LocalNestedItem>
+        <LocalNestedItem>
           IPčko - <a href="https://ipcko.sk" target="_blank" rel="noopener noreferrer">https://ipcko.sk</a>
-        </NestedListItem>
-        <NestedListItem>
+        </LocalNestedItem>
+        <LocalNestedItem>
           Linka dôvery - <a href="https://www.linkanezabudka.sk" target="_blank" rel="noopener noreferrer">https://www.linkanezabudka.sk</a>
-        </NestedListItem>
+        </LocalNestedItem>
       </>
       )
     },
@@ -1010,24 +1061,24 @@ const handleStart = async () => {
       id: 'sutaz',
       title: 'Súťaž',
       content: (
-      <GradientCircleList>
+      <LocalList>
         <li>Súťaž bude vyhodnotená na základe stanovených pravidiel do 10 dní od ukončenia hlavného výskumu.</li>
         <li>Podrobné informácie o bodovaní, cenách a podmienkach účasti nájdete nižšie v sekcii Pravidlá a podmienky súťaže.</li>
-      </GradientCircleList>
+      </LocalList>
       )
     },
     {
       id: 'kontakt',
       title: 'Kontakt',
       content: (
-      <GradientCircleList>
-        <li>V prípade, že máte otázky k samotnému výskumu, môžete nás kontaktovať na uvedenom e‑maile -- radi vám poskytneme doplňujúce informácie.</li>
+      <LocalList>
+        <li>V prípade, že máte otázky k samotnému výskumu, môžete nás kontaktovať na uvedenom e‑maile - radi vám poskytneme doplňujúce informácie.</li>
         <li>Výskumník:<br/>
         Roman Fiala<br/>
         Psychológia, 3. roč. Bc.<br/>
         Katedra psychológie, Filozofická fakulta, Trnavská univerzita v Trnave<br/>
         Email: <a href="mailto:roman.fiala@tvu.sk">roman.fiala@tvu.sk</a></li>
-      </GradientCircleList>
+      </LocalList>
       )
     }
   ];
@@ -1043,7 +1094,6 @@ const handleStart = async () => {
           <strong>Milá respondentka, milý respondent, ďakujeme vám za váš čas a ochotu zúčastniť sa v našom výskume.</strong>
         </Subtitle>
 
-        {/* Expandable sekcie s inštrukciami */}
         <InstructionsSection>
           <WelcomeText>
             <p><strong>Prečítajte si prosím pozorne podmienky a inštrukcie k výskumu.</strong></p>
@@ -1068,7 +1118,6 @@ const handleStart = async () => {
           ))}
         </InstructionsSection>
 
-        {/* Indikátor automaticky vyplneného referral kódu */}
         {referralFromUrl && referralCode && (
           <ReferralNotice>
             <ReferralNoticeText>
@@ -1080,11 +1129,10 @@ const handleStart = async () => {
           </ReferralNotice>
         )}
 
-        {/* Blokovanie používateľa */}
         {isBlocked && (
           <BlockedWarning ref={blockedWarningRef}>
             <BlockedIcon>🚫</BlockedIcon>
-            <BlockedTitle>Váš prístup do aplikáciebol zamietnutý.</BlockedTitle>
+            <BlockedTitle>Váš prístup do aplikácie bol zamietnutý.</BlockedTitle>
             <BlockedMessage>
               Váš účet <strong>{participantCode}</strong> bol zablokovaný administrátorom.
             </BlockedMessage>
@@ -1106,7 +1154,6 @@ const handleStart = async () => {
           </BlockedWarning>
         )}
 
-        {/* ✅ 1. INFORMOVANÝ SÚHLAS - s ref */}
         <FormCard ref={consentRef} $hasError={!!errors.consent}>
           <div>
             <CheckboxContainer 
@@ -1122,84 +1169,82 @@ const handleStart = async () => {
             </CheckboxContainer>
             
             <ConsentText>
-              <GradientCircleList>
+              <LocalList>
                 <li><strong>Prehlasujem, že:</strong></li>
-              </GradientCircleList>
+              </LocalList>
               
-              <NestedListItem>
+              <LocalNestedItem>
                 <strong>Bol(a) som informovaný(á) o účele, priebehu a podmienkach výskumu prostredníctvom informačného listu.</strong>
-              </NestedListItem>
-              <NestedListItem>
+              </LocalNestedItem>
+              <LocalNestedItem>
                 <strong>Rozumiem, že v prípade porušenia podmienok výskumu, môžem byť z výskumu a súťaže o ceny vylúčený, následkom čoho bude zablokovanie môjho prístupu do aplikácie.</strong>
-              </NestedListItem>
-              <NestedListItem>
+              </LocalNestedItem>
+              <LocalNestedItem>
                 <strong>Mám vedomosť o svojich právach a povinnostiach počas výskumu.</strong>
-              </NestedListItem>
-              <NestedListItem>
+              </LocalNestedItem>
+              <LocalNestedItem>
                 <strong>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</strong>
-              </NestedListItem>
-              <NestedListItem>
+              </LocalNestedItem>
+              <LocalNestedItem>
                 <strong>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</strong>
-              </NestedListItem>
-              <NestedListItem>
+              </LocalNestedItem>
+              <LocalNestedItem>
                 <strong>Rozumiem, že budú zaznamenávané moje interakcie s aplikáciou pre vedeckú analýzu.</strong>
-              </NestedListItem>
-              <NestedListItem>
+              </LocalNestedItem>
+              <LocalNestedItem>
                 <strong>Súhlasím s anonymizáciou a publikáciou mojich údajov v súhrnnej forme.</strong>
-              </NestedListItem>
-              <NestedListItem>
+              </LocalNestedItem>
+              <LocalNestedItem>
                 <strong>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</strong>
-              </NestedListItem>
+              </LocalNestedItem>
             </ConsentText>
           </div>
           {errors.consent && <ErrorText>{errors.consent}</ErrorText>}
         </FormCard>
 
-        {/* 2. FORMAT PRIHLASOVACIEHO KÓDU */}
         <InfoBox>
           <InfoTitle>Inštrukcie pre prihlásenie:</InfoTitle>
           <InfoText>
-            <GradientCircleList>
+            <LocalList>
               <li><strong>Do výskumu sa ako respondenti budete prihlasovať pomocou identifikačného kódu respondenta (IKR).</strong></li> 
               <li><strong>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom.</strong></li> 
               <li><strong>Tento kód slúži na to aby bola zachovaná vaša anonymita a aby ste si kód pri ďalšom prihlásení nemuseli pamätať.</strong></li> 
               <li><strong>Prosím zadajte kód podľa následujúcich inštrukcií:</strong></li>
-            </GradientCircleList>
+            </LocalList>
             
-            <NestedListItem>
+            <LocalNestedItem>
               <strong>Pre 1. znak: Zadajte prvé písmeno vášho mena.</strong>
-            </NestedListItem>
-            <NestedListItem>
+            </LocalNestedItem>
+            <LocalNestedItem>
               <strong>Pre 2. znak: Zadajte posledné písmeno vášho mena.</strong>
-            </NestedListItem>
-            <NestedListItem>
+            </LocalNestedItem>
+            <LocalNestedItem>
               <strong>Pre 3. znak: Zadajte druhé písmeno vášho priezviska.</strong>
-            </NestedListItem>
-            <NestedListItem>
+            </LocalNestedItem>
+            <LocalNestedItem>
               <strong>Pre 4. znak: Zadajte tretie písmeno vášho priezviska.</strong>
-            </NestedListItem>
-            <NestedListItem>
+            </LocalNestedItem>
+            <LocalNestedItem>
               <strong>Pre dvojčíslie: Zadajte číselne váš mesiac narodenia vo formáte MM (napr. pre 1. január zadajte 01).</strong>
-            </NestedListItem>
-            <NestedListItem>
+            </LocalNestedItem>
+            <LocalNestedItem>
               <strong>Príklad: Jožko Mrkvička narodený v novembri = JORK11.</strong>
-            </NestedListItem>
+            </LocalNestedItem>
             
-            <GradientCircleList>
+            <LocalList>
               <li><strong>V prípade ak ste sa do výskumu ešte neprihlásili a IKR už existuje, zadajte prosím:</strong></li>
-            </GradientCircleList>
+            </LocalList>
             
-            <NestedListItem>
+            <LocalNestedItem>
               <strong>Namiesto 1. znaku: Zadajte 1. písmeno okresu v ktorom žijete.</strong>
-            </NestedListItem>
+            </LocalNestedItem>
             
-            <GradientCircleList>
+            <LocalList>
               <li><strong>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín = TORK11.</strong></li>
-            </GradientCircleList>
+            </LocalList>
           </InfoText>
         </InfoBox>
 
-        {/* ✅ 3. KÓD ÚČASTNÍKA - s ref */}
         <FormCard ref={participantCodeRef} $hasError={!!errors.participant || !!errors.blocked}>
           <InputLabel htmlFor="participant-code">Zadajte váš identifikačný kód respondenta pre prihlásenie:</InputLabel>
           <Input
@@ -1219,33 +1264,32 @@ const handleStart = async () => {
           <Note>Prosím zadajte kód podľa inštrukcií.</Note>
         </FormCard>
 
-        {/* ✅ 4. EMAIL PRE SÚŤAŽ - s ref */}
         <CompetitionSection ref={emailRef}>
           <CompetitionTitle>Zapojte sa do súťaže o ceny</CompetitionTitle>
           <CompetitionText>
-            <GradientCircleList>
+            <LocalList>
               <li><strong>Pre zapojenie do súťaže je potrebné zadať e-mailovú adresu a absolovať predvýskum alebo prvú časť hlavného výskumu.</strong></li>
               <li><strong>Súťaž funguje na základe bodovacieho systému:</strong></li>
-            </GradientCircleList>
+            </LocalList>
             
-            <NestedListItem>
+            <LocalNestedItem>
               <strong>Za absolvovanie predvýskumu získava účastník 50 bodov.</strong>
-            </NestedListItem>
-            <NestedListItem>
+            </LocalNestedItem>
+            <LocalNestedItem>
               <strong>Za absolvovanie prvej časti hlavného výskumu získava účastník 50 bodov.</strong>
-            </NestedListItem>
-            <NestedListItem>
+            </LocalNestedItem>
+            <LocalNestedItem>
               <strong>Za absolvovanie druhej časti hlavného výskumu (follow up meranie) získava účastník 25 bodov.</strong>
-            </NestedListItem>
-            <NestedListItem>
+            </LocalNestedItem>
+            <LocalNestedItem>
               <strong>Za odporúčanie ďalším účastníkom získava účastník 10 bodov za každého nového účastníka.</strong>
-            </NestedListItem>
+            </LocalNestedItem>
             
-            <GradientCircleList>
+            <LocalList>
               <li><strong>Hlavnou cenou je darčekový poukaz v hodnote 30 € pre jedného výhercu.</strong></li>
               <li><strong>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10€ pre piatich výhercov.</strong></li>
               <li><strong>Viac informácií o súťaži nájdete v sekcii Pravidlá a podmienky súťaže.</strong></li>
-            </GradientCircleList>
+            </LocalList>
           </CompetitionText>
           
           <InputLabel htmlFor="email">Zadajte prosím e-mailovú adresu pre zapojenie do súťaže (nepovinné)</InputLabel>
@@ -1260,17 +1304,14 @@ const handleStart = async () => {
             autoComplete="email"
           />
           {errors.email && <ErrorText>{errors.email}</ErrorText>}
-            <Note>
-              <GradientCircleList>
-               
-                <li><strong>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</strong></li>
-                <li><strong>E-mailová adresa bude použitá výhradne na účely kontaktovania výhercov a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</strong></li>
-            
-             </GradientCircleList>
-            </Note>
+          <Note>
+            <LocalList>
+              <li><strong>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</strong></li>
+              <li><strong>E-mailová adresa bude použitá výhradne na účely kontaktovania výhercov a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</strong></li>
+            </LocalList>
+          </Note>
         </CompetitionSection>
 
-        {/* ✅ 5. INFORMOVANÝ SÚHLAS SO SÚŤAŽOU - s ref */}
         {email && (
           <FormCard ref={competitionConsentRef} $hasError={!!errors.competitionConsent}>
             <div>
@@ -1289,35 +1330,34 @@ const handleStart = async () => {
               </CheckboxContainer>
               
               <ConsentText>
-                <GradientCircleList>
+                <LocalList>
                   <li><strong>Prehlasujem, že:</strong></li>
-                </GradientCircleList>
+                </LocalList>
                 
-                <NestedListItem>
+                <LocalNestedItem>
                   <strong>Súhlasím s účasťou v súťaži a potvrdzujem, že som si Pravidlá a podmienky súťaže prečítal/a, porozumel/a im a súhlasím s nimi.</strong>
-                </NestedListItem>
-                <NestedListItem>
+                </LocalNestedItem>
+                <LocalNestedItem>
                   <strong>Rozumiem, že v prípade porušenia podmienok súťaže, môžem byť zo súťaže o ceny vylúčený.</strong>
-                </NestedListItem>
-                <NestedListItem>
+                </LocalNestedItem>
+                <LocalNestedItem>
                   <strong>Mám vedomosť o svojich právach a povinnostiach počas súťaže.</strong>
-                </NestedListItem>
-                <NestedListItem>
+                </LocalNestedItem>
+                <LocalNestedItem>
                   <strong>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</strong>
-                </NestedListItem>
-                <NestedListItem>
+                </LocalNestedItem>
+                <LocalNestedItem>
                   <strong>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</strong>
-                </NestedListItem>
-                <NestedListItem>
+                </LocalNestedItem>
+                <LocalNestedItem>
                   <strong>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</strong>
-                </NestedListItem>
+                </LocalNestedItem>
               </ConsentText>
             </div>
             {errors.competitionConsent && <ErrorText>{errors.competitionConsent}</ErrorText>}
           </FormCard>
         )}
 
-        {/* ✅ 6. REFERRAL KÓD - s ref */}
         {!referralAlreadyUsed && (
           <FormCard ref={referralRef} $hasError={!!errors.referral}>
             <CheckboxContainer
@@ -1360,7 +1400,6 @@ const handleStart = async () => {
           </FormCard>
         )}
 
-        {/* 7. PRAVIDLÁ A PODMIENKY SÚŤAŽE */}
         <RulesSection>
           <RulesAccordion>
             <AccordionHeader 
@@ -1374,115 +1413,114 @@ const handleStart = async () => {
               <AccordionInner $isOpen={openSections['rules']}>
 
                 <h4>Organizátor súťaže:</h4>
-                <GradientCircleList>
+                <LocalList>
                   <li>Organizátorom súťaže je hlavný zodpovedný riešiteľ výskumu - Roman Fiala.</li>
-                </GradientCircleList>
+                </LocalList>
 
                 <h4>Účastníci súťaže:</h4>
-                <GradientCircleList>
+                <LocalList>
                   <li>Súťaže sa môžu zúčastniť osoby, ktoré dovŕšili 18 rokov a vyjadrili informovaný súhlas s účasťou vo výskume.</li>
-                </GradientCircleList>
+                </LocalList>
 
                 <h4>Podmienky zaradenia do žrebovania:</h4>
-                <GradientCircleList>
+                <LocalList>
                   <li>Podmienky účasti uvedené v tejto časti sú zároveň podmienkami na získanie minimálneho počtu 50 bodov potrebných na zaradenie do žrebovania.</li>
                   <li>Účastník bude zaradený do žrebovania o ceny, ak:</li>
-                </GradientCircleList>
+                </LocalList>
                 
-                <NestedListItem>
+                <LocalNestedItem>
                   Absolvuje aspoň jednu z požadovaných častí výskumu: Predvýskum alebo prvú časť hlavného výskumu.
-                </NestedListItem>
-                <NestedListItem>
+                </LocalNestedItem>
+                <LocalNestedItem>
                   Pravdivo a úplne vyplní všetky povinné položky predvýskumu alebo prvej časti hlavného výskumu.
-                </NestedListItem>
-                <NestedListItem>
+                </LocalNestedItem>
+                <LocalNestedItem>
                   Poskytne kontaktný e-mail určený výhradne na účely súťaže, ktorý nie je spájaný s výskumnými dátami.
-                </NestedListItem>
+                </LocalNestedItem>
                 
-                <GradientCircleList>
+                <LocalList>
                   <li>Účasť v súťaži nie je podmienkou účasti vo výskume, respondent sa môže zúčastniť výskumu aj bez poskytnutia kontaktného e-mailu.</li>
-                </GradientCircleList>
+                </LocalList>
 
                 <h4>Trvanie súťaže:</h4>
-                <GradientCircleList>
+                <LocalList>
                   <li>Súťaž prebieha v období od spustenia predvýskumu - marec 2026 do ukončenia hlavného výskumu - apríl 2026.</li>
                   <li>Pozor - predvýskum bude dostupný iba do spustenia hlavného výskumu, to znamená že po jeho spustení predvýskum už nebude možné absolvovať.</li>
                   <li>Do žrebovania budú zaradení len účastníci, ktorí splnia podmienky účasti v tomto časovom intervale.</li>
-                </GradientCircleList>
+                </LocalList>
 
                 <h4>Bodovanie účasti v súťaži:</h4>
-                <GradientCircleList>
+                <LocalList>
                   <li>Každý získaný bod predstavuje jeden žreb v súťaži. Účastník s vyšším počtom bodov tak má vyššiu pravdepodobnosť výhry. Minimálnou podmienkou zaradenia do žrebovania je získanie minimálne 50 bodov.</li>
                   <li>Za absolvovanie predvýskumu získava účastník 50 bodov.</li>
                   <li>Za absolvovanie prvej časti hlavného výskumu získava účastník 50 bodov.</li>
                   <li>Za absolvovanie druhej časti hlavného výskumu (follow-up meranie) získava účastník 25 bodov.</li>
                   <li>Za odporúčanie ďalším účastníkom 10 bodov za nového účastníka.</li>
-                </GradientCircleList>
+                </LocalList>
                 
-                <NestedListItem>
+                <LocalNestedItem>
                   Každý účastník, ktorý absolvuje aspoň predvýskum alebo prvú časť hlavného výskumu, získa jedinečný referral kód.
-                </NestedListItem>
-                <NestedListItem>
+                </LocalNestedItem>
+                <LocalNestedItem>
                   Ak nový účastník pri vstupe do štúdie uvedie referral kód osoby, ktorá ho pozvala, a sám splní podmienky účasti, osoba, ktorá referral kód zdieľala, získa za každé takéto platné odporúčanie 10 bodov.
-                </NestedListItem>
-                <NestedListItem>
+                </LocalNestedItem>
+                <LocalNestedItem>
                   Za toho istého nového účastníka možno referral kód započítať len raz a len jednému odporúčateľovi.
-                </NestedListItem>
-                <NestedListItem>
+                </LocalNestedItem>
+                <LocalNestedItem>
                   Referral kód nemá vplyv na samotný priebeh výskumu, slúži iba na pridelenie bodov do súťaže.
-                </NestedListItem>
+                </LocalNestedItem>
 
                 <h4>Výhry:</h4>
-                <GradientCircleList>
+                <LocalList>
                   <li>Hlavnou cenou je darčekový poukaz v hodnote 30 € pre jedného výhercu.</li>
                   <li>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10 € pre piatich výhercov.</li>
                   <li>Výhercovia si určia v ktorom obchode si chcú uplatniť darčekový poukaz a na základe toho im bude poukaz poskytnutý.</li>
                   <li>Organizátor si vyhradzuje právo zmeniť typ ceny za inú v rovnakej alebo vyššej hodnote (napr. iný typ poukážky), ak pôvodnú cenu nebude možné zabezpečiť.</li>
-                </GradientCircleList>
+                </LocalList>
 
                 <h4>Žrebovanie výhercov:</h4>
-                <GradientCircleList>
+                <LocalList>
                   <li>Žrebovanie prebehne najneskôr do 10 dní po ukončení hlavného výskumu.</li>
                   <li>Žrebovanie bude realizované náhodným výberom z databázy e-mailových adries účastníkov, ktorí splnili podmienky účasti.</li>
                   <li>Žrebovanie vykoná organizátor za prítomnosti svedkov a bude zaznamenané na videozáznam s časovou stopou.</li>
-                </GradientCircleList>
+                </LocalList>
 
                 <h4>Oznámenie a odovzdanie výhry:</h4>
-                <GradientCircleList>
+                <LocalList>
                   <li>Výhercovia budú kontaktovaní e-mailom najneskôr do 5 dní od žrebovania.</li>
                   <li>Ak výherca do 10 pracovných dní od odoslania e-mailu nereaguje alebo odmietne výhru, cena môže byť pridelená náhradníkovi, ktorý bude vyžrebovaný rovnakým spôsobom.</li>
                   <li>Výhra bude odovzdaná elektronicky formou poukazu.</li>
-                </GradientCircleList>
+                </LocalList>
 
                 <h4>Ochrana osobných údajov:</h4>
-                <GradientCircleList>
+                <LocalList>
                   <li>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</li>
                   <li>Údaje budú použité výhradne na účely kontaktovania výhercu a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</li>
                   <li>Spracovanie osobných údajov prebieha v súlade s GDPR a zákonom č. 18/2018 Z. z.</li>
-                </GradientCircleList>
+                </LocalList>
 
                 <h4>Vylúčenie zo súťaže:</h4>
-                <GradientCircleList>
+                <LocalList>
                   <li>Organizátor si vyhradzuje právo vylúčiť účastníka zo súťaže, ak:</li>
-                </GradientCircleList>
+                </LocalList>
                 
-                <NestedListItem>
+                <LocalNestedItem>
                   Porušil tieto pravidlá a podmienky súťaže.
-                </NestedListItem>
-                <NestedListItem>
+                </LocalNestedItem>
+                <LocalNestedItem>
                   Uviedol zjavne nepravdivé údaje alebo iným spôsobom zneužil mechanizmus súťaže (napr. viacnásobná registrácia s rôznymi e-mailmi).
-                </NestedListItem>
+                </LocalNestedItem>
 
                 <h4>Zodpovednosť organizátora:</h4>
-                <GradientCircleList>
+                <LocalList>
                   <li>Organizátor nezodpovedá za technické problémy (napr. výpadky internetu, poruchy zariadenia účastníka), ktoré znemožnia alebo skomplikujú účasť v súťaži alebo dokončenie výskumu.</li>
-                </GradientCircleList>
+                </LocalList>
               </AccordionInner>
             </AccordionContent>
           </RulesAccordion>
         </RulesSection>
 
-        {/* Tlačidlá */}
         <ButtonContainer>
           <StyledButton
             onClick={handleStart}
