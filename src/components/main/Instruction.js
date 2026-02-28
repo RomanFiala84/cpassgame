@@ -12,16 +12,20 @@ import {GradientCircleList, NestedListItem} from '../../styles/StyledList';
 // STYLED COMPONENTS
 // =====================
 
+// =====================
+// STYLED COMPONENTS - OPRAVENÉ
+// =====================
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 24px 16px;
+  padding: 25px 15px; /* ✅ zaokrúhlené */
   min-height: 100vh;
   
   @media (max-width: 768px) {
-    padding: 20px 12px;
+    padding: 20px 10px; /* ✅ zaokrúhlené */
   }
 `;
 
@@ -82,17 +86,16 @@ const AccordionItem = styled.div`
   border-radius: 10px;
   overflow: hidden;
   background: ${props => props.theme.CARD_BACKGROUND};
-  transition: border-color 0.2s ease;  // ⬅️ zmena z "all" na špecifické
+  transition: border-color 0.2s ease;
   
   &:hover {
     border-color: ${props => props.theme.ACCENT_COLOR}66;
   }
 `;
 
-
 const AccordionHeader = styled.button`
   width: 100%;
-  padding: 15px 15px;
+  padding: 15px;
   background: ${props => props.$isOpen ? props.theme.CARD_BACKGROUND : 'transparent'};
   border: none;
   text-align: center;
@@ -112,31 +115,50 @@ const AccordionHeader = styled.button`
   
   @media (max-width: 768px) {
     font-size: 15px;
-    padding: 10px 10px;
+    padding: 10px;
   }
 `;
 
 const AccordionIcon = styled.span`
-  transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0)'}; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);  // ⬅️ zmena z 0.3s
+  transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0)'};
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 15px;
   color: ${props => props.theme.ACCENT_COLOR};
 `;
 
-
 const AccordionContent = styled.div`
-  max-height: ${props => props.$isOpen ? '3000px' : '0'};  // ⬅️ zvýšené z 3000px
+  max-height: ${props => props.$isOpen ? '3000px' : '0'};
   overflow: hidden;
-  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);  // ⬅️ zmena z 0.4s ease
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
-
+/* ✅ OPRAVENÝ AccordionInner - konzistentný padding, odstránené margin konflikty */
 const AccordionInner = styled.div`
-  padding: 0 15px;  // ⬅️ odstránené dynamické prepínanie
-  padding-bottom: ${props => props.$isOpen ? '10px' : '0'};  // ⬅️ len bottom
+  padding: ${props => props.$isOpen ? '15px' : '0 15px'}; /* ✅ jednotný padding */
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   line-height: 1.6;
   font-size: 15px;
-  transition: padding-bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1);  // ⬅️ pridané
+  transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* ✅ Resetovanie margin/padding pre GradientCircleList a NestedListItem */
+  ${GradientCircleList} {
+    margin: 0; /* ✅ odstránené top/bottom margin */
+    padding-left: 25px;
+    
+    li {
+      margin: 0; /* ✅ odstránené margin */
+      padding: 5px 0; /* ✅ len vertical padding */
+      font-size: 15px; /* ✅ konzistentná veľkosť */
+      color: ${props => props.theme.SECONDARY_TEXT_COLOR}; /* ✅ konzistentná farba */
+    }
+  }
+  
+  ${NestedListItem} {
+    margin: 0; /* ✅ odstránené margin */
+    padding: 5px 0 5px 25px; /* ✅ konzistentný padding */
+    font-size: 15px; /* ✅ konzistentná veľkosť */
+    color: ${props => props.theme.SECONDARY_TEXT_COLOR}; /* ✅ konzistentná farba */
+  }
   
   h3 {
     color: ${props => props.theme.ACCENT_COLOR};
@@ -147,6 +169,7 @@ const AccordionInner = styled.div`
   
   p {
     margin-bottom: 10px;
+    font-size: 15px; /* ✅ konzistentná veľkosť */
   }
   
   strong {
@@ -172,12 +195,10 @@ const AccordionInner = styled.div`
   }
 `;
 
-
-
 const FormCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px solid ${p => p.$hasError ? '#ef4444' : p.theme.BORDER_COLOR};
-  border-radius: 12px;
+  border-radius: 10px; /* ✅ zaokrúhlené */
   padding: 15px;
   margin-bottom: 10px;
   width: 100%;
@@ -195,23 +216,52 @@ const FormCard = styled.div`
   }
 `;
 
+/* ✅ OPRAVENÝ ConsentText - jednotný font-size 15px */
 const ConsentText = styled.div`
-  font-size: 10px;
+  font-size: 15px; /* ✅ zmenené z 10px */
   padding: 15px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   line-height: 1.5;
   margin-top: 10px;
+  
+  /* ✅ Resetovanie margin/padding */
+  ${GradientCircleList} {
+    margin: 0;
+    padding-left: 25px;
+    
+    li {
+      margin: 0;
+      padding: 5px 0;
+      font-size: 15px; /* ✅ konzistentná veľkosť */
+      color: ${p => p.theme.SECONDARY_TEXT_COLOR}; /* ✅ farba */
+      
+      strong {
+        color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+        font-weight: 600;
+      }
+    }
+  }
+  
+  ${NestedListItem} {
+    margin: 0;
+    padding: 5px 0 5px 25px;
+    font-size: 15px; /* ✅ konzistentná veľkosť */
+    color: ${p => p.theme.SECONDARY_TEXT_COLOR}; /* ✅ farba */
+    
+    strong {
+      color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+      font-weight: 600;
+    }
+  }
 
   h3 {
     color: ${props => props.theme.ACCENT_COLOR};
-    padding: 15px;
+    padding: 0; /* ✅ odstránené padding */
     margin: 10px 0 5px 0;
     font-size: 15px;
     font-weight: 600;
   }
-
 `;
-
 
 const CheckboxContainer = styled.div`
   display: flex;
@@ -233,7 +283,7 @@ const CheckboxContainer = styled.div`
 const Checkbox = styled.input`
   width: 15px;
   height: 15px;
-  margin-top: 5px;
+  margin-top: 5px; /* ✅ zaokrúhlené */
   flex-shrink: 0;
   cursor: ${p => p.disabled ? 'not-allowed' : 'pointer'};
   accent-color: ${p => p.theme.ACCENT_COLOR};
@@ -249,9 +299,9 @@ const InputLabel = styled.label`
 
 const Input = styled.input`
   width: 100%;
-  padding: 15px 15px;
+  padding: 15px;
   border: 2px solid ${props => props.$hasError ? '#ef4444' : props.theme.BORDER_COLOR};
-  border-radius: 8px;
+  border-radius: 10px; /* ✅ zaokrúhlené */
   font-size: 15px;
   background: ${props => props.theme.INPUT_BACKGROUND};
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
@@ -284,11 +334,11 @@ const Input = styled.input`
 const ErrorText = styled.div`
   color: #ef4444;
   font-size: 15px;
-  margin-top: 5;
+  margin-top: 5px;
   font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px; /* ✅ zaokrúhlené */
   
   &::before {
     content: '⚠️';
@@ -296,14 +346,14 @@ const ErrorText = styled.div`
 `;
 
 const Note = styled.div`
-  font-size: 10px;
+  font-size: 15px; /* ✅ zmenené z 10px */
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   margin-top: 5px;
   line-height: 1.4;
 `;
 
 const InfoBox = styled.div`
-  background: ${p => p.$hasError ? '#ef444411' : `${p.theme.ACCENT_COLOR}`}45;
+  background: ${p => p.$hasError ? '#ef444411' : `${p.theme.ACCENT_COLOR}45`};
   border-left: 5px solid ${p => p.$hasError ? '#ef4444' : p.theme.ACCENT_COLOR};
   padding: 15px;
   margin-bottom: 15px;
@@ -320,16 +370,36 @@ const InfoTitle = styled.div`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   font-weight: 700;
   margin-bottom: 10px;
-  font-size: 25px;
+  font-size: 20px; /* ✅ zmenené z 25px na čitateľnejšiu veľkosť */
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px; /* ✅ zaokrúhlené */
 `;
 
 const InfoText = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   font-size: 15px;
   line-height: 1.6;
+  
+  /* ✅ Resetovanie margin/padding */
+  ${GradientCircleList} {
+    margin: 0;
+    padding-left: 25px;
+    
+    li {
+      margin: 0;
+      padding: 5px 0;
+      font-size: 15px;
+      color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+    }
+  }
+  
+  ${NestedListItem} {
+    margin: 0;
+    padding: 5px 0 5px 25px;
+    font-size: 15px;
+    color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  }
   
   strong {
     color: ${p => p.theme.PRIMARY_TEXT_COLOR};
@@ -353,7 +423,7 @@ const ButtonContainer = styled.div`
 const BlockedWarning = styled.div`
   background: linear-gradient(135deg, #ef4444, #dc2626);
   border: 2px solid #b91c1c;
-  border-radius: 16px;
+  border-radius: 15px; /* ✅ zaokrúhlené */
   padding: 30px;
   margin: 25px 0;
   max-width: 800px;
@@ -409,7 +479,7 @@ const BlockedMessage = styled.p`
 
 const ContactInfo = styled.div`
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  border-radius: 10px; /* ✅ zaokrúhlené */
   padding: 15px;
   margin-top: 20px;
   color: #fef2f2;
@@ -471,7 +541,7 @@ const CompetitionSection = styled(FormCard)`
 `;
 
 const CompetitionTitle = styled.h3`
-  color: ${p => p.theme.ACCENT_COLOR};
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   font-size: 15px;
   font-weight: 600;
   margin-bottom: 10px;
@@ -482,6 +552,24 @@ const CompetitionText = styled.p`
   font-size: 15px;
   line-height: 1.5;
   margin-bottom: 10px;
+  
+  /* ✅ Resetovanie margin/padding */
+  ${GradientCircleList} {
+    margin: 0;
+    padding-left: 25px;
+    
+    li {
+      margin: 0;
+      padding: 5px 0;
+      font-size: 15px;
+    }
+  }
+  
+  ${NestedListItem} {
+    margin: 0;
+    padding: 5px 0 5px 25px;
+    font-size: 15px;
+  }
 `;
 
 const EmailInput = styled(Input)`
@@ -502,6 +590,7 @@ const RulesAccordion = styled(AccordionItem)`
     border-color: ${p => p.theme.BORDER_COLOR};
   }
 `;
+
 
 
 
@@ -1131,7 +1220,7 @@ const handleStart = async () => {
                 disabled={isBlocked}
                 onChange={(e) => setConsentGiven(e.target.checked)}
               />
-              <label>SÚHLASÍM SO SPRACOVANÍM ÚDAJOV A PARTICIPÁCIOU VO VÝSKUME</label>
+              <label><strong>SÚHLASÍM SO SPRACOVANÍM ÚDAJOV A PARTICIPÁCIOU VO VÝSKUME</strong></label>
             </CheckboxContainer>
             
             <ConsentText>
@@ -1170,12 +1259,12 @@ const handleStart = async () => {
 
         {/* 2. FORMAT PRIHLASOVACIEHO KÓDU */}
         <InfoBox>
-          <InfoTitle>Inštrukcie pre prihlásenie:</InfoTitle>
+          <InfoTitle><strong>Inštrukcie pre prihlásenie:</strong></InfoTitle>
           <InfoText>
             <GradientCircleList>
-              <li><strong>Do výskumu sa ako respondenti budete prihlasovať pomocou identifikačného kódu respondenta (IKR).</strong></li> 
-              <li><strong>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom.</strong></li> 
-              <li><strong>Tento kód slúži na to aby bola zachovaná vaša anonymita a aby ste si kód pri ďalšom prihlásení nemuseli pamätať.</strong></li> 
+              <li>Do výskumu sa ako respondenti budete prihlasovať pomocou identifikačného kódu respondenta (IKR).</li> 
+              <li>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom.</li> 
+              <li>Tento kód slúži na to aby bola zachovaná vaša anonymita a aby ste si kód pri ďalšom prihlásení nemuseli pamätať.</li> 
               <li ><strong>Prosím zadajte kód podľa následujúcich inštrukcií:</strong></li>
             </GradientCircleList>
             
@@ -1195,7 +1284,7 @@ const handleStart = async () => {
               <strong>Pre dvojčíslie: Zadajte číselne váš mesiac narodenia vo formáte MM (napr. pre 1. január zadajte 01).</strong>
             </NestedListItem>
             <NestedListItem>
-              <strong>Príklad: Jožko Mrkvička narodený v novembri = JORK11.</strong>
+              Príklad: Jožko Mrkvička narodený v novembri = JORK11.
             </NestedListItem>
             
             <GradientCircleList>
@@ -1206,15 +1295,15 @@ const handleStart = async () => {
               <strong>Namiesto 1. znaku: Zadajte 1. písmeno okresu v ktorom žijete.</strong>
             </NestedListItem>
             
-            <GradientCircleList>
-              <li><strong>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín = TORK11.</strong></li>
-            </GradientCircleList>
+            <NestedListItem>
+              <li>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín = TORK11.</li>
+            </NestedListItem>
           </InfoText>
         </InfoBox>
 
         {/* ✅ 3. KÓD ÚČASTNÍKA - s ref */}
         <FormCard ref={participantCodeRef} $hasError={!!errors.participant || !!errors.blocked}>
-          <InputLabel htmlFor="participant-code">Zadajte váš identifikačný kód respondenta pre prihlásenie:</InputLabel>
+          <InputLabel htmlFor="participant-code"><strong>Zadajte váš identifikačný kód respondenta pre prihlásenie:</strong></InputLabel>
           <Input
             id="participant-code"
             type="text"
@@ -1234,7 +1323,7 @@ const handleStart = async () => {
 
         {/* ✅ 4. EMAIL PRE SÚŤAŽ - s ref */}
         <CompetitionSection ref={emailRef}>
-          <CompetitionTitle>Zapojte sa do súťaže o ceny</CompetitionTitle>
+          <CompetitionTitle><strong>Zapojte sa do súťaže o ceny</strong></CompetitionTitle>
           <CompetitionText>
             <GradientCircleList>
               <li><strong>Pre zapojenie do súťaže je potrebné zadať e-mailovú adresu a absolovať predvýskum alebo prvú časť hlavného výskumu.</strong></li>
@@ -1261,7 +1350,7 @@ const handleStart = async () => {
             </GradientCircleList>
           </CompetitionText>
           
-          <InputLabel htmlFor="email">Zadajte prosím e-mailovú adresu pre zapojenie do súťaže (nepovinné):</InputLabel>
+          <InputLabel htmlFor="email"><strong>Zadajte prosím e-mailovú adresu pre zapojenie do súťaže (nepovinné):</strong></InputLabel>
           <EmailInput
             id="email"
             type="email"
@@ -1276,8 +1365,8 @@ const handleStart = async () => {
             <Note>
               <GradientCircleList>
                
-                <li><strong>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</strong></li>
-                <li><strong>E-mailová adresa bude použitá výhradne na účely kontaktovania výhercov a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</strong></li>
+                <li>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</li>
+                <li>E-mailová adresa bude použitá výhradne na účely kontaktovania výhercov a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</li>
             
              </GradientCircleList>
             </Note>
@@ -1297,7 +1386,7 @@ const handleStart = async () => {
                   onChange={(e) => setCompetitionConsent(e.target.checked)}
                 />
                 <label>
-                  SÚHLASÍM SO SPRACOVANÍM OSOBNÝCH ÚDAJOV A PARTICIPÁCIOU V SÚŤAŽI
+                  <strong>SÚHLASÍM SO SPRACOVANÍM OSOBNÝCH ÚDAJOV A PARTICIPÁCIOU V SÚŤAŽI</strong>
                 </label>
               </CheckboxContainer>
               
@@ -1349,7 +1438,7 @@ const handleStart = async () => {
             {hasReferral && (
               <>
                 <InputLabel htmlFor="referral-code" style={{ marginTop: '16px' }}>
-                  Referral kód {referralFromUrl && '(automaticky vyplnený)'}
+                  <strong>Referral kód</strong> {referralFromUrl && '(automaticky vyplnený)'}
                 </InputLabel>
                 <Input
                   id="referral-code"
@@ -1380,7 +1469,7 @@ const handleStart = async () => {
               onClick={() => toggleSection('rules')}
               $isOpen={openSections['rules']}
             >
-              Pravidlá a podmienky súťaže
+              <strong>Pravidlá a podmienky súťaže</strong>
               <AccordionIcon $isOpen={openSections['rules']}>▼</AccordionIcon>
             </AccordionHeader>
             <AccordionContent $isOpen={openSections['rules']}>
