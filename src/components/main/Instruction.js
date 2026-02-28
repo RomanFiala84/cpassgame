@@ -98,10 +98,36 @@ const Container = styled.div`
   }
 `;
 
-const Title = styled.h1`
-  font-size: 25px;
+// =====================
+// ÚVODNÉ OKNO - PRIDAJ PO EXISTUJÚCICH STYLED COMPONENTS
+// =====================
+
+const WelcomeCard = styled.div`
+  background: ${p => `${p.theme.ACCENT_COLOR}11`};
+  border: 2px solid ${p => p.theme.ACCENT_COLOR}44;
+  border-radius: 12px;
+  padding: 24px; /* ✅ Väčší padding pre úvodné okno */
+  margin-bottom: 20px; /* ✅ Väčší spacing */
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: all 0.2s ease;
   text-align: center;
-  margin-bottom: 8px;
+  
+  &:hover {
+    border-color: ${p => p.theme.ACCENT_COLOR};
+    box-shadow: 0 4px 16px ${p => `${p.theme.ACCENT_COLOR}33`}; /* ✅ Svetelný efekt */
+  }
+  
+  @media (max-width: 768px) {
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+`;
+
+const WelcomeTitle = styled.h2`
+  font-size: 25px;
+  margin-bottom: 12px;
   background: linear-gradient(
     135deg,
     ${props => props.theme.ACCENT_COLOR},
@@ -113,27 +139,45 @@ const Title = styled.h1`
   font-weight: 700;
   
   @media (max-width: 768px) {
-    font-size: 25px;
-  }
-  
-  @media (max-width: 480px) {
-    font-size: 20px;
+    font-size: 22px;
   }
 `;
 
-const Subtitle = styled.p`
-  font-size: 15px;
-  line-height: 1.5;
-  max-width: 800px;
-  margin-bottom: 20px;
-  color: ${props => props.theme.SECONDARY_TEXT_COLOR};
-  text-align: center;
+const WelcomeSubtitle = styled.p`
+  font-size: 16px;
+  line-height: 1.6;
+  color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+  margin-bottom: 16px;
+  font-weight: 600;
   
   @media (max-width: 768px) {
     font-size: 15px;
-    margin-bottom: 16px;
   }
 `;
+
+const WelcomeInstructions = styled.div`
+  text-align: left;
+  font-size: 15px;
+  line-height: 1.6;
+  color: ${props => props.theme.SECONDARY_TEXT_COLOR};
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 2px solid ${props => props.theme.ACCENT_COLOR}33;
+  
+  p {
+    margin-bottom: 12px;
+    
+    &:last-child {
+      margin-bottom: 0; /* ✅ Posledný odstavec bez marginu */
+    }
+    
+    strong {
+      color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+      font-weight: 600;
+    }
+  }
+`;
+
 
 const InstructionsSection = styled.div`
   width: 100%;
@@ -141,13 +185,6 @@ const InstructionsSection = styled.div`
   margin-bottom: 20px;
 `;
 
-const WelcomeText = styled.p`
-  font-size: 15px;
-  line-height: 1.5;
-  color: ${props => props.theme.PRIMARY_TEXT_COLOR};
-  text-align: center;
-  margin-bottom: 16px;
-`;
 
 const AccordionItem = styled.div`
   margin-bottom: 8px;
@@ -191,9 +228,9 @@ const AccordionHeader = styled.button`
 // ✅ OPTIMALIZOVANÉ ACCORDION KOMPONENTY
 
 const AccordionContent = styled.div`
-  max-height: ${props => props.$isOpen ? '2000px' : '0'}; /* ✅ Zvýšený limit */
+  max-height: ${props => props.$isOpen ? '2000px' : '0'};
   overflow: hidden;
-  transition: max-height 0.4s ease-in-out; /* ✅ Rýchlejšia a plynulejšia krivka */
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1); /* ✅ Plynulá Material Design krivka */
 `;
 
 const AccordionInner = styled.div`
@@ -203,9 +240,8 @@ const AccordionInner = styled.div`
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   line-height: 1.6;
   font-size: 15px;
-  opacity: ${props => props.$isOpen ? '1' : '0'}; /* ✅ Pridaná fade animácia */
-  transition: opacity 0.3s ease-in-out 0.1s, 
-              transform 0.3s ease-in-out 0.1s; /* ✅ Mierny delay pre plynulosť */
+  opacity: ${props => props.$isOpen ? '1' : '0'}; /* ✅ Len fade efekt */
+  transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0.08s; /* ✅ BEZ transform */
   
   h3 {
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};
@@ -243,7 +279,7 @@ const AccordionInner = styled.div`
 
 const AccordionIcon = styled.span`
   transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0)'};
-  transition: transform 0.4s ease-in-out; /* ✅ Zosúladené s AccordionContent */
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1); /* ✅ Zosúladené */
   font-size: 15px;
   color: ${props => props.theme.ACCENT_COLOR};
 `;
@@ -290,9 +326,9 @@ const ContestHeader = styled.button`
 // ✅ OPTIMALIZOVANÉ ACCORDION KOMPONENTY
 
 const ContestContent = styled.div`
-  max-height: ${props => props.$isOpen ? '3000px' : '0'}; /* ✅ Zvýšený limit */
+  max-height: ${props => props.$isOpen ? '3000px' : '0'};
   overflow: hidden;
-  transition: max-height 0.4s ease-in-out; /* ✅ Rýchlejšia a plynulejšia krivka */
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
 const ContestInner = styled.div`
@@ -302,11 +338,17 @@ const ContestInner = styled.div`
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   line-height: 1.6;
   font-size: 10px;
-  opacity: ${props => props.$isOpen ? '1' : '0'}; /* ✅ Pridaná fade animácia */
-  transition: opacity 0.3s ease-in-out 0.1s, 
-              transform 0.3s ease-in-out 0.1s; /* ✅ Mierny delay pre plynulosť */
+  opacity: ${props => props.$isOpen ? '1' : '0'}; /* ✅ Len fade efekt */
+  transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0.08s; /* ✅ BEZ transform */
   
   h3 {
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+    margin: 12px 0 6px 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  
+  h4 {
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};
     margin: 12px 0 6px 0;
     font-size: 15px;
@@ -337,15 +379,20 @@ const ContestInner = styled.div`
     h3 {
       font-size: 15px;
     }
+    
+    h4 {
+      font-size: 13px;
+    }
   }
 `;
 
 const ContestIcon = styled.span`
   transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0)'};
-  transition: transform 0.4s ease-in-out; /* ✅ Zosúladené s AccordionContent */
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 15px;
   color: ${props => props.theme.ACCENT_COLOR};
 `;
+
 const FormCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px solid ${p => p.$hasError ? '#ef4444' : p.theme.BORDER_COLOR};
@@ -1188,16 +1235,20 @@ export default function Instruction() {
   animationSpeed="normal"
   complexity="medium">
       <Container>
-        <Title><strong>Vitajte v aplikácií CP-PASS</strong></Title>
-        <Subtitle>
-          <strong>Milá respondentka, milý respondent, ďakujeme vám za váš čas a ochotu zúčastniť sa v našom výskume.</strong>
-        </Subtitle>
-
-        <InstructionsSection>
-          <WelcomeText>
+        <WelcomeCard>
+          <WelcomeTitle>Vitajte v aplikácií CP-PASS</WelcomeTitle>
+          
+          <WelcomeSubtitle>
+            <strong>Milá respondentka, milý respondent, ďakujeme vám za váš čas a ochotu zúčastniť sa v našom výskume.</strong>
+          </WelcomeSubtitle>
+          
+          <WelcomeInstructions>
             <p><strong>Prečítajte si prosím pozorne podmienky a inštrukcie k výskumu.</strong></p>
             <p><strong>Následne pokračujte prihlásením sa do výskumnej aplikácie.</strong></p>
-          </WelcomeText>
+          </WelcomeInstructions>
+        </WelcomeCard>
+
+        <InstructionsSection>
           
           {instructionsSections.map(section => (
             <AccordionItem key={section.id}>
