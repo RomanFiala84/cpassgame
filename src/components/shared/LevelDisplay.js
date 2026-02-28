@@ -171,7 +171,7 @@ const MiniInfo = styled.div`
 const MiniLabel = styled.div`
   font-size: 15px;
   font-weight: 600;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  color: ${p => p.theme.ACCENT_COLOR};
   text-transform: uppercase;
   letter-spacing: 0.3px;
 `;
@@ -298,9 +298,9 @@ const LevelInfo = styled.div`
 `;
 
 const LevelLabel = styled.div`
-  font-size: 10px;
+  font-size: 15px;
   font-weight: 600;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  color: ${p => p.theme.ACCENT_COLOR};
   text-transform: uppercase;
   letter-spacing: 0.3px;
 
@@ -344,7 +344,7 @@ const StatItem = styled.div`
 const StatLabel = styled.div`
   font-size: 10px;
   font-weight: 600;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  color: ${p => p.theme.ACCENT_COLOR};
   text-transform: uppercase;
   letter-spacing: 0.2px;
 
@@ -382,7 +382,7 @@ const ProgressSection = styled.div`
 const ProgressLabel = styled.div`
   font-size: 10px;
   font-weight: 600;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  color: ${p => p.theme.ACCENT_COLOR};
   text-transform: uppercase;
   letter-spacing: 0.2px;
 `;
@@ -443,7 +443,7 @@ const ProgressText = styled.div`
 `;
 
 const ProgressPercentage = styled.div`
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  color: ${p => p.theme.ACCENT_COLOR};
 `;
 
 const SidebarOverlay = styled.div`

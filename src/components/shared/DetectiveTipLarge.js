@@ -113,7 +113,7 @@ const ModalContainer = styled.div`
   border-radius: 16px;
   max-width: 850px;
   width: 100%;
-  max-height: 90vh;
+  max-height: 70vh; /* ✅ ZMENENÉ z 90vh na 70vh */
   overflow: hidden;
   display: flex;
   flex-direction: row;
@@ -146,12 +146,14 @@ const ModalContainer = styled.div`
   
   @media (max-width: 768px) {
     max-width: 90%;
+    max-height: 75vh; /* ✅ ZMENENÉ z 90vh */
     flex-direction: column;
     border-radius: 12px;
   }
   
   @media (max-width: 480px) {
     max-width: 95%;
+    max-height: 80vh; /* ✅ ZMENENÉ z 90vh */
   }
 `;
 
@@ -183,29 +185,20 @@ const CountdownBadge = styled.div`
 const DetectiveImageContainer = styled.div`
   position: relative;
   width: 50%;
-  min-height: 480px;
-  background: linear-gradient(135deg, 
-    ${p => p.theme.ACCENT_COLOR}33, 
-    ${p => p.theme.ACCENT_COLOR_2}33
-  );
-  overflow: hidden;
-  order: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  /* ✅ ODSTRÁNENÉ - Dekoratívny pattern overlay */
+  min-height: 320px; /* ✅ Ešte menšie pre kompaktné okno */
+  /* ... zvyšok kódu ... */
   
   @media (max-width: 768px) {
     width: 100%;
-    min-height: 220px;
+    min-height: 160px; /* ✅ Menšie */
     order: 1;
   }
   
   @media (max-width: 480px) {
-    min-height: 180px;
+    min-height: 140px; /* ✅ Menšie */
   }
 `;
+
 
 const DetectiveImage = styled.img`
   width: calc(100% - 32px); /* ✅ Miesto pre rámček a margin */
