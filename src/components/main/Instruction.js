@@ -509,13 +509,20 @@ const Note = styled.div`
 `;
 
 const InfoBox = styled.div`
-  background: ${p => p.$hasError ? '#ef444411' : `${p.theme.ACCENT_COLOR}11`};
-  border-left: 3px solid ${p => p.$hasError ? '#ef4444' : p.theme.ACCENT_COLOR};
+  background: ${p => p.theme.CARD_BACKGROUND};
+  border: 2px solid ${p => p.$hasError ? '#ef4444' : p.theme.BORDER_COLOR};
+  border-radius: 12px;
   padding: 16px;
-  margin-bottom: 16px;
-  max-width: 800px;
+  margin-bottom: 12px;
   width: 100%;
-  border-radius: 10px;
+  max-width: 800px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: all 0.2s ease;
+  scroll-margin-top: 20px;
+  
+  &:hover {
+    border-color: ${p => p.$hasError ? '#ef4444' : p.theme.ACCENT_COLOR}66;
+  }
   
   @media (max-width: 768px) {
     padding: 14px;
