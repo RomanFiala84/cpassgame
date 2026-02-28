@@ -21,7 +21,6 @@ const LocalList = styled.ul`
     padding-left: 0;
     position: relative;
     margin-bottom: 10px;
-    font-size: 13px; /* ✅ Zosúladené s AccordionInner */
     line-height: 1.6;
     color: ${props => props.theme.SECONDARY_TEXT_COLOR};
     
@@ -31,7 +30,6 @@ const LocalList = styled.ul`
       left: -15px; /* ✅ ZMENENÉ z -20px na -15px pre lepšie zarovnanie */
       top: 0;
       color: ${props => props.theme.ACCENT_COLOR};
-      font-size: 13px;
       line-height: 1.6;
       font-weight: bold;
     }
@@ -54,7 +52,6 @@ const LocalList = styled.ul`
 
 const LocalNestedItem = styled.div`
   padding-left: 20px; /* ✅ ZMENENÉ z 25px na 20px */
-  font-size: 13px; /* ✅ Zosúladené s AccordionInner */
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   position: relative;
   margin-bottom: 10px;
@@ -66,7 +63,6 @@ const LocalNestedItem = styled.div`
     left: 0;
     top: 0;
     color: ${props => props.theme.ACCENT_COLOR};
-    font-size: 13px;
     line-height: 1.6;
   }
   
@@ -103,7 +99,7 @@ const Container = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 28px;
+  font-size: 25px;
   text-align: center;
   margin-bottom: 8px;
   background: linear-gradient(
@@ -117,16 +113,16 @@ const Title = styled.h1`
   font-weight: 700;
   
   @media (max-width: 768px) {
-    font-size: 24px;
+    font-size: 25px;
   }
   
   @media (max-width: 480px) {
-    font-size: 22px;
+    font-size: 20px;
   }
 `;
 
 const Subtitle = styled.p`
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.5;
   max-width: 800px;
   margin-bottom: 20px;
@@ -187,7 +183,7 @@ const AccordionHeader = styled.button`
   }
   
   @media (max-width: 768px) {
-    font-size: 14px;
+    font-size: 15px;
     padding: 12px 14px;
   }
 `;
@@ -206,16 +202,15 @@ const AccordionInner = styled.div`
   padding-bottom: ${props => props.$isOpen ? '16px' : '0'};
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   line-height: 1.6;
-  font-size: 13px;
+  font-size: 15px;
   opacity: ${props => props.$isOpen ? '1' : '0'}; /* ✅ Pridaná fade animácia */
-  transform: translateY(${props => props.$isOpen ? '0' : '-10px'}); /* ✅ Jemný posun */
   transition: opacity 0.3s ease-in-out 0.1s, 
               transform 0.3s ease-in-out 0.1s; /* ✅ Mierny delay pre plynulosť */
   
   h3 {
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};
     margin: 12px 0 6px 0;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
   }
   
@@ -238,10 +233,10 @@ const AccordionInner = styled.div`
   }
   
   @media (max-width: 768px) {
-    font-size: 12px;
+    font-size: 15px;
     
     h3 {
-      font-size: 13px;
+      font-size: 15px;
     }
   }
 `;
@@ -249,11 +244,108 @@ const AccordionInner = styled.div`
 const AccordionIcon = styled.span`
   transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0)'};
   transition: transform 0.4s ease-in-out; /* ✅ Zosúladené s AccordionContent */
-  font-size: 14px;
+  font-size: 15px;
   color: ${props => props.theme.ACCENT_COLOR};
 `;
 
+const ContestItem = styled.div`
+  margin-bottom: 8px;
+  border: 1px solid ${props => props.theme.BORDER_COLOR};
+  border-radius: 10px;
+  overflow: hidden;
+  background: ${props => props.theme.CARD_BACKGROUND};
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: ${props => props.theme.ACCENT_COLOR}66;
+  }
+`;
 
+const ContestHeader = styled.button`
+  width: 100%;
+  padding: 12px 16px;
+  background: ${props => props.$isOpen ? props.theme.CARD_BACKGROUND : 'transparent'};
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: ${props => props.$isOpen ? props.theme.ACCENT_COLOR : props.theme.PRIMARY_TEXT_COLOR};
+  transition: all 0.2s ease;
+  font-family: inherit;
+  
+  &:hover {
+    color: ${props => props.theme.ACCENT_COLOR};
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 15px;
+    padding: 12px 14px;
+  }
+`;
+
+// ✅ OPTIMALIZOVANÉ ACCORDION KOMPONENTY
+
+const ContestContent = styled.div`
+  max-height: ${props => props.$isOpen ? '3000px' : '0'}; /* ✅ Zvýšený limit */
+  overflow: hidden;
+  transition: max-height 0.4s ease-in-out; /* ✅ Rýchlejšia a plynulejšia krivka */
+`;
+
+const ContestInner = styled.div`
+  padding: 16px;
+  padding-top: ${props => props.$isOpen ? '0' : '16px'};
+  padding-bottom: ${props => props.$isOpen ? '16px' : '0'};
+  color: ${props => props.theme.SECONDARY_TEXT_COLOR};
+  line-height: 1.6;
+  font-size: 10px;
+  opacity: ${props => props.$isOpen ? '1' : '0'}; /* ✅ Pridaná fade animácia */
+  transition: opacity 0.3s ease-in-out 0.1s, 
+              transform 0.3s ease-in-out 0.1s; /* ✅ Mierny delay pre plynulosť */
+  
+  h3 {
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+    margin: 12px 0 6px 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  
+  p {
+    margin-bottom: 10px;
+  }
+  
+  strong {
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+    font-weight: 600;
+  }
+  
+  a {
+    color: ${props => props.theme.ACCENT_COLOR};
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 10px;
+    
+    h3 {
+      font-size: 15px;
+    }
+  }
+`;
+
+const ContestIcon = styled.span`
+  transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0)'};
+  transition: transform 0.4s ease-in-out; /* ✅ Zosúladené s AccordionContent */
+  font-size: 15px;
+  color: ${props => props.theme.ACCENT_COLOR};
+`;
 const FormCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px solid ${p => p.$hasError ? '#ef4444' : p.theme.BORDER_COLOR};
@@ -276,7 +368,7 @@ const FormCard = styled.div`
 `;
 
 const ConsentText = styled.div`
-  font-size: 0.85em;
+  font-size: 15px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   line-height: 1.5;
   margin-top: 12px;
@@ -294,7 +386,7 @@ const CheckboxContainer = styled.div`
     text-decoration: ${p => p.$disabled ? 'line-through' : 'none'};
     opacity: ${p => p.$disabled ? 0.6 : 1};
     user-select: none;
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.4;
   }
 `;
@@ -313,7 +405,7 @@ const InputLabel = styled.label`
   font-weight: 600;
   margin-bottom: 8px;
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
-  font-size: 14px;
+  font-size: 15px;
 `;
 
 const Input = styled.input`
@@ -352,7 +444,7 @@ const Input = styled.input`
 
 const ErrorText = styled.div`
   color: #ef4444;
-  font-size: 12px;
+  font-size: 15px;
   margin-top: 6px;
   font-weight: 500;
   display: flex;
@@ -365,7 +457,7 @@ const ErrorText = styled.div`
 `;
 
 const Note = styled.div`
-  font-size: 11px;
+  font-size: 15px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   margin-top: 6px;
   line-height: 1.4;
@@ -397,7 +489,7 @@ const InfoTitle = styled.div`
 
 const InfoText = styled.div`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.6;
   
   strong {
@@ -444,7 +536,7 @@ const BlockedWarning = styled.div`
 `;
 
 const BlockedIcon = styled.div`
-  font-size: 64px;
+  font-size: 60px;
   margin-bottom: 16px;
   animation: pulse 2s ease-in-out infinite;
   
@@ -456,7 +548,7 @@ const BlockedIcon = styled.div`
 
 const BlockedTitle = styled.h2`
   color: #ffffff;
-  font-size: 24px;
+  font-size: 25px;
   font-weight: 700;
   margin-bottom: 12px;
   
@@ -467,12 +559,12 @@ const BlockedTitle = styled.h2`
 
 const BlockedMessage = styled.p`
   color: #fecaca;
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.6;
   margin-bottom: 8px;
   
   @media (max-width: 768px) {
-    font-size: 14px;
+    font-size: 15px;
   }
 `;
 
@@ -482,7 +574,7 @@ const ContactInfo = styled.div`
   padding: 16px;
   margin-top: 20px;
   color: #fef2f2;
-  font-size: 14px;
+  font-size: 15px;
   
   strong {
     color: #ffffff;
@@ -523,13 +615,13 @@ const ReferralNotice = styled.div`
 
 const ReferralNoticeText = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 13px;
+  font-size: 15px;
   margin-bottom: 6px;
   
   strong {
     color: ${p => p.theme.ACCENT_COLOR};
     font-weight: 700;
-    font-size: 16px;
+    font-size: 15px;
     letter-spacing: 2px;
   }
 `;
@@ -548,7 +640,7 @@ const CompetitionTitle = styled.h3`
 
 const CompetitionText = styled.p`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.5;
   margin-bottom: 12px;
 `;
@@ -564,7 +656,7 @@ const RulesSection = styled.div`
   margin-bottom: 12px;
 `;
 
-const RulesAccordion = styled(AccordionItem)`
+const RulesAccordion = styled(ContestItem)`
   border-color: ${p => p.theme.ACCENT_COLOR}44;
   
   &:hover {
@@ -1409,15 +1501,15 @@ export default function Instruction() {
 
         <RulesSection>
           <RulesAccordion>
-            <AccordionHeader 
+            <ContestHeader 
               onClick={() => toggleSection('rules')}
               $isOpen={openSections['rules']}
             >
               Pravidlá a podmienky súťaže
-              <AccordionIcon $isOpen={openSections['rules']}>▼</AccordionIcon>
-            </AccordionHeader>
-            <AccordionContent $isOpen={openSections['rules']}>
-              <AccordionInner $isOpen={openSections['rules']}>
+              <ContestIcon $isOpen={openSections['rules']}>▼</ContestIcon>
+            </ContestHeader>
+            <ContestContent $isOpen={openSections['rules']}>
+              <ContestInner $isOpen={openSections['rules']}>
 
                 <h4>Organizátor súťaže:</h4>
                 <LocalList>
@@ -1523,8 +1615,8 @@ export default function Instruction() {
                 <LocalList>
                   <li>Organizátor nezodpovedá za technické problémy (napr. výpadky internetu, poruchy zariadenia účastníka), ktoré znemožnia alebo skomplikujú účasť v súťaži alebo dokončenie výskumu.</li>
                 </LocalList>
-              </AccordionInner>
-            </AccordionContent>
+              </ContestInner>
+            </ContestContent>
           </RulesAccordion>
         </RulesSection>
 
