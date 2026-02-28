@@ -1,5 +1,6 @@
-//HTOTOVO
+//HOTOVO
 // ✅ Všetko v PRIMARY_TEXT_COLOR - jednotný vzhľad
+// ✅ Margin/padding zaokrúhlené na 5/10
 
 import styled from 'styled-components';
 
@@ -9,10 +10,10 @@ export const GradientCircleList = styled.ul`
   margin: 0;
   
   > li {
-    padding-left: 24px;
+    padding-left: 25px; /* ✅ zaokrúhlené z 24px */
     position: relative;
-    margin-bottom: 8px;
-    //font-size: 15px;
+    margin-bottom: 10px; /* ✅ zaokrúhlené z 8px */
+    font-size: 15px; /* ✅ odkomentované */
     line-height: 1.6;
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};
     list-style: none;
@@ -29,12 +30,12 @@ export const GradientCircleList = styled.ul`
     }
     
     strong {
-      color: ${props => props.theme.PRIMARY_TEXT_COLOR};  /* ✅ PRIMARY */
+      color: ${props => props.theme.PRIMARY_TEXT_COLOR};
       font-weight: 600;
     }
     
     a {
-      color: ${props => props.theme.PRIMARY_TEXT_COLOR};  /* ✅ PRIMARY */
+      color: ${props => props.theme.PRIMARY_TEXT_COLOR};
       text-decoration: underline;
       
       &:hover {
@@ -46,7 +47,7 @@ export const GradientCircleList = styled.ul`
   @media (max-width: 768px) {
     > li {
       padding-left: 20px;
-     // font-size: 15px;
+      font-size: 15px; /* ✅ odkomentované */
       
       &::before {
         font-size: 15px;
@@ -56,9 +57,9 @@ export const GradientCircleList = styled.ul`
   
   @media (max-width: 480px) {
     > li {
-      padding-left: 18px;
-     // font-size: 15px;
-      margin-bottom: 6px;
+      padding-left: 20px; /* ✅ zaokrúhlené z 18px */
+      font-size: 15px; /* ✅ odkomentované */
+      margin-bottom: 5px; /* ✅ zaokrúhlené z 6px */
       
       &::before {
         font-size: 15px;
@@ -68,30 +69,30 @@ export const GradientCircleList = styled.ul`
 `;
 
 export const NestedListItem = styled.div`
-  padding-left: 44px;
-  //font-size: 15px;
+  padding-left: 45px; /* ✅ zaokrúhlené z 44px */
+  font-size: 15px; /* ✅ odkomentované */
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   position: relative;
-  margin-bottom: 8px;
+  margin-bottom: 10px; /* ✅ zaokrúhlené z 8px */
   line-height: 1.6;
   
   &::before {
     content: '→';
     position: absolute;
-    left: 24px;
+    left: 25px; /* ✅ zaokrúhlené z 24px */
     top: 0;
-    color: ${props => props.theme.PRIMARY_TEXT_COLOR};  /* ✅ PRIMARY */
-   // font-size: 15px;
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+    font-size: 15px; /* ✅ odkomentované */
     line-height: 1.6;
   }
   
   strong {
-    color: ${props => props.theme.PRIMARY_TEXT_COLOR};  /* ✅ PRIMARY */
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
     font-weight: 600;
   }
   
   a {
-    color: ${props => props.theme.PRIMARY_TEXT_COLOR};  /* ✅ PRIMARY */
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
     text-decoration: underline;
     
     &:hover {
@@ -100,8 +101,8 @@ export const NestedListItem = styled.div`
   }
   
   @media (max-width: 768px) {
-    padding-left: 38px;
-    //font-size: 15px;
+    padding-left: 40px; /* ✅ zaokrúhlené z 38px */
+    font-size: 15px; /* ✅ odkomentované */
     
     &::before {
       left: 20px;
@@ -110,12 +111,12 @@ export const NestedListItem = styled.div`
   }
   
   @media (max-width: 480px) {
-    padding-left: 32px;
-   // font-size: 15px;
+    padding-left: 30px; /* ✅ zaokrúhlené z 32px */
+    font-size: 15px; /* ✅ odkomentované */
     
     &::before {
-      left: 18px;
-      //font-size: 15px;
+      left: 20px; /* ✅ zaokrúhlené z 18px */
+      font-size: 15px; /* ✅ odkomentované */
     }
   }
 `;
