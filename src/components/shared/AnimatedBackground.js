@@ -2,47 +2,55 @@
 import React from 'react';
 import styled, { keyframes, useTheme } from 'styled-components';
 
-// 📦 Animácia vystupujúcich kociek
-const rise = keyframes`
+// 🌌 Animácia z hĺbky dopredu (z-axis)
+const comeFromDepth = keyframes`
   0% {
-    transform: translateY(0) scale(1);
+    transform: translateZ(-1000px) scale(0.1);
     opacity: 0;
   }
   20% {
     opacity: 0.4;
   }
   50% {
-    transform: translateY(-40vh) scale(1.15);
-    opacity: 0.6;
+    transform: translateZ(-200px) scale(0.6);
+    opacity: 0.7;
   }
   80% {
-    opacity: 0.3;
+    opacity: 0.5;
   }
   100% {
-    transform: translateY(-80vh) scale(0.9);
+    transform: translateZ(0) scale(1);
     opacity: 0;
   }
 `;
 
-// 📦 Kontajner - FIXED position
+// 📦 Kontajner s 3D perspektívou
 const BackgroundContainer = styled.div`
-  position: fixed; /* ✅ FIXED = nebude scrollovať */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  pointer-events: none; /* ✅ Nebráni klikaniu */
-  z-index: 0; /* ✅ POD všetkým obsahom */
-  will-change: transform; /* ✅ Optimalizácia pre scroll */
+  pointer-events: none;
+  z-index: 0;
+  
+  /* ✅ 3D perspektíva pre depth efekt */
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+  
+  /* ✅ Optimalizácia pre plynulosť */
+  will-change: transform;
 `;
 
-// 🎲 Jednotlivá kocka
+// 🎲 Kocka s 3D transformáciou
 const Cube = styled.div`
   position: absolute;
   width: ${props => props.$size || '60px'};
   height: ${props => props.$size || '60px'};
-  bottom: ${props => props.$bottom || '-80px'};
+  
+  /* ✅ Náhodná pozícia */
+  top: ${props => props.$top || '50%'};
   left: ${props => props.$left || '50%'};
   
   background: ${props => props.$gradient 
@@ -51,13 +59,18 @@ const Cube = styled.div`
   };
   
   border: 2px solid ${props => `${props.$color}30`};
-  border-radius: 8px; /* ✅ Zaoblené rohy */
+  border-radius: 8px;
   
   opacity: 0;
   
-  animation: ${rise} 
-             ${props => props.$duration || '6s'} 
-             ease-in-out 
+  /* ✅ 3D transformácia */
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  
+  /* ✅ SPOMALENÁ animácia (8-15s namiesto 5-9s) */
+  animation: ${comeFromDepth} 
+             ${props => props.$duration || '10s'} 
+             ease-out 
              infinite;
   
   animation-delay: ${props => props.$delay || '0s'};
@@ -65,10 +78,8 @@ const Cube = styled.div`
   /* ✅ Jemné rozmazanie */
   filter: blur(${props => props.$blur || '1px'});
   
-  /* ✅ Optimalizácia výkonu */
+  /* ✅ GPU akcelerácia */
   will-change: transform, opacity;
-  transform: translateZ(0); /* GPU acceleration */
-  backface-visibility: hidden;
   
   @media (max-width: 768px) {
     width: ${props => parseInt(props.$size) * 0.7}px;
@@ -84,19 +95,25 @@ const Cube = styled.div`
 // 🎨 Hlavný komponent
 const AnimatedBackground = ({ 
   variant = 'gradient', 
-  cubeCount = 8 // ✅ Kontrolovateľný počet kociek
+  cubeCount = 8 
 }) => {
   const theme = useTheme();
   const color = theme.ACCENT_COLOR;
   
-  // 🎲 Generuj náhodné kocky
+  // 🎲 Generuj kocky s rôznymi hĺbkami
   const cubes = [];
   
   for (let i = 0; i < cubeCount; i++) {
     const size = 40 + Math.random() * 60; // 40-100px
+    const top = Math.random() * 100; // 0-100%
     const left = Math.random() * 100; // 0-100%
-    const duration = 5 + Math.random() * 4; // 5-9s
-    const delay = Math.random() * 8; // 0-8s
+    
+    // ✅ SPOMALENÉ - 8-15s namiesto 5-9s
+    const duration = 8 + Math.random() * 7; // 8-15s
+    
+    // ✅ Náhodný delay pre organický efekt
+    const delay = Math.random() * 10; // 0-10s
+    
     const blur = variant === 'gradient' ? 1 + Math.random() : 0.5;
     
     cubes.push(
@@ -105,8 +122,8 @@ const AnimatedBackground = ({
         $color={color}
         $gradient={variant === 'gradient'}
         $size={`${size}px`}
+        $top={`${top}%`}
         $left={`${left}%`}
-        $bottom="-100px"
         $duration={`${duration}s`}
         $delay={`${delay}s`}
         $blur={`${blur}px`}

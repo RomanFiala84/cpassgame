@@ -950,11 +950,11 @@ const handleStart = async () => {
           
           <li>Výskum prebieha online formou interaktívnej aplikácie.</li>
           <li>Pozostáva z troch fáz:</li>
-        <NestedListItem>
-          <li>Úvodný dotazník (5-10 minút)</li>
-          <li>Misia 1 (10-15 minút) - Prebehne bezprostredne po dokončení úvodného dotazníka</li>
-          <li>Misia 2 (10-15 minút) - Prebehne po piatich dňoch od dokončenia Misie 1</li>
-        </NestedListItem>
+          <NestedListItem>
+            <li>Úvodný dotazník (5-10 minút)</li>
+            <li>Misia 1 (10-15 minút) - Prebehne bezprostredne po dokončení úvodného dotazníka</li>
+            <li>Misia 2 (10-15 minút) - Prebehne po piatich dňoch od dokončenia Misie 1</li>
+          </NestedListItem>
           <li>Počas výskumu budeme automaticky zaznamenávať vaše interakcie s aplikáciou pre účely výskumu.</li>
         
         </GradientCircleList>
