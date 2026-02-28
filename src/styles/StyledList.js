@@ -7,7 +7,7 @@ export const GradientCircleList = styled.ul`
   padding-left: 0;
   margin: 0;
   
-  /* ✅ Štandardné LI elementy */
+  /* ✅ Priame deti LI (hlavné odrážky) */
   > li {
     padding-left: 28px;
     position: relative;
@@ -15,6 +15,7 @@ export const GradientCircleList = styled.ul`
     font-size: 14px;
     line-height: 1.6;
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+    list-style: none;
     
     &::before {
       content: '';
@@ -75,70 +76,54 @@ export const GradientCircleList = styled.ul`
   }
 `;
 
-// ✅ Vnorený list item - ÚPLNE SAMOSTATNÝ KOMPONENT
-export const NestedListItem = styled.li`
-  /* ✅ RESET všetkých možných dedených štýlov */
-  all: unset;
-  display: block;
-  box-sizing: border-box;
+// ✅ Vnorený list item - SAMOSTATNÝ DIV
+export const NestedListItem = styled.div`
+  padding-left: 52px;
+  font-size: 13px;
+  color: ${props => props.theme.SECONDARY_TEXT_COLOR};
+  position: relative;
+  margin-bottom: 8px;
+  line-height: 1.6;
   
-  /* ✅ Vlastné štýly */
-  padding-left: 52px !important;
-  font-size: 13px !important;
-  color: ${props => props.theme.SECONDARY_TEXT_COLOR} !important;
-  position: relative !important;
-  margin-bottom: 8px !important;
-  line-height: 1.6 !important;
-  list-style: none !important;
-  
-  /* ❌ ÚPLNE ZRUŠ akýkoľvek ::before */
+  /* ✅ Menšia odrážka */
   &::before {
-    content: none !important;
-    display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-  }
-  
-  /* ✅ VYTVOR nový marker pomocou ::after */
-  &::after {
-    content: '' !important;
-    display: block !important;
-    position: absolute !important;
-    left: 28px !important;
-    top: 9px !important;
-    width: 8px !important;
-    height: 8px !important;
-    border-radius: 50% !important;
+    content: '';
+    position: absolute;
+    left: 28px;
+    top: 9px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
     background: linear-gradient(
       135deg,
       ${props => props.theme.ACCENT_COLOR}66,
       ${props => props.theme.ACCENT_COLOR_2}66
-    ) !important;
-    opacity: 0.7 !important;
-    box-shadow: 0 1px 2px ${props => props.theme.ACCENT_COLOR}22 !important;
+    );
+    opacity: 0.7;
+    box-shadow: 0 1px 2px ${props => props.theme.ACCENT_COLOR}22;
   }
   
   @media (max-width: 768px) {
-    padding-left: 40px !important;
-    font-size: 12px !important;
+    padding-left: 40px;
+    font-size: 12px;
     
-    &::after {
-      left: 24px !important;
-      width: 7px !important;
-      height: 7px !important;
-      top: 8px !important;
+    &::before {
+      left: 24px;
+      width: 7px;
+      height: 7px;
+      top: 8px;
     }
   }
   
   @media (max-width: 480px) {
-    padding-left: 32px !important;
-    font-size: 11px !important;
+    padding-left: 32px;
+    font-size: 11px;
     
-    &::after {
-      left: 20px !important;
-      width: 6px !important;
-      height: 6px !important;
-      top: 7px !important;
+    &::before {
+      left: 20px;
+      width: 6px;
+      height: 6px;
+      top: 7px;
     }
   }
 `;

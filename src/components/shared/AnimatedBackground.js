@@ -2,33 +2,27 @@
 import React from 'react';
 import styled, { keyframes, useTheme } from 'styled-components';
 
-// 🌌 Animácia z hĺbky - hore a dole (loop)
-const sibilSystemFloat = keyframes`
+// 🌌 Sibyl System - Pulzovanie z hĺbky na statickej pozícii
+const sibilDepthPulse = keyframes`
   0% {
-    transform: translateZ(-800px) translateY(100vh) scale(0.3);
-    opacity: 0;
+    transform: translateZ(-1200px) scale(0.2);
+    opacity: 0.3;
   }
-  15% {
+  25% {
+    transform: translateZ(-600px) scale(0.5);
     opacity: 0.6;
   }
-  35% {
-    transform: translateZ(-200px) translateY(20vh) scale(0.7);
-    opacity: 0.8;
-  }
   50% {
-    transform: translateZ(0) translateY(-10vh) scale(1);
-    opacity: 0.9;
+    transform: translateZ(0px) scale(1);
+    opacity: 0.85;
   }
-  65% {
-    transform: translateZ(-200px) translateY(-40vh) scale(0.7);
-    opacity: 0.8;
-  }
-  85% {
-    opacity: 0.4;
+  75% {
+    transform: translateZ(-600px) scale(0.5);
+    opacity: 0.6;
   }
   100% {
-    transform: translateZ(-800px) translateY(-100vh) scale(0.3);
-    opacity: 0;
+    transform: translateZ(-1200px) scale(0.2);
+    opacity: 0.3;
   }
 `;
 
@@ -44,42 +38,46 @@ const BackgroundContainer = styled.div`
   z-index: 0;
   
   /* ✅ Sibyl System perspektíva */
-  perspective: 1500px;
+  perspective: 2000px;
   perspective-origin: 50% 50%;
   
-  /* ✅ Optimalizácia pre plynulosť */
+  /* ✅ Optimalizácia */
   will-change: transform;
   transform: translateZ(0);
 `;
 
-// 🎲 Kocka s 3D transformáciou
+// 🎲 Kocka so statickou XY pozíciou, pulzuje v Z-osi
 const Cube = styled.div`
   position: absolute;
   width: ${props => props.$size || '60px'};
   height: ${props => props.$size || '60px'};
   
-  /* ✅ Náhodná X pozícia */
+  /* ✅ FIXNÉ XY pozície - kocka sa nehýbe horizontálne */
+  top: ${props => props.$top || '50%'};
   left: ${props => props.$left || '50%'};
   
-  /* ✅ Štart pozícia (zdola) */
-  bottom: 0;
+  /* ✅ Centrovaná transformácia */
+  transform-origin: center center;
+  margin-left: ${props => -(parseInt(props.$size) / 2)}px;
+  margin-top: ${props => -(parseInt(props.$size) / 2)}px;
   
   background: ${props => props.$gradient 
-    ? `linear-gradient(135deg, ${props.$color}60, ${props.$color}25)`
-    : `${props.$color}45`
+    ? `linear-gradient(135deg, ${props.$color}55, ${props.$color}20)`
+    : `${props.$color}40`
   };
   
-  border: 2px solid ${props => `${props.$color}40`};
-  border-radius: ${props => props.$rounded ? '50%' : '10px'};
+  border: 2px solid ${props => `${props.$color}35`};
+  border-radius: ${props => props.$rounded ? '50%' : '12px'};
   
-  opacity: 0;
+  /* ✅ Kocka NEMIZNE - min opacity 0.3 */
+  opacity: 0.5;
   
   /* ✅ 3D transformácia */
   transform-style: preserve-3d;
   backface-visibility: hidden;
   
-  /* ✅ Animácia hore-dole z hĺbky */
-  animation: ${sibilSystemFloat} 
+  /* ✅ Pulzovanie z hĺbky - NEKONEČNÝ LOOP */
+  animation: ${sibilDepthPulse} 
              ${props => props.$duration || '12s'} 
              ease-in-out 
              infinite;
@@ -87,32 +85,36 @@ const Cube = styled.div`
   animation-delay: ${props => props.$delay || '0s'};
   
   /* ✅ Jemné rozmazanie pre depth efekt */
-  filter: blur(${props => props.$blur || '1.5px'});
+  filter: blur(${props => props.$blur || '1px'});
   
   /* ✅ GPU akcelerácia */
   will-change: transform, opacity;
   
   /* ✅ Svetelný efekt (glow) */
   box-shadow: 
-    0 0 10px ${props => `${props.$color}30`},
-    0 0 20px ${props => `${props.$color}15`},
-    inset 0 0 10px ${props => `${props.$color}20`};
+    0 0 15px ${props => `${props.$color}25`},
+    0 0 30px ${props => `${props.$color}12`},
+    inset 0 0 15px ${props => `${props.$color}18`};
   
   @media (max-width: 768px) {
     width: ${props => parseInt(props.$size) * 0.6}px;
     height: ${props => parseInt(props.$size) * 0.6}px;
+    margin-left: ${props => -(parseInt(props.$size) * 0.6 / 2)}px;
+    margin-top: ${props => -(parseInt(props.$size) * 0.6 / 2)}px;
   }
   
   @media (max-width: 480px) {
     width: ${props => parseInt(props.$size) * 0.4}px;
     height: ${props => parseInt(props.$size) * 0.4}px;
+    margin-left: ${props => -(parseInt(props.$size) * 0.4 / 2)}px;
+    margin-top: ${props => -(parseInt(props.$size) * 0.4 / 2)}px;
   }
 `;
 
 // 🎨 Hlavný komponent
 const AnimatedBackground = ({ 
   variant = 'gradient',
-  cubeCount = 10,
+  cubeCount = 12,
   speed = 'normal' // 'slow' | 'normal' | 'fast'
 }) => {
   const theme = useTheme();
@@ -127,23 +129,63 @@ const AnimatedBackground = ({
   
   const { min, max } = speedConfig[speed] || speedConfig.normal;
   
-  // 🎲 Generuj kocky s rôznymi parametrami
+  // 🎲 Generuj grid pattern kociek (ako Sibyl System)
   const cubes = [];
+  const gridRows = 4;
+  const gridCols = 4;
   
-  for (let i = 0; i < cubeCount; i++) {
-    const size = 30 + Math.random() * 70; // 30-100px
-    const left = 5 + Math.random() * 90; // 5-95% (nie až na kraj)
-    const duration = min + Math.random() * (max - min); // Podľa speed
-    const delay = Math.random() * 15; // 0-15s náhodný štart
-    const blur = 1 + Math.random() * 2; // 1-3px
-    const rounded = Math.random() > 0.7; // 30% šanca na kruh
+  // ✅ Vytvor pravidelný grid s náhodnými variáciami
+  for (let row = 0; row < gridRows; row++) {
+    for (let col = 0; col < gridCols; col++) {
+      // Preskakovanie pre menej hustý grid
+      if (cubes.length >= cubeCount) break;
+      if (Math.random() > 0.7) continue; // 30% šanca skipnúť
+      
+      // ✅ STATICKÉ pozície v grid patterni
+      const top = 15 + (row * 25) + (Math.random() * 8 - 4); // 15%, 40%, 65%, 90% + jitter
+      const left = 15 + (col * 25) + (Math.random() * 8 - 4); // 15%, 40%, 65%, 90% + jitter
+      
+      const size = 40 + Math.random() * 50; // 40-90px
+      const duration = min + Math.random() * (max - min);
+      const delay = Math.random() * 12; // 0-12s náhodný štart fázy
+      const blur = 0.8 + Math.random() * 1.5; // 0.8-2.3px
+      const rounded = Math.random() > 0.6; // 40% šanca na kruh
+      
+      cubes.push(
+        <Cube
+          key={`${row}-${col}-${cubes.length}`}
+          $color={color}
+          $gradient={variant === 'gradient'}
+          $size={`${size}px`}
+          $top={`${top}%`}
+          $left={`${left}%`}
+          $duration={`${duration}s`}
+          $delay={`${delay}s`}
+          $blur={`${blur}px`}
+          $rounded={rounded}
+        />
+      );
+    }
+  }
+  
+  // ✅ Pridaj ešte pár náhodných kociek mimo grid
+  const randomCount = Math.floor(cubeCount * 0.3);
+  for (let i = 0; i < randomCount; i++) {
+    const size = 30 + Math.random() * 60;
+    const top = 5 + Math.random() * 90;
+    const left = 5 + Math.random() * 90;
+    const duration = min + Math.random() * (max - min);
+    const delay = Math.random() * 15;
+    const blur = 1 + Math.random() * 2;
+    const rounded = Math.random() > 0.5;
     
     cubes.push(
       <Cube
-        key={i}
+        key={`random-${i}`}
         $color={color}
         $gradient={variant === 'gradient'}
         $size={`${size}px`}
+        $top={`${top}%`}
         $left={`${left}%`}
         $duration={`${duration}s`}
         $delay={`${delay}s`}
