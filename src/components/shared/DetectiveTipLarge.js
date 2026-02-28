@@ -1,4 +1,4 @@
-//Hotovo
+//HOTOVO
 // ✅ OPRAVENÁ VERZIA - Obrázok detektíva na celú plochu bez okrajov
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -111,9 +111,9 @@ const ModalContainer = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   border-radius: 16px;
-  max-width: 950px; /* ✅ ZVÄČŠENÉ z 850px */
+  max-width: 850px;
   width: 100%;
-  max-height: 75vh; /* ✅ Vyššie okno */
+  max-height: 90vh;
   overflow: hidden;
   display: flex;
   flex-direction: row;
@@ -144,16 +144,14 @@ const ModalContainer = styled.div`
     }
   }
   
-   @media (max-width: 768px) {
+  @media (max-width: 768px) {
     max-width: 90%;
-    max-height: 80vh;
     flex-direction: column;
     border-radius: 12px;
   }
   
   @media (max-width: 480px) {
     max-width: 95%;
-    max-height: 85vh;
   }
 `;
 
@@ -184,8 +182,8 @@ const CountdownBadge = styled.div`
 
 const DetectiveImageContainer = styled.div`
   position: relative;
-  width: 55%; /* ✅ ZVÄČŠENÉ z 50% - viac priestoru pre obrázok */
-  min-height: 450px; /* ✅ ZVÄČŠENÉ z 320px - vyšší obrázok */
+  width: 50%;
+  min-height: 480px;
   background: linear-gradient(135deg, 
     ${p => p.theme.ACCENT_COLOR}33, 
     ${p => p.theme.ACCENT_COLOR_2}33
@@ -196,50 +194,36 @@ const DetectiveImageContainer = styled.div`
   align-items: center;
   justify-content: center;
   
+  /* ✅ ODSTRÁNENÉ - Dekoratívny pattern overlay */
+  
   @media (max-width: 768px) {
     width: 100%;
-    min-height: 280px; /* ✅ ZVÄČŠENÉ */
+    min-height: 220px;
     order: 1;
   }
   
   @media (max-width: 480px) {
-    min-height: 240px; /* ✅ ZVÄČŠENÉ */
+    min-height: 180px;
   }
 `;
 
-
-
-
 const DetectiveImage = styled.img`
-  width: calc(100% - 32px);
-  height: calc(100% - 32px);
-  object-fit: contain; /* ✅ Celý obrázok viditeľný */
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ✅ COVER namiesto contain - vyplní celú plochu */
   object-position: center;
   position: relative;
   z-index: 2;
-  border-radius: 20px; /* ✅ Jemné zaoblenie */
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15); /* ✅ Jemný tieň */
-  margin: 16px;
-  /* ✅ BEZ borderu - prirodzený okraj obrázka zostáva */
+  /* ✅ ODSTRÁNENÉ - padding */
   
   @media (max-width: 768px) {
-    width: calc(100% - 24px);
-    height: calc(100% - 24px);
-    margin: 12px;
-    border-radius: 16px;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+    /* ✅ ODSTRÁNENÉ - padding */
   }
   
   @media (max-width: 480px) {
-    width: calc(100% - 20px);
-    height: calc(100% - 20px);
-    margin: 10px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    /* ✅ ODSTRÁNENÉ - padding */
   }
 `;
-
-
 
 const DetectiveImageFallback = styled.div`
   width: 100%;
@@ -288,9 +272,9 @@ const DetectiveName = styled.div`
 // ✅ OPRAVA - ContentContainer s lepším paddingom a spacing
 
 const ContentContainer = styled.div`
-  width: 45%; /* ✅ ZMENŠENÉ z 50% */
+  width: 50%;
   padding: 24px;
-  padding-bottom: 28px;
+  padding-bottom: 28px; // ✅ PRIDAJ - Extra padding pre button
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -314,13 +298,13 @@ const ContentContainer = styled.div`
   @media (max-width: 768px) {
     width: 100%;
     padding: 20px;
-    padding-bottom: 24px;
+    padding-bottom: 24px; // ✅ PRIDAJ
     order: 2;
   }
   
   @media (max-width: 480px) {
     padding: 16px;
-    padding-bottom: 20px;
+    padding-bottom: 20px; // ✅ PRIDAJ
   }
 `;
 
