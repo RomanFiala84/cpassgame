@@ -172,7 +172,8 @@ export const GradientCircleList = styled.ul`
         margin-bottom: 6px;
         font-size: 0.95em;
         position: relative;
-        
+        color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+
         &::before {
           content: '';
           display: block;
@@ -209,7 +210,8 @@ export const GradientCircleList = styled.ul`
             margin-bottom: 4px;
             font-size: 0.9em;
             position: relative;
-            
+            color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+
             &::before {
               content: '';
               display: block;
