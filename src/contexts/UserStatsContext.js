@@ -186,7 +186,15 @@ export const UserStatsProvider = ({ children }) => {
     const totalPoints = missionPoints + bonusPoints;
 
     // ✅ Level (každých 25 bodov = 1 level, max 5)
-    const level = Math.min(Math.floor(totalPoints / 25) + 1, 5);
+    const level = Math.min(Math.floor(totalPoints / 25) + 1);
+    
+    const mainMissions = ['mission1', 'mission2', 'mission3'];
+    const completedMainMissions = mainMissions.filter(m => completedMissions.includes(m)).length;
+    const progressPercent = (completedMainMissions / 3) * 100; // 33.33% za každú
+
+    // ✅ Bonusový progress za Mission 0 (25% extra)
+    const hasMission0 = completedMissions.includes('mission0');
+    const totalProgressPercent = progressPercent + (hasMission0 ? 25 : 0);
 
     // ✅ Oprávnenie na žrebovanie (min 50 bodov)
     const eligibleForRaffle = totalPoints >= 50;
@@ -199,7 +207,8 @@ export const UserStatsProvider = ({ children }) => {
       totalPoints,
       eligibleForRaffle,
       completedMissions,
-      referrals: progress.referrals_count || 0
+      referrals: progress.referrals_count || 0,
+      progressPercent: totalProgressPercent  // ⬅️ Môže byť 0-125%
     };
   };
 

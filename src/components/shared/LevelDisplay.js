@@ -480,7 +480,8 @@ const LevelDisplay = () => {
   const total = userStats?.totalPoints ?? 0;
   const level = userStats?.level ?? 1;
 
-  const progress = Math.min((mission / 100) * 100, 100);
+  const progress = userStats?.progressPercent ?? 0;
+
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   const closeSidebar = () => setIsOpen(false);
@@ -548,7 +549,10 @@ const LevelDisplay = () => {
               <ProgressBar $progress={progress} />
             </ProgressBarContainer>
             <ProgressInfo>
-              <ProgressText>{mission}/100</ProgressText>
+              <ProgressText>
+                {userStats?.completedMissions?.filter(m => ['mission1', 'mission2', 'mission3'].includes(m)).length || 0}/3
+                {userStats?.completedMissions?.includes('mission0') && ' +bonus'}
+              </ProgressText>
               <ProgressPercentage>{Math.round(progress)}%</ProgressPercentage>
             </ProgressInfo>
           </ProgressSection>

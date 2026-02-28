@@ -8,7 +8,7 @@ import Layout from '../../../styles/Layout';
 import StyledButton from '../../../styles/StyledButton';
 import { useUserStats } from '../../../contexts/UserStatsContext';
 import { getResponseManager } from '../../../utils/ResponseManager';
-import DetectiveTip from '../../shared/DetectiveTip';
+
 
 const Container = styled.div`
   padding: 20px;
@@ -85,15 +85,6 @@ const QUESTIONS = [
   { id: 'vzdelanie', text: 'Najvyššie dosiahnuté vzdelanie:', type: 'text' },
   { id: 'zaujem_konspiracie', text: 'Máte záujem o konšpiračné teórie?', type: 'text' }
 ];
-
-// ✅ Tipy od detektíva - jeden všeobecný tip pre celý dotazník
-const DETECTIVE_TIP = `
-  🎯 <strong>Vitajte v prvom dotazníku, detektív!</strong><br/><br/>
-  Tento dotazník nám pomôže lepšie spoznať vás a prispôsobiť ďalšie misie.<br/><br/>
-  <em>Dôležité:</em> Nie sú žiadne správne alebo nesprávne odpovede - odpovedajte podľa 
-  vášho najlepšieho vedomia a buďte úprimný. Všetky údaje zostanú <strong>anonymné</strong> 
-  a budú použité len na výskumné účely. 🔍
-`;
 
 const COMPONENT_ID = 'mission0_questionnaire';
 
@@ -225,15 +216,7 @@ export default function Questionnaire0() {
           </ProgressIndicator>
         </Card>
 
-        {/* ✅ DetectiveTip - automaticky sa otvorí pri načítaní */}
-        <DetectiveTip 
-          tip={DETECTIVE_TIP}
-          detectiveName="Detektív Conan"
-          autoOpen={true}
-          autoOpenDelay={800}
-          autoClose={false}  // Neuzavrie sa automaticky - dôležitá informácia
-          showBadge={true}
-        />
+
       </Container>
     </Layout>
   );
