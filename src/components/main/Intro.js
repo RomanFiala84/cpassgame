@@ -385,7 +385,7 @@ const Intro = () => {
                 size="large"
                 onClick={handleContinue}
               >
-                Poďme na to! 🚀
+                Rozumiem, poďme na to!
               </StyledButton>
             </ButtonContainer>
           </>
