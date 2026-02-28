@@ -34,16 +34,15 @@ const lightTheme = {
   SECONDARY_TEXT_COLOR: '#000000',       // Tmavošedá pre sekundárny text
   
   // Akcentové farby - Kráľovská modrá škála
-  ACCENT_COLOR: '#4ea8de',          // Sýtejšia modrá (hlavná)
-  ACCENT_COLOR_2: '#6ec1e8',        // Svetlejšia sýta
-  ACCENT_COLOR_3: '#3b8fc2',        // Tmavšia sýta
+  ACCENT_COLOR: '#b565d8',          // Sýtejšia fialová (hlavná)
+  ACCENT_COLOR_2: '#d084f0',        // Svetlejšia sýta
+  ACCENT_COLOR_3: '#9b4ec7',        // Tmavšia sýta
   
-  CARD_BACKGROUND: '#ffffff',
-  INPUT_BACKGROUND: '#ffffff',
-  BUTTON_COLOR: '#4ea8de',
-  BORDER_COLOR: '#b8dff0',          // Sýtejšia modrá border
-  HOVER_OVERLAY: 'rgba(78, 168, 222, 0.15)',
-
+  CARD_BACKGROUND: '#3a3a3a',
+  INPUT_BACKGROUND: '#424242',
+  BUTTON_COLOR: '#b565d8',
+  BORDER_COLOR: '#4a4a4a',
+  HOVER_OVERLAY: 'rgba(181, 101, 216, 0.18)',
   
   // Stavové farby
   SUCCESS_COLOR: '#50c878',              // Smaragdovo zelená

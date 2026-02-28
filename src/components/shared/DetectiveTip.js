@@ -1,5 +1,5 @@
 // src/components/shared/DetectiveTip.js
-// ✅ OPRAVENÁ VERZIA - Avatar bez okrajov
+// ✅ FINÁLNA VERZIA - Podporuje JSX, gradient odrážky, avatar bez okrajov
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
@@ -183,10 +183,10 @@ const DetectiveAvatar = styled.img`
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  object-fit: cover; /* ✅ COVER namiesto contain */
+  object-fit: cover;
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}33;
-  flex-shrink: 0; /* ✅ PRIDANÉ - zabráni zmenšeniu */
+  flex-shrink: 0;
   
   @media (max-width: 480px) {
     width: 32px;
@@ -205,7 +205,7 @@ const DetectiveAvatarFallback = styled.div`
   justify-content: center;
   font-size: 18px;
   box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}33;
-  flex-shrink: 0; /* ✅ PRIDANÉ */
+  flex-shrink: 0;
   
   @media (max-width: 480px) {
     width: 32px;
@@ -225,7 +225,8 @@ const DetectiveName = styled.div`
   }
 `;
 
-const TipText = styled.div`
+// ✅ NOVÝ - TipContent podporuje React children (JSX)
+const TipContent = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   font-size: 14px;
   line-height: 1.6;
@@ -255,6 +256,8 @@ const TipText = styled.div`
     font-style: normal;
     font-weight: 500;
   }
+  
+  /* ✅ ODSTRÁNENÉ - <ul> a <li> štýly, pretože používame GradientCircleList */
 `;
 
 const CloseButton = styled.button`
@@ -273,7 +276,7 @@ const CloseButton = styled.button`
   line-height: 1;
   transition: all 0.2s ease;
   opacity: ${p => p.disabled ? 0.3 : 1};
-  flex-shrink: 0; /* ✅ PRIDANÉ */
+  flex-shrink: 0;
   
   &:hover {
     background: ${p => p.disabled ? 'transparent' : p.theme.ACCENT_COLOR};
@@ -342,7 +345,7 @@ const CountdownTimer = styled.div`
 // =====================
 
 const DetectiveTip = ({ 
-  tip, 
+  tip, // ✅ TERAZ MÔŽE BYŤ JSX (React.ReactNode) NAMIESTO HTML STRINGU
   detectiveName = "Inšpektor Kritan", 
   autoOpen = false,
   autoOpenDelay = 500,
@@ -486,7 +489,11 @@ const DetectiveTip = ({
               ×
             </CloseButton>
           </TipHeader>
-          <TipText dangerouslySetInnerHTML={{ __html: tip }} />
+          
+          {/* ✅ ZMENA - Renderuj priamo JSX children namiesto dangerouslySetInnerHTML */}
+          <TipContent>
+            {tip}
+          </TipContent>
           
           {autoClose && canClose && (
             <ProgressBar>

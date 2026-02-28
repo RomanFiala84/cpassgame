@@ -1,5 +1,5 @@
 // src/components/main/MainMenu.js
-// VERZIA s DetectiveTipLarge namiesto export tlačidla
+// VERZIA s DetectiveTipLarge namiesto export tlačidla + GRADIENT ODRÁŽKY
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +8,7 @@ import Layout from '../../styles/Layout';
 import StyledButton from '../../styles/StyledButton';
 import { useUserStats } from '../../contexts/UserStatsContext';
 import DetectiveTipLarge from '../shared/DetectiveTipLarge';
+import { GradientCircleList, NestedListItem } from '../../styles/StyledList'; // ✅ PRIDANÉ
 
 // =====================
 // STYLED COMPONENTS - OPTIMALIZOVANÁ VERZIA
@@ -73,35 +74,6 @@ const InstructionCard = styled.div`
   
   @media (max-width: 480px) {
     padding: 12px 14px;
-  }
-`;
-
-const InstructionList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  
-  li {
-    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-    padding: 6px 0 6px 22px;
-    position: relative;
-    line-height: 1.5;
-    font-size: 14px;
-    
-    &:before {
-      content: "▸";
-      position: absolute;
-      left: 6px;
-      color: ${p => p.theme.ACCENT_COLOR};
-      font-weight: bold;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    li {
-      font-size: 13px;
-      padding: 5px 0 5px 20px;
-    }
   }
 `;
 
@@ -703,27 +675,6 @@ const ModalContent = styled.div`
     font-size: 14px;
   }
   
-  ul {
-    margin: 6px 0 12px 0;
-    padding-left: 18px;
-    
-    li {
-      line-height: 1.6;
-      margin-bottom: 6px;
-      font-size: 14px;
-    }
-    
-    ul {
-      margin: 6px 0 6px 0;
-      padding-left: 18px;
-      
-      li {
-        font-size: 13px;
-        list-style-type: circle;
-      }
-    }
-  }
-  
   a {
     color: ${p => p.theme.ACCENT_COLOR};
     text-decoration: none;
@@ -759,7 +710,7 @@ const ModalContent = styled.div`
       font-size: 13px;
     }
     
-    p, li {
+    p {
       font-size: 13px;
     }
   }
@@ -956,47 +907,60 @@ const MainMenu = () => {
   };
 
   const detectiveStory = `
-    <p>Potrebujete pomôcť?</p>
-  
-    <ul>
-      <li><strong>Ktorou časťou mám začať?</strong></li>
-        <ul>
-          <li>Ak sa účastníte predvýskumu začnite prosím Misiou 0.</li>
-            <ul>
-              <li>Po ukončení predvýskumu bude táto misia uzamknutá a účasť v nej už nebude možná.</li>
-            </ul>
-          <li>Ak sa účastníte prvej časti hlavného výskumu začnite prosím Misiou 1 a pokračujete Misiou 2.</li>
-            <ul>
-              <li>Po ukončení predvýskumu budú tieto misie neustále odomknuté.</li>
-              <li>Pre spustenie týchto misií nie je potrebné mať absolvovanú Misiu 0.</li>
-            </ul>
-          <li>Ak sa účastníte druhej časti hlavného výskumu pokračujte prosím Misiou 3.</li>
-            <ul>
-              <li>Po ukončení prvej časti hlavného výskumu bude táto misia neustále odomknutá.</li>
-              <li>Pred spustením Misie 3 si prosím skontrulujte v hlavnom menu, či máte dokočenú Misiu 1 a Misiu 2.</li>
-            </ul>
-        </ul>
-    </ul>
-    
-    <ul> 
-      <li><strong>Čo nájdem v hlavnom menu?</strong></li>
-        <ul>
-            <li>Bočný panel s aktuálnou detektívnou úrovňou a bodmi.</li>
-            <li>Panel s aktuálnym progresom misií a celkový počet nazbiernaných bodov.</li>
-            <li>Zonzam všetkých misií.</li>
-            <li>Odkaz na pomoc.</li>
-            <li>Odkaz na pravidlá a podmienky súťaže.</li>
-            <li>Možnosť odhlásenia z aplikácie.</li>
-            <li>Zonzam všetkých misií.</li>
-            <li>Váš osobný refferal kód, ktorý môžete zdieľať s priateľmi.</li>
-        </ul>
-    </ul>
+    <>
+      
+      <GradientCircleList>
+        <li><strong>Ktorou časťou mám začať?</strong></li>
+      </GradientCircleList>
+      
+      <NestedListItem>
+        Ak sa účastníte predvýskumu začnite prosím Misiou 0.
+      </NestedListItem>
+      <NestedListItem style={{ paddingLeft: '20px', fontSize: '0.95em' }}>
+        Po ukončení predvýskumu bude táto misia uzamknutá a účasť v nej už nebude možná.
+      </NestedListItem>
+      
+      <NestedListItem>
+        Ak sa účastníte prvej časti hlavného výskumu začnite prosím Misiou 1 a pokračujete Misiou 2.
+      </NestedListItem>
+      <NestedListItem style={{ paddingLeft: '20px', fontSize: '0.95em' }}>
+        Po ukončení predvýskumu budú tieto misie neustále odomknuté.
+      </NestedListItem>
+      <NestedListItem style={{ paddingLeft: '20px', fontSize: '0.95em' }}>
+        Pre spustenie týchto misií nie je potrebné mať absolvovanú Misiu 0.
+      </NestedListItem>
+      
+      <NestedListItem>
+        Ak sa účastníte druhej časti hlavného výskumu pokračujte prosím Misiou 3.
+      </NestedListItem>
+      <NestedListItem style={{ paddingLeft: '20px', fontSize: '0.95em' }}>
+        Po ukončení prvej časti hlavného výskumu bude táto misia neustále odomknutá.
+      </NestedListItem>
+      <NestedListItem style={{ paddingLeft: '20px', fontSize: '0.95em' }}>
+        Pred spustením Misie 3 si prosím skontrolujte v hlavnom menu, či máte dokončenú Misiu 1 a Misiu 2.
+      </NestedListItem>
+      
+      <GradientCircleList style={{ marginTop: '16px' }}>
+        <li><strong>Čo nájdem v hlavnom menu?</strong></li>
+      </GradientCircleList>
+      
+      <NestedListItem>Bočný panel s aktuálnou detektívnou úrovňou a bodmi.</NestedListItem>
+      <NestedListItem>Panel s aktuálnym progresom misií a celkový počet nazbieraných bodov.</NestedListItem>
+      <NestedListItem>Zoznam všetkých misií.</NestedListItem>
+      <NestedListItem>Odkaz na pomoc.</NestedListItem>
+      <NestedListItem>Odkaz na pravidlá a podmienky súťaže.</NestedListItem>
+      <NestedListItem>Možnosť odhlásenia z aplikácie.</NestedListItem>
+      <NestedListItem>Váš osobný referral kód, ktorý môžete zdieľať s priateľmi.</NestedListItem>
+    </>
   `;
 
   // ✅ NOVÉ - Loading state
   if (!userId && !userProgress) {
     return (
-      <Layout showLevelDisplay={false}>
+      <Layout showLevelDisplay={false}  showAnimatedBackground={true}
+  cubeCount={12}
+  animationSpeed="slow"
+  complexity="medium">
         <Container>
           <Header>
             <Title>Načítavam...</Title>
@@ -1007,7 +971,10 @@ const MainMenu = () => {
   }
 
   return (
-    <Layout>
+    <Layout  showAnimatedBackground={true}
+  cubeCount={12}
+  animationSpeed="slow"
+  complexity="medium">
       <Container>
         <Header>
           <Title>CP-PASS</Title>
@@ -1015,24 +982,25 @@ const MainMenu = () => {
             <InstructionCard>
               <h4>Ktorou časťou mám začať?</h4>
               
-              <InstructionList>
+              {/* ✅ GRADIENT ODRÁŽKY */}
+              <GradientCircleList>
                 <li><strong>Ak sa účastníte predvýskumu - začnite prosím Misiou 0.</strong></li>
-              </InstructionList>
+              </GradientCircleList>
               <SubNote>
                 Po ukončení predvýskumu bude táto misia uzamknutá a účasť v nej už nebude možná.
               </SubNote>
               
-              <InstructionList style={{ marginTop: '12px' }}>
+              <GradientCircleList style={{ marginTop: '12px' }}>
                 <li><strong>Ak sa účastníte prvej časti hlavného výskumu - začnite prosím Misiou 1 a pokračujete Misiou 2.</strong></li>
-              </InstructionList>
+              </GradientCircleList>
               <SubNote>
                 Po ukončení predvýskumu budú tieto misie neustále odomknuté.<br/>
                 Pre spustenie týchto misií nie je potrebné mať absolvovanú Misiu 0.
               </SubNote>
               
-              <InstructionList style={{ marginTop: '12px' }}>
+              <GradientCircleList style={{ marginTop: '12px' }}>
                 <li><strong>Ak sa účastníte druhej časti hlavného výskumu - pokračujte prosím Misiou 3.</strong></li>
-              </InstructionList>
+              </GradientCircleList>
               <SubNote>
                 Po ukončení prvej časti hlavného výskumu bude táto misia neustále odomknutá.<br/>
                 Pred spustením Misie 3 si prosím skontrulujte v hlavnom menu, či máte dokočenú Misiu 1 a Misiu 2.
@@ -1183,18 +1151,19 @@ const MainMenu = () => {
                 <>
                   <h3>Čo ak sa počas výskumu cítim znepokojený/á?</h3>
                   
-                  <ul>
+                  {/* ✅ GRADIENT ODRÁŽKY */}
+                  <GradientCircleList>
                     <li>Je úplne v poriadku mať z niektorých tém alebo tvrdení nepríjemný pocit - dotýkajú sa citlivých spoločenských tém.</li>
                     <li>Odporúčame o svojich pocitoch hovoriť s niekým, komu dôverujete (priateľ, rodina, odborník).</li>
                     <li>Ak máte pocit, že na vás podobné informácie dlhodobo pôsobia stresujúco alebo úzkostne, môže byť užitočné poradiť sa so psychológom alebo iným odborníkom.</li>
-                    <h4>Dostupné zdroje pomoci:
-                      <ul>
-                        <li>Kontakt na výskumníka - <a href="mailto:roman.fiala@tvu.sk">roman.fiala@tvu.sk</a></li>
-                        <li>IPčko - <a href="https://ipcko.sk" target="_blank" rel="noopener noreferrer">https://ipcko.sk</a></li>
-                        <li>Linka dôvery - <a href="https://www.linkanezabudka.sk" target="_blank" rel="noopener noreferrer">https://www.linkanezabudka.sk</a></li>
-                      </ul>
-                    </h4>
-                  </ul>
+                  </GradientCircleList>
+                  
+                  <h4>Dostupné zdroje pomoci:</h4>
+                  <GradientCircleList>
+                    <li>Kontakt na výskumníka - <a href="mailto:roman.fiala@tvu.sk">roman.fiala@tvu.sk</a></li>
+                    <li>IPčko - <a href="https://ipcko.sk" target="_blank" rel="noopener noreferrer">https://ipcko.sk</a></li>
+                    <li>Linka dôvery - <a href="https://www.linkanezabudka.sk" target="_blank" rel="noopener noreferrer">https://www.linkanezabudka.sk</a></li>
+                  </GradientCircleList>
                 </>
               )}
               {modal.type === 'contest' && (
@@ -1202,94 +1171,109 @@ const MainMenu = () => {
                   <h3>🎁 Pravidlá a podmienky súťaže:</h3>
                   
                   <h4>Organizátor súťaže:</h4>
-                  <ul>
+                  <GradientCircleList>
                     <li>Organizátorom súťaže je hlavný zodpovedný riešiteľ výskumu - Roman Fiala.</li>
-                  </ul>
+                  </GradientCircleList>
 
                   <h4>Účastníci súťaže:</h4>
-                  <ul>
+                  <GradientCircleList>
                     <li>Súťaže sa môžu zúčastniť osoby, ktoré dovŕšili 18 rokov a vyjadrili informovaný súhlas s účasťou vo výskume.</li>
-                  </ul>
+                  </GradientCircleList>
 
                   <h4>Podmienky zaradenia do žrebovania:</h4>
-                  <ul>
+                  <GradientCircleList>
                     <li>Podmienky účasti uvedené v tejto časti sú zároveň podmienkami na získanie minimálneho počtu 50 bodov potrebných na zaradenie do žrebovania.</li>
-                    <li>Účastník bude zaradený do žrebovania o ceny, ak:
-                      <ul>
-                        <li>Absolvuje aspoň jednu z požadovaných častí výskumu: Predvýskum alebo prvú časť hlavného výskumu.</li>
-                        <li>Pravdivo a úplne vyplní všetky povinné položky predvýskumu alebo prvej časti hlavného výskumu.</li>
-                        <li>Poskytne kontaktný e-mail určený výhradne na účely súťaže, ktorý nie je spájaný s výskumnými dátami.</li>
-                      </ul>
-                    </li>
+                    <li>Účastník bude zaradený do žrebovania o ceny, ak:</li>
+                  </GradientCircleList>
+                  
+                  <NestedListItem>
+                    Absolvuje aspoň jednu z požadovaných častí výskumu: Predvýskum alebo prvú časť hlavného výskumu.
+                  </NestedListItem>
+                  <NestedListItem>
+                    Pravdivo a úplne vyplní všetky povinné položky predvýskumu alebo prvej časti hlavného výskumu.
+                  </NestedListItem>
+                  <NestedListItem>
+                    Poskytne kontaktný e-mail určený výhradne na účely súťaže, ktorý nie je spájaný s výskumnými dátami.
+                  </NestedListItem>
+                  
+                  <GradientCircleList>
                     <li>Účasť v súťaži nie je podmienkou účasti vo výskume, respondent sa môže zúčastniť výskumu aj bez poskytnutia kontaktného e-mailu.</li>
-                  </ul>
+                  </GradientCircleList>
 
                   <h4>Trvanie súťaže:</h4>
-                  <ul>
+                  <GradientCircleList>
                     <li>Súťaž prebieha v období od spustenia predvýskumu - marec 2026 do ukončenia hlavného výskumu - apríl 2026.</li>
                     <li>Pozor - predvýskum bude dostupný iba do spustenia hlavného výskumu, to znamená že po jeho spustení predvýskum už nebude možné absolvovať.</li>
                     <li>Do žrebovania budú zaradení len účastníci, ktorí splnia podmienky účasti v tomto časovom intervale.</li>
-                  </ul>
+                  </GradientCircleList>
 
                   <h4>Bodovanie účasti v súťaži:</h4>
-                  <ul>
+                  <GradientCircleList>
                     <li>Každý získaný bod predstavuje jeden žreb v súťaži. Účastník s vyšším počtom bodov tak má vyššiu pravdepodobnosť výhry. Minimálnou podmienkou zaradenia do žrebovania je získanie minimálne 50 bodov.</li>
                     <li>Za absolvovanie predvýskumu získava účastník 50 bodov.</li>
                     <li>Za absolvovanie prvej časti hlavného výskumu získava účastník 50 bodov.</li>
                     <li>Za absolvovanie druhej časti hlavného výskumu (follow-up meranie) získava účastník 25 bodov.</li>
-                    <li>Za odporúčanie ďalším účastníkom 10 bodov za nového účastníka.
-                      <ul>
-                        <li>Každý účastník, ktorý absolvuje aspoň predvýskum alebo prvú časť hlavného výskumu, získa jedinečný referral kód.</li>
-                        <li>Ak nový účastník pri vstupe do štúdie uvedie referral kód osoby, ktorá ho pozvala, a sám splní podmienky účasti, osoba, ktorá referral kód zdieľala, získa za každé takéto platné odporúčanie 10 bodov.</li>
-                        <li>Za toho istého nového účastníka možno referral kód započítať len raz a len jednému odporúčateľovi.</li>
-                        <li>Referral kód nemá vplyv na samotný priebeh výskumu, slúži iba na pridelenie bodov do súťaže.</li>
-                      </ul>
-                    </li>
-                  </ul>
+                    <li>Za odporúčanie ďalším účastníkom 10 bodov za nového účastníka.</li>
+                  </GradientCircleList>
+                  
+                  <NestedListItem>
+                    Každý účastník, ktorý absolvuje aspoň predvýskum alebo prvú časť hlavného výskumu, získa jedinečný referral kód.
+                  </NestedListItem>
+                  <NestedListItem>
+                    Ak nový účastník pri vstupe do štúdie uvedie referral kód osoby, ktorá ho pozvala, a sám splní podmienky účasti, osoba, ktorá referral kód zdieľala, získa za každé takéto platné odporúčanie 10 bodov.
+                  </NestedListItem>
+                  <NestedListItem>
+                    Za toho istého nového účastníka možno referral kód započítať len raz a len jednému odporúčateľovi.
+                  </NestedListItem>
+                  <NestedListItem>
+                    Referral kód nemá vplyv na samotný priebeh výskumu, slúži iba na pridelenie bodov do súťaže.
+                  </NestedListItem>
 
                   <h4>Výhry:</h4>
-                  <ul>
+                  <GradientCircleList>
                     <li>Hlavnou cenou je darčekový poukaz v hodnote 30 € pre jedného výhercu.</li>
                     <li>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10 € pre piatich výhercov.</li>
                     <li>Výhercovia si určia v ktorom obchode si chcú uplatniť darčekový poukaz a na základe toho im bude poukaz poskytnutý.</li>
                     <li>Organizátor si vyhradzuje právo zmeniť typ ceny za inú v rovnakej alebo vyššej hodnote (napr. iný typ poukážky), ak pôvodnú cenu nebude možné zabezpečiť.</li>
-                  </ul>
+                  </GradientCircleList>
 
                   <h4>Žrebovanie výhercov:</h4>
-                  <ul>
+                  <GradientCircleList>
                     <li>Žrebovanie prebehne najneskôr do 10 dní po ukončení hlavného výskumu.</li>
                     <li>Žrebovanie bude realizované náhodným výberom z databázy e-mailových adries účastníkov, ktorí splnili podmienky účasti.</li>
                     <li>Žrebovanie vykoná organizátor za prítomnosti svedkov a bude zaznamenané na videozáznam s časovou stopou.</li>
-                  </ul>
+                  </GradientCircleList>
 
                   <h4>Oznámenie a odovzdanie výhry:</h4>
-                  <ul>
+                  <GradientCircleList>
                     <li>Výhercovia budú kontaktovaní e-mailom najneskôr do 5 dní od žrebovania.</li>
                     <li>Ak výherca do 10 pracovných dní od odoslania e-mailu nereaguje alebo odmietne výhru, cena môže byť pridelená náhradníkovi, ktorý bude vyžrebovaný rovnakým spôsobom.</li>
                     <li>Výhra bude odovzdaná elektronicky formou poukazu.</li>
-                  </ul>
+                  </GradientCircleList>
 
                   <h4>Ochrana osobných údajov:</h4>
-                  <ul>
+                  <GradientCircleList>
                     <li>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</li>
                     <li>Údaje budú použité výhradne na účely kontaktovania výhercu a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</li>
                     <li>Spracovanie osobných údajov prebieha v súlade s GDPR a zákonom č. 18/2018 Z. z.</li>
-                  </ul>
+                  </GradientCircleList>
 
                   <h4>Vylúčenie zo súťaže:</h4>
-                  <ul>
-                    <li>Organizátor si vyhradzuje právo vylúčiť účastníka zo súťaže, ak:
-                      <ul>
-                        <li>Porušil tieto pravidlá a podmienky súťaže.</li>
-                        <li>Uviedol zjavne nepravdivé údaje alebo iným spôsobom zneužil mechanizmus súťaže (napr. viacnásobná registrácia s rôznymi e-mailmi).</li>
-                      </ul>
-                    </li>
-                  </ul>
+                  <GradientCircleList>
+                    <li>Organizátor si vyhradzuje právo vylúčiť účastníka zo súťaže, ak:</li>
+                  </GradientCircleList>
+                  
+                  <NestedListItem>
+                    Porušil tieto pravidlá a podmienky súťaže.
+                  </NestedListItem>
+                  <NestedListItem>
+                    Uviedol zjavne nepravdivé údaje alebo iným spôsobom zneužil mechanizmus súťaže (napr. viacnásobná registrácia s rôznymi e-mailmi).
+                  </NestedListItem>
 
                   <h4>Zodpovednosť organizátora:</h4>
-                  <ul>
+                  <GradientCircleList>
                     <li>Organizátor nezodpovedá za technické problémy (napr. výpadky internetu, poruchy zariadenia účastníka), ktoré znemožnia alebo skomplikujú účasť v súťaži alebo dokončenie výskumu.</li>
-                  </ul>
+                  </GradientCircleList>
                 </>
               )}
             </ModalContent>

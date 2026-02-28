@@ -340,7 +340,10 @@ const Intro = () => {
   };
 
   return (
-    <Layout showLevelDisplay={false}>
+    <Layout showLevelDisplay={false} showAnimatedBackground={true}
+  cubeCount={12}
+  animationSpeed="slow"
+  complexity="medium">
       <Container>
         <Header>
           <Title>Aplikácia CP-PASS</Title>

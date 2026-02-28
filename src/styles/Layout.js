@@ -1,8 +1,14 @@
 // src/styles/Layout.js
+// ✅ FINÁLNA VERZIA - S AnimatedBackground a správnymi props
+
 import React from 'react';
 import styled from 'styled-components';
 import LevelDisplay from '../components/shared/LevelDisplay';
-import AnimatedBackground from '../components/shared/AnimatedBackground'; // ✅ Priamy import
+import AnimatedBackground from '../components/shared/AnimatedBackground';
+
+// =====================
+// STYLED COMPONENTS
+// =====================
 
 const LayoutContainer = styled.div`
   min-height: 100vh;
@@ -42,21 +48,26 @@ const ContentWrapper = styled.div`
   }
 `;
 
+// =====================
+// COMPONENT
+// =====================
+
 const Layout = ({ 
   children, 
   showLevelDisplay = true,
   showAnimatedBackground = false,
-  cubeCount = 10,
-  animationSpeed = 'normal' // 'slow' | 'normal' | 'fast'
+  cubeCount = 15,
+  animationSpeed = 'normal', // 'slow' | 'normal' | 'fast'
+  complexity = 'medium' // 'low' | 'medium' | 'high'
 }) => {
   return (
     <LayoutContainer>
-      {/* 🎲 Animácia - PRIAMO načítaná, BEZ lazy load */}
+      {/* 🎲 Animované pozadie - IBA KOCKY */}
       {showAnimatedBackground && (
         <AnimatedBackground 
-          variant="gradient" 
           cubeCount={cubeCount}
-          speed={animationSpeed}
+          animationSpeed={animationSpeed}
+          complexity={complexity}
         />
       )}
       

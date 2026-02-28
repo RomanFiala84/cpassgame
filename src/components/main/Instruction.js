@@ -1069,9 +1069,10 @@ const handleStart = async () => {
   ];
 
   return (
-    <Layout showLevelDisplay={false} showAnimatedBackground={true} 
-  cubeCount={10} 
-  animationSpeed="normal">
+    <Layout showLevelDisplay={false} showAnimatedBackground={true}
+  cubeCount={12}
+  animationSpeed="slow"
+  complexity="medium">
       <Container>
         <Title><strong>Vitajte v aplikácií CP-PASS</strong></Title>
         <Subtitle>

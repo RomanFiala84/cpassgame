@@ -1,7 +1,9 @@
 // src/styles/StyledList.js
 import styled from 'styled-components';
 
-// Hlavný gradient list
+// =====================
+// Hlavný gradient list (väčšie odrážky)
+// =====================
 export const GradientCircleList = styled.ul`
   list-style: none;
   padding-left: 0;
@@ -17,6 +19,7 @@ export const GradientCircleList = styled.ul`
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};
     list-style: none;
     
+    /* ✅ VÄČŠIA odrážka (12px) */
     &::before {
       content: '';
       position: absolute;
@@ -31,6 +34,8 @@ export const GradientCircleList = styled.ul`
         ${props => props.theme.ACCENT_COLOR_2}
       );
       box-shadow: 0 2px 4px ${props => props.theme.ACCENT_COLOR}33;
+      /* ✅ PLNÁ OPACITY */
+      opacity: 1;
     }
     
     strong {
@@ -76,16 +81,19 @@ export const GradientCircleList = styled.ul`
   }
 `;
 
-// ✅ Vnorený list item - SAMOSTATNÝ DIV
+// =====================
+// Vnorený list item (menšie odrážky)
+// =====================
 export const NestedListItem = styled.div`
   padding-left: 52px;
-  font-size: 13px;
-  color: ${props => props.theme.SECONDARY_TEXT_COLOR};
+  /* ✅ ROVNAKÁ veľkosť písma ako GradientCircleList */
+  font-size: 14px;
+  color: ${props => props.theme.PRIMARY_TEXT_COLOR}; /* ✅ ROVNAKÁ farba ako hlavné odrážky */
   position: relative;
-  margin-bottom: 8px;
+  margin-bottom: 10px; /* ✅ ROVNAKÝ margin ako hlavné odrážky */
   line-height: 1.6;
   
-  /* ✅ Menšia odrážka */
+  /* ✅ MENŠIA odrážka (8px namiesto 12px) - ale rovnaký gradient */
   &::before {
     content: '';
     position: absolute;
@@ -96,33 +104,34 @@ export const NestedListItem = styled.div`
     border-radius: 50%;
     background: linear-gradient(
       135deg,
-      ${props => props.theme.ACCENT_COLOR}66,
-      ${props => props.theme.ACCENT_COLOR_2}66
+      ${props => props.theme.ACCENT_COLOR},
+      ${props => props.theme.ACCENT_COLOR_2}
     );
-    opacity: 0.7;
-    box-shadow: 0 1px 2px ${props => props.theme.ACCENT_COLOR}22;
+    box-shadow: 0 2px 4px ${props => props.theme.ACCENT_COLOR}33;
+    /* ✅ PLNÁ OPACITY - rovnaká ako hlavné odrážky */
+    opacity: 1;
   }
   
   @media (max-width: 768px) {
     padding-left: 40px;
-    font-size: 12px;
+    font-size: 13px; /* ✅ ROVNAKÁ ako GradientCircleList */
     
     &::before {
       left: 24px;
-      width: 7px;
-      height: 7px;
+      width: 6px; /* ✅ Proporčne menšia */
+      height: 6px;
       top: 8px;
     }
   }
   
   @media (max-width: 480px) {
     padding-left: 32px;
-    font-size: 11px;
+    font-size: 12px; /* ✅ ROVNAKÁ ako GradientCircleList */
     
     &::before {
       left: 20px;
-      width: 6px;
-      height: 6px;
+      width: 5px; /* ✅ Proporčne menšia */
+      height: 5px;
       top: 7px;
     }
   }
