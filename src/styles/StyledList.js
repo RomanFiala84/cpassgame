@@ -1,8 +1,7 @@
 // src/styles/StyledList.js
-
 import styled from 'styled-components';
 
-// Existujúci GradientCircleList
+// Hlavný gradient list
 export const GradientCircleList = styled.ul`
   list-style: none;
   padding-left: 0;
@@ -75,33 +74,36 @@ export const GradientCircleList = styled.ul`
   }
 `;
 
-// src/styles/StyledList.js
-
+// ✅ Vnorený list item - KOMPLETNE PREPÍSANÉ ŠTÝLY
 export const NestedListItem = styled.li`
   padding-left: 52px !important;
   font-size: 13px !important;
   color: ${props => props.theme.SECONDARY_TEXT_COLOR} !important;
+  position: relative !important;
+  margin-bottom: 8px !important;
   
-  /* ✅ VYPNI pôvodný ::before z GradientCircleList */
+  /* ❌ ZRUŠ originálny ::before z GradientCircleList */
   &::before {
-    display: none !important; /* ❌ Zruš originálnu odrážku */
+    content: none !important;
+    display: none !important;
   }
   
-  /* ✅ VYTVOR NOVÝ menší ::before marker */
+  /* ✅ VYTVOR nový menší marker pomocou ::after */
   &::after {
-    content: '';
-    position: absolute;
-    left: 28px; /* Odsadený doprava */
-    top: 9px;
+    content: '' !important;
+    position: absolute !important;
+    left: 28px !important;
+    top: 9px !important;
     width: 8px !important;
     height: 8px !important;
-    border-radius: 50%;
+    border-radius: 50% !important;
     background: linear-gradient(
       135deg,
       ${props => props.theme.ACCENT_COLOR}66,
       ${props => props.theme.ACCENT_COLOR_2}66
-    );
-    opacity: 0.7;
+    ) !important;
+    opacity: 0.7 !important;
+    box-shadow: 0 1px 2px ${props => props.theme.ACCENT_COLOR}22 !important;
   }
   
   @media (max-width: 768px) {
@@ -112,7 +114,7 @@ export const NestedListItem = styled.li`
       left: 24px !important;
       width: 7px !important;
       height: 7px !important;
-      top: 8px;
+      top: 8px !important;
     }
   }
   
@@ -124,9 +126,7 @@ export const NestedListItem = styled.li`
       left: 20px !important;
       width: 6px !important;
       height: 6px !important;
-      top: 7px;
+      top: 7px !important;
     }
   }
 `;
-
-

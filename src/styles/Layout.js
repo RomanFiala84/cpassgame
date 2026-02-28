@@ -49,16 +49,24 @@ const ContentWrapper = styled.div`
   }
 `;
 
-const Layout = ({ children, showLevelDisplay = true }) => {
+const Layout = ({ 
+  children, 
+  showLevelDisplay = true,
+  showAnimatedBackground = false,
+  cubeCount = 12 // ✅ Počet kociek (4-12 odporúčam)
+}) => {
   return (
     <LayoutContainer>
-      {/* 🫧 Animované pozadie - POD všetkým */}
-      <AnimatedBackground variant="medium" />
+      {/* 🎲 Vystupujúce kocky */}
+      {showAnimatedBackground && (
+        <AnimatedBackground 
+          variant="gradient" 
+          cubeCount={cubeCount}
+        />
+      )}
       
-      {/* 📊 Level Display - NAD pozadím, POD obsahom */}
       {showLevelDisplay && <LevelDisplay />}
       
-      {/* 📄 Hlavný obsah - NAD všetkým */}
       <ContentWrapper $showLevel={showLevelDisplay}>
         {children}
       </ContentWrapper>

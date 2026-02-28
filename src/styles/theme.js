@@ -9,15 +9,15 @@ const darkTheme = {
   SECONDARY_TEXT_COLOR: '#ffffff',       // Svetlejšia biela pre sekundárny text
   
 // Akcentové farby - Rubínová červená škála 🔴
-  ACCENT_COLOR: '#ff2d75',        // Jasná magenta (hlavná)
-  ACCENT_COLOR_2: '#ff5e95',      // Svetlá ružová magenta
-  ACCENT_COLOR_3: '#e91e63',      // Material Design Pink
+ ACCENT_COLOR: '#9d4edd',        // Jasná fialová (hlavná)
+  ACCENT_COLOR_2: '#c77dff',      // Svetlá levanduľová
+  ACCENT_COLOR_3: '#7b2cbf',      // Stredná fialová
   
   CARD_BACKGROUND: '#3a3a3a',
   INPUT_BACKGROUND: '#424242',
-  BUTTON_COLOR: '#ff2d75',
+  BUTTON_COLOR: '#9d4edd',
   BORDER_COLOR: '#4a4a4a',
-  HOVER_OVERLAY: 'rgba(255, 45, 117, 0.15)',
+  HOVER_OVERLAY: 'rgba(157, 78, 221, 0.15)',
   
   // Stavové farby
   SUCCESS_COLOR: '#50c878',              // Smaragdovo zelená

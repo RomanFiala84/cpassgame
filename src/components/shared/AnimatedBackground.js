@@ -2,157 +2,121 @@
 import React from 'react';
 import styled, { keyframes, useTheme } from 'styled-components';
 
-// 📦 Animácia vystupujúcich kociek (3D efekt)
+// 📦 Animácia vystupujúcich kociek
 const rise = keyframes`
   0% {
-    transform: translateZ(0) scale(1);
+    transform: translateY(0) scale(1);
     opacity: 0;
   }
   20% {
-    opacity: 0.6;
-  }
-  50% {
-    transform: translateZ(100px) scale(1.2);
-    opacity: 0.8;
-  }
-  80% {
     opacity: 0.4;
   }
+  50% {
+    transform: translateY(-40vh) scale(1.15);
+    opacity: 0.6;
+  }
+  80% {
+    opacity: 0.3;
+  }
   100% {
-    transform: translateZ(200px) scale(0.8);
+    transform: translateY(-80vh) scale(0.9);
     opacity: 0;
   }
 `;
 
-// 🎲 Pulzovanie pre statické kocky
-const pulse = keyframes`
-  0%, 100% {
-    opacity: 0.2;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.5;
-    transform: scale(1.05);
-  }
-`;
-
-// 📦 Kontajner s perspektívou pre 3D efekt
+// 📦 Kontajner - FIXED position
 const BackgroundContainer = styled.div`
-  position: fixed;
+  position: fixed; /* ✅ FIXED = nebude scrollovať */
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   overflow: hidden;
-  pointer-events: none;
-  z-index: 0;
-  perspective: 1000px;
-  perspective-origin: center center;
-`;
-
-// 🎨 Grid kontajner pre šachovnicu
-const GridContainer = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-  grid-template-rows: repeat(auto-fit, minmax(80px, 1fr));
-  gap: 0;
-  transform-style: preserve-3d;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-    grid-template-rows: repeat(auto-fit, minmax(60px, 1fr));
-  }
-  
-  @media (max-width: 480px) {
-    grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
-    grid-template-rows: repeat(auto-fit, minmax(40px, 1fr));
-  }
+  pointer-events: none; /* ✅ Nebráni klikaniu */
+  z-index: 0; /* ✅ POD všetkým obsahom */
+  will-change: transform; /* ✅ Optimalizácia pre scroll */
 `;
 
 // 🎲 Jednotlivá kocka
 const Cube = styled.div`
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  width: ${props => props.$size || '60px'};
+  height: ${props => props.$size || '60px'};
+  bottom: ${props => props.$bottom || '-80px'};
+  left: ${props => props.$left || '50%'};
+  
   background: ${props => props.$gradient 
-    ? `linear-gradient(135deg, ${props.$color}60, ${props.$color}20)`
+    ? `linear-gradient(135deg, ${props.$color}50, ${props.$color}20)`
     : `${props.$color}40`
   };
-  border: 1px solid ${props => props.$color}30;
-  opacity: ${props => props.$static ? 0.2 : 0};
   
-  animation: ${props => props.$animate ? rise : pulse} 
-             ${props => props.$duration || '4s'} 
+  border: 2px solid ${props => `${props.$color}30`};
+  border-radius: 8px; /* ✅ Zaoblené rohy */
+  
+  opacity: 0;
+  
+  animation: ${rise} 
+             ${props => props.$duration || '6s'} 
              ease-in-out 
              infinite;
   
   animation-delay: ${props => props.$delay || '0s'};
   
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  
+  /* ✅ Jemné rozmazanie */
   filter: blur(${props => props.$blur || '1px'});
   
-  transition: all 0.3s ease;
+  /* ✅ Optimalizácia výkonu */
+  will-change: transform, opacity;
+  transform: translateZ(0); /* GPU acceleration */
+  backface-visibility: hidden;
+  
+  @media (max-width: 768px) {
+    width: ${props => parseInt(props.$size) * 0.7}px;
+    height: ${props => parseInt(props.$size) * 0.7}px;
+  }
+  
+  @media (max-width: 480px) {
+    width: ${props => parseInt(props.$size) * 0.5}px;
+    height: ${props => parseInt(props.$size) * 0.5}px;
+  }
 `;
 
 // 🎨 Hlavný komponent
-const AnimatedBackground = ({ variant = 'gradient', intensity = 'medium' }) => {
+const AnimatedBackground = ({ 
+  variant = 'gradient', 
+  cubeCount = 8 // ✅ Kontrolovateľný počet kociek
+}) => {
   const theme = useTheme();
-  
-  // 🎨 Farby podľa témy
   const color = theme.ACCENT_COLOR;
   
-  // ✅ OPRAVA: Definuj config PRED použitím
-  const intensityConfig = {
-    light: { animate: 10, static: 30, duration: '5s' },
-    medium: { animate: 15, static: 20, duration: '4s' },
-    heavy: { animate: 25, static: 15, duration: '3s' }
-  };
-  
-  // 🎯 Vyber config podľa intenzity
-  const config = intensityConfig[intensity] || intensityConfig.medium;
-  
-  // 🎲 Generuj šachovnicový pattern
+  // 🎲 Generuj náhodné kocky
   const cubes = [];
-  const rows = 12; // Počet riadkov
-  const cols = 16; // Počet stĺpcov
   
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
-      // Šachovnicový vzor (len párne pozície)
-      const isCheckerboard = (row + col) % 2 === 0;
-      
-      if (!isCheckerboard) continue;
-      
-      // Náhodne vyber ktoré kocky sa budú animovať
-      const shouldAnimate = Math.random() < (config.animate / 100);
-      const delay = Math.random() * 6; // Náhodný delay 0-6s
-      
-      cubes.push(
-        <Cube
-          key={`${row}-${col}`}
-          $color={color}
-          $gradient={variant === 'gradient'}
-          $animate={shouldAnimate}
-          $static={!shouldAnimate}
-          $duration={`${3 + Math.random() * 2}s`} // 3-5s
-          $delay={`${delay}s`}
-          $blur={variant === 'gradient' ? '2px' : '1px'}
-        />
-      );
-    }
+  for (let i = 0; i < cubeCount; i++) {
+    const size = 40 + Math.random() * 60; // 40-100px
+    const left = Math.random() * 100; // 0-100%
+    const duration = 5 + Math.random() * 4; // 5-9s
+    const delay = Math.random() * 8; // 0-8s
+    const blur = variant === 'gradient' ? 1 + Math.random() : 0.5;
+    
+    cubes.push(
+      <Cube
+        key={i}
+        $color={color}
+        $gradient={variant === 'gradient'}
+        $size={`${size}px`}
+        $left={`${left}%`}
+        $bottom="-100px"
+        $duration={`${duration}s`}
+        $delay={`${delay}s`}
+        $blur={`${blur}px`}
+      />
+    );
   }
   
   return (
     <BackgroundContainer>
-      <GridContainer>
-        {cubes}
-      </GridContainer>
+      {cubes}
     </BackgroundContainer>
   );
 };
