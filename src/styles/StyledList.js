@@ -1,15 +1,15 @@
 //HOTOVO
-// ✅ OPRAVENÉ - odrážky správne zarovnané v Accordion
+// ✅ FINÁLNA VERZIA - odrážky správne zarovnané
 
 import styled from 'styled-components';
 
 export const GradientCircleList = styled.ul`
   list-style: none;
-  padding-left: 25px; /* ✅ OPRAVENÉ z 0 na 25px */
+  padding-left: 25px;
   margin: 0;
   
   > li {
-    padding-left: 0; /* ✅ OPRAVENÉ - li už nemá extra padding */
+    padding-left: 0;
     position: relative;
     margin-bottom: 10px;
     font-size: 15px;
@@ -20,7 +20,7 @@ export const GradientCircleList = styled.ul`
     &::before {
       content: '•';
       position: absolute;
-      left: -20px; /* ✅ OPRAVENÉ - odrážka vľavo od textu */
+      left: -20px;
       top: 0;
       color: ${props => props.theme.PRIMARY_TEXT_COLOR};
       font-size: 15px;
@@ -68,7 +68,7 @@ export const GradientCircleList = styled.ul`
 `;
 
 export const NestedListItem = styled.div`
-  padding-left: 25px; /* ✅ OPRAVENÉ z 45px */
+  padding-left: 25px;
   font-size: 15px;
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   position: relative;
@@ -78,7 +78,7 @@ export const NestedListItem = styled.div`
   &::before {
     content: '→';
     position: absolute;
-    left: 0; /* ✅ OPRAVENÉ z 25px */
+    left: 0;
     top: 0;
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};
     font-size: 15px;
