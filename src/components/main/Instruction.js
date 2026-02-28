@@ -21,11 +21,11 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 25px 15px; /* ✅ zaokrúhlené */
+  padding: 24px 16px;
   min-height: 100vh;
   
   @media (max-width: 768px) {
-    padding: 20px 10px; /* ✅ zaokrúhlené */
+    padding: 20px 12px;
   }
 `;
 
@@ -95,7 +95,7 @@ const AccordionItem = styled.div`
 
 const AccordionHeader = styled.button`
   width: 100%;
-  padding: 15px;
+  padding: 15px 15px;
   background: ${props => props.$isOpen ? props.theme.CARD_BACKGROUND : 'transparent'};
   border: none;
   text-align: center;
@@ -115,50 +115,32 @@ const AccordionHeader = styled.button`
   
   @media (max-width: 768px) {
     font-size: 15px;
-    padding: 10px;
+    padding: 10px 10px;
   }
 `;
 
 const AccordionIcon = styled.span`
   transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0)'};
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.4s ease-in-out;
   font-size: 15px;
   color: ${props => props.theme.ACCENT_COLOR};
 `;
 
 const AccordionContent = styled.div`
-  max-height: ${props => props.$isOpen ? '3000px' : '0'};
+  display: grid;
+  grid-template-rows: ${props => props.$isOpen ? '1fr' : '0fr'};
+  transition: grid-template-rows 0.4s ease-in-out;
   overflow: hidden;
-  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
-/* ✅ OPRAVENÝ AccordionInner - konzistentný padding, odstránené margin konflikty */
 const AccordionInner = styled.div`
-  padding: ${props => props.$isOpen ? '15px' : '0 15px'}; /* ✅ jednotný padding */
+  min-height: 0;
+  padding: 0 15px;
+  padding-bottom: ${props => props.$isOpen ? '10px' : '0'};
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   line-height: 1.6;
   font-size: 15px;
-  transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  /* ✅ Resetovanie margin/padding pre GradientCircleList a NestedListItem */
-  ${GradientCircleList} {
-    margin: 0; /* ✅ odstránené top/bottom margin */
-    padding-left: 25px;
-    
-    li {
-      margin: 0; /* ✅ odstránené margin */
-      padding: 5px 0; /* ✅ len vertical padding */
-      font-size: 15px; /* ✅ konzistentná veľkosť */
-      color: ${props => props.theme.SECONDARY_TEXT_COLOR}; /* ✅ konzistentná farba */
-    }
-  }
-  
-  ${NestedListItem} {
-    margin: 0; /* ✅ odstránené margin */
-    padding: 5px 0 5px 25px; /* ✅ konzistentný padding */
-    font-size: 15px; /* ✅ konzistentná veľkosť */
-    color: ${props => props.theme.SECONDARY_TEXT_COLOR}; /* ✅ konzistentná farba */
-  }
+  transition: padding-bottom 0.4s ease-in-out;
   
   h3 {
     color: ${props => props.theme.ACCENT_COLOR};
@@ -169,7 +151,6 @@ const AccordionInner = styled.div`
   
   p {
     margin-bottom: 10px;
-    font-size: 15px; /* ✅ konzistentná veľkosť */
   }
   
   strong {
@@ -186,6 +167,34 @@ const AccordionInner = styled.div`
     }
   }
   
+  /* ✅ OPRAVENÉ - styling pre GradientCircleList */
+  ${GradientCircleList} {
+    margin: 0;
+    padding-left: 25px;
+    
+    > li {
+      margin: 0;
+      padding: 5px 0;
+      padding-left: 0;
+      font-size: 15px;
+      
+      &::before {
+        left: -20px;
+      }
+    }
+  }
+  
+  /* ✅ OPRAVENÉ - styling pre NestedListItem */
+  ${NestedListItem} {
+    margin: 0;
+    padding: 5px 0 5px 25px;
+    font-size: 15px;
+    
+    &::before {
+      left: 0;
+    }
+  }
+  
   @media (max-width: 768px) {
     font-size: 15px;
     
@@ -198,7 +207,7 @@ const AccordionInner = styled.div`
 const FormCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px solid ${p => p.$hasError ? '#ef4444' : p.theme.BORDER_COLOR};
-  border-radius: 10px; /* ✅ zaokrúhlené */
+  border-radius: 12px;
   padding: 15px;
   margin-bottom: 10px;
   width: 100%;
@@ -216,50 +225,47 @@ const FormCard = styled.div`
   }
 `;
 
-/* ✅ OPRAVENÝ ConsentText - jednotný font-size 15px */
 const ConsentText = styled.div`
-  font-size: 15px; /* ✅ zmenené z 10px */
+  font-size: 10px;
   padding: 15px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   line-height: 1.5;
   margin-top: 10px;
+
+  h3 {
+    color: ${props => props.theme.ACCENT_COLOR};
+    padding: 15px;
+    margin: 10px 0 5px 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
   
-  /* ✅ Resetovanie margin/padding */
+  /* ✅ OPRAVENÉ - styling pre GradientCircleList v ConsentText */
   ${GradientCircleList} {
     margin: 0;
     padding-left: 25px;
     
-    li {
+    > li {
       margin: 0;
       padding: 5px 0;
-      font-size: 15px; /* ✅ konzistentná veľkosť */
-      color: ${p => p.theme.SECONDARY_TEXT_COLOR}; /* ✅ farba */
+      padding-left: 0;
+      font-size: 15px;
       
-      strong {
-        color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-        font-weight: 600;
+      &::before {
+        left: -20px;
       }
     }
   }
   
+  /* ✅ OPRAVENÉ - styling pre NestedListItem v ConsentText */
   ${NestedListItem} {
     margin: 0;
     padding: 5px 0 5px 25px;
-    font-size: 15px; /* ✅ konzistentná veľkosť */
-    color: ${p => p.theme.SECONDARY_TEXT_COLOR}; /* ✅ farba */
-    
-    strong {
-      color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-      font-weight: 600;
-    }
-  }
-
-  h3 {
-    color: ${props => props.theme.ACCENT_COLOR};
-    padding: 0; /* ✅ odstránené padding */
-    margin: 10px 0 5px 0;
     font-size: 15px;
-    font-weight: 600;
+    
+    &::before {
+      left: 0;
+    }
   }
 `;
 
@@ -283,7 +289,7 @@ const CheckboxContainer = styled.div`
 const Checkbox = styled.input`
   width: 15px;
   height: 15px;
-  margin-top: 5px; /* ✅ zaokrúhlené */
+  margin-top: 10px;
   flex-shrink: 0;
   cursor: ${p => p.disabled ? 'not-allowed' : 'pointer'};
   accent-color: ${p => p.theme.ACCENT_COLOR};
@@ -299,9 +305,9 @@ const InputLabel = styled.label`
 
 const Input = styled.input`
   width: 100%;
-  padding: 15px;
+  padding: 15px 15px;
   border: 2px solid ${props => props.$hasError ? '#ef4444' : props.theme.BORDER_COLOR};
-  border-radius: 10px; /* ✅ zaokrúhlené */
+  border-radius: 8px;
   font-size: 15px;
   background: ${props => props.theme.INPUT_BACKGROUND};
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
@@ -338,7 +344,7 @@ const ErrorText = styled.div`
   font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 5px; /* ✅ zaokrúhlené */
+  gap: 6px;
   
   &::before {
     content: '⚠️';
@@ -346,7 +352,7 @@ const ErrorText = styled.div`
 `;
 
 const Note = styled.div`
-  font-size: 15px; /* ✅ zmenené z 10px */
+  font-size: 10px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   margin-top: 5px;
   line-height: 1.4;
@@ -361,6 +367,34 @@ const InfoBox = styled.div`
   width: 100%;
   border-radius: 10px;
   
+  /* ✅ OPRAVENÉ - styling pre GradientCircleList v InfoBox */
+  ${GradientCircleList} {
+    margin: 0;
+    padding-left: 25px;
+    
+    > li {
+      margin: 0;
+      padding: 5px 0;
+      padding-left: 0;
+      font-size: 15px;
+      
+      &::before {
+        left: -20px;
+      }
+    }
+  }
+  
+  /* ✅ OPRAVENÉ - styling pre NestedListItem v InfoBox */
+  ${NestedListItem} {
+    margin: 0;
+    padding: 5px 0 5px 25px;
+    font-size: 15px;
+    
+    &::before {
+      left: 0;
+    }
+  }
+  
   @media (max-width: 768px) {
     padding: 15px;
   }
@@ -370,36 +404,16 @@ const InfoTitle = styled.div`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   font-weight: 700;
   margin-bottom: 10px;
-  font-size: 20px; /* ✅ zmenené z 25px na čitateľnejšiu veľkosť */
+  font-size: 25px;
   display: flex;
   align-items: center;
-  gap: 5px; /* ✅ zaokrúhlené */
+  gap: 6px;
 `;
 
 const InfoText = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   font-size: 15px;
   line-height: 1.6;
-  
-  /* ✅ Resetovanie margin/padding */
-  ${GradientCircleList} {
-    margin: 0;
-    padding-left: 25px;
-    
-    li {
-      margin: 0;
-      padding: 5px 0;
-      font-size: 15px;
-      color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-    }
-  }
-  
-  ${NestedListItem} {
-    margin: 0;
-    padding: 5px 0 5px 25px;
-    font-size: 15px;
-    color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  }
   
   strong {
     color: ${p => p.theme.PRIMARY_TEXT_COLOR};
@@ -423,7 +437,7 @@ const ButtonContainer = styled.div`
 const BlockedWarning = styled.div`
   background: linear-gradient(135deg, #ef4444, #dc2626);
   border: 2px solid #b91c1c;
-  border-radius: 15px; /* ✅ zaokrúhlené */
+  border-radius: 16px;
   padding: 30px;
   margin: 25px 0;
   max-width: 800px;
@@ -479,7 +493,7 @@ const BlockedMessage = styled.p`
 
 const ContactInfo = styled.div`
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px; /* ✅ zaokrúhlené */
+  border-radius: 8px;
   padding: 15px;
   margin-top: 20px;
   color: #fef2f2;
@@ -552,24 +566,6 @@ const CompetitionText = styled.p`
   font-size: 15px;
   line-height: 1.5;
   margin-bottom: 10px;
-  
-  /* ✅ Resetovanie margin/padding */
-  ${GradientCircleList} {
-    margin: 0;
-    padding-left: 25px;
-    
-    li {
-      margin: 0;
-      padding: 5px 0;
-      font-size: 15px;
-    }
-  }
-  
-  ${NestedListItem} {
-    margin: 0;
-    padding: 5px 0 5px 25px;
-    font-size: 15px;
-  }
 `;
 
 const EmailInput = styled(Input)`
@@ -590,6 +586,7 @@ const RulesAccordion = styled(AccordionItem)`
     border-color: ${p => p.theme.BORDER_COLOR};
   }
 `;
+
 
 
 
