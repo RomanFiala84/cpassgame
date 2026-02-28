@@ -2,41 +2,41 @@
 import React from 'react';
 import styled, { keyframes, useTheme } from 'styled-components';
 
-// 🌊 Animácia plávajúcich bublín
-const float = keyframes`
+// 📦 Animácia vystupujúcich kociek (3D efekt)
+const rise = keyframes`
   0% {
-    transform: translateY(0) translateX(0) scale(1);
+    transform: translateZ(0) scale(1);
     opacity: 0;
   }
-  10% {
+  20% {
     opacity: 0.6;
   }
   50% {
-    transform: translateY(-50vh) translateX(20px) scale(1.1);
+    transform: translateZ(100px) scale(1.2);
+    opacity: 0.8;
+  }
+  80% {
     opacity: 0.4;
   }
-  90% {
-    opacity: 0.2;
-  }
   100% {
-    transform: translateY(-100vh) translateX(-20px) scale(0.8);
+    transform: translateZ(200px) scale(0.8);
     opacity: 0;
   }
 `;
 
-// 🎈 Animácia pulzovania
+// 🎲 Pulzovanie pre statické kocky
 const pulse = keyframes`
   0%, 100% {
+    opacity: 0.2;
     transform: scale(1);
-    opacity: 0.3;
   }
   50% {
-    transform: scale(1.05);
     opacity: 0.5;
+    transform: scale(1.05);
   }
 `;
 
-// 📦 Kontajner pre pozadie
+// 📦 Kontajner s perspektívou pre 3D efekt
 const BackgroundContainer = styled.div`
   position: fixed;
   top: 0;
@@ -46,164 +46,113 @@ const BackgroundContainer = styled.div`
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
+  perspective: 1000px;
+  perspective-origin: center center;
 `;
 
-// 🫧 Základná bublinka
-const Bubble = styled.div`
+// 🎨 Grid kontajner pre šachovnicu
+const GridContainer = styled.div`
   position: absolute;
-  border-radius: 50%;
-  background: ${props => props.$gradient 
-    ? `radial-gradient(circle at 30% 30%, ${props.$color}40, ${props.$color}15)`
-    : props.$color
-  };
-  border: ${props => props.$outlined ? `2px solid ${props.$color}` : 'none'};
-  width: ${props => props.$size || '60px'};
-  height: ${props => props.$size || '60px'};
-  opacity: ${props => props.$opacity || 0.25};
-  bottom: ${props => props.$bottom || '-100px'};
-  left: ${props => props.$left || '50%'};
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  grid-template-rows: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 0;
+  transform-style: preserve-3d;
   
-  animation: ${props => props.$animation === 'float' ? float : pulse} 
-             ${props => props.$duration || '20s'} 
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    grid-template-rows: repeat(auto-fit, minmax(60px, 1fr));
+  }
+  
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+    grid-template-rows: repeat(auto-fit, minmax(40px, 1fr));
+  }
+`;
+
+// 🎲 Jednotlivá kocka
+const Cube = styled.div`
+  width: 100%;
+  height: 100%;
+  background: ${props => props.$gradient 
+    ? `linear-gradient(135deg, ${props.$color}60, ${props.$color}20)`
+    : `${props.$color}40`
+  };
+  border: 1px solid ${props => props.$color}30;
+  opacity: ${props => props.$static ? 0.2 : 0};
+  
+  animation: ${props => props.$animate ? rise : pulse} 
+             ${props => props.$duration || '4s'} 
              ease-in-out 
              infinite;
   
   animation-delay: ${props => props.$delay || '0s'};
   
-  /* Rozmazanie pre soft efekt */
-  filter: blur(${props => props.$blur || '0px'});
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
   
-  @media (max-width: 768px) {
-    width: ${props => parseInt(props.$size) * 0.7}px;
-    height: ${props => parseInt(props.$size) * 0.7}px;
-  }
+  filter: blur(${props => props.$blur || '1px'});
   
-  @media (max-width: 480px) {
-    width: ${props => parseInt(props.$size) * 0.5}px;
-    height: ${props => parseInt(props.$size) * 0.5}px;
-  }
+  transition: all 0.3s ease;
 `;
 
 // 🎨 Hlavný komponent
-const AnimatedBackground = ({ variant = 'soft' }) => {
+const AnimatedBackground = ({ variant = 'gradient', intensity = 'medium' }) => {
   const theme = useTheme();
   
   // 🎨 Farby podľa témy
-  const colors = {
-    primary: theme.ACCENT_COLOR,      // Modrá v light, červená v dark
-    secondary: theme.ACCENT_COLOR_2,  // Svetlá modrá / svetlá červená
-    tertiary: theme.ACCENT_COLOR_3    // Tmavá modrá / tmavá červená
+  const color = theme.ACCENT_COLOR;
+  
+  // ✅ OPRAVA: Definuj config PRED použitím
+  const intensityConfig = {
+    light: { animate: 10, static: 30, duration: '5s' },
+    medium: { animate: 15, static: 20, duration: '4s' },
+    heavy: { animate: 25, static: 15, duration: '3s' }
   };
+  
+  // 🎯 Vyber config podľa intenzity
+  const config = intensityConfig[intensity] || intensityConfig.medium;
+  
+  // 🎲 Generuj šachovnicový pattern
+  const cubes = [];
+  const rows = 12; // Počet riadkov
+  const cols = 16; // Počet stĺpcov
+  
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      // Šachovnicový vzor (len párne pozície)
+      const isCheckerboard = (row + col) % 2 === 0;
+      
+      if (!isCheckerboard) continue;
+      
+      // Náhodne vyber ktoré kocky sa budú animovať
+      const shouldAnimate = Math.random() < (config.animate / 100);
+      const delay = Math.random() * 6; // Náhodný delay 0-6s
+      
+      cubes.push(
+        <Cube
+          key={`${row}-${col}`}
+          $color={color}
+          $gradient={variant === 'gradient'}
+          $animate={shouldAnimate}
+          $static={!shouldAnimate}
+          $duration={`${3 + Math.random() * 2}s`} // 3-5s
+          $delay={`${delay}s`}
+          $blur={variant === 'gradient' ? '2px' : '1px'}
+        />
+      );
+    }
+  }
   
   return (
     <BackgroundContainer>
-      {/* Prvý klaster */}
-      <Bubble
-        $color={colors.primary}
-        $size="80px"
-        $bottom="-100px"
-        $left="10%"
-        $duration="25s"
-        $delay="0s"
-        $animation="float"
-        $gradient={variant === 'soft'}
-        $outlined={variant === 'outlined'}
-        $blur={variant === 'soft' ? '2px' : '0px'}
-      />
-      
-      <Bubble
-        $color={colors.secondary}
-        $size="50px"
-        $bottom="-120px"
-        $left="15%"
-        $duration="22s"
-        $delay="3s"
-        $animation="float"
-        $gradient={variant === 'soft'}
-        $outlined={variant === 'outlined'}
-        $blur={variant === 'soft' ? '1px' : '0px'}
-      />
-      
-      {/* Druhý klaster */}
-      <Bubble
-        $color={colors.tertiary}
-        $size="70px"
-        $bottom="-90px"
-        $left="45%"
-        $duration="28s"
-        $delay="5s"
-        $animation="float"
-        $gradient={variant === 'soft'}
-        $outlined={variant === 'outlined'}
-        $blur={variant === 'soft' ? '2px' : '0px'}
-      />
-      
-      <Bubble
-        $color={colors.secondary}
-        $size="60px"
-        $bottom="-110px"
-        $left="50%"
-        $duration="24s"
-        $delay="8s"
-        $animation="float"
-        $gradient={variant === 'soft'}
-        $outlined={variant === 'outlined'}
-        $blur={variant === 'soft' ? '1px' : '0px'}
-      />
-      
-      {/* Tretí klaster */}
-      <Bubble
-        $color={colors.primary}
-        $size="90px"
-        $bottom="-120px"
-        $left="80%"
-        $duration="30s"
-        $delay="2s"
-        $animation="float"
-        $gradient={variant === 'soft'}
-        $outlined={variant === 'outlined'}
-        $blur={variant === 'soft' ? '3px' : '0px'}
-      />
-      
-      <Bubble
-        $color={colors.tertiary}
-        $size="55px"
-        $bottom="-100px"
-        $left="85%"
-        $duration="26s"
-        $delay="6s"
-        $animation="float"
-        $gradient={variant === 'soft'}
-        $outlined={variant === 'outlined'}
-        $blur={variant === 'soft' ? '1px' : '0px'}
-      />
-      
-      {/* Extra bublinky */}
-      <Bubble
-        $color={colors.secondary}
-        $size="40px"
-        $bottom="-80px"
-        $left="25%"
-        $duration="20s"
-        $delay="10s"
-        $animation="float"
-        $gradient={variant === 'soft'}
-        $outlined={variant === 'outlined'}
-        $blur={variant === 'soft' ? '1px' : '0px'}
-      />
-      
-      <Bubble
-        $color={colors.tertiary}
-        $size="65px"
-        $bottom="-95px"
-        $left="65%"
-        $duration="27s"
-        $delay="4s"
-        $animation="float"
-        $gradient={variant === 'soft'}
-        $outlined={variant === 'outlined'}
-        $blur={variant === 'soft' ? '2px' : '0px'}
-      />
+      <GridContainer>
+        {cubes}
+      </GridContainer>
     </BackgroundContainer>
   );
 };

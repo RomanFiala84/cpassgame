@@ -53,7 +53,7 @@ const Layout = ({ children, showLevelDisplay = true }) => {
   return (
     <LayoutContainer>
       {/* 🫧 Animované pozadie - POD všetkým */}
-      <AnimatedBackground variant="soft" />
+      <AnimatedBackground variant="medium" />
       
       {/* 📊 Level Display - NAD pozadím, POD obsahom */}
       {showLevelDisplay && <LevelDisplay />}
