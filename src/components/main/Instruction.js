@@ -12,10 +12,6 @@ import {GradientCircleList, NestedListItem} from '../../styles/StyledList';
 // STYLED COMPONENTS
 // =====================
 
-// =====================
-// STYLED COMPONENTS - OPRAVENÉ
-// =====================
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -30,9 +26,9 @@ const Container = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 25px;
+  font-size: 28px;
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   background: linear-gradient(
     135deg,
     ${props => props.theme.ACCENT_COLOR},
@@ -44,32 +40,32 @@ const Title = styled.h1`
   font-weight: 700;
   
   @media (max-width: 768px) {
-    font-size: 25px;
+    font-size: 24px;
   }
   
   @media (max-width: 480px) {
-    font-size: 20px;
+    font-size: 22px;
   }
 `;
 
 const Subtitle = styled.p`
-  font-size: 20px;
+  font-size: 16px;
   line-height: 1.5;
   max-width: 800px;
   margin-bottom: 20px;
-  color: ${props => props.theme.ACCENT_COLOR};
+  color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   text-align: center;
   
   @media (max-width: 768px) {
     font-size: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 16px;
   }
 `;
 
 const InstructionsSection = styled.div`
   width: 100%;
   max-width: 800px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 `;
 
 const WelcomeText = styled.p`
@@ -77,16 +73,16 @@ const WelcomeText = styled.p`
   line-height: 1.5;
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   text-align: center;
-  margin-bottom: 15px;
+  margin-bottom: 16px;
 `;
 
 const AccordionItem = styled.div`
-  margin-bottom: 5px;
+  margin-bottom: 8px;
   border: 1px solid ${props => props.theme.BORDER_COLOR};
   border-radius: 10px;
   overflow: hidden;
   background: ${props => props.theme.CARD_BACKGROUND};
-  transition: border-color 0.2s ease;
+  transition: all 0.2s ease;
   
   &:hover {
     border-color: ${props => props.theme.ACCENT_COLOR}66;
@@ -95,10 +91,10 @@ const AccordionItem = styled.div`
 
 const AccordionHeader = styled.button`
   width: 100%;
-  padding: 15px 15px;
+  padding: 12px 16px;
   background: ${props => props.$isOpen ? props.theme.CARD_BACKGROUND : 'transparent'};
   border: none;
-  text-align: center;
+  text-align: left;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -114,38 +110,36 @@ const AccordionHeader = styled.button`
   }
   
   @media (max-width: 768px) {
-    font-size: 15px;
-    padding: 10px 10px;
+    font-size: 14px;
+    padding: 12px 14px;
   }
 `;
 
 const AccordionIcon = styled.span`
   transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0)'};
-  transition: transform 0.4s ease-in-out;
-  font-size: 15px;
+  transition: transform 0.3s ease;
+  font-size: 14px;
   color: ${props => props.theme.ACCENT_COLOR};
 `;
 
 const AccordionContent = styled.div`
-  display: grid;
-  grid-template-rows: ${props => props.$isOpen ? '1fr' : '0fr'};
-  transition: grid-template-rows 0.4s ease-in-out;
+  max-height: ${props => props.$isOpen ? '1500px' : '0'};
   overflow: hidden;
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
 const AccordionInner = styled.div`
-  min-height: 0;
-  padding: 0 15px;
-  padding-bottom: ${props => props.$isOpen ? '10px' : '0'};
+  padding: 16px;
+  padding-top: ${props => props.$isOpen ? '0' : '16px'};
+  padding-bottom: ${props => props.$isOpen ? '16px' : '0'};
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   line-height: 1.6;
-  font-size: 15px;
-  transition: padding-bottom 0.4s ease-in-out;
+  font-size: 13px;
   
   h3 {
-    color: ${props => props.theme.ACCENT_COLOR};
-    margin: 10px 0 5px 0;
-    font-size: 15px;
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+    margin: 12px 0 6px 0;
+    font-size: 14px;
     font-weight: 600;
   }
   
@@ -167,49 +161,23 @@ const AccordionInner = styled.div`
     }
   }
   
-  /* ✅ OPRAVENÉ - styling pre GradientCircleList */
-  ${GradientCircleList} {
-    margin: 0;
-    padding-left: 25px;
-    
-    > li {
-      margin: 0;
-      padding: 5px 0;
-      padding-left: 0;
-      font-size: 15px;
-      
-      &::before {
-        left: -20px;
-      }
-    }
-  }
-  
-  /* ✅ OPRAVENÉ - styling pre NestedListItem */
-  ${NestedListItem} {
-    margin: 0;
-    padding: 5px 0 5px 25px;
-    font-size: 15px;
-    
-    &::before {
-      left: 0;
-    }
-  }
-  
   @media (max-width: 768px) {
-    font-size: 15px;
+    font-size: 12px;
     
     h3 {
-      font-size: 15px;
+      font-size: 13px;
     }
   }
 `;
+
+
 
 const FormCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px solid ${p => p.$hasError ? '#ef4444' : p.theme.BORDER_COLOR};
   border-radius: 12px;
-  padding: 15px;
-  margin-bottom: 10px;
+  padding: 16px;
+  margin-bottom: 12px;
   width: 100%;
   max-width: 800px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -221,75 +189,39 @@ const FormCard = styled.div`
   }
   
   @media (max-width: 768px) {
-    padding: 15px;
+    padding: 14px;
   }
 `;
 
 const ConsentText = styled.div`
-  font-size: 10px;
-  padding: 15px;
+  font-size: 0.85em;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   line-height: 1.5;
-  margin-top: 10px;
-
-  h3 {
-    color: ${props => props.theme.ACCENT_COLOR};
-    padding: 15px;
-    margin: 10px 0 5px 0;
-    font-size: 15px;
-    font-weight: 600;
-  }
-  
-  /* ✅ OPRAVENÉ - styling pre GradientCircleList v ConsentText */
-  ${GradientCircleList} {
-    margin: 0;
-    padding-left: 25px;
-    
-    > li {
-      margin: 0;
-      padding: 5px 0;
-      padding-left: 0;
-      font-size: 15px;
-      
-      &::before {
-        left: -20px;
-      }
-    }
-  }
-  
-  /* ✅ OPRAVENÉ - styling pre NestedListItem v ConsentText */
-  ${NestedListItem} {
-    margin: 0;
-    padding: 5px 0 5px 25px;
-    font-size: 15px;
-    
-    &::before {
-      left: 0;
-    }
-  }
+  margin-top: 12px;
 `;
+
 
 const CheckboxContainer = styled.div`
   display: flex;
   align-items: flex-start;
-  gap: 5px;
+  gap: 10px;
   cursor: ${p => p.$disabled ? 'not-allowed' : 'pointer'};
   
   label {
     cursor: ${p => p.$disabled ? 'not-allowed' : 'pointer'};
-    color: ${p => p.$disabled ? p.theme.SECONDARY_TEXT_COLOR : p.theme.SECONDARY_TEXT_COLOR};
+    color: ${p => p.$disabled ? p.theme.SECONDARY_TEXT_COLOR : p.theme.PRIMARY_TEXT_COLOR};
     text-decoration: ${p => p.$disabled ? 'line-through' : 'none'};
     opacity: ${p => p.$disabled ? 0.6 : 1};
     user-select: none;
-    font-size: 15px;
+    font-size: 14px;
     line-height: 1.4;
   }
 `;
 
 const Checkbox = styled.input`
-  width: 15px;
-  height: 15px;
-  margin-top: 10px;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
   flex-shrink: 0;
   cursor: ${p => p.disabled ? 'not-allowed' : 'pointer'};
   accent-color: ${p => p.theme.ACCENT_COLOR};
@@ -298,14 +230,14 @@ const Checkbox = styled.input`
 const InputLabel = styled.label`
   display: block;
   font-weight: 600;
-  margin-bottom: 10px;
-  color: ${props => props.theme.SECONDARY_TEXT_COLOR};
-  font-size: 15px;
+  margin-bottom: 8px;
+  color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+  font-size: 14px;
 `;
 
 const Input = styled.input`
   width: 100%;
-  padding: 15px 15px;
+  padding: 12px 14px;
   border: 2px solid ${props => props.$hasError ? '#ef4444' : props.theme.BORDER_COLOR};
   border-radius: 8px;
   font-size: 15px;
@@ -339,8 +271,8 @@ const Input = styled.input`
 
 const ErrorText = styled.div`
   color: #ef4444;
-  font-size: 15px;
-  margin-top: 5px;
+  font-size: 12px;
+  margin-top: 6px;
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -352,67 +284,39 @@ const ErrorText = styled.div`
 `;
 
 const Note = styled.div`
-  font-size: 10px;
+  font-size: 11px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  margin-top: 5px;
+  margin-top: 6px;
   line-height: 1.4;
 `;
 
 const InfoBox = styled.div`
-  background: ${p => p.$hasError ? '#ef444411' : `${p.theme.ACCENT_COLOR}45`};
-  border-left: 5px solid ${p => p.$hasError ? '#ef4444' : p.theme.ACCENT_COLOR};
-  padding: 15px;
-  margin-bottom: 15px;
+  background: ${p => p.$hasError ? '#ef444411' : `${p.theme.ACCENT_COLOR}11`};
+  border-left: 3px solid ${p => p.$hasError ? '#ef4444' : p.theme.ACCENT_COLOR};
+  padding: 16px;
+  margin-bottom: 16px;
   max-width: 800px;
   width: 100%;
   border-radius: 10px;
   
-  /* ✅ OPRAVENÉ - styling pre GradientCircleList v InfoBox */
-  ${GradientCircleList} {
-    margin: 0;
-    padding-left: 25px;
-    
-    > li {
-      margin: 0;
-      padding: 5px 0;
-      padding-left: 0;
-      font-size: 15px;
-      
-      &::before {
-        left: -20px;
-      }
-    }
-  }
-  
-  /* ✅ OPRAVENÉ - styling pre NestedListItem v InfoBox */
-  ${NestedListItem} {
-    margin: 0;
-    padding: 5px 0 5px 25px;
-    font-size: 15px;
-    
-    &::before {
-      left: 0;
-    }
-  }
-  
   @media (max-width: 768px) {
-    padding: 15px;
+    padding: 14px;
   }
 `;
 
 const InfoTitle = styled.div`
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   font-weight: 700;
-  margin-bottom: 10px;
-  font-size: 25px;
+  margin-bottom: 8px;
+  font-size: 15px;
   display: flex;
   align-items: center;
   gap: 6px;
 `;
 
 const InfoText = styled.div`
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 15px;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 13px;
   line-height: 1.6;
   
   strong {
@@ -424,7 +328,7 @@ const InfoText = styled.div`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
   margin-top: 20px;
   width: 100%;
   max-width: 800px;
@@ -438,8 +342,8 @@ const BlockedWarning = styled.div`
   background: linear-gradient(135deg, #ef4444, #dc2626);
   border: 2px solid #b91c1c;
   border-radius: 16px;
-  padding: 30px;
-  margin: 25px 0;
+  padding: 32px;
+  margin: 24px 0;
   max-width: 800px;
   width: 100%;
   box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);
@@ -454,13 +358,13 @@ const BlockedWarning = styled.div`
   }
   
   @media (max-width: 768px) {
-    padding: 25px;
+    padding: 24px;
   }
 `;
 
 const BlockedIcon = styled.div`
-  font-size: 60px;
-  margin-bottom: 15px;
+  font-size: 64px;
+  margin-bottom: 16px;
   animation: pulse 2s ease-in-out infinite;
   
   @keyframes pulse {
@@ -471,9 +375,9 @@ const BlockedIcon = styled.div`
 
 const BlockedTitle = styled.h2`
   color: #ffffff;
-  font-size: 25px;
+  font-size: 24px;
   font-weight: 700;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   
   @media (max-width: 768px) {
     font-size: 20px;
@@ -482,22 +386,22 @@ const BlockedTitle = styled.h2`
 
 const BlockedMessage = styled.p`
   color: #fecaca;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.6;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   
   @media (max-width: 768px) {
-    font-size: 15px;
+    font-size: 14px;
   }
 `;
 
 const ContactInfo = styled.div`
   background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  padding: 15px;
+  padding: 16px;
   margin-top: 20px;
   color: #fef2f2;
-  font-size: 15px;
+  font-size: 14px;
   
   strong {
     color: #ffffff;
@@ -505,7 +409,7 @@ const ContactInfo = styled.div`
 `;
 
 const ClearCodeButton = styled(StyledButton)`
-  margin-top: 15px;
+  margin-top: 16px;
   background: rgba(255, 255, 255, 0.2);
   
   &:hover {
@@ -517,8 +421,8 @@ const ReferralNotice = styled.div`
   background: ${p => `${p.theme.ACCENT_COLOR}22`};
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   border-radius: 10px;
-  padding: 10px;
-  margin-bottom: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
   max-width: 800px;
   width: 100%;
   text-align: center;
@@ -538,34 +442,34 @@ const ReferralNotice = styled.div`
 
 const ReferralNoticeText = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 15px;
-  margin-bottom: 5px;
+  font-size: 13px;
+  margin-bottom: 6px;
   
   strong {
     color: ${p => p.theme.ACCENT_COLOR};
     font-weight: 700;
-    font-size: 15px;
+    font-size: 16px;
     letter-spacing: 2px;
   }
 `;
 
 const CompetitionSection = styled(FormCard)`
-  background: ${p => `${p.theme.ACCENT_COLOR}45`};
-  border-color: ${p => p.theme.ACCENT_COLOR}60;
+  background: ${p => `${p.theme.ACCENT_COLOR}11`};
+  border-color: ${p => p.theme.ACCENT_COLOR}44;
 `;
 
 const CompetitionTitle = styled.h3`
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  color: ${p => p.theme.ACCENT_COLOR};
   font-size: 15px;
   font-weight: 600;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 `;
 
 const CompetitionText = styled.p`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 15px;
+  font-size: 13px;
   line-height: 1.5;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 `;
 
 const EmailInput = styled(Input)`
@@ -576,19 +480,16 @@ const EmailInput = styled(Input)`
 const RulesSection = styled.div`
   width: 100%;
   max-width: 800px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 `;
 
 const RulesAccordion = styled(AccordionItem)`
-  border-color: ${p => p.theme.BORDER_COLOR};
+  border-color: ${p => p.theme.ACCENT_COLOR}44;
   
   &:hover {
-    border-color: ${p => p.theme.BORDER_COLOR};
+    border-color: ${p => p.theme.ACCENT_COLOR};
   }
 `;
-
-
-
 
 
 // =====================
@@ -692,7 +593,7 @@ export default function Instruction() {
       return { valid: true, type: 'admin' };
     }
     
-    const testPattern = /^TEST([0-5][0-9]|84)$/;
+    const testPattern = /^TEST([0-5][0-9]|60)$/;
     if (testPattern.test(upperCode)) {
       return { valid: true, type: 'test' };
     }
@@ -898,7 +799,7 @@ const handleStart = async () => {
         await dataManager.processReferral(upperCode, referralCode.trim().toUpperCase());
       } catch (error) {
         console.error('Referral processing error:', error);
-        setErrors({ referral: 'Chyba pri spracovaní referral kódu. Zadajte kód znova prosím.' });
+        setErrors({ referral: 'Chyba pri spracovaní referral kódu. Zadajte kód znova.' });
         return; // ✅ finally blok sa postará o reset
       }
     }
@@ -993,7 +894,7 @@ const handleStart = async () => {
       content: (
       <>
         <GradientCircleList>
-          <li>V predvýskume prejdete sériou otázok a tvrdení - dotazník online aplikácie Misia 0 - (5-10 minút).</li>
+          <li>V predvýskume prejdete sériou otázok a tvrdení - dotazník (5-10 minút).</li>
           <li>Pri hodnotení neexistujú správne ani nesprávne odpovede a po každom bloku otázok vás požiadame o spätnú väzbu.</li>
           <li>Budeme sa pýtať napríklad na:</li>
         </GradientCircleList>
@@ -1024,13 +925,13 @@ const handleStart = async () => {
         </GradientCircleList>
         
         <NestedListItem>
-          Misia 1 (5-10 minút) - Úvodný dotazník
+          Úvodný dotazník (5-10 minút)
         </NestedListItem>
         <NestedListItem>
-          Misia 2 (10-15 minút) - Prebehne bezprostredne po dokončení úvodného dotazníka
+          Misia 1 (10-15 minút) - Prebehne bezprostredne po dokončení úvodného dotazníka
         </NestedListItem>
         <NestedListItem>
-          Misia 3 (10-15 minút) - Prebehne po piatich dňoch od dokončenia Misie 1
+          Misia 2 (10-15 minút) - Prebehne po piatich dňoch od dokončenia Misie 1
         </NestedListItem>
         
         <GradientCircleList>
@@ -1120,7 +1021,7 @@ const handleStart = async () => {
       title: 'Kontakt',
       content: (
       <GradientCircleList>
-        <li>V prípade, že máte otázky k samotnému výskumu, môžete nás kontaktovať na uvedenom e‑maile - radi vám poskytneme doplňujúce informácie.</li>
+        <li>V prípade, že máte otázky k samotnému výskumu, môžete nás kontaktovať na uvedenom e‑maile -- radi vám poskytneme doplňujúce informácie.</li>
         <li>Výskumník:<br/>
         Roman Fiala<br/>
         Psychológia, 3. roč. Bc.<br/>
@@ -1173,7 +1074,7 @@ const handleStart = async () => {
             <ReferralNoticeText>
               Referral kód bol automaticky vyplnený: <strong>{referralCode}</strong>
             </ReferralNoticeText>
-            <ReferralNoticeText style={{ marginTop: '10px', fontSize: '10px' }}>
+            <ReferralNoticeText style={{ marginTop: '8px', fontSize: '13px' }}>
               Váš priateľ/ka dostane +10 bodov za odporúčanie!
             </ReferralNoticeText>
           </ReferralNotice>
@@ -1217,7 +1118,7 @@ const handleStart = async () => {
                 disabled={isBlocked}
                 onChange={(e) => setConsentGiven(e.target.checked)}
               />
-              <label><strong>SÚHLASÍM SO SPRACOVANÍM ÚDAJOV A PARTICIPÁCIOU VO VÝSKUME</strong></label>
+              <label>SÚHLASÍM SO SPRACOVANÍM ÚDAJOV A PARTICIPÁCIOU VO VÝSKUME</label>
             </CheckboxContainer>
             
             <ConsentText>
@@ -1256,13 +1157,13 @@ const handleStart = async () => {
 
         {/* 2. FORMAT PRIHLASOVACIEHO KÓDU */}
         <InfoBox>
-          <InfoTitle><strong>Inštrukcie pre prihlásenie:</strong></InfoTitle>
+          <InfoTitle>Inštrukcie pre prihlásenie:</InfoTitle>
           <InfoText>
             <GradientCircleList>
-              <li>Do výskumu sa ako respondenti budete prihlasovať pomocou identifikačného kódu respondenta (IKR).</li> 
-              <li>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom.</li> 
-              <li>Tento kód slúži na to aby bola zachovaná vaša anonymita a aby ste si kód pri ďalšom prihlásení nemuseli pamätať.</li> 
-              <li ><strong>Prosím zadajte kód podľa následujúcich inštrukcií:</strong></li>
+              <li><strong>Do výskumu sa ako respondenti budete prihlasovať pomocou identifikačného kódu respondenta (IKR).</strong></li> 
+              <li><strong>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom.</strong></li> 
+              <li><strong>Tento kód slúži na to aby bola zachovaná vaša anonymita a aby ste si kód pri ďalšom prihlásení nemuseli pamätať.</strong></li> 
+              <li><strong>Prosím zadajte kód podľa následujúcich inštrukcií:</strong></li>
             </GradientCircleList>
             
             <NestedListItem>
@@ -1281,7 +1182,7 @@ const handleStart = async () => {
               <strong>Pre dvojčíslie: Zadajte číselne váš mesiac narodenia vo formáte MM (napr. pre 1. január zadajte 01).</strong>
             </NestedListItem>
             <NestedListItem>
-              Príklad: Jožko Mrkvička narodený v novembri = JORK11.
+              <strong>Príklad: Jožko Mrkvička narodený v novembri = JORK11.</strong>
             </NestedListItem>
             
             <GradientCircleList>
@@ -1292,15 +1193,15 @@ const handleStart = async () => {
               <strong>Namiesto 1. znaku: Zadajte 1. písmeno okresu v ktorom žijete.</strong>
             </NestedListItem>
             
-            <NestedListItem>
-              <li>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín = TORK11.</li>
-            </NestedListItem>
+            <GradientCircleList>
+              <li><strong>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín = TORK11.</strong></li>
+            </GradientCircleList>
           </InfoText>
         </InfoBox>
 
         {/* ✅ 3. KÓD ÚČASTNÍKA - s ref */}
         <FormCard ref={participantCodeRef} $hasError={!!errors.participant || !!errors.blocked}>
-          <InputLabel htmlFor="participant-code"><strong>Zadajte váš identifikačný kód respondenta pre prihlásenie:</strong></InputLabel>
+          <InputLabel htmlFor="participant-code">Zadajte váš identifikačný kód respondenta pre prihlásenie:</InputLabel>
           <Input
             id="participant-code"
             type="text"
@@ -1320,7 +1221,7 @@ const handleStart = async () => {
 
         {/* ✅ 4. EMAIL PRE SÚŤAŽ - s ref */}
         <CompetitionSection ref={emailRef}>
-          <CompetitionTitle><strong>Zapojte sa do súťaže o ceny</strong></CompetitionTitle>
+          <CompetitionTitle>Zapojte sa do súťaže o ceny</CompetitionTitle>
           <CompetitionText>
             <GradientCircleList>
               <li><strong>Pre zapojenie do súťaže je potrebné zadať e-mailovú adresu a absolovať predvýskum alebo prvú časť hlavného výskumu.</strong></li>
@@ -1347,7 +1248,7 @@ const handleStart = async () => {
             </GradientCircleList>
           </CompetitionText>
           
-          <InputLabel htmlFor="email"><strong>Zadajte prosím e-mailovú adresu pre zapojenie do súťaže (nepovinné):</strong></InputLabel>
+          <InputLabel htmlFor="email">Zadajte prosím e-mailovú adresu pre zapojenie do súťaže (nepovinné)</InputLabel>
           <EmailInput
             id="email"
             type="email"
@@ -1362,8 +1263,8 @@ const handleStart = async () => {
             <Note>
               <GradientCircleList>
                
-                <li>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</li>
-                <li>E-mailová adresa bude použitá výhradne na účely kontaktovania výhercov a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</li>
+                <li><strong>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</strong></li>
+                <li><strong>E-mailová adresa bude použitá výhradne na účely kontaktovania výhercov a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</strong></li>
             
              </GradientCircleList>
             </Note>
@@ -1383,7 +1284,7 @@ const handleStart = async () => {
                   onChange={(e) => setCompetitionConsent(e.target.checked)}
                 />
                 <label>
-                  <strong>SÚHLASÍM SO SPRACOVANÍM OSOBNÝCH ÚDAJOV A PARTICIPÁCIOU V SÚŤAŽI</strong>
+                  SÚHLASÍM SO SPRACOVANÍM OSOBNÝCH ÚDAJOV A PARTICIPÁCIOU V SÚŤAŽI
                 </label>
               </CheckboxContainer>
               
@@ -1429,13 +1330,13 @@ const handleStart = async () => {
                 disabled={isBlocked}
                 onChange={(e) => setHasReferral(e.target.checked)}
               />
-              <label><strong>Mám referral kód</strong></label>
+              <label>Mám referral kód</label>
             </CheckboxContainer>
 
             {hasReferral && (
               <>
                 <InputLabel htmlFor="referral-code" style={{ marginTop: '16px' }}>
-                  <strong>Referral kód</strong> {referralFromUrl && '(automaticky vyplnený)'}
+                  Referral kód {referralFromUrl && '(automaticky vyplnený)'}
                 </InputLabel>
                 <Input
                   id="referral-code"
@@ -1466,23 +1367,23 @@ const handleStart = async () => {
               onClick={() => toggleSection('rules')}
               $isOpen={openSections['rules']}
             >
-              <strong>Pravidlá a podmienky súťaže</strong>
+              Pravidlá a podmienky súťaže
               <AccordionIcon $isOpen={openSections['rules']}>▼</AccordionIcon>
             </AccordionHeader>
             <AccordionContent $isOpen={openSections['rules']}>
-              <ConsentText $isOpen={openSections['rules']}>
+              <AccordionInner $isOpen={openSections['rules']}>
 
-                <h3>Organizátor súťaže:</h3>
+                <h4>Organizátor súťaže:</h4>
                 <GradientCircleList>
                   <li>Organizátorom súťaže je hlavný zodpovedný riešiteľ výskumu - Roman Fiala.</li>
                 </GradientCircleList>
 
-                <h3>Účastníci súťaže:</h3>
+                <h4>Účastníci súťaže:</h4>
                 <GradientCircleList>
                   <li>Súťaže sa môžu zúčastniť osoby, ktoré dovŕšili 18 rokov a vyjadrili informovaný súhlas s účasťou vo výskume.</li>
                 </GradientCircleList>
 
-                <h3>Podmienky zaradenia do žrebovania:</h3>
+                <h4>Podmienky zaradenia do žrebovania:</h4>
                 <GradientCircleList>
                   <li>Podmienky účasti uvedené v tejto časti sú zároveň podmienkami na získanie minimálneho počtu 50 bodov potrebných na zaradenie do žrebovania.</li>
                   <li>Účastník bude zaradený do žrebovania o ceny, ak:</li>
@@ -1502,14 +1403,14 @@ const handleStart = async () => {
                   <li>Účasť v súťaži nie je podmienkou účasti vo výskume, respondent sa môže zúčastniť výskumu aj bez poskytnutia kontaktného e-mailu.</li>
                 </GradientCircleList>
 
-                <h3>Trvanie súťaže:</h3>
+                <h4>Trvanie súťaže:</h4>
                 <GradientCircleList>
-                  <li>Súťaž prebieha v období od spustenia predvýskumu do ukončenia hlavného výskumu - marec 2026.</li>
+                  <li>Súťaž prebieha v období od spustenia predvýskumu - marec 2026 do ukončenia hlavného výskumu - apríl 2026.</li>
                   <li>Pozor - predvýskum bude dostupný iba do spustenia hlavného výskumu, to znamená že po jeho spustení predvýskum už nebude možné absolvovať.</li>
                   <li>Do žrebovania budú zaradení len účastníci, ktorí splnia podmienky účasti v tomto časovom intervale.</li>
                 </GradientCircleList>
 
-                <h3>Bodovanie účasti v súťaži:</h3>
+                <h4>Bodovanie účasti v súťaži:</h4>
                 <GradientCircleList>
                   <li>Každý získaný bod predstavuje jeden žreb v súťaži. Účastník s vyšším počtom bodov tak má vyššiu pravdepodobnosť výhry. Minimálnou podmienkou zaradenia do žrebovania je získanie minimálne 50 bodov.</li>
                   <li>Za absolvovanie predvýskumu získava účastník 50 bodov.</li>
@@ -1531,7 +1432,7 @@ const handleStart = async () => {
                   Referral kód nemá vplyv na samotný priebeh výskumu, slúži iba na pridelenie bodov do súťaže.
                 </NestedListItem>
 
-                <h3>Výhry:</h3>
+                <h4>Výhry:</h4>
                 <GradientCircleList>
                   <li>Hlavnou cenou je darčekový poukaz v hodnote 30 € pre jedného výhercu.</li>
                   <li>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10 € pre piatich výhercov.</li>
@@ -1539,28 +1440,28 @@ const handleStart = async () => {
                   <li>Organizátor si vyhradzuje právo zmeniť typ ceny za inú v rovnakej alebo vyššej hodnote (napr. iný typ poukážky), ak pôvodnú cenu nebude možné zabezpečiť.</li>
                 </GradientCircleList>
 
-                <h3>Žrebovanie výhercov:</h3>
+                <h4>Žrebovanie výhercov:</h4>
                 <GradientCircleList>
                   <li>Žrebovanie prebehne najneskôr do 10 dní po ukončení hlavného výskumu.</li>
                   <li>Žrebovanie bude realizované náhodným výberom z databázy e-mailových adries účastníkov, ktorí splnili podmienky účasti.</li>
                   <li>Žrebovanie vykoná organizátor za prítomnosti svedkov a bude zaznamenané na videozáznam s časovou stopou.</li>
                 </GradientCircleList>
 
-                <h3>Oznámenie a odovzdanie výhry:</h3>
+                <h4>Oznámenie a odovzdanie výhry:</h4>
                 <GradientCircleList>
                   <li>Výhercovia budú kontaktovaní e-mailom najneskôr do 5 dní od žrebovania.</li>
                   <li>Ak výherca do 10 pracovných dní od odoslania e-mailu nereaguje alebo odmietne výhru, cena môže byť pridelená náhradníkovi, ktorý bude vyžrebovaný rovnakým spôsobom.</li>
                   <li>Výhra bude odovzdaná elektronicky formou poukazu.</li>
                 </GradientCircleList>
 
-                <h3>Ochrana osobných údajov:</h3>
+                <h4>Ochrana osobných údajov:</h4>
                 <GradientCircleList>
                   <li>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</li>
                   <li>Údaje budú použité výhradne na účely kontaktovania výhercu a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</li>
                   <li>Spracovanie osobných údajov prebieha v súlade s GDPR a zákonom č. 18/2018 Z. z.</li>
                 </GradientCircleList>
 
-                <h3>Vylúčenie zo súťaže:</h3>
+                <h4>Vylúčenie zo súťaže:</h4>
                 <GradientCircleList>
                   <li>Organizátor si vyhradzuje právo vylúčiť účastníka zo súťaže, ak:</li>
                 </GradientCircleList>
@@ -1572,11 +1473,11 @@ const handleStart = async () => {
                   Uviedol zjavne nepravdivé údaje alebo iným spôsobom zneužil mechanizmus súťaže (napr. viacnásobná registrácia s rôznymi e-mailmi).
                 </NestedListItem>
 
-                <h3>Zodpovednosť organizátora:</h3>
+                <h4>Zodpovednosť organizátora:</h4>
                 <GradientCircleList>
                   <li>Organizátor nezodpovedá za technické problémy (napr. výpadky internetu, poruchy zariadenia účastníka), ktoré znemožnia alebo skomplikujú účasť v súťaži alebo dokončenie výskumu.</li>
                 </GradientCircleList>
-              </ConsentText>
+              </AccordionInner>
             </AccordionContent>
           </RulesAccordion>
         </RulesSection>

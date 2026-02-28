@@ -1,18 +1,18 @@
-//HOTOVO
-// ✅ FINÁLNA VERZIA - odrážky správne zarovnané
+// src/styles/StyledList.js
+// ✅ Všetko v PRIMARY_TEXT_COLOR - jednotný vzhľad
 
 import styled from 'styled-components';
 
 export const GradientCircleList = styled.ul`
   list-style: none;
-  padding-left: 25px;
+  padding-left: 0;
   margin: 0;
   
   > li {
-    padding-left: 0;
+    padding-left: 24px;
     position: relative;
-    margin-bottom: 10px;
-    font-size: 15px;
+    margin-bottom: 8px;
+    font-size: 14px;
     line-height: 1.6;
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};
     list-style: none;
@@ -20,21 +20,21 @@ export const GradientCircleList = styled.ul`
     &::before {
       content: '•';
       position: absolute;
-      left: -20px;
+      left: 0;
       top: 0;
       color: ${props => props.theme.PRIMARY_TEXT_COLOR};
-      font-size: 15px;
+      font-size: 20px;
       line-height: 1.6;
       font-weight: bold;
     }
     
     strong {
-      color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+      color: ${props => props.theme.PRIMARY_TEXT_COLOR};  /* ✅ PRIMARY */
       font-weight: 600;
     }
     
     a {
-      color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+      color: ${props => props.theme.PRIMARY_TEXT_COLOR};  /* ✅ PRIMARY */
       text-decoration: underline;
       
       &:hover {
@@ -45,53 +45,53 @@ export const GradientCircleList = styled.ul`
   
   @media (max-width: 768px) {
     > li {
-      font-size: 15px;
+      padding-left: 20px;
+      font-size: 13px;
       
       &::before {
-        font-size: 15px;
-        left: -20px;
+        font-size: 18px;
       }
     }
   }
   
   @media (max-width: 480px) {
     > li {
-      font-size: 15px;
-      margin-bottom: 5px;
+      padding-left: 18px;
+      font-size: 12px;
+      margin-bottom: 6px;
       
       &::before {
-        font-size: 15px;
-        left: -20px;
+        font-size: 16px;
       }
     }
   }
 `;
 
 export const NestedListItem = styled.div`
-  padding-left: 25px;
-  font-size: 15px;
+  padding-left: 44px;
+  font-size: 14px;
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   position: relative;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   line-height: 1.6;
   
   &::before {
     content: '→';
     position: absolute;
-    left: 0;
+    left: 24px;
     top: 0;
-    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
-    font-size: 15px;
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};  /* ✅ PRIMARY */
+    font-size: 16px;
     line-height: 1.6;
   }
   
   strong {
-    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};  /* ✅ PRIMARY */
     font-weight: 600;
   }
   
   a {
-    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};  /* ✅ PRIMARY */
     text-decoration: underline;
     
     &:hover {
@@ -100,22 +100,22 @@ export const NestedListItem = styled.div`
   }
   
   @media (max-width: 768px) {
-    padding-left: 25px;
-    font-size: 15px;
+    padding-left: 38px;
+    font-size: 13px;
     
     &::before {
-      left: 0;
-      font-size: 15px;
+      left: 20px;
+      font-size: 14px;
     }
   }
   
   @media (max-width: 480px) {
-    padding-left: 25px;
-    font-size: 15px;
+    padding-left: 32px;
+    font-size: 12px;
     
     &::before {
-      left: 0;
-      font-size: 15px;
+      left: 18px;
+      font-size: 13px;
     }
   }
 `;
