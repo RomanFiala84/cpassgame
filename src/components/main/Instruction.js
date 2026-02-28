@@ -230,18 +230,17 @@ const AccordionHeader = styled.button`
 const AccordionContent = styled.div`
   max-height: ${props => props.$isOpen ? '2000px' : '0'};
   overflow: hidden;
-  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1); /* ✅ Plynulá Material Design krivka */
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
 const AccordionInner = styled.div`
-  padding: 16px;
-  padding-top: ${props => props.$isOpen ? '0' : '16px'};
-  padding-bottom: ${props => props.$isOpen ? '16px' : '0'};
+  padding: 16px; /* ✅ FIXNÝ padding, BEZ animácie */
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   line-height: 1.6;
   font-size: 15px;
-  opacity: ${props => props.$isOpen ? '1' : '0'}; /* ✅ Len fade efekt */
-  transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0.08s; /* ✅ BEZ transform */
+  opacity: ${props => props.$isOpen ? '1' : '0'};
+  transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0.08s;
+  /* ✅ ODSTRÁNENÉ: padding-top a padding-bottom animácie */
   
   h3 {
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};
@@ -279,7 +278,7 @@ const AccordionInner = styled.div`
 
 const AccordionIcon = styled.span`
   transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0)'};
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1); /* ✅ Zosúladené */
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 15px;
   color: ${props => props.theme.ACCENT_COLOR};
 `;
@@ -332,14 +331,13 @@ const ContestContent = styled.div`
 `;
 
 const ContestInner = styled.div`
-  padding: 16px;
-  padding-top: ${props => props.$isOpen ? '0' : '16px'};
-  padding-bottom: ${props => props.$isOpen ? '16px' : '0'};
+  padding: 16px; /* ✅ FIXNÝ padding, BEZ animácie */
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   line-height: 1.6;
   font-size: 10px;
-  opacity: ${props => props.$isOpen ? '1' : '0'}; /* ✅ Len fade efekt */
-  transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0.08s; /* ✅ BEZ transform */
+  opacity: ${props => props.$isOpen ? '1' : '0'};
+  transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0.08s;
+  /* ✅ ODSTRÁNENÉ: padding-top a padding-bottom animácie */
   
   h3 {
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};
@@ -381,7 +379,7 @@ const ContestInner = styled.div`
     }
     
     h4 {
-      font-size: 13px;
+      font-size: 15px;
     }
   }
 `;
