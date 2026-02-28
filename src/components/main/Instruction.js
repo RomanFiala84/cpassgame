@@ -141,7 +141,7 @@ const AccordionInner = styled.div`
   h3 {
     color: ${props => props.theme.ACCENT_COLOR};
     margin: 10px 0 5px 0;
-    font-size: 10px;
+    font-size: 15px;
     font-weight: 600;
   }
   
@@ -164,10 +164,10 @@ const AccordionInner = styled.div`
   }
   
   @media (max-width: 768px) {
-    font-size: 10px;
+    font-size: 15px;
     
     h3 {
-      font-size: 10px;
+      font-size: 15px;
     }
   }
 `;
@@ -197,14 +197,16 @@ const FormCard = styled.div`
 
 const ConsentText = styled.div`
   font-size: 10px;
+  padding: 15px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   line-height: 1.5;
   margin-top: 10px;
 
   h3 {
     color: ${props => props.theme.ACCENT_COLOR};
+    padding: 15px;
     margin: 10px 0 5px 0;
-    font-size: 10px;
+    font-size: 15px;
     font-weight: 600;
   }
 
