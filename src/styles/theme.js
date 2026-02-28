@@ -8,21 +8,21 @@ const darkTheme = {
   PRIMARY_TEXT_COLOR: '#ffffff',         // Čisto biela
   SECONDARY_TEXT_COLOR: '#ffffff',       // Svetlejšia biela pre sekundárny text
   
-  // Akcentové farby - Kráľovská fialová škála
-  ACCENT_COLOR: '#7851a9',               // Kráľovská fialová (hlavná)
-  ACCENT_COLOR_2: '#9370db',             // Svetlejšia kráľovská fialová
-  ACCENT_COLOR_3: '#5e3d8f',             // Tmavšia kráľovská fialová
+// Akcentové farby - Rubínová červená škála 🔴
+  ACCENT_COLOR: '#9b111e',               // Tmavá rubínová (hlavná)
+  ACCENT_COLOR_2: '#e74c3c',             // Svetlejšia crimson červená
+  ACCENT_COLOR_3: '#5e0b0f',             // Najtemnejšia bordová
   
   // Komponenty
   CARD_BACKGROUND: '#3a3a3a',            // Tieňovo šedá karta
   INPUT_BACKGROUND: '#424242',           // Tmavé inputy
-  BUTTON_COLOR: '#7851a9',               // Fialové tlačidlo
+  BUTTON_COLOR: '#9b111e',               // Červené tlačidlo
   BORDER_COLOR: '#4a4a4a',               // Jemný border
-  HOVER_OVERLAY: 'rgba(120, 81, 169, 0.15)', // Fialový hover
+  HOVER_OVERLAY: 'rgba(155, 17, 30, 0.15)', // Červený hover
   
   // Stavové farby
   SUCCESS_COLOR: '#50c878',              // Smaragdovo zelená
-  ERROR_COLOR: '#e0115f',                // Rubínovo červená
+  ERROR_COLOR: '#ff0000ff',                // Rubínovo červená
   WARNING_COLOR: '#ff8c00',              // Pomarančovo oranžová
 };
 
@@ -47,7 +47,7 @@ const lightTheme = {
   
   // Stavové farby
   SUCCESS_COLOR: '#50c878',              // Smaragdovo zelená
-  ERROR_COLOR: '#e0115f',                // Rubínovo červená
+  ERROR_COLOR: '#ff0000ff',                // Rubínovo červená
   WARNING_COLOR: '#ff8c00',              // Pomarančovo oranžová
 };
 

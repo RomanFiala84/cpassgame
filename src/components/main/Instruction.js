@@ -912,13 +912,13 @@ const handleStart = async () => {
         <GradientCircleList>
           
           <li>Predvýskum:</li>
-          <ul> 
-            <li>Predtým ako spustíme hlavný výskum, potrebujeme overiť, že všetky otázky a tvrdenia v dotazníku sú zrozumiteľné a jednoznačné.</li>
-          </ul>
+        
+            <li style={{ paddingLeft: '12px' }}>Predtým ako spustíme hlavný výskum, potrebujeme overiť, že všetky otázky a tvrdenia v dotazníku sú zrozumiteľné a jednoznačné.</li>
+       
           <li>Hlavný výskum:</li>
-          <ul>
-            <li>Cieľom nášho hlavného výskumu je lepšie porozumieť tomu, ako ľudia na Slovensku vnímajú inštitúcie Európskej únie, ako im dôverujú a aké faktory s tým súvisia. V našom výskume sme sa preto zameriavame na to ako informácie o fungovaní EÚ a jej prínosoch môžu pôsobiť na presvedčenia a mieru dôvery v inštitúcie EÚ.</li>
-          </ul>
+       
+            <li style={{ paddingLeft: '12px' }}>Cieľom nášho hlavného výskumu je lepšie porozumieť tomu, ako ľudia na Slovensku vnímajú inštitúcie Európskej únie, ako im dôverujú a aké faktory s tým súvisia. V našom výskume sme sa preto zameriavame na to ako informácie o fungovaní EÚ a jej prínosoch môžu pôsobiť na presvedčenia a mieru dôvery v inštitúcie EÚ.</li>
+      
           
         </GradientCircleList>
       )
@@ -932,12 +932,12 @@ const handleStart = async () => {
           <li>V predvýskume prejdete sériou otázok a tvrdení - dotazník (5-10 minút).</li>
           <li>Pri hodnotení neexistujú správne ani nesprávne odpovede a po každom bloku otázok vás požiadame o spätnú väzbu.</li>
           <li>Budeme sa pýtať napríklad na:</li>
-          <ul>
-            <li>Zrozumiteľnosť: Bola otázka alebo tvrdenie významovo jasná? Rozumeli ste všetkým použitým slovám?</li>
-            <li>Jednoznačnosť: Mohli by ste si otázku vyložiť viacerými spôsobmi?</li>
-            <li>Významová zhoda: Pri niektorých položkách vám ukážeme dva rôzne spôsoby formulácie toho istého tvrdenia. Budeme sa pýtať, či podľa vás znamenajú to isté, alebo sa v niečom líšia.</li>
-            <li>Hodnotiaca stupnica: Bola stupnica odpovedí zrozumiteľná a mali ste pocit, že dokážete vyjadriť svoj skutočný postoj?</li>
-          </ul>
+     
+            <li style={{ paddingLeft: '12px' }}>Zrozumiteľnosť: Bola otázka alebo tvrdenie významovo jasná? Rozumeli ste všetkým použitým slovám?</li>
+            <li style={{ paddingLeft: '12px' }}> Jednoznačnosť: Mohli by ste si otázku vyložiť viacerými spôsobmi?</li>
+            <li style={{ paddingLeft: '12px' }}>Významová zhoda: Pri niektorých položkách vám ukážeme dva rôzne spôsoby formulácie toho istého tvrdenia. Budeme sa pýtať, či podľa vás znamenajú to isté, alebo sa v niečom líšia.</li>
+            <li style={{ paddingLeft: '12px' }}>Hodnotiaca stupnica: Bola stupnica odpovedí zrozumiteľná a mali ste pocit, že dokážete vyjadriť svoj skutočný postoj?</li>
+      
         
         </GradientCircleList>
       )
@@ -950,11 +950,11 @@ const handleStart = async () => {
           
           <li>Výskum prebieha online formou interaktívnej aplikácie.</li>
           <li>Pozostáva z troch fáz:</li>
-            <ul>
-              <li>Úvodný dotazník (5-10 minút)</li>
-              <li>Misia 1 (10-15 minút) - Prebehne bezprostredne po dokončení úvodného dotazníka</li>
-              <li>Misia 2 (10-15 minút) - Prebehne po piatich dňoch od dokončenia Misie 1</li>
-            </ul>
+         
+              <li style={{ paddingLeft: '12px' }}>Úvodný dotazník (5-10 minút)</li>
+              <li style={{ paddingLeft: '12px' }}>Misia 1 (10-15 minút) - Prebehne bezprostredne po dokončení úvodného dotazníka</li>
+              <li style={{ paddingLeft: '12px' }}>Misia 2 (10-15 minút) - Prebehne po piatich dňoch od dokončenia Misie 1</li>
+        
           <li>Počas výskumu budeme automaticky zaznamenávať vaše interakcie s aplikáciou pre účely výskumu.</li>
         
         </GradientCircleList>
@@ -1007,16 +1007,16 @@ const handleStart = async () => {
         <GradientCircleList>
           
           <li>Je úplne v poriadku mať z niektorých tém alebo tvrdení nepríjemný pocit - dotýkajú sa citlivých spoločenských tém.</li>
-          <ul>
-            <li>Odporúčame o svojich pocitoch alebo otázkach hovoriť s niekým, komu dôverujete (priateľ, rodina, odborník).</li>
+   
+            <li style={{ paddingLeft: '12px' }}>Odporúčame o svojich pocitoch alebo otázkach hovoriť s niekým, komu dôverujete (priateľ, rodina, odborník).</li>
             <li>Ak máte pocit, že na vás podobné informácie dlhodobo pôsobia stresujúco alebo úzkostne, môže byť užitočné poradiť sa so psychológom alebo iným odborníkom.</li>
-          </ul>
+    
           <li>Dostupné zdroje pomoci:</li>
-          <ul>
-            <li>Kontakt na výskumníka - <a href="mailto:roman.fiala@tvu.sk">roman.fiala@tvu.sk</a></li>
-            <li>IPčko - <a href="https://ipcko.sk" target="_blank" rel="noopener noreferrer">https://ipcko.sk</a></li>
-            <li>Linka dôvery - <a href="https://www.linkanezabudka.sk" target="_blank" rel="noopener noreferrer">https://www.linkanezabudka.sk</a></li>
-          </ul>
+          
+            <li style={{ paddingLeft: '12px' }}>Kontakt na výskumníka - <a href="mailto:roman.fiala@tvu.sk">roman.fiala@tvu.sk</a></li>
+            <li style={{ paddingLeft: '12px' }}>IPčko - <a href="https://ipcko.sk" target="_blank" rel="noopener noreferrer">https://ipcko.sk</a></li>
+            <li style={{ paddingLeft: '12px' }}>Linka dôvery - <a href="https://www.linkanezabudka.sk" target="_blank" rel="noopener noreferrer">https://www.linkanezabudka.sk</a></li>
+   
           
         </GradientCircleList>
       )
@@ -1141,16 +1141,16 @@ const handleStart = async () => {
               <GradientCircleList>
                
                 <li><strong>Prehlasujem, že:</strong></li>
-                <ul>
-                  <li><strong>Bol(a) som informovaný(á) o účele, priebehu a podmienkach výskumu prostredníctvom informačného listu.</strong></li>
-                  <li><strong>Rozumiem, že v prípade porušenia podmienok výskumu, môžem byť z výskumu a súťaže o ceny vylúčený, následkom čoho bude zablokovanie môjho prístupu do aplikácie.</strong></li>
-                  <li><strong>Mám vedomosť o svojich právach a povinnostiach počas výskumu.</strong></li>
-                  <li><strong>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</strong></li>
-                  <li><strong>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</strong></li>
-                  <li><strong>Rozumiem, že budú zaznamenávané moje interakcie s aplikáciou pre vedeckú analýzu.</strong></li>
-                  <li><strong>Súhlasím s anonymizáciou a publikáciou mojich údajov v súhrnnej forme.</strong></li>
-                  <li><strong>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</strong></li>
-                </ul>
+      
+                  <li style={{ paddingLeft: '12px' }}><strong>Bol(a) som informovaný(á) o účele, priebehu a podmienkach výskumu prostredníctvom informačného listu.</strong></li>
+                  <li style={{ paddingLeft: '12px' }}><strong>Rozumiem, že v prípade porušenia podmienok výskumu, môžem byť z výskumu a súťaže o ceny vylúčený, následkom čoho bude zablokovanie môjho prístupu do aplikácie.</strong></li>
+                  <li style={{ paddingLeft: '12px' }}><strong>Mám vedomosť o svojich právach a povinnostiach počas výskumu.</strong></li>
+                  <li style={{ paddingLeft: '12px' }}><strong>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</strong></li>
+                  <li style={{ paddingLeft: '12px' }}><strong>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</strong></li>
+                  <li style={{ paddingLeft: '12px' }}><strong>Rozumiem, že budú zaznamenávané moje interakcie s aplikáciou pre vedeckú analýzu.</strong></li>
+                  <li style={{ paddingLeft: '12px' }}><strong>Súhlasím s anonymizáciou a publikáciou mojich údajov v súhrnnej forme.</strong></li>
+                  <li style={{ paddingLeft: '12px' }}><strong>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</strong></li>
+          
              
               </GradientCircleList>
             </ConsentText>
@@ -1168,19 +1168,19 @@ const handleStart = async () => {
               <li><strong>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom.</strong></li> 
               <li><strong>Tento kód slúži na to aby bola zachovaná vaša anonymita a aby ste si kód pri ďalšom prihlásení nemuseli pamätať.</strong></li> 
               <li><strong>Prosím zadajte kód podľa následujúcich inštrukcií:</strong></li> 
-              <ul>
-                <li><strong>Pre 1. znak: Zadajte prvé písmeno vášho mena.</strong></li> 
-                <li><strong>Pre 2. znak: Zadajte posledné písmeno vášho mena.</strong></li> 
-                <li><strong>Pre 3. znak: Zadajte druhé písmeno vášho priezviska.</strong></li> 
-                <li><strong>Pre 4. znak: Zadajte tretie písmeno vášho priezviska.</strong></li> 
-                <li><strong>Pre dvojčíslie: Zadajte číselne váš mesiac narodenia vo formáte MM (napr. pre 1. január zadajte 01).</strong></li> 
-                <li><strong>Príklad: Jožko Mrkvička narodený v novembri = JORK11.</strong></li> 
-              </ul>
+            
+                <li style={{ paddingLeft: '12px' }}><strong>Pre 1. znak: Zadajte prvé písmeno vášho mena.</strong></li> 
+                <li style={{ paddingLeft: '12px' }}><strong>Pre 2. znak: Zadajte posledné písmeno vášho mena.</strong></li> 
+                <li style={{ paddingLeft: '12px' }}><strong>Pre 3. znak: Zadajte druhé písmeno vášho priezviska.</strong></li> 
+                <li style={{ paddingLeft: '12px' }}><strong>Pre 4. znak: Zadajte tretie písmeno vášho priezviska.</strong></li> 
+                <li style={{ paddingLeft: '12px' }}><strong>Pre dvojčíslie: Zadajte číselne váš mesiac narodenia vo formáte MM (napr. pre 1. január zadajte 01).</strong></li> 
+                <li style={{ paddingLeft: '12px' }}><strong>Príklad: Jožko Mrkvička narodený v novembri = JORK11.</strong></li> 
+        
               <li><strong>V prípade ak ste sa do výskumu ešte neprihlásili a IKR už existuje, zadajte prosím:</strong></li> 
-              <ul>
-                <li><strong>Namiesto 1. znaku: Zadajte 1. písmeno okresu v ktorom žijete.</strong></li> 
+          
+                <li style={{ paddingLeft: '12px' }}><strong>Namiesto 1. znaku: Zadajte 1. písmeno okresu v ktorom žijete.</strong></li> 
                 <li><strong>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín = TORK11.</strong></li> 
-              </ul>
+     
            
             </GradientCircleList>
           </InfoText>
@@ -1214,12 +1214,12 @@ const handleStart = async () => {
             
                 <li><strong>Pre zapojenie do súťaže je potrebné zadať e-mailovú adresu a absolovať predvýskum alebo prvú časť hlavného výskumu.</strong></li>
                 <li><strong>Súťaž funguje na základe bodovacieho systému:</strong></li>
-                <ul>
-                  <li><strong>Za absolvovanie predvýskumu získava účastník 50 bodov.</strong></li>
-                  <li><strong>Za absolvovanie prvej časti hlavného výskumu získava účastník 50 bodov.</strong></li>
-                  <li><strong>Za absolvovanie druhej časti hlavného výskumu (follow up meranie) získava účastník 25 bodov.</strong></li>
-                  <li><strong>Za odporúčanie ďalším účastníkom získava účastník 10 bodov za každého nového účastníka.</strong></li>
-                </ul>
+            
+                  <li style={{ paddingLeft: '12px' }}><strong>Za absolvovanie predvýskumu získava účastník 50 bodov.</strong></li>
+                  <li style={{ paddingLeft: '12px' }}><strong>Za absolvovanie prvej časti hlavného výskumu získava účastník 50 bodov.</strong></li>
+                  <li style={{ paddingLeft: '12px' }}><strong>Za absolvovanie druhej časti hlavného výskumu (follow up meranie) získava účastník 25 bodov.</strong></li>
+                  <li style={{ paddingLeft: '12px' }}><strong>Za odporúčanie ďalším účastníkom získava účastník 10 bodov za každého nového účastníka.</strong></li>
+          
                 <li><strong>Hlavnou cenou je darčekový poukaz v hodnote 30 € pre jedného výhercu.</strong></li>
                 <li><strong>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10€ pre piatich výhercov.</strong></li>
                 <li><strong>Viac informácií o súťaži nájdete v sekcii Pravidlá a podmienky súťaže.</strong></li>
@@ -1271,14 +1271,14 @@ const handleStart = async () => {
                 <GradientCircleList>
                  
                   <li><strong>Prehlasujem, že:</strong></li>
-                  <ul>
-                    <li><strong>Súhlasím s účasťou v súťaži a potvrdzujem, že som si Pravidlá a podmienky súťaže prečítal/a, porozumel/a im a súhlasím s nimi.</strong></li>
-                    <li><strong>Rozumiem, že v prípade porušenia podmienok súťaže, môžem byť zo súťaže o ceny vylúčený.</strong></li>
-                    <li><strong>Mám vedomosť o svojich právach a povinnostiach počas súťaže.</strong></li>
-                    <li><strong>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</strong></li>
-                    <li><strong>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</strong></li>
-                    <li><strong>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</strong></li>
-                  </ul>
+             
+                    <li style={{ paddingLeft: '12px' }}><strong>Súhlasím s účasťou v súťaži a potvrdzujem, že som si Pravidlá a podmienky súťaže prečítal/a, porozumel/a im a súhlasím s nimi.</strong></li>
+                    <li style={{ paddingLeft: '12px' }}><strong>Rozumiem, že v prípade porušenia podmienok súťaže, môžem byť zo súťaže o ceny vylúčený.</strong></li>
+                    <li style={{ paddingLeft: '12px' }}><strong>Mám vedomosť o svojich právach a povinnostiach počas súťaže.</strong></li>
+                    <li style={{ paddingLeft: '12px' }}><strong>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</strong></li>
+                    <li style={{ paddingLeft: '12px' }}><strong>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</strong></li>
+                    <li style={{ paddingLeft: '12px' }}><strong>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</strong></li>
+             
               
                </GradientCircleList>
               </ConsentText>
@@ -1357,11 +1357,11 @@ const handleStart = async () => {
                   
                   <li>Podmienky účasti uvedené v tejto časti sú zároveň podmienkami na získanie minimálneho počtu 50 bodov potrebných na zaradenie do rebríčka.</li>
                   <li>Účastník bude zaradený do rebríčka o ceny, ak:</li>
-                  <ul>
-                    <li>Absolvuje aspoň jednu z požadovaných častí výskumu (Predvýskum alebo prvá časť hlavného výskumu).</li>
-                    <li>Pravdivo a plne vypĺňa všetky povinné položky predvýskumu alebo prvej časti hlavného výskumu.</li>
-                    <li>Poskytne kontaktný e-mail určený výhradne na účely súťaže, ktorý nie je spájaný s výskumnými dátami.</li>
-                  </ul>
+                
+                    <li style={{ paddingLeft: '12px' }}>Absolvuje aspoň jednu z požadovaných častí výskumu (Predvýskum alebo prvá časť hlavného výskumu).</li>
+                    <li style={{ paddingLeft: '12px' }}>Pravdivo a plne vypĺňa všetky povinné položky predvýskumu alebo prvej časti hlavného výskumu.</li>
+                    <li style={{ paddingLeft: '12px' }}>Poskytne kontaktný e-mail určený výhradne na účely súťaže, ktorý nie je spájaný s výskumnými dátami.</li>
+          
                   <li>Účasť v súťaži nie je podmienkou účasti vo výskume, respondent sa môže zúčastniť výskumu aj bez poskytnutia kontaktného e-mailu.</li>
               
 
