@@ -135,7 +135,7 @@ const AccordionInner = styled.div`
   padding-bottom: ${props => props.$isOpen ? '10px' : '0'};  // ⬅️ len bottom
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   line-height: 1.6;
-  font-size: 10px;
+  font-size: 15px;
   transition: padding-bottom 0.6s cubic-bezier(0.4, 0, 0.2, 1);  // ⬅️ pridané
   
   h3 {
@@ -211,7 +211,7 @@ const CheckboxContainer = styled.div`
   
   label {
     cursor: ${p => p.$disabled ? 'not-allowed' : 'pointer'};
-    color: ${p => p.$disabled ? p.theme.SECONDARY_TEXT_COLOR : p.theme.PRIMARY_TEXT_COLOR};
+    color: ${p => p.$disabled ? p.theme.SECONDARY_TEXT_COLOR : p.theme.SECONDARY_TEXT_COLOR};
     text-decoration: ${p => p.$disabled ? 'line-through' : 'none'};
     opacity: ${p => p.$disabled ? 0.6 : 1};
     user-select: none;
@@ -233,7 +233,7 @@ const InputLabel = styled.label`
   display: block;
   font-weight: 600;
   margin-bottom: 10px;
-  color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+  color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   font-size: 15px;
 `;
 
@@ -286,14 +286,14 @@ const ErrorText = styled.div`
 `;
 
 const Note = styled.div`
-  font-size: 15px;
+  font-size: 10px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   margin-top: 5px;
   line-height: 1.4;
 `;
 
 const InfoBox = styled.div`
-  background: ${p => p.$hasError ? '#ef444411' : `${p.theme.ACCENT_COLOR}`};
+  background: ${p => p.$hasError ? '#ef444411' : `${p.theme.ACCENT_COLOR}`}45;
   border-left: 5px solid ${p => p.$hasError ? '#ef4444' : p.theme.ACCENT_COLOR};
   padding: 15px;
   margin-bottom: 15px;
@@ -307,7 +307,7 @@ const InfoBox = styled.div`
 `;
 
 const InfoTitle = styled.div`
-  color: ${p => p.theme.ACCENT_COLOR};
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   font-weight: 700;
   margin-bottom: 10px;
   font-size: 25px;
@@ -317,7 +317,7 @@ const InfoTitle = styled.div`
 `;
 
 const InfoText = styled.div`
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   font-size: 15px;
   line-height: 1.6;
   
@@ -469,7 +469,7 @@ const CompetitionTitle = styled.h3`
 
 const CompetitionText = styled.p`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 10px;
+  font-size: 15px;
   line-height: 1.5;
   margin-bottom: 10px;
 `;
@@ -492,6 +492,7 @@ const RulesAccordion = styled(AccordionItem)`
     border-color: ${p => p.theme.BORDER_COLOR};
   }
 `;
+
 
 
 // =====================
@@ -1165,7 +1166,7 @@ const handleStart = async () => {
               <li><strong>Do výskumu sa ako respondenti budete prihlasovať pomocou identifikačného kódu respondenta (IKR).</strong></li> 
               <li><strong>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom.</strong></li> 
               <li><strong>Tento kód slúži na to aby bola zachovaná vaša anonymita a aby ste si kód pri ďalšom prihlásení nemuseli pamätať.</strong></li> 
-              <li><strong>Prosím zadajte kód podľa následujúcich inštrukcií:</strong></li>
+              <li ><strong>Prosím zadajte kód podľa následujúcich inštrukcií:</strong></li>
             </GradientCircleList>
             
             <NestedListItem>
@@ -1332,7 +1333,7 @@ const handleStart = async () => {
                 disabled={isBlocked}
                 onChange={(e) => setHasReferral(e.target.checked)}
               />
-              <label>Mám referral kód</label>
+              <label><strong>Mám referral kód</strong></label>
             </CheckboxContainer>
 
             {hasReferral && (
