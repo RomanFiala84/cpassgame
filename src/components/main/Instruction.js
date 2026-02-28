@@ -117,7 +117,7 @@ const AccordionHeader = styled.button`
 `;
 
 const AccordionIcon = styled.span`
-  transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0)'}; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);  // ⬅️ zmena z 0.3s
+  transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0)'}; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);  // ⬅️ zmena z 0.3s
   font-size: 15px;
   color: ${props => props.theme.ACCENT_COLOR};
 `;
@@ -126,7 +126,7 @@ const AccordionIcon = styled.span`
 const AccordionContent = styled.div`
   max-height: ${props => props.$isOpen ? '3000px' : '0'};  // ⬅️ zvýšené z 3000px
   overflow: hidden;
-  transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1);  // ⬅️ zmena z 0.4s ease
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);  // ⬅️ zmena z 0.4s ease
 `;
 
 
@@ -136,7 +136,7 @@ const AccordionInner = styled.div`
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   line-height: 1.6;
   font-size: 15px;
-  transition: padding-bottom 0.6s cubic-bezier(0.4, 0, 0.2, 1);  // ⬅️ pridané
+  transition: padding-bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1);  // ⬅️ pridané
   
   h3 {
     color: ${props => props.theme.ACCENT_COLOR};
@@ -200,13 +200,21 @@ const ConsentText = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   line-height: 1.5;
   margin-top: 10px;
+
+  h3 {
+    color: ${props => props.theme.ACCENT_COLOR};
+    margin: 10px 0 5px 0;
+    font-size: 10px;
+    font-weight: 600;
+  }
+
 `;
 
 
 const CheckboxContainer = styled.div`
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 5px;
   cursor: ${p => p.$disabled ? 'not-allowed' : 'pointer'};
   
   label {
@@ -1374,7 +1382,7 @@ const handleStart = async () => {
               <AccordionIcon $isOpen={openSections['rules']}>▼</AccordionIcon>
             </AccordionHeader>
             <AccordionContent $isOpen={openSections['rules']}>
-              <AccordionInner $isOpen={openSections['rules']}>
+              <ConsentText $isOpen={openSections['rules']}>
 
                 <h3>Organizátor súťaže:</h3>
                 <GradientCircleList>
@@ -1480,7 +1488,7 @@ const handleStart = async () => {
                 <GradientCircleList>
                   <li>Organizátor nezodpovedá za technické problémy (napr. výpadky internetu, poruchy zariadenia účastníka), ktoré znemožnia alebo skomplikujú účasť v súťaži alebo dokončenie výskumu.</li>
                 </GradientCircleList>
-              </AccordionInner>
+              </ConsentText>
             </AccordionContent>
           </RulesAccordion>
         </RulesSection>
