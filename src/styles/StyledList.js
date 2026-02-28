@@ -12,7 +12,7 @@ export const GradientCircleList = styled.ul`
     padding-left: 24px;
     position: relative;
     margin-bottom: 8px;
-    font-size: 15px;
+    //font-size: 15px;
     line-height: 1.6;
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};
     list-style: none;
@@ -46,7 +46,7 @@ export const GradientCircleList = styled.ul`
   @media (max-width: 768px) {
     > li {
       padding-left: 20px;
-      font-size: 15px;
+     // font-size: 15px;
       
       &::before {
         font-size: 15px;
@@ -57,7 +57,7 @@ export const GradientCircleList = styled.ul`
   @media (max-width: 480px) {
     > li {
       padding-left: 18px;
-      font-size: 15px;
+     // font-size: 15px;
       margin-bottom: 6px;
       
       &::before {
@@ -69,7 +69,7 @@ export const GradientCircleList = styled.ul`
 
 export const NestedListItem = styled.div`
   padding-left: 44px;
-  font-size: 15px;
+  //font-size: 15px;
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   position: relative;
   margin-bottom: 8px;
@@ -81,7 +81,7 @@ export const NestedListItem = styled.div`
     left: 24px;
     top: 0;
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};  /* ✅ PRIMARY */
-    font-size: 15px;
+   // font-size: 15px;
     line-height: 1.6;
   }
   
@@ -101,7 +101,7 @@ export const NestedListItem = styled.div`
   
   @media (max-width: 768px) {
     padding-left: 38px;
-    font-size: 15px;
+    //font-size: 15px;
     
     &::before {
       left: 20px;
@@ -111,11 +111,11 @@ export const NestedListItem = styled.div`
   
   @media (max-width: 480px) {
     padding-left: 32px;
-    font-size: 15px;
+   // font-size: 15px;
     
     &::before {
       left: 18px;
-      font-size: 15px;
+      //font-size: 15px;
     }
   }
 `;

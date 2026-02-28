@@ -293,8 +293,8 @@ const Note = styled.div`
 `;
 
 const InfoBox = styled.div`
-  background: ${p => p.$hasError ? '#ef444411' : `${p.theme.ACCENT_COLOR}33`};
-  border-left: 3px solid ${p => p.$hasError ? '#ef4444' : p.theme.ACCENT_COLOR};
+  background: ${p => p.$hasError ? '#ef444411' : `${p.theme.ACCENT_COLOR}`};
+  border-left: 5px solid ${p => p.$hasError ? '#ef4444' : p.theme.ACCENT_COLOR};
   padding: 15px;
   margin-bottom: 15px;
   max-width: 800px;
@@ -307,10 +307,10 @@ const InfoBox = styled.div`
 `;
 
 const InfoTitle = styled.div`
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  color: ${p => p.theme.ACCENT_COLOR};
   font-weight: 700;
   margin-bottom: 10px;
-  font-size: 15px;
+  font-size: 25px;
   display: flex;
   align-items: center;
   gap: 6px;
