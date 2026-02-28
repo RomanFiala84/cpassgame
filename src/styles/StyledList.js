@@ -7,7 +7,8 @@ export const GradientCircleList = styled.ul`
   padding-left: 0;
   margin: 0;
   
-  li {
+  /* ✅ Štandardné LI elementy */
+  > li {
     padding-left: 28px;
     position: relative;
     margin-bottom: 10px;
@@ -47,7 +48,7 @@ export const GradientCircleList = styled.ul`
   }
   
   @media (max-width: 768px) {
-    li {
+    > li {
       padding-left: 24px;
       font-size: 13px;
       
@@ -60,7 +61,7 @@ export const GradientCircleList = styled.ul`
   }
   
   @media (max-width: 480px) {
-    li {
+    > li {
       padding-left: 20px;
       font-size: 12px;
       margin-bottom: 8px;
@@ -74,23 +75,34 @@ export const GradientCircleList = styled.ul`
   }
 `;
 
-// ✅ Vnorený list item - KOMPLETNE PREPÍSANÉ ŠTÝLY
+// ✅ Vnorený list item - ÚPLNE SAMOSTATNÝ KOMPONENT
 export const NestedListItem = styled.li`
+  /* ✅ RESET všetkých možných dedených štýlov */
+  all: unset;
+  display: block;
+  box-sizing: border-box;
+  
+  /* ✅ Vlastné štýly */
   padding-left: 52px !important;
   font-size: 13px !important;
   color: ${props => props.theme.SECONDARY_TEXT_COLOR} !important;
   position: relative !important;
   margin-bottom: 8px !important;
+  line-height: 1.6 !important;
+  list-style: none !important;
   
-  /* ❌ ZRUŠ originálny ::before z GradientCircleList */
+  /* ❌ ÚPLNE ZRUŠ akýkoľvek ::before */
   &::before {
     content: none !important;
     display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
   }
   
-  /* ✅ VYTVOR nový menší marker pomocou ::after */
+  /* ✅ VYTVOR nový marker pomocou ::after */
   &::after {
     content: '' !important;
+    display: block !important;
     position: absolute !important;
     left: 28px !important;
     top: 9px !important;

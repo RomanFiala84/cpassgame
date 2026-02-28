@@ -1,12 +1,8 @@
 // src/styles/Layout.js
-import React, { lazy, Suspense } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import LevelDisplay from '../components/shared/LevelDisplay';
-
-// ✅ Lazy load animácie - načíta sa až po stránke
-const AnimatedBackground = lazy(() => 
-  import('../components/shared/AnimatedBackground')
-);
+import AnimatedBackground from '../components/shared/AnimatedBackground'; // ✅ Priamy import
 
 const LayoutContainer = styled.div`
   min-height: 100vh;
@@ -50,18 +46,18 @@ const Layout = ({
   children, 
   showLevelDisplay = true,
   showAnimatedBackground = false,
-  cubeCount = 8
+  cubeCount = 10,
+  animationSpeed = 'normal' // 'slow' | 'normal' | 'fast'
 }) => {
   return (
     <LayoutContainer>
-      {/* 🎲 Lazy loaded animácia */}
+      {/* 🎲 Animácia - PRIAMO načítaná, BEZ lazy load */}
       {showAnimatedBackground && (
-        <Suspense fallback={null}>
-          <AnimatedBackground 
-            variant="gradient" 
-            cubeCount={cubeCount}
-          />
-        </Suspense>
+        <AnimatedBackground 
+          variant="gradient" 
+          cubeCount={cubeCount}
+          speed={animationSpeed}
+        />
       )}
       
       {/* 📊 Level Display */}

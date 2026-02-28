@@ -1009,7 +1009,7 @@ const handleStart = async () => {
           <li>Je úplne v poriadku mať z niektorých tém alebo tvrdení nepríjemný pocit - dotýkajú sa citlivých spoločenských tém.</li>
           
             <NestedListItem>
-              <li>Odporúčame o svojich pocitoch alebo otázkach hovoriť s niekým, komu dôverujete (priateľ, rodina, odborník).</li>
+              <li>Odporúčame o svojich pocitoch hovoriť s niekým, komu dôverujete (priateľ, rodina, odborník).</li>
               <li>Ak máte pocit, že na vás podobné informácie dlhodobo pôsobia stresujúco alebo úzkostne, môže byť užitočné poradiť sa so psychológom alebo iným odborníkom.</li>
             </NestedListItem>
     
@@ -1054,7 +1054,9 @@ const handleStart = async () => {
   ];
 
   return (
-    <Layout showLevelDisplay={false} showAnimatedBackground={true}>
+    <Layout showLevelDisplay={false} showAnimatedBackground={true} 
+  cubeCount={10} 
+  animationSpeed="normal">
       <Container>
         <Title><strong>Vitajte v aplikácií CP-PASS</strong></Title>
         <Subtitle>
