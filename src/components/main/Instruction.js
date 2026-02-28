@@ -192,17 +192,12 @@ const AccordionHeader = styled.button`
   }
 `;
 
-const AccordionIcon = styled.span`
-  transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0)'};
-  transition: transform 0.3s ease;
-  font-size: 14px;
-  color: ${props => props.theme.ACCENT_COLOR};
-`;
+// ✅ OPTIMALIZOVANÉ ACCORDION KOMPONENTY
 
 const AccordionContent = styled.div`
-  max-height: ${props => props.$isOpen ? '1500px' : '0'};
+  max-height: ${props => props.$isOpen ? '2000px' : '0'}; /* ✅ Zvýšený limit */
   overflow: hidden;
-  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: max-height 0.4s ease-in-out; /* ✅ Rýchlejšia a plynulejšia krivka */
 `;
 
 const AccordionInner = styled.div`
@@ -212,6 +207,10 @@ const AccordionInner = styled.div`
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   line-height: 1.6;
   font-size: 13px;
+  opacity: ${props => props.$isOpen ? '1' : '0'}; /* ✅ Pridaná fade animácia */
+  transform: translateY(${props => props.$isOpen ? '0' : '-10px'}); /* ✅ Jemný posun */
+  transition: opacity 0.3s ease-in-out 0.1s, 
+              transform 0.3s ease-in-out 0.1s; /* ✅ Mierny delay pre plynulosť */
   
   h3 {
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};
@@ -246,6 +245,14 @@ const AccordionInner = styled.div`
     }
   }
 `;
+
+const AccordionIcon = styled.span`
+  transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0)'};
+  transition: transform 0.4s ease-in-out; /* ✅ Zosúladené s AccordionContent */
+  font-size: 14px;
+  color: ${props => props.theme.ACCENT_COLOR};
+`;
+
 
 const FormCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
