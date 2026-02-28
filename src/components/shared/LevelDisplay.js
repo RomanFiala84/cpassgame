@@ -514,10 +514,12 @@ const LevelDisplay = () => {
         <SidebarContent>
           {/* Level */}
           <LevelSection>
-            <LevelIcon>{level}</LevelIcon>
             <LevelInfo>
-              <LevelLabel>Úroveň</LevelLabel>
-              <LevelValue>Detektíva</LevelValue>
+              <LevelValue>Detektív</LevelValue>
+            </LevelInfo>
+            <LevelIcon>{level}.</LevelIcon>
+            <LevelInfo>
+              <LevelLabel>Úrovne</LevelLabel>
             </LevelInfo>
           </LevelSection>
 
@@ -551,7 +553,7 @@ const LevelDisplay = () => {
             <ProgressInfo>
               <ProgressText>
                 {userStats?.completedMissions?.filter(m => ['mission1', 'mission2', 'mission3'].includes(m)).length || 0}/3
-                {userStats?.completedMissions?.includes('mission0') && ' +bonus'}
+                {userStats?.completedMissions?.includes('mission0') && ' + Predvýskum'}
               </ProgressText>
               <ProgressPercentage>{Math.round(progress)}%</ProgressPercentage>
             </ProgressInfo>

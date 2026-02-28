@@ -56,10 +56,11 @@ const getCorsHeaders = (res) => {
 //
 const assignRandomGroup = () => {
   const rand = Math.random();
-  if (rand < 0.33) return '0';      // 33% šanca
-  if (rand < 0.66) return '1';      // 33% šanca
-  return '2';                        // 34% šanca
+  if (rand < 1/3) return '0';      // presne 33.333...% 
+  if (rand < 2/3) return '1';      // presne 33.333...%
+  return '2';                       // presne 33.333...%
 };
+
 
 //
 // 🧩 4️⃣ Helper – načítanie globálneho stavu misií
