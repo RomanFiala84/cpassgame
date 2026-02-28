@@ -201,33 +201,32 @@ const DetectiveImageContainer = styled.div`
 
 
 const DetectiveImage = styled.img`
-  width: calc(100% - 32px); /* ✅ Miesto pre rámček a margin */
+  width: calc(100% - 32px);
   height: calc(100% - 32px);
   object-fit: contain; /* ✅ Celý obrázok viditeľný */
   object-position: center;
   position: relative;
   z-index: 2;
-  border-radius: 16px; /* ✅ Zaoblené rohy */
-  border: 3px solid ${p => p.theme.ACCENT_COLOR}33; /* ✅ Jemný farebný border */
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2); /* ✅ Elegantný tieň */
-  margin: 16px; /* ✅ Odsadenie od okrajov */
-  background: ${p => p.theme.CARD_BACKGROUND}; /* ✅ White space má farbu karty */
+  border-radius: 20px; /* ✅ VÄČŠIE zaoblenie pre prirodzený vzhľad */
+  margin: 16px;
+  /* ✅ ODSTRÁNENÉ - border (bez rámčeka) */
+  /* ✅ ODSTRÁNENÉ - box-shadow (bez tieňa) */
   
   @media (max-width: 768px) {
     width: calc(100% - 24px);
     height: calc(100% - 24px);
     margin: 12px;
-    border-radius: 12px;
-    border-width: 2px;
+    border-radius: 16px;
   }
   
   @media (max-width: 480px) {
     width: calc(100% - 20px);
     height: calc(100% - 20px);
     margin: 10px;
-    border-radius: 10px;
+    border-radius: 12px;
   }
 `;
+
 
 
 const DetectiveImageFallback = styled.div`

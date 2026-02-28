@@ -34,13 +34,13 @@ const lightTheme = {
   SECONDARY_TEXT_COLOR: '#a900d5ff', // ⬅️ Royal purple
   
   // ✅ Akcentové farby - Sky blue škála 💧
-  ACCENT_COLOR: '#1a5f7a',
-  ACCENT_COLOR_2: '#134e5e',
-  ACCENT_COLOR_3: '#0d3d4f',
+  ACCENT_COLOR: '#2563a8', // ⬅️ O něco tmavší modrá pro lepší kontrast
+  ACCENT_COLOR_2: '#1e4d8b',
+  ACCENT_COLOR_3: '#163a6f',
   
   CARD_BACKGROUND: '#ffffff',
   INPUT_BACKGROUND: '#ffffff',
-  BUTTON_COLOR: '#87ceeb',
+  BUTTON_COLOR: '#2563a8',
   BORDER_COLOR: '#d8e8f0', // ⬅️ Svetlo modrá border
   HOVER_OVERLAY: 'rgba(135, 206, 235, 0.15)',
   
