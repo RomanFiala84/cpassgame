@@ -75,31 +75,58 @@ export const GradientCircleList = styled.ul`
   }
 `;
 
-// ✨ NOVÝ - Vnorený list item
-// Vnorený list item - ROVNAKÝ AKO HLAVNÝ, LEN ODSADENÝ
+// src/styles/StyledList.js
+
 export const NestedListItem = styled.li`
-  padding-left: 52px !important; /* Iba extra odsadenie */
+  padding-left: 52px !important;
+  font-size: 13px !important;
+  color: ${props => props.theme.SECONDARY_TEXT_COLOR} !important;
   
-  /* Všetko ostatné zdedí z GradientCircleList */
-  
+  /* ✅ VYPNI pôvodný ::before z GradientCircleList */
   &::before {
-    left: 28px !important; /* Gradient kruh posunutý doprava */
+    display: none !important; /* ❌ Zruš originálnu odrážku */
+  }
+  
+  /* ✅ VYTVOR NOVÝ menší ::before marker */
+  &::after {
+    content: '';
+    position: absolute;
+    left: 28px; /* Odsadený doprava */
+    top: 9px;
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 50%;
+    background: linear-gradient(
+      135deg,
+      ${props => props.theme.ACCENT_COLOR}66,
+      ${props => props.theme.ACCENT_COLOR_2}66
+    );
+    opacity: 0.7;
   }
   
   @media (max-width: 768px) {
     padding-left: 40px !important;
+    font-size: 12px !important;
     
-    &::before {
+    &::after {
       left: 24px !important;
+      width: 7px !important;
+      height: 7px !important;
+      top: 8px;
     }
   }
   
   @media (max-width: 480px) {
     padding-left: 32px !important;
+    font-size: 11px !important;
     
-    &::before {
+    &::after {
       left: 20px !important;
+      width: 6px !important;
+      height: 6px !important;
+      top: 7px;
     }
   }
 `;
+
 
