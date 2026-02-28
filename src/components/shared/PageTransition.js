@@ -1,34 +1,30 @@
 // src/components/shared/PageTransition.js
-// ✅ VYLEPŠENÁ VERZIA - Plynulejšie prechody s lepším timing
-
+// FINÁLNA VERZIA - Neovplyvňuje fixed elementy (modály)
 
 import { motion } from 'framer-motion';
-
 
 const pageVariants = {
   initial: {
     opacity: 0,
-    filter: 'blur(4px)' // ✅ Začne rozmazané
+    y: 20
   },
   animate: {
     opacity: 1,
-    filter: 'blur(0px)', // ✅ Postupne sa doostri
+    y: 0,
     transition: {
-      duration: 0.5,
-      ease: [0.4, 0, 0.2, 1]
+      duration: 0.3,
+      ease: 'easeOut'
     }
   },
   exit: {
     opacity: 0,
-    filter: 'blur(4px)', // ✅ Rozmaže sa pri odchode
+    y: -20,
     transition: {
-      duration: 0.4,
-      ease: [0.4, 0, 0.2, 1]
+      duration: 0.2,
+      ease: 'easeIn'
     }
   }
 };
-
-
 
 export const PageTransition = ({ children }) => {
   return (
@@ -39,14 +35,12 @@ export const PageTransition = ({ children }) => {
       exit="exit"
       style={{ 
         position: 'relative',
-        zIndex: 1,
-        willChange: 'opacity'
+        zIndex: 1
       }}
     >
       {children}
     </motion.div>
   );
 };
-
 
 export default PageTransition;

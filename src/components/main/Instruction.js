@@ -289,7 +289,7 @@ const Note = styled.div`
 `;
 
 const InfoBox = styled.div`
-  background: ${p => p.$hasError ? '#ef444411' : `${p.theme.ACCENT_COLOR}`};
+  background: ${p => p.$hasError ? '#ef444411' : `${p.theme.ACCENT_COLOR}11`};
   border-left: 3px solid ${p => p.$hasError ? '#ef4444' : p.theme.ACCENT_COLOR};
   padding: 16px;
   margin-bottom: 16px;
@@ -452,8 +452,8 @@ const ReferralNoticeText = styled.div`
 `;
 
 const CompetitionSection = styled(FormCard)`
-  background: ${p => `${p.theme.ACCENT_COLOR}`};
-  border-color: ${p => p.theme.ACCENT_COLOR};
+  background: ${p => `${p.theme.ACCENT_COLOR}11`};
+  border-color: ${p => p.theme.ACCENT_COLOR}44;
 `;
 
 const CompetitionTitle = styled.h3`
@@ -489,154 +489,6 @@ const RulesAccordion = styled(AccordionItem)`
   }
 `;
 
-// ✅ NOVÉ KOMPONENTY PRE BUTTONY
-const ButtonsRow = styled.div`
-  display: flex;
-  gap: 12px;
-  margin-bottom: 8px;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
-`;
-
-const InfoButton = styled(StyledButton)`
-  flex: 1;
-  white-space: normal;
-  text-align: left;
-  justify-content: flex-start;
-  padding: 14px 18px;
-  font-size: 14px;
-  line-height: 1.4;
-  min-height: 50px;
-  
-  @media (max-width: 768px) {
-    font-size: 13px;
-    padding: 12px 16px;
-  }
-`;
-
-const Overlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  padding: 20px;
-  backdrop-filter: blur(4px);
-`;
-
-const ModalContainer = styled.div`
-  background: ${p => p.theme.CARD_BACKGROUND};
-  border: 2px solid ${p => p.theme.ACCENT_COLOR};
-  border-radius: 16px;
-  max-width: 700px;
-  width: 100%;
-  max-height: 85vh;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-  animation: modalSlide 0.3s ease-out;
-  
-  @keyframes modalSlide {
-    from {
-      opacity: 0;
-      transform: translateY(-30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-`;
-
-const ModalHeader = styled.div`
-  padding: 20px 24px;
-  border-bottom: 2px solid ${p => p.theme.BORDER_COLOR};
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: ${p => `${p.theme.ACCENT_COLOR}11`};
-  border-radius: 14px 14px 0 0;
-`;
-
-const ModalTitle = styled.h2`
-  color: ${p => p.theme.ACCENT_COLOR};
-  font-size: 18px;
-  font-weight: 700;
-  margin: 0;
-  line-height: 1.3;
-  flex: 1;
-  padding-right: 16px;
-  
-  @media (max-width: 768px) {
-    font-size: 16px;
-  }
-`;
-
-const CloseButton = styled.button`
-  background: none;
-  border: none;
-  font-size: 28px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  cursor: pointer;
-  padding: 0;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-  
-  &:hover {
-    background: ${p => p.theme.ACCENT_COLOR}22;
-    color: ${p => p.theme.ACCENT_COLOR};
-    transform: rotate(90deg);
-  }
-`;
-
-const ModalContent = styled.div`
-  padding: 24px;
-  overflow-y: auto;
-  flex: 1;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  line-height: 1.6;
-  font-size: 14px;
-  
-  @media (max-width: 768px) {
-    padding: 20px;
-    font-size: 13px;
-  }
-  
-  strong {
-    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  }
-  
-  a {
-    color: ${p => p.theme.ACCENT_COLOR};
-    text-decoration: none;
-    
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-`;
-
-const ModalFooter = styled.div`
-  padding: 16px 24px;
-  border-top: 2px solid ${p => p.theme.BORDER_COLOR};
-  display: flex;
-  justify-content: center;
-  background: ${p => p.theme.CARD_BACKGROUND};
-  border-radius: 0 0 14px 14px;
-`;
 
 // =====================
 // MAIN COMPONENT
@@ -660,8 +512,7 @@ export default function Instruction() {
   const [isBlocked, setIsBlocked] = useState(false);
   const [referralFromUrl, setReferralFromUrl] = useState(false);
   const [openSections, setOpenSections] = useState({});
-  const [activeModal, setActiveModal] = useState(null); // ✅ PRIDAJ TENTO RIADOK
-
+  
   // ✅ VŠETKY REF-y PRE AUTOSCROLL
   const consentRef = useRef(null);
   const participantCodeRef = useRef(null);
@@ -1191,102 +1042,29 @@ const handleStart = async () => {
         </Subtitle>
 
         {/* Expandable sekcie s inštrukciami */}
-                {/* ✅ NOVÉ BUTTONY */}
         <InstructionsSection>
           <WelcomeText>
             <p><strong>Prečítajte si prosím pozorne podmienky a inštrukcie k výskumu.</strong></p>
             <p><strong>Následne pokračujte prihlásením sa do výskumnej aplikácie.</strong></p>
           </WelcomeText>
           
-          {/* PODMIENKY - zostáva AKORDEON ako prvé */}
-          <AccordionItem>
-            <AccordionHeader 
-              onClick={() => toggleSection('podmienky')}
-              $isOpen={openSections['podmienky']}
-            >
-              Aké sú podmienky účasti vo výskume?
-              <AccordionIcon $isOpen={openSections['podmienky']}>▼</AccordionIcon>
-            </AccordionHeader>
-            <AccordionContent $isOpen={openSections['podmienky']}>
-              <AccordionInner $isOpen={openSections['podmienky']}>
-                {instructionsSections.find(s => s.id === 'podmienky')?.content}
-              </AccordionInner>
-            </AccordionContent>
-          </AccordionItem>
-          
-          {/* Group 0 - samostatne */}
-          <InfoButton
-            variant="outline"
-            onClick={() => setActiveModal(instructionsSections.find(s => s.id === 'ciel'))}
-          >
-            Čo je cieľom predvýskumu a hlavného výskumu?
-          </InfoButton>
-          
-          {/* Group 1 - vedľa seba */}
-          <ButtonsRow>
-            <InfoButton
-              variant="outline"
-              onClick={() => setActiveModal(instructionsSections.find(s => s.id === 'priebehPred'))}
-            >
-              Ako bude prebiehať predvýskum?
-            </InfoButton>
-            <InfoButton
-              variant="outline"
-              onClick={() => setActiveModal(instructionsSections.find(s => s.id === 'priebehHlavny'))}
-            >
-              Ako bude prebiehať hlavný výskum?
-            </InfoButton>
-          </ButtonsRow>
-          
-          {/* Group 2 - samostatne */}
-          <InfoButton
-            variant="outline"
-            onClick={() => setActiveModal(instructionsSections.find(s => s.id === 'spracovanie'))}
-          >
-            Ako budú spracované výsledky a chránené vaše údaje?
-          </InfoButton>
-          
-          {/* Group 3 - samostatne */}
-          <InfoButton
-            variant="outline"
-            onClick={() => setActiveModal(instructionsSections.find(s => s.id === 'odstupenie'))}
-          >
-            Môžem odstúpiť?
-          </InfoButton>
-          
-          {/* Group 4 - vedľa seba */}
-          <ButtonsRow>
-            <InfoButton
-              variant="outline"
-              onClick={() => setActiveModal(instructionsSections.find(s => s.id === 'rizika'))}
-            >
-              Aké sú riziká účasti vo výskume?
-            </InfoButton>
-            <InfoButton
-              variant="outline"
-              onClick={() => setActiveModal(instructionsSections.find(s => s.id === 'podpora'))}
-            >
-              Čo ak sa budem počas výskumu cítiť znepokojený/á
-            </InfoButton>
-          </ButtonsRow>
-          
-          {/* Group 5 - vedľa seba */}
-          <ButtonsRow>
-            <InfoButton
-              variant="outline"
-              onClick={() => setActiveModal(instructionsSections.find(s => s.id === 'sutaz'))}
-            >
-              Súťaž
-            </InfoButton>
-            <InfoButton
-              variant="outline"
-              onClick={() => setActiveModal(instructionsSections.find(s => s.id === 'kontakt'))}
-            >
-              Kontakt
-            </InfoButton>
-          </ButtonsRow>
+          {instructionsSections.map(section => (
+            <AccordionItem key={section.id}>
+              <AccordionHeader 
+                onClick={() => toggleSection(section.id)}
+                $isOpen={openSections[section.id]}
+              >
+                {section.title}
+                <AccordionIcon $isOpen={openSections[section.id]}>▼</AccordionIcon>
+              </AccordionHeader>
+              <AccordionContent $isOpen={openSections[section.id]}>
+                <AccordionInner $isOpen={openSections[section.id]}>
+                  {section.content}
+                </AccordionInner>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
         </InstructionsSection>
-
 
         {/* Indikátor automaticky vyplneného referral kódu */}
         {referralFromUrl && referralCode && (
@@ -1579,27 +1357,6 @@ const handleStart = async () => {
             )}
           </FormCard>
         )}
-
-                {/* ✅ MODAL PRE ZOBRAZENIE OBSAHU */}
-        {activeModal && (
-          <Overlay onClick={() => setActiveModal(null)}>
-            <ModalContainer onClick={(e) => e.stopPropagation()}>
-              <ModalHeader>
-                <ModalTitle>{activeModal.title}</ModalTitle>
-                <CloseButton onClick={() => setActiveModal(null)}>✕</CloseButton>
-              </ModalHeader>
-              <ModalContent>
-                {activeModal.content}
-              </ModalContent>
-              <ModalFooter>
-                <StyledButton onClick={() => setActiveModal(null)}>
-                  Rozumiem
-                </StyledButton>
-              </ModalFooter>
-            </ModalContainer>
-          </Overlay>
-        )}
-
 
         {/* 7. PRAVIDLÁ A PODMIENKY SÚŤAŽE */}
         <RulesSection>
