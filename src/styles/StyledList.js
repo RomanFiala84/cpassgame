@@ -1,4 +1,6 @@
 // src/styles/StyledList.js
+// ✅ Všetko v PRIMARY_TEXT_COLOR - jednotný vzhľad
+
 import styled from 'styled-components';
 
 export const GradientCircleList = styled.ul`
@@ -7,125 +9,103 @@ export const GradientCircleList = styled.ul`
   margin: 0;
   
   > li {
-    padding-left: 28px;
+    padding-left: 24px;
     position: relative;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     font-size: 14px;
     line-height: 1.6;
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};
     list-style: none;
     
     &::before {
-      content: '';
+      content: '•';
       position: absolute;
       left: 0;
-      top: 8px;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: linear-gradient(
-        135deg,
-        ${props => props.theme.ACCENT_COLOR},
-        ${props => props.theme.ACCENT_COLOR_2 || props.theme.ACCENT_COLOR}
-      );
-      box-shadow: 0 2px 4px ${props => props.theme.ACCENT_COLOR}33;
-      opacity: 1;
+      top: 0;
+      color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+      font-size: 20px;
+      line-height: 1.6;
+      font-weight: bold;
     }
     
     strong {
-      color: ${props => props.theme.ACCENT_COLOR};
+      color: ${props => props.theme.PRIMARY_TEXT_COLOR};  /* ✅ PRIMARY */
       font-weight: 600;
     }
     
     a {
-      color: ${props => props.theme.ACCENT_COLOR};
-      text-decoration: none;
+      color: ${props => props.theme.PRIMARY_TEXT_COLOR};  /* ✅ PRIMARY */
+      text-decoration: underline;
       
       &:hover {
-        text-decoration: underline;
+        opacity: 0.8;
       }
     }
   }
   
   @media (max-width: 768px) {
     > li {
-      padding-left: 24px;
+      padding-left: 20px;
       font-size: 13px;
       
       &::before {
-        width: 10px;
-        height: 10px;
-        top: 7px;
+        font-size: 18px;
       }
     }
   }
   
   @media (max-width: 480px) {
     > li {
-      padding-left: 20px;
+      padding-left: 18px;
       font-size: 12px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       
       &::before {
-        width: 8px;
-        height: 8px;
-        top: 6px;
+        font-size: 16px;
       }
     }
   }
 `;
 
-// ✅ OPRAVENÝ NestedListItem s support pre strong a a
 export const NestedListItem = styled.div`
-  padding-left: 52px;
+  padding-left: 44px;
   font-size: 14px;
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   position: relative;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   line-height: 1.6;
   
   &::before {
-    content: '';
+    content: '→';
     position: absolute;
-    left: 28px;
-    top: 9px;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: linear-gradient(
-      135deg,
-      ${props => props.theme.ACCENT_COLOR},
-      ${props => props.theme.ACCENT_COLOR_2 || props.theme.ACCENT_COLOR}
-    );
-    box-shadow: 0 2px 4px ${props => props.theme.ACCENT_COLOR}33;
-    opacity: 1;
+    left: 24px;
+    top: 0;
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};  /* ✅ PRIMARY */
+    font-size: 16px;
+    line-height: 1.6;
   }
   
-  /* ✅ PRIDANÉ - support pre strong */
   strong {
-    color: ${props => props.theme.ACCENT_COLOR};
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};  /* ✅ PRIMARY */
     font-weight: 600;
   }
   
-  /* ✅ PRIDANÉ - support pre linky */
   a {
-    color: ${props => props.theme.ACCENT_COLOR};
-    text-decoration: none;
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};  /* ✅ PRIMARY */
+    text-decoration: underline;
     
     &:hover {
-      text-decoration: underline;
+      opacity: 0.8;
     }
   }
   
   @media (max-width: 768px) {
-    padding-left: 40px;
+    padding-left: 38px;
     font-size: 13px;
     
     &::before {
-      left: 24px;
-      width: 6px;
-      height: 6px;
-      top: 8px;
+      left: 20px;
+      font-size: 14px;
     }
   }
   
@@ -134,10 +114,8 @@ export const NestedListItem = styled.div`
     font-size: 12px;
     
     &::before {
-      left: 20px;
-      width: 5px;
-      height: 5px;
-      top: 7px;
+      left: 18px;
+      font-size: 13px;
     }
   }
 `;

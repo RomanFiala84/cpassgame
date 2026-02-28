@@ -1,30 +1,34 @@
 // src/components/shared/PageTransition.js
-// ✅ FINÁLNA VERZIA - Iba fade in/out, žiadny posun
+// ✅ VYLEPŠENÁ VERZIA - Plynulejšie prechody s lepším timing
+
 
 import { motion } from 'framer-motion';
 
+
 const pageVariants = {
   initial: {
-    opacity: 0
-    // ✅ ODSTRÁNENÉ - y: 20 (spôsobovalo skok)
+    opacity: 0,
+    filter: 'blur(4px)' // ✅ Začne rozmazané
   },
   animate: {
     opacity: 1,
-    // ✅ ODSTRÁNENÉ - y: 0
+    filter: 'blur(0px)', // ✅ Postupne sa doostri
     transition: {
-      duration: 0.3,
-      ease: 'easeOut'
+      duration: 0.5,
+      ease: [0.4, 0, 0.2, 1]
     }
   },
   exit: {
     opacity: 0,
-    // ✅ ODSTRÁNENÉ - y: -20 (spôsobovalo skok)
+    filter: 'blur(4px)', // ✅ Rozmaže sa pri odchode
     transition: {
-      duration: 0.2,
-      ease: 'easeIn'
+      duration: 0.4,
+      ease: [0.4, 0, 0.2, 1]
     }
   }
 };
+
+
 
 export const PageTransition = ({ children }) => {
   return (
@@ -36,7 +40,6 @@ export const PageTransition = ({ children }) => {
       style={{ 
         position: 'relative',
         zIndex: 1,
-        // ✅ PRIDANÉ - Zabráni posunu počas animácie
         willChange: 'opacity'
       }}
     >
@@ -44,5 +47,6 @@ export const PageTransition = ({ children }) => {
     </motion.div>
   );
 };
+
 
 export default PageTransition;

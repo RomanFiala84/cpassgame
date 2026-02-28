@@ -354,21 +354,22 @@ const ButtonGroup = styled.div`
 
 const InfoButton = styled(StyledButton)`
   background: linear-gradient(135deg, 
-    ${p => p.theme.ACCENT_COLOR}22, 
-    ${p => p.theme.ACCENT_COLOR_2}22
+    #00D9FF22, 
+    #00FFD922
   );
-  border: 2px solid ${p => p.theme.ACCENT_COLOR};
-  color: ${p => p.theme.ACCENT_COLOR};
+  border: 2px solid #00D9FF;
+  color: #00D9FF;
   
   &:hover {
     background: linear-gradient(135deg, 
-      ${p => p.theme.ACCENT_COLOR}, 
-      ${p => p.theme.ACCENT_COLOR_2}
+      #00D9FF, 
+      #00FFD9
     );
     color: white;
     transform: translateY(-2px);
   }
 `;
+
 
 const ContestButton = styled(StyledButton)`
   background: linear-gradient(135deg, 

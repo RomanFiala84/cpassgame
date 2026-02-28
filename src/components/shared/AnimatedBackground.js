@@ -1,39 +1,28 @@
 // src/components/shared/AnimatedBackground.js
-// ✅ VÝRAZNÁ ANIMÁCIA - Bordové farby namiesto fialových
+// ✅ FINÁLNA VERZIA - Bez ESLint chýb
 
 import React, { useMemo } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 // =====================
-// ANIMÁCIE - VÝRAZNÉ ako Sibyl
+// ANIMÁCIE - ZJEDNODUŠENÉ
 // =====================
 
-const floatDynamic = keyframes`
-  0% {
-    transform: translateY(0) translateX(0) rotate(0deg) scale(1);
-  }
-  25% {
-    transform: translateY(-40px) translateX(30px) rotate(90deg) scale(1.1);
+const floatSimple = keyframes`
+  0%, 100% {
+    transform: translateY(0) translateX(0) rotate(0deg);
   }
   50% {
-    transform: translateY(-20px) translateX(-20px) rotate(180deg) scale(0.9);
-  }
-  75% {
-    transform: translateY(30px) translateX(20px) rotate(270deg) scale(1.05);
-  }
-  100% {
-    transform: translateY(0) translateX(0) rotate(360deg) scale(1);
+    transform: translateY(-30px) translateX(20px) rotate(180deg);
   }
 `;
 
 const pulse = keyframes`
   0%, 100% {
-    opacity: 1;
-    box-shadow: 0 0 20px rgba(139, 0, 0, 0.4);
+    opacity: 0.6;
   }
   50% {
-    opacity: 0.7;
-    box-shadow: 0 0 40px rgba(139, 0, 0, 0.6);
+    opacity: 0.9;
   }
 `;
 
@@ -42,42 +31,85 @@ const pulse = keyframes`
 // =====================
 
 const SPEEDS = {
-  slow: 20,
-  normal: 15,
-  fast: 10
+  slow: 25,
+  normal: 20,
+  fast: 15
 };
 
 const COMPLEXITY_SETTINGS = {
   low: {
-    minSize: 50,
-    maxSize: 80,
-    minOpacity: 60,        // ✅ Oveľa vyššia priehľadnosť
-    maxOpacity: 90,
-    baseOpacity: 0.85,
-    glowSize: 30,
-    glowOpacity: '60',
-    borderOpacity: '80'
+    minSize: 60,
+    maxSize: 100,
+    minOpacity: 25,
+    maxOpacity: 45,
+    baseOpacity: 0.35,
+    glowSize: 15,
+    glowOpacity: 30,
+    borderOpacity: 40
   },
   medium: {
-    minSize: 45,
+    minSize: 50,
     maxSize: 90,
-    minOpacity: 65,
-    maxOpacity: 95,
-    baseOpacity: 0.90,
-    glowSize: 35,
-    glowOpacity: '70',
-    borderOpacity: '90'
+    minOpacity: 30,
+    maxOpacity: 50,
+    baseOpacity: 0.40,
+    glowSize: 18,
+    glowOpacity: 35,
+    borderOpacity: 45
   },
   high: {
     minSize: 40,
-    maxSize: 100,
-    minOpacity: 70,
-    maxOpacity: 100,
-    baseOpacity: 0.95,
-    glowSize: 40,
-    glowOpacity: '80',
-    borderOpacity: '95'
+    maxSize: 80,
+    minOpacity: 35,
+    maxOpacity: 55,
+    baseOpacity: 0.45,
+    glowSize: 20,
+    glowOpacity: 40,
+    borderOpacity: 50
   }
+};
+
+// ✅ Pomocná funkcia na generovanie pozícií
+const generatePositions = (count, minDistance) => {
+  const positions = [];
+  
+  for (let i = 0; i < count; i++) {
+    let attempts = 0;
+    const maxAttempts = 50;
+    let validPosition = null;
+    
+    while (attempts < maxAttempts && !validPosition) {
+      const candidate = {
+        left: Math.random() * 90 + 5,
+        top: Math.random() * 90 + 5
+      };
+      
+      const isTooClose = positions.some(existing => {
+        const dx = existing.left - candidate.left;
+        const dy = existing.top - candidate.top;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        return distance < minDistance;
+      });
+      
+      if (!isTooClose) {
+        validPosition = candidate;
+      }
+      
+      attempts++;
+    }
+    
+    // Fallback ak sa nepodarí nájsť validnú pozíciu
+    if (!validPosition) {
+      validPosition = {
+        left: Math.random() * 90 + 5,
+        top: Math.random() * 90 + 5
+      };
+    }
+    
+    positions.push(validPosition);
+  }
+  
+  return positions;
 };
 
 // =====================
@@ -96,52 +128,37 @@ const BackgroundContainer = styled.div`
   background: ${props => props.theme.BACKGROUND_COLOR};
 `;
 
-// ✅ BORDOVÉ FARBY namiesto fialových
 const Cube = styled.div`
   position: absolute;
   width: ${props => props.$size}px;
   height: ${props => props.$size}px;
   background: linear-gradient(
     135deg,
-    rgba(139, 0, 0, ${props => props.$baseOpacity}),      /* ✅ Tmavá bordová */
-    rgba(220, 38, 38, ${props => props.$baseOpacity})      /* ✅ Svetlá bordová */
+    rgba(139, 0, 0, ${props => props.$baseOpacity}),
+    rgba(220, 38, 38, ${props => props.$baseOpacity})
   );
-  border: 2px solid rgba(185, 28, 28, ${props => props.$borderOpacity / 100});  /* ✅ Bordový border */
+  border: 1px solid rgba(185, 28, 28, ${props => props.$borderOpacity / 100});
   border-radius: ${props => props.$borderRadius}px;
   animation: 
-    ${floatDynamic} ${props => props.$duration}s ease-in-out infinite,
-    ${pulse} ${props => props.$duration * 0.6}s ease-in-out infinite;
+    ${floatSimple} ${props => props.$duration}s ease-in-out infinite,
+    ${pulse} ${props => props.$duration * 0.8}s ease-in-out infinite;
   animation-delay: ${props => props.$delay}s;
-  opacity: ${props => props.$baseOpacity};
   left: ${props => props.$left}%;
   top: ${props => props.$top}%;
-  box-shadow: 
-    0 0 ${props => props.$glowSize}px rgba(139, 0, 0, ${props => props.$glowOpacity / 100}),
-    inset 0 0 ${props => props.$glowSize / 2}px rgba(220, 38, 38, 0.3);
-  will-change: transform, opacity;
-  backdrop-filter: blur(2px);
-  
-  /* ✅ Reflexný efekt */
-  &::after {
-    content: '';
-    position: absolute;
-    top: 10%;
-    left: 10%;
-    width: 40%;
-    height: 40%;
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 50%;
-    filter: blur(8px);
-  }
+  box-shadow: 0 0 ${props => props.$glowSize}px rgba(139, 0, 0, ${props => props.$glowOpacity / 100});
+  will-change: transform;
   
   @media (max-width: 768px) {
-    width: ${props => props.$size * 0.75}px;
-    height: ${props => props.$size * 0.75}px;
+    width: ${props => props.$size * 0.7}px;
+    height: ${props => props.$size * 0.7}px;
+    animation: ${floatSimple} ${props => props.$duration * 1.5}s ease-in-out infinite;
   }
   
   @media (max-width: 480px) {
-    width: ${props => props.$size * 0.6}px;
-    height: ${props => props.$size * 0.6}px;
+    width: ${props => props.$size * 0.5}px;
+    height: ${props => props.$size * 0.5}px;
+    border: none;
+    box-shadow: none;
   }
 `;
 
@@ -150,28 +167,31 @@ const Cube = styled.div`
 // =====================
 
 const AnimatedBackground = ({ 
-  cubeCount = 15,  // ✅ Viac kociek pre výraznejší efekt
-  animationSpeed = 'normal',
-  complexity = 'medium'
+  cubeCount = 8,
+  animationSpeed = 'slow',
+  complexity = 'low'
 }) => {
-  const settings = COMPLEXITY_SETTINGS[complexity] || COMPLEXITY_SETTINGS.medium;
-  const duration = SPEEDS[animationSpeed] || SPEEDS.normal;
+  const settings = COMPLEXITY_SETTINGS[complexity] || COMPLEXITY_SETTINGS.low;
+  const duration = SPEEDS[animationSpeed] || SPEEDS.slow;
 
   const cubes = useMemo(() => {
-    return Array.from({ length: cubeCount }, (_, i) => {
+    const minDistance = 25;
+    const positions = generatePositions(cubeCount, minDistance);
+    
+    return positions.map((pos, i) => {
       const size = Math.random() * (settings.maxSize - settings.minSize) + settings.minSize;
       const opacity = Math.floor(Math.random() * (settings.maxOpacity - settings.minOpacity) + settings.minOpacity);
       
       return {
         id: `cube-${i}`,
         size: size,
-        left: Math.random() * 100,
-        top: Math.random() * 100,
-        delay: Math.random() * duration,
-        duration: duration + Math.random() * 8,
+        left: pos.left,
+        top: pos.top,
+        delay: i * 2,
+        duration: duration + (i % 3) * 3,
         opacity: opacity,
         baseOpacity: settings.baseOpacity,
-        borderRadius: Math.random() * 12 + 6,
+        borderRadius: Math.random() * 8 + 4,
         borderOpacity: settings.borderOpacity,
         glowSize: settings.glowSize,
         glowOpacity: settings.glowOpacity

@@ -168,6 +168,8 @@ const AccordionInner = styled.div`
   }
 `;
 
+
+
 const FormCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px solid ${p => p.$hasError ? '#ef4444' : p.theme.BORDER_COLOR};
@@ -287,7 +289,7 @@ const Note = styled.div`
 `;
 
 const InfoBox = styled.div`
-  background: ${p => p.$hasError ? '#ef444411' : `${p.theme.ACCENT_COLOR}11`};
+  background: ${p => p.$hasError ? '#ef444411' : `${p.theme.ACCENT_COLOR}`};
   border-left: 3px solid ${p => p.$hasError ? '#ef4444' : p.theme.ACCENT_COLOR};
   padding: 16px;
   margin-bottom: 16px;
@@ -450,8 +452,8 @@ const ReferralNoticeText = styled.div`
 `;
 
 const CompetitionSection = styled(FormCard)`
-  background: ${p => `${p.theme.ACCENT_COLOR}11`};
-  border-color: ${p => p.theme.ACCENT_COLOR}44;
+  background: ${p => `${p.theme.ACCENT_COLOR}`};
+  border-color: ${p => p.theme.ACCENT_COLOR};
 `;
 
 const CompetitionTitle = styled.h3`
@@ -487,6 +489,155 @@ const RulesAccordion = styled(AccordionItem)`
   }
 `;
 
+// ✅ NOVÉ KOMPONENTY PRE BUTTONY
+const ButtonsRow = styled.div`
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
+const InfoButton = styled(StyledButton)`
+  flex: 1;
+  white-space: normal;
+  text-align: left;
+  justify-content: flex-start;
+  padding: 14px 18px;
+  font-size: 14px;
+  line-height: 1.4;
+  min-height: 50px;
+  
+  @media (max-width: 768px) {
+    font-size: 13px;
+    padding: 12px 16px;
+  }
+`;
+
+const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+`;
+
+const ModalContainer = styled.div`
+  background: ${p => p.theme.CARD_BACKGROUND};
+  border: 2px solid ${p => p.theme.ACCENT_COLOR};
+  border-radius: 16px;
+  max-width: 700px;
+  width: 100%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: modalSlide 0.3s ease-out;
+  
+  @keyframes modalSlide {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`;
+
+const ModalHeader = styled.div`
+  padding: 20px 24px;
+  border-bottom: 2px solid ${p => p.theme.BORDER_COLOR};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: ${p => `${p.theme.ACCENT_COLOR}11`};
+  border-radius: 14px 14px 0 0;
+`;
+
+const ModalTitle = styled.h2`
+  color: ${p => p.theme.ACCENT_COLOR};
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.3;
+  flex: 1;
+  padding-right: 16px;
+  
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+`;
+
+const CloseButton = styled.button`
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  cursor: pointer;
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  
+  &:hover {
+    background: ${p => p.theme.ACCENT_COLOR}22;
+    color: ${p => p.theme.ACCENT_COLOR};
+    transform: rotate(90deg);
+  }
+`;
+
+const ModalContent = styled.div`
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  line-height: 1.6;
+  font-size: 14px;
+  
+  @media (max-width: 768px) {
+    padding: 20px;
+    font-size: 13px;
+  }
+  
+  strong {
+    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  }
+  
+  a {
+    color: ${p => p.theme.ACCENT_COLOR};
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
+
+const ModalFooter = styled.div`
+  padding: 16px 24px;
+  border-top: 2px solid ${p => p.theme.BORDER_COLOR};
+  display: flex;
+  justify-content: center;
+  background: ${p => p.theme.CARD_BACKGROUND};
+  border-radius: 0 0 14px 14px;
+`;
+
 // =====================
 // MAIN COMPONENT
 // =====================
@@ -509,7 +660,8 @@ export default function Instruction() {
   const [isBlocked, setIsBlocked] = useState(false);
   const [referralFromUrl, setReferralFromUrl] = useState(false);
   const [openSections, setOpenSections] = useState({});
-  
+  const [activeModal, setActiveModal] = useState(null); // ✅ PRIDAJ TENTO RIADOK
+
   // ✅ VŠETKY REF-y PRE AUTOSCROLL
   const consentRef = useRef(null);
   const participantCodeRef = useRef(null);
@@ -1039,29 +1191,102 @@ const handleStart = async () => {
         </Subtitle>
 
         {/* Expandable sekcie s inštrukciami */}
+                {/* ✅ NOVÉ BUTTONY */}
         <InstructionsSection>
           <WelcomeText>
             <p><strong>Prečítajte si prosím pozorne podmienky a inštrukcie k výskumu.</strong></p>
             <p><strong>Následne pokračujte prihlásením sa do výskumnej aplikácie.</strong></p>
           </WelcomeText>
           
-          {instructionsSections.map(section => (
-            <AccordionItem key={section.id}>
-              <AccordionHeader 
-                onClick={() => toggleSection(section.id)}
-                $isOpen={openSections[section.id]}
-              >
-                {section.title}
-                <AccordionIcon $isOpen={openSections[section.id]}>▼</AccordionIcon>
-              </AccordionHeader>
-              <AccordionContent $isOpen={openSections[section.id]}>
-                <AccordionInner $isOpen={openSections[section.id]}>
-                  {section.content}
-                </AccordionInner>
-              </AccordionContent>
-            </AccordionItem>
-          ))}
+          {/* PODMIENKY - zostáva AKORDEON ako prvé */}
+          <AccordionItem>
+            <AccordionHeader 
+              onClick={() => toggleSection('podmienky')}
+              $isOpen={openSections['podmienky']}
+            >
+              Aké sú podmienky účasti vo výskume?
+              <AccordionIcon $isOpen={openSections['podmienky']}>▼</AccordionIcon>
+            </AccordionHeader>
+            <AccordionContent $isOpen={openSections['podmienky']}>
+              <AccordionInner $isOpen={openSections['podmienky']}>
+                {instructionsSections.find(s => s.id === 'podmienky')?.content}
+              </AccordionInner>
+            </AccordionContent>
+          </AccordionItem>
+          
+          {/* Group 0 - samostatne */}
+          <InfoButton
+            variant="outline"
+            onClick={() => setActiveModal(instructionsSections.find(s => s.id === 'ciel'))}
+          >
+            Čo je cieľom predvýskumu a hlavného výskumu?
+          </InfoButton>
+          
+          {/* Group 1 - vedľa seba */}
+          <ButtonsRow>
+            <InfoButton
+              variant="outline"
+              onClick={() => setActiveModal(instructionsSections.find(s => s.id === 'priebehPred'))}
+            >
+              Ako bude prebiehať predvýskum?
+            </InfoButton>
+            <InfoButton
+              variant="outline"
+              onClick={() => setActiveModal(instructionsSections.find(s => s.id === 'priebehHlavny'))}
+            >
+              Ako bude prebiehať hlavný výskum?
+            </InfoButton>
+          </ButtonsRow>
+          
+          {/* Group 2 - samostatne */}
+          <InfoButton
+            variant="outline"
+            onClick={() => setActiveModal(instructionsSections.find(s => s.id === 'spracovanie'))}
+          >
+            Ako budú spracované výsledky a chránené vaše údaje?
+          </InfoButton>
+          
+          {/* Group 3 - samostatne */}
+          <InfoButton
+            variant="outline"
+            onClick={() => setActiveModal(instructionsSections.find(s => s.id === 'odstupenie'))}
+          >
+            Môžem odstúpiť?
+          </InfoButton>
+          
+          {/* Group 4 - vedľa seba */}
+          <ButtonsRow>
+            <InfoButton
+              variant="outline"
+              onClick={() => setActiveModal(instructionsSections.find(s => s.id === 'rizika'))}
+            >
+              Aké sú riziká účasti vo výskume?
+            </InfoButton>
+            <InfoButton
+              variant="outline"
+              onClick={() => setActiveModal(instructionsSections.find(s => s.id === 'podpora'))}
+            >
+              Čo ak sa budem počas výskumu cítiť znepokojený/á
+            </InfoButton>
+          </ButtonsRow>
+          
+          {/* Group 5 - vedľa seba */}
+          <ButtonsRow>
+            <InfoButton
+              variant="outline"
+              onClick={() => setActiveModal(instructionsSections.find(s => s.id === 'sutaz'))}
+            >
+              Súťaž
+            </InfoButton>
+            <InfoButton
+              variant="outline"
+              onClick={() => setActiveModal(instructionsSections.find(s => s.id === 'kontakt'))}
+            >
+              Kontakt
+            </InfoButton>
+          </ButtonsRow>
         </InstructionsSection>
+
 
         {/* Indikátor automaticky vyplneného referral kódu */}
         {referralFromUrl && referralCode && (
@@ -1355,6 +1580,27 @@ const handleStart = async () => {
           </FormCard>
         )}
 
+                {/* ✅ MODAL PRE ZOBRAZENIE OBSAHU */}
+        {activeModal && (
+          <Overlay onClick={() => setActiveModal(null)}>
+            <ModalContainer onClick={(e) => e.stopPropagation()}>
+              <ModalHeader>
+                <ModalTitle>{activeModal.title}</ModalTitle>
+                <CloseButton onClick={() => setActiveModal(null)}>✕</CloseButton>
+              </ModalHeader>
+              <ModalContent>
+                {activeModal.content}
+              </ModalContent>
+              <ModalFooter>
+                <StyledButton onClick={() => setActiveModal(null)}>
+                  Rozumiem
+                </StyledButton>
+              </ModalFooter>
+            </ModalContainer>
+          </Overlay>
+        )}
+
+
         {/* 7. PRAVIDLÁ A PODMIENKY SÚŤAŽE */}
         <RulesSection>
           <RulesAccordion>
@@ -1367,23 +1613,28 @@ const handleStart = async () => {
             </AccordionHeader>
             <AccordionContent $isOpen={openSections['rules']}>
               <AccordionInner $isOpen={openSections['rules']}>
+
+                <h4>Organizátor súťaže:</h4>
                 <GradientCircleList>
-                  <h3>Organizátor súťaže</h3>
                   <li>Organizátorom súťaže je hlavný zodpovedný riešiteľ výskumu - Roman Fiala.</li>
+                </GradientCircleList>
 
-                  <h3>Účastníci súťaže</h3>
+                <h4>Účastníci súťaže:</h4>
+                <GradientCircleList>
                   <li>Súťaže sa môžu zúčastniť osoby, ktoré dovŕšili 18 rokov a vyjadrili informovaný súhlas s účasťou vo výskume.</li>
+                </GradientCircleList>
 
-                  <h3>Podmienky zaradenia do rebríčka</h3>
-                  <li>Podmienky účasti uvedené v tejto časti sú zároveň podmienkami na získanie minimálneho počtu 50 bodov potrebných na zaradenie do rebríčka.</li>
-                  <li>Účastník bude zaradený do rebríčka o ceny, ak:</li>
+                <h4>Podmienky zaradenia do žrebovania:</h4>
+                <GradientCircleList>
+                  <li>Podmienky účasti uvedené v tejto časti sú zároveň podmienkami na získanie minimálneho počtu 50 bodov potrebných na zaradenie do žrebovania.</li>
+                  <li>Účastník bude zaradený do žrebovania o ceny, ak:</li>
                 </GradientCircleList>
                 
                 <NestedListItem>
-                  Absolvuje aspoň jednu z požadovaných častí výskumu (Predvýskum alebo prvá časť hlavného výskumu).
+                  Absolvuje aspoň jednu z požadovaných častí výskumu: Predvýskum alebo prvú časť hlavného výskumu.
                 </NestedListItem>
                 <NestedListItem>
-                  Pravdivo a plne vypĺňa všetky povinné položky predvýskumu alebo prvej časti hlavného výskumu.
+                  Pravdivo a úplne vyplní všetky povinné položky predvýskumu alebo prvej časti hlavného výskumu.
                 </NestedListItem>
                 <NestedListItem>
                   Poskytne kontaktný e-mail určený výhradne na účely súťaže, ktorý nie je spájaný s výskumnými dátami.
@@ -1391,59 +1642,81 @@ const handleStart = async () => {
                 
                 <GradientCircleList>
                   <li>Účasť v súťaži nie je podmienkou účasti vo výskume, respondent sa môže zúčastniť výskumu aj bez poskytnutia kontaktného e-mailu.</li>
+                </GradientCircleList>
 
-                  <h3>Bodovací systém</h3>
+                <h4>Trvanie súťaže:</h4>
+                <GradientCircleList>
+                  <li>Súťaž prebieha v období od spustenia predvýskumu - marec 2026 do ukončenia hlavného výskumu - apríl 2026.</li>
+                  <li>Pozor - predvýskum bude dostupný iba do spustenia hlavného výskumu, to znamená že po jeho spustení predvýskum už nebude možné absolvovať.</li>
+                  <li>Do žrebovania budú zaradení len účastníci, ktorí splnia podmienky účasti v tomto časovom intervale.</li>
+                </GradientCircleList>
+
+                <h4>Bodovanie účasti v súťaži:</h4>
+                <GradientCircleList>
+                  <li>Každý získaný bod predstavuje jeden žreb v súťaži. Účastník s vyšším počtom bodov tak má vyššiu pravdepodobnosť výhry. Minimálnou podmienkou zaradenia do žrebovania je získanie minimálne 50 bodov.</li>
                   <li>Za absolvovanie predvýskumu získava účastník 50 bodov.</li>
                   <li>Za absolvovanie prvej časti hlavného výskumu získava účastník 50 bodov.</li>
-                  <li>Za absolvovanie druhej časti hlavného výskumu (follow up meranie po 5 dňoch) získava účastník 25 bodov.</li>
-                  <li>Za odporúčanie ďalším účastníkom získava účastník 10 bodov za každého nového účastníka, ktorý sa do výskumu zapojí prostredníctvom jeho referral kódu.</li>
-
-                  <h3>Ceny</h3>
-                  <li>Hlavná cena: Darčekový poukaz v hodnote 30 € pre jedného výhercu.</li>
-                  <li>Vedľajšie ceny: Päť darčekových poukazov, každý v hodnote 10 €.</li>
-                  <li>Darčekové poukazy budú použiteľné vo vybraných obchodných reťazcoch alebo online obchodoch (špecifikácia bude oznámená výhercom).</li>
-
-                  <h3>Výber výhercov</h3>
-                  <li>Výhercovia budú vybraní na základe počtu získaných bodov.</li>
-                  <li>V prípade rovnosti bodov bude rozhodovať čas dokončenia prvej časti výskumu (skorší čas má prednosť).</li>
-                  <li>Hlavnú cenu získa účastník s najvyšším počtom bodov.</li>
-                  <li>Vedľajšie ceny získajú účastníci na 2. až 6. mieste v rebríčku.</li>
-
-                  <h3>Oznámenie výhry a odovzdanie cien</h3>
-                  <li>Výhercovia budú kontaktovaní e-mailom do 10 dní od ukončenia hlavného výskumu.</li>
-                  <li>Výherca je povinný potvrdiť prijatie výhry do 7 dní od odoslania oznámenia.</li>
-                  <li>V prípade, že výherca nepotvrdí prijatie výhry v stanovenej lehote, cena prepadá a bude presunutá na ďalšieho účastníka v poradí.</li>
-                  <li>Darčekové poukazy budú doručené elektronicky na e-mailovú adresu výhercu.</li>
-
-                  <h3>Vylúčenie zo súťaže</h3>
-                  <li>Účastník môže byť vylúčený zo súťaže v prípade:</li>
+                  <li>Za absolvovanie druhej časti hlavného výskumu (follow-up meranie) získava účastník 25 bodov.</li>
+                  <li>Za odporúčanie ďalším účastníkom 10 bodov za nového účastníka.</li>
                 </GradientCircleList>
                 
                 <NestedListItem>
-                  Podvodného konania alebo porušenia pravidiel súťaže.
+                  Každý účastník, ktorý absolvuje aspoň predvýskum alebo prvú časť hlavného výskumu, získa jedinečný referral kód.
                 </NestedListItem>
                 <NestedListItem>
-                  Poskytnutia nepravdivých údajov.
+                  Ak nový účastník pri vstupe do štúdie uvedie referral kód osoby, ktorá ho pozvala, a sám splní podmienky účasti, osoba, ktorá referral kód zdieľala, získa za každé takéto platné odporúčanie 10 bodov.
                 </NestedListItem>
                 <NestedListItem>
-                  Vytvorenia viacerých účtov jedným účastníkom.
+                  Za toho istého nového účastníka možno referral kód započítať len raz a len jednému odporúčateľovi.
                 </NestedListItem>
                 <NestedListItem>
-                  Zneužitia referral systému (napr. samopozvánky, falošné účty).
+                  Referral kód nemá vplyv na samotný priebeh výskumu, slúži iba na pridelenie bodov do súťaže.
                 </NestedListItem>
-                
+
+                <h4>Výhry:</h4>
                 <GradientCircleList>
-                  <li>Rozhodnutie o vylúčení je v kompetencii organizátora a je konečné.</li>
+                  <li>Hlavnou cenou je darčekový poukaz v hodnote 30 € pre jedného výhercu.</li>
+                  <li>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10 € pre piatich výhercov.</li>
+                  <li>Výhercovia si určia v ktorom obchode si chcú uplatniť darčekový poukaz a na základe toho im bude poukaz poskytnutý.</li>
+                  <li>Organizátor si vyhradzuje právo zmeniť typ ceny za inú v rovnakej alebo vyššej hodnote (napr. iný typ poukážky), ak pôvodnú cenu nebude možné zabezpečiť.</li>
+                </GradientCircleList>
 
-                  <h3>Ochrana osobných údajov</h3>
-                  <li>Kontaktné e-maily budú použité výhradne na účely súťaže a kontaktovania výhercov.</li>
-                  <li>E-mailové adresy nebudú zdieľané s tretími stranami.</li>
-                  <li>Po ukončení súťaže a odovzdaní výhry budú všetky kontaktné údaje bezpečne zlikvidované.</li>
+                <h4>Žrebovanie výhercov:</h4>
+                <GradientCircleList>
+                  <li>Žrebovanie prebehne najneskôr do 10 dní po ukončení hlavného výskumu.</li>
+                  <li>Žrebovanie bude realizované náhodným výberom z databázy e-mailových adries účastníkov, ktorí splnili podmienky účasti.</li>
+                  <li>Žrebovanie vykoná organizátor za prítomnosti svedkov a bude zaznamenané na videozáznam s časovou stopou.</li>
+                </GradientCircleList>
 
-                  <h3>Záverečné ustanovenia</h3>
-                  <li>Organizátor si vyhradzuje právo zmeniť pravidlá súťaže v prípade nepredvídateľných okolností.</li>
-                  <li>Účastníci budú o prípadných zmenách informovaní e-mailom.</li>
-                  <li>Účasťou v súťaži účastník potvrdzuje, že si prečítal pravidlá a súhlasí s nimi.</li>
+                <h4>Oznámenie a odovzdanie výhry:</h4>
+                <GradientCircleList>
+                  <li>Výhercovia budú kontaktovaní e-mailom najneskôr do 5 dní od žrebovania.</li>
+                  <li>Ak výherca do 10 pracovných dní od odoslania e-mailu nereaguje alebo odmietne výhru, cena môže byť pridelená náhradníkovi, ktorý bude vyžrebovaný rovnakým spôsobom.</li>
+                  <li>Výhra bude odovzdaná elektronicky formou poukazu.</li>
+                </GradientCircleList>
+
+                <h4>Ochrana osobných údajov:</h4>
+                <GradientCircleList>
+                  <li>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</li>
+                  <li>Údaje budú použité výhradne na účely kontaktovania výhercu a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</li>
+                  <li>Spracovanie osobných údajov prebieha v súlade s GDPR a zákonom č. 18/2018 Z. z.</li>
+                </GradientCircleList>
+
+                <h4>Vylúčenie zo súťaže:</h4>
+                <GradientCircleList>
+                  <li>Organizátor si vyhradzuje právo vylúčiť účastníka zo súťaže, ak:</li>
+                </GradientCircleList>
+                
+                <NestedListItem>
+                  Porušil tieto pravidlá a podmienky súťaže.
+                </NestedListItem>
+                <NestedListItem>
+                  Uviedol zjavne nepravdivé údaje alebo iným spôsobom zneužil mechanizmus súťaže (napr. viacnásobná registrácia s rôznymi e-mailmi).
+                </NestedListItem>
+
+                <h4>Zodpovednosť organizátora:</h4>
+                <GradientCircleList>
+                  <li>Organizátor nezodpovedá za technické problémy (napr. výpadky internetu, poruchy zariadenia účastníka), ktoré znemožnia alebo skomplikujú účasť v súťaži alebo dokončenie výskumu.</li>
                 </GradientCircleList>
               </AccordionInner>
             </AccordionContent>
