@@ -82,12 +82,13 @@ const AccordionItem = styled.div`
   border-radius: 10px;
   overflow: hidden;
   background: ${props => props.theme.CARD_BACKGROUND};
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease;  // ⬅️ zmena z "all" na špecifické
   
   &:hover {
     border-color: ${props => props.theme.ACCENT_COLOR}66;
   }
 `;
+
 
 const AccordionHeader = styled.button`
   width: 100%;
@@ -116,25 +117,26 @@ const AccordionHeader = styled.button`
 `;
 
 const AccordionIcon = styled.span`
-  transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0)'};
-  transition: transform 0.3s ease;
+  transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0)'}; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);  // ⬅️ zmena z 0.3s
   font-size: 14px;
   color: ${props => props.theme.ACCENT_COLOR};
 `;
 
+
 const AccordionContent = styled.div`
-  max-height: ${props => props.$isOpen ? '1500px' : '0'};
+  max-height: ${props => props.$isOpen ? '3000px' : '0'};  // ⬅️ zvýšené z 3000px
   overflow: hidden;
-  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1);  // ⬅️ zmena z 0.4s ease
 `;
 
+
 const AccordionInner = styled.div`
-  padding: 16px;
-  padding-top: ${props => props.$isOpen ? '0' : '16px'};
-  padding-bottom: ${props => props.$isOpen ? '16px' : '0'};
+  padding: 0 16px;  // ⬅️ odstránené dynamické prepínanie
+  padding-bottom: ${props => props.$isOpen ? '16px' : '0'};  // ⬅️ len bottom
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   line-height: 1.6;
   font-size: 13px;
+  transition: padding-bottom 0.6s cubic-bezier(0.4, 0, 0.2, 1);  // ⬅️ pridané
   
   h3 {
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};
@@ -291,7 +293,7 @@ const Note = styled.div`
 `;
 
 const InfoBox = styled.div`
-  background: ${p => p.$hasError ? '#ef444411' : `${p.theme.ACCENT_COLOR}11`};
+  background: ${p => p.$hasError ? '#ef444411' : `${p.theme.ACCENT_COLOR}33`};
   border-left: 3px solid ${p => p.$hasError ? '#ef4444' : p.theme.ACCENT_COLOR};
   padding: 16px;
   margin-bottom: 16px;
@@ -454,7 +456,7 @@ const ReferralNoticeText = styled.div`
 `;
 
 const CompetitionSection = styled(FormCard)`
-  background: ${p => `${p.theme.ACCENT_COLOR}11`};
+  background: ${p => `${p.theme.ACCENT_COLOR}33`};
   border-color: ${p => p.theme.ACCENT_COLOR}44;
 `;
 

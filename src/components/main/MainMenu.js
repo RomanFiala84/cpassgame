@@ -78,7 +78,7 @@ const InstructionCard = styled.div`
 `;
 
 const SubNote = styled.div`
-  background: ${p => p.theme.ACCENT_COLOR}11;
+  background: ${p => p.theme.ACCENT_COLOR}33;
   border-radius: 6px;
   padding: 8px 10px;
   margin-top: 6px;
