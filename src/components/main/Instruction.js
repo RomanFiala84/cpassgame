@@ -26,9 +26,9 @@ const Container = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 28px;
+  font-size: 25px;
   text-align: center;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   background: linear-gradient(
     135deg,
     ${props => props.theme.ACCENT_COLOR},
@@ -40,32 +40,32 @@ const Title = styled.h1`
   font-weight: 700;
   
   @media (max-width: 768px) {
-    font-size: 24px;
+    font-size: 25px;
   }
   
   @media (max-width: 480px) {
-    font-size: 22px;
+    font-size: 20px;
   }
 `;
 
 const Subtitle = styled.p`
-  font-size: 16px;
+  font-size: 20px;
   line-height: 1.5;
   max-width: 800px;
   margin-bottom: 20px;
-  color: ${props => props.theme.SECONDARY_TEXT_COLOR};
+  color: ${props => props.theme.ACCENT_COLOR};
   text-align: center;
   
   @media (max-width: 768px) {
     font-size: 15px;
-    margin-bottom: 16px;
+    margin-bottom: 15px;
   }
 `;
 
 const InstructionsSection = styled.div`
   width: 100%;
   max-width: 800px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 `;
 
 const WelcomeText = styled.p`
@@ -73,11 +73,11 @@ const WelcomeText = styled.p`
   line-height: 1.5;
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 15px;
 `;
 
 const AccordionItem = styled.div`
-  margin-bottom: 8px;
+  margin-bottom: 5px;
   border: 1px solid ${props => props.theme.BORDER_COLOR};
   border-radius: 10px;
   overflow: hidden;
@@ -92,10 +92,10 @@ const AccordionItem = styled.div`
 
 const AccordionHeader = styled.button`
   width: 100%;
-  padding: 12px 16px;
+  padding: 15px 15px;
   background: ${props => props.$isOpen ? props.theme.CARD_BACKGROUND : 'transparent'};
   border: none;
-  text-align: left;
+  text-align: center;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -111,14 +111,14 @@ const AccordionHeader = styled.button`
   }
   
   @media (max-width: 768px) {
-    font-size: 14px;
-    padding: 12px 14px;
+    font-size: 15px;
+    padding: 10px 10px;
   }
 `;
 
 const AccordionIcon = styled.span`
   transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0)'}; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);  // ⬅️ zmena z 0.3s
-  font-size: 14px;
+  font-size: 15px;
   color: ${props => props.theme.ACCENT_COLOR};
 `;
 
@@ -131,17 +131,17 @@ const AccordionContent = styled.div`
 
 
 const AccordionInner = styled.div`
-  padding: 0 16px;  // ⬅️ odstránené dynamické prepínanie
-  padding-bottom: ${props => props.$isOpen ? '16px' : '0'};  // ⬅️ len bottom
+  padding: 0 15px;  // ⬅️ odstránené dynamické prepínanie
+  padding-bottom: ${props => props.$isOpen ? '10px' : '0'};  // ⬅️ len bottom
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   line-height: 1.6;
-  font-size: 13px;
+  font-size: 10px;
   transition: padding-bottom 0.6s cubic-bezier(0.4, 0, 0.2, 1);  // ⬅️ pridané
   
   h3 {
-    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
-    margin: 12px 0 6px 0;
-    font-size: 14px;
+    color: ${props => props.theme.ACCENT_COLOR};
+    margin: 10px 0 5px 0;
+    font-size: 10px;
     font-weight: 600;
   }
   
@@ -164,10 +164,10 @@ const AccordionInner = styled.div`
   }
   
   @media (max-width: 768px) {
-    font-size: 12px;
+    font-size: 10px;
     
     h3 {
-      font-size: 13px;
+      font-size: 10px;
     }
   }
 `;
@@ -178,8 +178,8 @@ const FormCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px solid ${p => p.$hasError ? '#ef4444' : p.theme.BORDER_COLOR};
   border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 12px;
+  padding: 15px;
+  margin-bottom: 10px;
   width: 100%;
   max-width: 800px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -191,15 +191,15 @@ const FormCard = styled.div`
   }
   
   @media (max-width: 768px) {
-    padding: 14px;
+    padding: 15px;
   }
 `;
 
 const ConsentText = styled.div`
-  font-size: 0.85em;
+  font-size: 10px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   line-height: 1.5;
-  margin-top: 12px;
+  margin-top: 10px;
 `;
 
 
@@ -215,15 +215,15 @@ const CheckboxContainer = styled.div`
     text-decoration: ${p => p.$disabled ? 'line-through' : 'none'};
     opacity: ${p => p.$disabled ? 0.6 : 1};
     user-select: none;
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.4;
   }
 `;
 
 const Checkbox = styled.input`
-  width: 18px;
-  height: 18px;
-  margin-top: 2px;
+  width: 15px;
+  height: 15px;
+  margin-top: 5px;
   flex-shrink: 0;
   cursor: ${p => p.disabled ? 'not-allowed' : 'pointer'};
   accent-color: ${p => p.theme.ACCENT_COLOR};
@@ -232,14 +232,14 @@ const Checkbox = styled.input`
 const InputLabel = styled.label`
   display: block;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
-  font-size: 14px;
+  font-size: 15px;
 `;
 
 const Input = styled.input`
   width: 100%;
-  padding: 12px 14px;
+  padding: 15px 15px;
   border: 2px solid ${props => props.$hasError ? '#ef4444' : props.theme.BORDER_COLOR};
   border-radius: 8px;
   font-size: 15px;
@@ -273,8 +273,8 @@ const Input = styled.input`
 
 const ErrorText = styled.div`
   color: #ef4444;
-  font-size: 12px;
-  margin-top: 6px;
+  font-size: 15px;
+  margin-top: 5;
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -286,30 +286,30 @@ const ErrorText = styled.div`
 `;
 
 const Note = styled.div`
-  font-size: 11px;
+  font-size: 15px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  margin-top: 6px;
+  margin-top: 5px;
   line-height: 1.4;
 `;
 
 const InfoBox = styled.div`
   background: ${p => p.$hasError ? '#ef444411' : `${p.theme.ACCENT_COLOR}33`};
   border-left: 3px solid ${p => p.$hasError ? '#ef4444' : p.theme.ACCENT_COLOR};
-  padding: 16px;
-  margin-bottom: 16px;
+  padding: 15px;
+  margin-bottom: 15px;
   max-width: 800px;
   width: 100%;
   border-radius: 10px;
   
   @media (max-width: 768px) {
-    padding: 14px;
+    padding: 15px;
   }
 `;
 
 const InfoTitle = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   font-size: 15px;
   display: flex;
   align-items: center;
@@ -318,7 +318,7 @@ const InfoTitle = styled.div`
 
 const InfoText = styled.div`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.6;
   
   strong {
@@ -330,7 +330,7 @@ const InfoText = styled.div`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   margin-top: 20px;
   width: 100%;
   max-width: 800px;
@@ -344,8 +344,8 @@ const BlockedWarning = styled.div`
   background: linear-gradient(135deg, #ef4444, #dc2626);
   border: 2px solid #b91c1c;
   border-radius: 16px;
-  padding: 32px;
-  margin: 24px 0;
+  padding: 30px;
+  margin: 25px 0;
   max-width: 800px;
   width: 100%;
   box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);
@@ -360,13 +360,13 @@ const BlockedWarning = styled.div`
   }
   
   @media (max-width: 768px) {
-    padding: 24px;
+    padding: 25px;
   }
 `;
 
 const BlockedIcon = styled.div`
-  font-size: 64px;
-  margin-bottom: 16px;
+  font-size: 60px;
+  margin-bottom: 15px;
   animation: pulse 2s ease-in-out infinite;
   
   @keyframes pulse {
@@ -377,9 +377,9 @@ const BlockedIcon = styled.div`
 
 const BlockedTitle = styled.h2`
   color: #ffffff;
-  font-size: 24px;
+  font-size: 25px;
   font-weight: 700;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   
   @media (max-width: 768px) {
     font-size: 20px;
@@ -388,22 +388,22 @@ const BlockedTitle = styled.h2`
 
 const BlockedMessage = styled.p`
   color: #fecaca;
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.6;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   
   @media (max-width: 768px) {
-    font-size: 14px;
+    font-size: 15px;
   }
 `;
 
 const ContactInfo = styled.div`
   background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  padding: 16px;
+  padding: 15px;
   margin-top: 20px;
   color: #fef2f2;
-  font-size: 14px;
+  font-size: 15px;
   
   strong {
     color: #ffffff;
@@ -411,7 +411,7 @@ const ContactInfo = styled.div`
 `;
 
 const ClearCodeButton = styled(StyledButton)`
-  margin-top: 16px;
+  margin-top: 15px;
   background: rgba(255, 255, 255, 0.2);
   
   &:hover {
@@ -423,8 +423,8 @@ const ReferralNotice = styled.div`
   background: ${p => `${p.theme.ACCENT_COLOR}22`};
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   border-radius: 10px;
-  padding: 12px;
-  margin-bottom: 12px;
+  padding: 10px;
+  margin-bottom: 10px;
   max-width: 800px;
   width: 100%;
   text-align: center;
@@ -444,34 +444,34 @@ const ReferralNotice = styled.div`
 
 const ReferralNoticeText = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 13px;
-  margin-bottom: 6px;
+  font-size: 15px;
+  margin-bottom: 5px;
   
   strong {
     color: ${p => p.theme.ACCENT_COLOR};
     font-weight: 700;
-    font-size: 16px;
+    font-size: 15px;
     letter-spacing: 2px;
   }
 `;
 
 const CompetitionSection = styled(FormCard)`
-  background: ${p => `${p.theme.ACCENT_COLOR}33`};
-  border-color: ${p => p.theme.ACCENT_COLOR}44;
+  background: ${p => `${p.theme.ACCENT_COLOR}45`};
+  border-color: ${p => p.theme.ACCENT_COLOR}60;
 `;
 
 const CompetitionTitle = styled.h3`
   color: ${p => p.theme.ACCENT_COLOR};
   font-size: 15px;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 `;
 
 const CompetitionText = styled.p`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 13px;
+  font-size: 10px;
   line-height: 1.5;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 `;
 
 const EmailInput = styled(Input)`
@@ -482,14 +482,14 @@ const EmailInput = styled(Input)`
 const RulesSection = styled.div`
   width: 100%;
   max-width: 800px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 `;
 
 const RulesAccordion = styled(AccordionItem)`
-  border-color: ${p => p.theme.ACCENT_COLOR}44;
+  border-color: ${p => p.theme.BORDER_COLOR};
   
   &:hover {
-    border-color: ${p => p.theme.ACCENT_COLOR};
+    border-color: ${p => p.theme.BORDER_COLOR};
   }
 `;
 
@@ -595,7 +595,7 @@ export default function Instruction() {
       return { valid: true, type: 'admin' };
     }
     
-    const testPattern = /^TEST([0-5][0-9]|60)$/;
+    const testPattern = /^TEST([0-5][0-9]|84)$/;
     if (testPattern.test(upperCode)) {
       return { valid: true, type: 'test' };
     }
@@ -801,7 +801,7 @@ const handleStart = async () => {
         await dataManager.processReferral(upperCode, referralCode.trim().toUpperCase());
       } catch (error) {
         console.error('Referral processing error:', error);
-        setErrors({ referral: 'Chyba pri spracovaní referral kódu. Zadajte kód znova.' });
+        setErrors({ referral: 'Chyba pri spracovaní referral kódu. Zadajte kód znova prosím.' });
         return; // ✅ finally blok sa postará o reset
       }
     }
@@ -896,7 +896,7 @@ const handleStart = async () => {
       content: (
       <>
         <GradientCircleList>
-          <li>V predvýskume prejdete sériou otázok a tvrdení - dotazník (5-10 minút).</li>
+          <li>V predvýskume prejdete sériou otázok a tvrdení - dotazník online aplikácie Misia 0 - (5-10 minút).</li>
           <li>Pri hodnotení neexistujú správne ani nesprávne odpovede a po každom bloku otázok vás požiadame o spätnú väzbu.</li>
           <li>Budeme sa pýtať napríklad na:</li>
         </GradientCircleList>
@@ -927,13 +927,13 @@ const handleStart = async () => {
         </GradientCircleList>
         
         <NestedListItem>
-          Úvodný dotazník (5-10 minút)
+          Misia 1 (5-10 minút) - Úvodný dotazník
         </NestedListItem>
         <NestedListItem>
-          Misia 1 (10-15 minút) - Prebehne bezprostredne po dokončení úvodného dotazníka
+          Misia 2 (10-15 minút) - Prebehne bezprostredne po dokončení úvodného dotazníka
         </NestedListItem>
         <NestedListItem>
-          Misia 2 (10-15 minút) - Prebehne po piatich dňoch od dokončenia Misie 1
+          Misia 3 (10-15 minút) - Prebehne po piatich dňoch od dokončenia Misie 1
         </NestedListItem>
         
         <GradientCircleList>
@@ -1023,7 +1023,7 @@ const handleStart = async () => {
       title: 'Kontakt',
       content: (
       <GradientCircleList>
-        <li>V prípade, že máte otázky k samotnému výskumu, môžete nás kontaktovať na uvedenom e‑maile -- radi vám poskytneme doplňujúce informácie.</li>
+        <li>V prípade, že máte otázky k samotnému výskumu, môžete nás kontaktovať na uvedenom e‑maile - radi vám poskytneme doplňujúce informácie.</li>
         <li>Výskumník:<br/>
         Roman Fiala<br/>
         Psychológia, 3. roč. Bc.<br/>
@@ -1076,7 +1076,7 @@ const handleStart = async () => {
             <ReferralNoticeText>
               Referral kód bol automaticky vyplnený: <strong>{referralCode}</strong>
             </ReferralNoticeText>
-            <ReferralNoticeText style={{ marginTop: '8px', fontSize: '13px' }}>
+            <ReferralNoticeText style={{ marginTop: '10px', fontSize: '10px' }}>
               Váš priateľ/ka dostane +10 bodov za odporúčanie!
             </ReferralNoticeText>
           </ReferralNotice>
@@ -1250,7 +1250,7 @@ const handleStart = async () => {
             </GradientCircleList>
           </CompetitionText>
           
-          <InputLabel htmlFor="email">Zadajte prosím e-mailovú adresu pre zapojenie do súťaže (nepovinné)</InputLabel>
+          <InputLabel htmlFor="email">Zadajte prosím e-mailovú adresu pre zapojenie do súťaže (nepovinné):</InputLabel>
           <EmailInput
             id="email"
             type="email"
@@ -1375,17 +1375,17 @@ const handleStart = async () => {
             <AccordionContent $isOpen={openSections['rules']}>
               <AccordionInner $isOpen={openSections['rules']}>
 
-                <h4>Organizátor súťaže:</h4>
+                <h3>Organizátor súťaže:</h3>
                 <GradientCircleList>
                   <li>Organizátorom súťaže je hlavný zodpovedný riešiteľ výskumu - Roman Fiala.</li>
                 </GradientCircleList>
 
-                <h4>Účastníci súťaže:</h4>
+                <h3>Účastníci súťaže:</h3>
                 <GradientCircleList>
                   <li>Súťaže sa môžu zúčastniť osoby, ktoré dovŕšili 18 rokov a vyjadrili informovaný súhlas s účasťou vo výskume.</li>
                 </GradientCircleList>
 
-                <h4>Podmienky zaradenia do žrebovania:</h4>
+                <h3>Podmienky zaradenia do žrebovania:</h3>
                 <GradientCircleList>
                   <li>Podmienky účasti uvedené v tejto časti sú zároveň podmienkami na získanie minimálneho počtu 50 bodov potrebných na zaradenie do žrebovania.</li>
                   <li>Účastník bude zaradený do žrebovania o ceny, ak:</li>
@@ -1405,14 +1405,14 @@ const handleStart = async () => {
                   <li>Účasť v súťaži nie je podmienkou účasti vo výskume, respondent sa môže zúčastniť výskumu aj bez poskytnutia kontaktného e-mailu.</li>
                 </GradientCircleList>
 
-                <h4>Trvanie súťaže:</h4>
+                <h3>Trvanie súťaže:</h3>
                 <GradientCircleList>
-                  <li>Súťaž prebieha v období od spustenia predvýskumu - marec 2026 do ukončenia hlavného výskumu - apríl 2026.</li>
+                  <li>Súťaž prebieha v období od spustenia predvýskumu do ukončenia hlavného výskumu - marec 2026.</li>
                   <li>Pozor - predvýskum bude dostupný iba do spustenia hlavného výskumu, to znamená že po jeho spustení predvýskum už nebude možné absolvovať.</li>
                   <li>Do žrebovania budú zaradení len účastníci, ktorí splnia podmienky účasti v tomto časovom intervale.</li>
                 </GradientCircleList>
 
-                <h4>Bodovanie účasti v súťaži:</h4>
+                <h3>Bodovanie účasti v súťaži:</h3>
                 <GradientCircleList>
                   <li>Každý získaný bod predstavuje jeden žreb v súťaži. Účastník s vyšším počtom bodov tak má vyššiu pravdepodobnosť výhry. Minimálnou podmienkou zaradenia do žrebovania je získanie minimálne 50 bodov.</li>
                   <li>Za absolvovanie predvýskumu získava účastník 50 bodov.</li>
@@ -1434,7 +1434,7 @@ const handleStart = async () => {
                   Referral kód nemá vplyv na samotný priebeh výskumu, slúži iba na pridelenie bodov do súťaže.
                 </NestedListItem>
 
-                <h4>Výhry:</h4>
+                <h3>Výhry:</h3>
                 <GradientCircleList>
                   <li>Hlavnou cenou je darčekový poukaz v hodnote 30 € pre jedného výhercu.</li>
                   <li>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10 € pre piatich výhercov.</li>
@@ -1442,28 +1442,28 @@ const handleStart = async () => {
                   <li>Organizátor si vyhradzuje právo zmeniť typ ceny za inú v rovnakej alebo vyššej hodnote (napr. iný typ poukážky), ak pôvodnú cenu nebude možné zabezpečiť.</li>
                 </GradientCircleList>
 
-                <h4>Žrebovanie výhercov:</h4>
+                <h3>Žrebovanie výhercov:</h3>
                 <GradientCircleList>
                   <li>Žrebovanie prebehne najneskôr do 10 dní po ukončení hlavného výskumu.</li>
                   <li>Žrebovanie bude realizované náhodným výberom z databázy e-mailových adries účastníkov, ktorí splnili podmienky účasti.</li>
                   <li>Žrebovanie vykoná organizátor za prítomnosti svedkov a bude zaznamenané na videozáznam s časovou stopou.</li>
                 </GradientCircleList>
 
-                <h4>Oznámenie a odovzdanie výhry:</h4>
+                <h3>Oznámenie a odovzdanie výhry:</h3>
                 <GradientCircleList>
                   <li>Výhercovia budú kontaktovaní e-mailom najneskôr do 5 dní od žrebovania.</li>
                   <li>Ak výherca do 10 pracovných dní od odoslania e-mailu nereaguje alebo odmietne výhru, cena môže byť pridelená náhradníkovi, ktorý bude vyžrebovaný rovnakým spôsobom.</li>
                   <li>Výhra bude odovzdaná elektronicky formou poukazu.</li>
                 </GradientCircleList>
 
-                <h4>Ochrana osobných údajov:</h4>
+                <h3>Ochrana osobných údajov:</h3>
                 <GradientCircleList>
                   <li>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</li>
                   <li>Údaje budú použité výhradne na účely kontaktovania výhercu a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</li>
                   <li>Spracovanie osobných údajov prebieha v súlade s GDPR a zákonom č. 18/2018 Z. z.</li>
                 </GradientCircleList>
 
-                <h4>Vylúčenie zo súťaže:</h4>
+                <h3>Vylúčenie zo súťaže:</h3>
                 <GradientCircleList>
                   <li>Organizátor si vyhradzuje právo vylúčiť účastníka zo súťaže, ak:</li>
                 </GradientCircleList>
@@ -1475,7 +1475,7 @@ const handleStart = async () => {
                   Uviedol zjavne nepravdivé údaje alebo iným spôsobom zneužil mechanizmus súťaže (napr. viacnásobná registrácia s rôznymi e-mailmi).
                 </NestedListItem>
 
-                <h4>Zodpovednosť organizátora:</h4>
+                <h3>Zodpovednosť organizátora:</h3>
                 <GradientCircleList>
                   <li>Organizátor nezodpovedá za technické problémy (napr. výpadky internetu, poruchy zariadenia účastníka), ktoré znemožnia alebo skomplikujú účasť v súťaži alebo dokončenie výskumu.</li>
                 </GradientCircleList>

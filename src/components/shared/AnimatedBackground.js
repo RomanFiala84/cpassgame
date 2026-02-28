@@ -8,23 +8,39 @@ import styled, { keyframes } from 'styled-components';
 // ANIMÁCIE - ZJEDNODUŠENÉ
 // =====================
 
-const floatSimple = keyframes`
-  0%, 100% {
-    transform: translateY(0) translateX(0) rotate(0deg);
+// =====================
+// ANIMÁCIE - WATER DROP WAVE
+// =====================
+
+const waterDrop = keyframes`
+  0% {
+    transform: translateY(-100%) scale(0);
+    opacity: 0;
   }
   50% {
-    transform: translateY(-30px) translateX(20px) rotate(180deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(100vh) scale(1.5);
+    opacity: 0;
   }
 `;
 
-const pulse = keyframes`
-  0%, 100% {
-    opacity: 0.6;
+const ripple = keyframes`
+  0% {
+    transform: scale(0.8);
+    opacity: 0.4;
   }
   50% {
-    opacity: 0.9;
+    transform: scale(1.2);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0.4;
   }
 `;
+
 
 // =====================
 // KONŠTANTY
@@ -128,41 +144,60 @@ const BackgroundContainer = styled.div`
   background: ${props => props.theme.BACKGROUND_COLOR};
 `;
 
-const Cube = styled.div`
+const WaterDrop = styled.div`
   position: absolute;
   width: ${props => props.$size}px;
-  height: ${props => props.$size}px;
-  background: linear-gradient(
-    135deg,
-    rgba(220, 38, 38, ${props => props.$baseOpacity}), /* ✅ Červená */
-    rgba(37, 99, 235, ${props => props.$baseOpacity})  /* ✅ Modrá */
+  height: ${props => props.$size * 1.2}px; /* ✅ Vyšší = kvapka */
+  background: radial-gradient(
+    ellipse at center,
+    rgba(37, 99, 235, ${props => props.$baseOpacity * 1.2}), /* ✅ Modrá kvapka */
+    rgba(59, 130, 246, ${props => props.$baseOpacity * 0.8}),
+    transparent
   );
-  border: 1px solid rgba(147, 51, 234, ${props => props.$borderOpacity / 100}); /* ✅ Fialový border (mix) */
-  border-radius: ${props => props.$borderRadius}px;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; /* ✅ Tvar kvapky */
   animation: 
-    ${floatSimple} ${props => props.$duration}s ease-in-out infinite,
-    ${pulse} ${props => props.$duration * 0.8}s ease-in-out infinite;
+    ${waterDrop} ${props => props.$duration}s linear infinite,
+    ${ripple} ${props => props.$duration * 0.4}s ease-in-out infinite;
   animation-delay: ${props => props.$delay}s;
   left: ${props => props.$left}%;
   top: ${props => props.$top}%;
+  filter: blur(${props => props.$size * 0.05}px); /* ✅ Jemný blur pre vodu */
   box-shadow: 
-    0 0 ${props => props.$glowSize}px rgba(220, 38, 38, ${props => props.$glowOpacity / 100}), /* ✅ Červený glow */
-    0 0 ${props => props.$glowSize * 1.5}px rgba(37, 99, 235, ${props => props.$glowOpacity / 100 * 0.6}); /* ✅ Modrý glow */
-  will-change: transform;
+    0 0 ${props => props.$glowSize}px rgba(59, 130, 246, ${props => props.$glowOpacity / 100}),
+    inset 0 0 ${props => props.$glowSize * 0.5}px rgba(255, 255, 255, 0.3); /* ✅ Svetelný odraz */
+  will-change: transform, opacity;
+  
+  /* Pseudo-element pre vlny */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150%;
+    height: 150%;
+    border: 2px solid rgba(59, 130, 246, ${props => props.$baseOpacity * 0.3});
+    border-radius: 50%;
+    animation: ${ripple} ${props => props.$duration * 0.6}s ease-out infinite;
+  }
   
   @media (max-width: 768px) {
     width: ${props => props.$size * 0.7}px;
-    height: ${props => props.$size * 0.7}px;
-    animation: ${floatSimple} ${props => props.$duration * 1.5}s ease-in-out infinite;
+    height: ${props => props.$size * 0.84}px;
+    animation: ${waterDrop} ${props => props.$duration * 1.2}s linear infinite;
   }
   
   @media (max-width: 480px) {
     width: ${props => props.$size * 0.5}px;
-    height: ${props => props.$size * 0.5}px;
-    border: none;
-    box-shadow: none;
+    height: ${props => props.$size * 0.6}px;
+    filter: blur(${props => props.$size * 0.03}px);
+    
+    &::before {
+      display: none; /* Bez vĺn na mobile */
+    }
   }
 `;
+
 
 
 // =====================
@@ -202,26 +237,26 @@ const AnimatedBackground = ({
     });
   }, [cubeCount, duration, settings]);
 
-  return (
+    return (
     <BackgroundContainer>
-      {cubes.map(cube => (
-        <Cube
-          key={cube.id}
-          $size={cube.size}
-          $left={cube.left}
-          $top={cube.top}
-          $delay={cube.delay}
-          $duration={cube.duration}
-          $opacity={cube.opacity}
-          $baseOpacity={cube.baseOpacity}
-          $borderRadius={cube.borderRadius}
-          $borderOpacity={cube.borderOpacity}
-          $glowSize={cube.glowSize}
-          $glowOpacity={cube.glowOpacity}
+        {cubes.map(cube => (
+        <WaterDrop  /* ✅ ZMENENÉ z Cube */
+            key={cube.id}
+            $size={cube.size}
+            $left={cube.left}
+            $top={cube.top}
+            $delay={cube.delay}
+            $duration={cube.duration}
+            $opacity={cube.opacity}
+            $baseOpacity={cube.baseOpacity}
+            $borderRadius={cube.borderRadius}
+            $borderOpacity={cube.borderOpacity}
+            $glowSize={cube.glowSize}
+            $glowOpacity={cube.glowOpacity}
         />
-      ))}
+        ))}
     </BackgroundContainer>
-  );
+    );
 };
 
 export default AnimatedBackground;
