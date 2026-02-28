@@ -1,14 +1,17 @@
 // src/styles/Layout.js
-// FINÁLNA VERZIA - Širší layout pre Full HD + správny padding
+// FINÁLNA VERZIA - Širší layout pre Full HD + AnimatedBackground
 
 import React from 'react';
 import styled from 'styled-components';
 import LevelDisplay from '../components/shared/LevelDisplay';
+import AnimatedBackground from '../components/shared/AnimatedBackground';
 
 const LayoutContainer = styled.div`
   min-height: 100vh;
   background: ${p => p.theme.BACKGROUND_COLOR};
   transition: background 240ms ease;
+  position: relative; /* ✅ Pre correct z-index stacking */
+  overflow-x: hidden; /* ✅ Zabráni horizontal scrollu od bublín */
 `;
 
 const ContentWrapper = styled.div`
@@ -17,6 +20,8 @@ const ContentWrapper = styled.div`
   margin: 0 auto;
   width: 100%;
   padding: 20px;
+  position: relative; /* ✅ Vytvorí stacking context */
+  z-index: 1; /* ✅ Obsah NAD bublinkami */
   
   padding-top: ${p => p.$showLevel ? '140px' : '20px'};
   
@@ -47,8 +52,13 @@ const ContentWrapper = styled.div`
 const Layout = ({ children, showLevelDisplay = true }) => {
   return (
     <LayoutContainer>
+      {/* 🫧 Animované pozadie - POD všetkým */}
+      <AnimatedBackground variant="soft" />
+      
+      {/* 📊 Level Display - NAD pozadím, POD obsahom */}
       {showLevelDisplay && <LevelDisplay />}
       
+      {/* 📄 Hlavný obsah - NAD všetkým */}
       <ContentWrapper $showLevel={showLevelDisplay}>
         {children}
       </ContentWrapper>
