@@ -123,13 +123,15 @@ const AccordionIcon = styled.span`
 `;
 
 const AccordionContent = styled.div`
-  max-height: ${props => props.$isOpen ? '3000px' : '0'};
+  max-height: ${props => props.$isOpen ? '1500px' : '0'};
   overflow: hidden;
-  transition: max-height 0.4s ease;
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
 const AccordionInner = styled.div`
-  padding: ${props => props.$isOpen ? '0 16px 16px 16px' : '0 16px'};
+  padding: 16px;
+  padding-top: ${props => props.$isOpen ? '0' : '16px'};
+  padding-bottom: ${props => props.$isOpen ? '16px' : '0'};
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   line-height: 1.6;
   font-size: 13px;
