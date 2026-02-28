@@ -31,34 +31,35 @@ const COMPLEXITY_SETTINGS = {
   low: {
     minSize: 40,
     maxSize: 60,
-    minOpacity: 3,
-    maxOpacity: 5,
-    baseOpacity: 0.25,
-    glowSize: 10,
-    glowOpacity: '08',
-    borderOpacity: '15'
+    minOpacity: 10,        // ✅ zmenené z 3 na 10
+    maxOpacity: 15,        // ✅ zmenené z 5 na 15
+    baseOpacity: 0.50,     // ✅ zmenené z 0.25 na 0.50
+    glowSize: 15,          // ✅ zväčšené z 10 na 15
+    glowOpacity: '15',     // ✅ zmenené z '08' na '15'
+    borderOpacity: '25'    // ✅ zmenené z '15' na '25'
   },
   medium: {
     minSize: 35,
     maxSize: 70,
-    minOpacity: 4,
-    maxOpacity: 8,
-    baseOpacity: 0.35,
-    glowSize: 12,
-    glowOpacity: '0a',
-    borderOpacity: '18'
+    minOpacity: 12,        // ✅ zmenené z 4 na 12
+    maxOpacity: 20,        // ✅ zmenené z 8 na 20
+    baseOpacity: 0.60,     // ✅ zmenené z 0.35 na 0.60
+    glowSize: 18,          // ✅ zväčšené z 12 na 18
+    glowOpacity: '1a',     // ✅ zmenené z '0a' na '1a'
+    borderOpacity: '30'    // ✅ zmenené z '18' na '30'
   },
   high: {
     minSize: 30,
     maxSize: 80,
-    minOpacity: 6,
-    maxOpacity: 12,
-    baseOpacity: 0.45,
-    glowSize: 15,
-    glowOpacity: '0d',
-    borderOpacity: '1c'
+    minOpacity: 15,        // ✅ zmenené z 6 na 15
+    maxOpacity: 25,        // ✅ zmenené z 12 na 25
+    baseOpacity: 0.70,     // ✅ zmenené z 0.45 na 0.70
+    glowSize: 20,          // ✅ zväčšené z 15 na 20
+    glowOpacity: '20',     // ✅ zmenené z '0d' na '20'
+    borderOpacity: '35'    // ✅ zmenené z '1c' na '35'
   }
 };
+
 
 // =====================
 // STYLED COMPONENTS

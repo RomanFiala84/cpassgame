@@ -141,15 +141,6 @@ const AccordionInner = styled.div`
     font-weight: 600;
   }
   
-  ul {
-    margin: 6px 0;
-    padding-left: 20px;
-  }
-  
-  li {
-    margin-bottom: 6px;
-  }
-  
   p {
     margin-bottom: 10px;
   }
@@ -203,8 +194,8 @@ const ConsentText = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   line-height: 1.5;
   margin-top: 12px;
-  padding-left: 20px;
 `;
+
 
 const CheckboxContainer = styled.div`
   display: flex;
@@ -293,7 +284,6 @@ const Note = styled.div`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   margin-top: 6px;
   line-height: 1.4;
-  
 `;
 
 const InfoBox = styled.div`
@@ -476,7 +466,6 @@ const CompetitionText = styled.p`
   font-size: 13px;
   line-height: 1.5;
   margin-bottom: 12px;
-  
 `;
 
 const EmailInput = styled(Input)`

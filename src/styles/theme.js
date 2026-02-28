@@ -6,7 +6,7 @@ const darkTheme = {
   BACKGROUND_COLOR: '#2f2f2f',
   SECONDARY_BACKGROUND: '#3a3a3a',
   PRIMARY_TEXT_COLOR: '#ffffff',
-  SECONDARY_TEXT_COLOR: '#e0e0e0',
+  SECONDARY_TEXT_COLOR: '#ffffff',
   
   // ✅ Akcentové farby - Kráľovská fialová škála 💜
   ACCENT_COLOR: '#b565d8',
@@ -30,7 +30,7 @@ const lightTheme = {
   BACKGROUND_COLOR: '#f8f8ff',
   SECONDARY_BACKGROUND: '#ffffff',
   PRIMARY_TEXT_COLOR: '#000000',
-  SECONDARY_TEXT_COLOR: '#4a4a4a',
+  SECONDARY_TEXT_COLOR: '#000000',
   
   // ✅ Akcentové farby - Kráľovská fialová škála 💜 (ROVNAKÉ AKO DARK)
   ACCENT_COLOR: '#b565d8',

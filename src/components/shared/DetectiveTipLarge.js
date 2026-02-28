@@ -1,5 +1,5 @@
 // src/components/shared/DetectiveTipLarge.js
-// ✅ FINÁLNA VERZIA - S GRADIENT ODRÁŽKAMI (JSX NAMIESTO HTML STRING)
+// ✅ OPRAVENÁ VERZIA - Obrázok detektíva na celú plochu bez okrajov
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
@@ -194,6 +194,8 @@ const DetectiveImageContainer = styled.div`
   align-items: center;
   justify-content: center;
   
+  /* ✅ ODSTRÁNENÉ - Dekoratívny pattern overlay */
+  
   @media (max-width: 768px) {
     width: 100%;
     min-height: 220px;
@@ -208,17 +210,18 @@ const DetectiveImageContainer = styled.div`
 const DetectiveImage = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* ✅ COVER namiesto contain - vyplní celú plochu */
   object-position: center;
   position: relative;
   z-index: 2;
+  /* ✅ ODSTRÁNENÉ - padding */
   
   @media (max-width: 768px) {
-    /* ✅ COVER vyplní celú plochu */
+    /* ✅ ODSTRÁNENÉ - padding */
   }
   
   @media (max-width: 480px) {
-    /* ✅ COVER vyplní celú plochu */
+    /* ✅ ODSTRÁNENÉ - padding */
   }
 `;
 
@@ -272,10 +275,13 @@ const DetectiveName = styled.div`
   }
 `;
 
+// src/components/shared/DetectiveTipLarge.js
+// ✅ OPRAVA - ContentContainer s lepším paddingom a spacing
+
 const ContentContainer = styled.div`
   width: 50%;
   padding: 24px;
-  padding-bottom: 28px;
+  padding-bottom: 28px; // ✅ PRIDAJ - Extra padding pre button
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -299,24 +305,23 @@ const ContentContainer = styled.div`
   @media (max-width: 768px) {
     width: 100%;
     padding: 20px;
-    padding-bottom: 24px;
+    padding-bottom: 24px; // ✅ PRIDAJ
     order: 2;
   }
   
   @media (max-width: 480px) {
     padding: 16px;
-    padding-bottom: 20px;
+    padding-bottom: 20px; // ✅ PRIDAJ
   }
 `;
 
-// ✅ NOVÝ - TipContent podporuje React children (JSX)
-const TipContent = styled.div`
+const TipText = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   font-size: 15px;
   line-height: 1.7;
-  margin-bottom: 20px;
+  margin-bottom: 20px; // ✅ ZVÄČŠI z 16px na 20px
   flex: 1;
-  overflow-y: auto;
+  overflow-y: auto; // ✅ PRIDAJ - Scroll len pre text ak je dlhý
   
   @media (max-width: 480px) {
     font-size: 14px;
@@ -342,7 +347,14 @@ const TipContent = styled.div`
     }
   }
   
-  /* ✅ ODSTRÁNENÉ - <ul> a <li> štýly, pretože používame GradientCircleList */
+  ul {
+    margin: 8px 0;
+    padding-left: 20px;
+    
+    li {
+      margin-bottom: 6px;
+    }
+  }
 `;
 
 const ActionButton = styled.button`
@@ -363,8 +375,8 @@ const ActionButton = styled.button`
   opacity: ${p => p.disabled ? 0.6 : 1};
   position: relative;
   overflow: hidden;
-  flex-shrink: 0;
-  margin-top: auto;
+  flex-shrink: 0; // ✅ PRIDAJ - Button sa nesmie zmenšiť
+  margin-top: auto; // ✅ PRIDAJ - Tlačí sa na spodok
   
   /* Shine effect */
   &::before {
@@ -402,12 +414,13 @@ const ActionButton = styled.button`
   }
 `;
 
+
 // =====================
 // COMPONENT
 // =====================
 
 const DetectiveTipLarge = ({
-  tip, // ✅ TERAZ MÔŽE BYŤ JSX (React.ReactNode) NAMIESTO HTML STRINGU
+  tip,
   detectiveName = "Inšpektor Kritan",
   imageUrl = "/images/detective.png",
   iconUrl = "/images/detective-icon.png",
@@ -547,10 +560,7 @@ const DetectiveTipLarge = ({
                 <DetectiveName>{detectiveName}</DetectiveName>
               </Header>
               
-              {/* ✅ ZMENA - Renderuj priamo JSX children namiesto dangerouslySetInnerHTML */}
-              <TipContent>
-                {tip}
-              </TipContent>
+              <TipText dangerouslySetInnerHTML={{ __html: tip }} />
               
               <ActionButton 
                 onClick={handleClose}

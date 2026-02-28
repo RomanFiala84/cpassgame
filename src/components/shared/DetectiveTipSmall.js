@@ -1,5 +1,5 @@
 // src/components/shared/DetectiveTipSmall.js
-// ✅ FINÁLNA VERZIA - Podporuje JSX, gradient odrážky, avatar bez okrajov
+// ✅ OPRAVENÁ VERZIA - Avatar bez okrajov, bez badge
 
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
@@ -84,11 +84,11 @@ const DetectiveAvatar = styled.img`
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  object-fit: cover;
+  object-fit: cover; /* ✅ COVER namiesto contain */
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}33;
   transition: transform 0.3s ease;
-  flex-shrink: 0;
+  flex-shrink: 0; /* ✅ PRIDANÉ - zabráni zmenšeniu */
   
   &:hover {
     transform: scale(1.1) rotate(5deg);
@@ -111,7 +111,7 @@ const DetectiveAvatarFallback = styled.div`
   justify-content: center;
   font-size: 18px;
   box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}33;
-  flex-shrink: 0;
+  flex-shrink: 0; /* ✅ PRIDANÉ */
   
   @media (max-width: 480px) {
     width: 32px;
@@ -146,7 +146,7 @@ const CloseButton = styled.button`
   justify-content: center;
   line-height: 1;
   transition: all 0.2s ease;
-  flex-shrink: 0;
+  flex-shrink: 0; /* ✅ PRIDANÉ */
   
   &:hover {
     background: ${p => p.theme.ACCENT_COLOR};
@@ -161,8 +161,7 @@ const CloseButton = styled.button`
   }
 `;
 
-// ✅ NOVÝ - TipContent podporuje React children (JSX)
-const TipContent = styled.div`
+const TipText = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   font-size: 14px;
   line-height: 1.6;
@@ -179,6 +178,19 @@ const TipContent = styled.div`
     
     &:last-child {
       margin-bottom: 0;
+    }
+  }
+  
+  ul {
+    margin: 6px 0;
+    padding-left: 20px;
+    
+    li {
+      margin-bottom: 6px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
     }
   }
   
@@ -201,16 +213,10 @@ const TipContent = styled.div`
     font-family: 'Courier New', monospace;
     font-size: 0.9em;
   }
-  
-  /* ✅ ODSTRÁNENÉ - <ul> a <li> štýly, pretože používame GradientCircleList */
 `;
 
-// =====================
-// COMPONENT
-// =====================
-
 const DetectiveTipSmall = ({ 
-  tip, // ✅ TERAZ MÔŽE BYŤ JSX (React.ReactNode) NAMIESTO HTML STRINGU
+  tip, 
   detectiveName = "Inšpektor Kritan",
   autoOpen = true,
   autoOpenDelay = 0,
@@ -280,11 +286,7 @@ const DetectiveTipSmall = ({
           ×
         </CloseButton>
       </TipHeader>
-      
-      {/* ✅ ZMENA - Renderuj priamo JSX children namiesto dangerouslySetInnerHTML */}
-      <TipContent>
-        {tip}
-      </TipContent>
+      <TipText dangerouslySetInnerHTML={{ __html: tip }} />
     </TipContainer>
   );
 };
