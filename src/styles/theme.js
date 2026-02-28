@@ -9,15 +9,15 @@ const darkTheme = {
   SECONDARY_TEXT_COLOR: '#ffffff',       // Svetlejšia biela pre sekundárny text
   
 // Akcentové farby - Rubínová červená škála 🔴
- ACCENT_COLOR: '#c8a2d0',        // Svetlá pastelová fialová (hlavná)
-  ACCENT_COLOR_2: '#ddbee3',      // Svetlejšia levanduľová
-  ACCENT_COLOR_3: '#b58fc2',      // Stredná pastelová
+ ACCENT_COLOR: '#b565d8',          // Sýtejšia fialová (hlavná)
+  ACCENT_COLOR_2: '#d084f0',        // Svetlejšia sýta
+  ACCENT_COLOR_3: '#9b4ec7',        // Tmavšia sýta
   
   CARD_BACKGROUND: '#3a3a3a',
   INPUT_BACKGROUND: '#424242',
-  BUTTON_COLOR: '#c8a2d0',
+  BUTTON_COLOR: '#b565d8',
   BORDER_COLOR: '#4a4a4a',
-  HOVER_OVERLAY: 'rgba(200, 162, 208, 0.15)',
+  HOVER_OVERLAY: 'rgba(181, 101, 216, 0.18)',
   
   
   // Stavové farby
@@ -34,15 +34,16 @@ const lightTheme = {
   SECONDARY_TEXT_COLOR: '#000000',       // Tmavošedá pre sekundárny text
   
   // Akcentové farby - Kráľovská modrá škála
-CCENT_COLOR: '#89cff0',          // Baby blue (hlavná)
-  ACCENT_COLOR_2: '#abddef',        // Svetlejšia baby blue
-  ACCENT_COLOR_3: '#6bb8db',        // Stredná baby blue
+  ACCENT_COLOR: '#4ea8de',          // Sýtejšia modrá (hlavná)
+  ACCENT_COLOR_2: '#6ec1e8',        // Svetlejšia sýta
+  ACCENT_COLOR_3: '#3b8fc2',        // Tmavšia sýta
   
   CARD_BACKGROUND: '#ffffff',
   INPUT_BACKGROUND: '#ffffff',
-  BUTTON_COLOR: '#89cff0',
-  BORDER_COLOR: '#e0f2ff',          // Veľmi svetlá modrá border
-  HOVER_OVERLAY: 'rgba(137, 207, 240, 0.12)',
+  BUTTON_COLOR: '#4ea8de',
+  BORDER_COLOR: '#b8dff0',          // Sýtejšia modrá border
+  HOVER_OVERLAY: 'rgba(78, 168, 222, 0.15)',
+
   
   // Stavové farby
   SUCCESS_COLOR: '#50c878',              // Smaragdovo zelená

@@ -1,5 +1,5 @@
 // src/components/shared/AnimatedBackground.js
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled, { keyframes, useTheme } from 'styled-components';
 
 // 🌌 Sibyl System - Pulzovanie z hĺbky na statickej pozícii
@@ -44,6 +44,16 @@ const BackgroundContainer = styled.div`
   /* ✅ Optimalizácia */
   will-change: transform;
   transform: translateZ(0);
+  
+  /* ✅ MOBIL - zredukuj efekty */
+  @media (max-width: 768px) {
+    perspective: 1000px;
+    
+    /* ✅ Vypni animácie na mobiloch s nízkym výkonom */
+    @media (prefers-reduced-motion: reduce) {
+      display: none;
+    }
+  }
 `;
 
 // 🎲 Kocka so statickou XY pozíciou, pulzuje v Z-osi
@@ -52,7 +62,7 @@ const Cube = styled.div`
   width: ${props => props.$size || '60px'};
   height: ${props => props.$size || '60px'};
   
-  /* ✅ FIXNÉ XY pozície - kocka sa nehýbe horizontálne */
+  /* ✅ FIXNÉ XY pozície */
   top: ${props => props.$top || '50%'};
   left: ${props => props.$left || '50%'};
   
@@ -96,18 +106,42 @@ const Cube = styled.div`
     0 0 30px ${props => `${props.$color}12`},
     inset 0 0 15px ${props => `${props.$color}18`};
   
-  @media (max-width: 768px) {
-    width: ${props => parseInt(props.$size) * 0.6}px;
-    height: ${props => parseInt(props.$size) * 0.6}px;
-    margin-left: ${props => -(parseInt(props.$size) * 0.6 / 2)}px;
-    margin-top: ${props => -(parseInt(props.$size) * 0.6 / 2)}px;
+  /* ✅ TABLET - zmenšené kocky */
+  @media (max-width: 1024px) {
+    width: ${props => parseInt(props.$size) * 0.7}px;
+    height: ${props => parseInt(props.$size) * 0.7}px;
+    margin-left: ${props => -(parseInt(props.$size) * 0.7 / 2)}px;
+    margin-top: ${props => -(parseInt(props.$size) * 0.7 / 2)}px;
+    filter: blur(${props => parseFloat(props.$blur) * 0.8}px);
   }
   
+  /* ✅ MOBIL - ešte menšie kocky + jednoduchšie efekty */
+  @media (max-width: 768px) {
+    width: ${props => parseInt(props.$size) * 0.5}px;
+    height: ${props => parseInt(props.$size) * 0.5}px;
+    margin-left: ${props => -(parseInt(props.$size) * 0.5 / 2)}px;
+    margin-top: ${props => -(parseInt(props.$size) * 0.5 / 2)}px;
+    
+    /* ✅ Zjednodušené efekty pre výkon */
+    filter: blur(${props => parseFloat(props.$blur) * 0.5}px);
+    box-shadow: 
+      0 0 10px ${props => `${props.$color}20`},
+      inset 0 0 10px ${props => `${props.$color}15`};
+    
+    /* ✅ Pomalšia animácia = menej CPU */
+    animation-duration: ${props => parseFloat(props.$duration) * 1.5}s;
+  }
+  
+  /* ✅ Malé mobily - minimálne efekty */
   @media (max-width: 480px) {
     width: ${props => parseInt(props.$size) * 0.4}px;
     height: ${props => parseInt(props.$size) * 0.4}px;
     margin-left: ${props => -(parseInt(props.$size) * 0.4 / 2)}px;
     margin-top: ${props => -(parseInt(props.$size) * 0.4 / 2)}px;
+    
+    filter: blur(${props => parseFloat(props.$blur) * 0.3}px);
+    box-shadow: 0 0 5px ${props => `${props.$color}15`};
+    border-width: 1px;
   }
 `;
 
@@ -119,6 +153,7 @@ const AnimatedBackground = ({
 }) => {
   const theme = useTheme();
   const color = theme.ACCENT_COLOR;
+  const containerRef = useRef(null);
   
   // ⚡ Rýchlosť animácie
   const speedConfig = {
@@ -129,27 +164,40 @@ const AnimatedBackground = ({
   
   const { min, max } = speedConfig[speed] || speedConfig.normal;
   
-  // 🎲 Generuj grid pattern kociek (ako Sibyl System)
+  // ✅ DETEKCIA MOBILU/TABLETU
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+  const isTablet = typeof window !== 'undefined' && window.innerWidth <= 1024 && window.innerWidth > 768;
+  
+  // ✅ Redukovaný počet kociek na mobiloch
+  const effectiveCubeCount = isMobile 
+    ? Math.floor(cubeCount * 0.5) // 50% na mobile
+    : isTablet 
+      ? Math.floor(cubeCount * 0.7) // 70% na tablete
+      : cubeCount; // 100% na desktope
+  
+  // 🎲 Generuj grid pattern kociek
   const cubes = [];
-  const gridRows = 4;
-  const gridCols = 4;
+  const gridRows = isMobile ? 3 : 4;
+  const gridCols = isMobile ? 3 : 4;
   
   // ✅ Vytvor pravidelný grid s náhodnými variáciami
   for (let row = 0; row < gridRows; row++) {
     for (let col = 0; col < gridCols; col++) {
-      // Preskakovanie pre menej hustý grid
-      if (cubes.length >= cubeCount) break;
-      if (Math.random() > 0.7) continue; // 30% šanca skipnúť
+      if (cubes.length >= effectiveCubeCount) break;
+      if (Math.random() > 0.7) continue;
       
-      // ✅ STATICKÉ pozície v grid patterni
-      const top = 15 + (row * 25) + (Math.random() * 8 - 4); // 15%, 40%, 65%, 90% + jitter
-      const left = 15 + (col * 25) + (Math.random() * 8 - 4); // 15%, 40%, 65%, 90% + jitter
+      const top = 15 + (row * 25) + (Math.random() * 8 - 4);
+      const left = 15 + (col * 25) + (Math.random() * 8 - 4);
       
-      const size = 40 + Math.random() * 50; // 40-90px
+      // ✅ Menšie kocky na mobile
+      const baseSize = isMobile ? 30 : 40;
+      const sizeRange = isMobile ? 30 : 50;
+      const size = baseSize + Math.random() * sizeRange;
+      
       const duration = min + Math.random() * (max - min);
-      const delay = Math.random() * 12; // 0-12s náhodný štart fázy
-      const blur = 0.8 + Math.random() * 1.5; // 0.8-2.3px
-      const rounded = Math.random() > 0.6; // 40% šanca na kruh
+      const delay = Math.random() * 12;
+      const blur = isMobile ? 0.5 : (0.8 + Math.random() * 1.5);
+      const rounded = Math.random() > 0.6;
       
       cubes.push(
         <Cube
@@ -168,15 +216,18 @@ const AnimatedBackground = ({
     }
   }
   
-  // ✅ Pridaj ešte pár náhodných kociek mimo grid
-  const randomCount = Math.floor(cubeCount * 0.3);
+  // ✅ Pridaj pár náhodných kociek mimo grid (menej na mobile)
+  const randomCount = Math.floor(effectiveCubeCount * (isMobile ? 0.2 : 0.3));
   for (let i = 0; i < randomCount; i++) {
-    const size = 30 + Math.random() * 60;
+    const baseSize = isMobile ? 25 : 30;
+    const sizeRange = isMobile ? 40 : 60;
+    const size = baseSize + Math.random() * sizeRange;
+    
     const top = 5 + Math.random() * 90;
     const left = 5 + Math.random() * 90;
     const duration = min + Math.random() * (max - min);
     const delay = Math.random() * 15;
-    const blur = 1 + Math.random() * 2;
+    const blur = isMobile ? 0.6 : (1 + Math.random() * 2);
     const rounded = Math.random() > 0.5;
     
     cubes.push(
@@ -195,8 +246,83 @@ const AnimatedBackground = ({
     );
   }
   
+  // ✅ FIX PRE RESET ANIMÁCIE PRI KLIKNUTÍ
+  useEffect(() => {
+    const handleInteraction = () => {
+      if (!containerRef.current) return;
+      
+      // ✅ Trigger reflow pre reset animácie
+      const container = containerRef.current;
+      
+      // Metóda 1: Dočasne vypni animácie
+      const cubes = container.querySelectorAll('div');
+      cubes.forEach(cube => {
+        cube.style.animationPlayState = 'paused';
+      });
+      
+      // Po krátkom čase ich znova zapni
+      requestAnimationFrame(() => {
+        cubes.forEach(cube => {
+          cube.style.animationPlayState = 'running';
+        });
+      });
+    };
+    
+    // ✅ Počúvaj na click, scroll, touch
+    document.addEventListener('click', handleInteraction);
+    document.addEventListener('scroll', handleInteraction, { passive: true });
+    document.addEventListener('touchstart', handleInteraction, { passive: true });
+    
+    return () => {
+      document.removeEventListener('click', handleInteraction);
+      document.removeEventListener('scroll', handleInteraction);
+      document.removeEventListener('touchstart', handleInteraction);
+    };
+  }, []);
+  
+  // ✅ MOBIL - Pausni animácie pri scrolle pre výkon
+  useEffect(() => {
+    if (!isMobile || !containerRef.current) return;
+    
+    let scrollTimeout;
+    let isScrolling = false;
+    
+    const handleMobileScroll = () => {
+      const container = containerRef.current;
+      if (!container) return;
+      
+      // ✅ Začni scroll - pausni animácie
+      if (!isScrolling) {
+        isScrolling = true;
+        const cubes = container.querySelectorAll('div');
+        cubes.forEach(cube => {
+          cube.style.animationPlayState = 'paused';
+        });
+      }
+      
+      // ✅ Clear predchádzajúci timeout
+      clearTimeout(scrollTimeout);
+      
+      // ✅ Obnov animácie po 150ms po skončení scrollu
+      scrollTimeout = setTimeout(() => {
+        isScrolling = false;
+        const cubes = container.querySelectorAll('div');
+        cubes.forEach(cube => {
+          cube.style.animationPlayState = 'running';
+        });
+      }, 150);
+    };
+    
+    window.addEventListener('scroll', handleMobileScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleMobileScroll);
+      clearTimeout(scrollTimeout);
+    };
+  }, [isMobile]);
+  
   return (
-    <BackgroundContainer>
+    <BackgroundContainer ref={containerRef}>
       {cubes}
     </BackgroundContainer>
   );
