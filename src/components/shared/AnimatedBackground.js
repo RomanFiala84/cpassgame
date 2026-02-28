@@ -1,8 +1,8 @@
 // src/components/shared/AnimatedBackground.js
-// ✅ FINÁLNA VERZIA - S globálnou konštantou
+// ✅ FINÁLNA VERZIA - OPRAVENÁ animation property
 
 import React, { useMemo } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components'; // ✅ PRIDAJ css
 
 // =====================
 // ANIMÁCIE
@@ -95,6 +95,7 @@ const BackgroundContainer = styled.div`
   background: ${props => props.theme.BACKGROUND_COLOR};
 `;
 
+// ✅ OPRAVA - Použitie css helper pre animáciu
 const Cube = styled.div`
   position: absolute;
   width: ${props => props.$size}px;
@@ -106,16 +107,28 @@ const Cube = styled.div`
   );
   border: 1px solid ${props => props.theme.ACCENT_COLOR}30;
   border-radius: ${props => props.$borderRadius}px;
-  animation: ${props => {
+  
+  /* ✅ OPRAVA - css helper namiesto arrow funkcie */
+  ${props => {
     if (props.$animationType === 'float') {
-      return `${float} ${props.$duration}s ease-in-out infinite`;
+      return css`
+        animation: ${float} ${props.$duration}s ease-in-out infinite;
+      `;
     } else if (props.$animationType === 'rotate') {
-      return `${rotate} ${props.$duration}s linear infinite`;
+      return css`
+        animation: ${rotate} ${props.$duration}s linear infinite;
+      `;
     } else if (props.$animationType === 'pulse') {
-      return `${pulse} ${props.$duration}s ease-in-out infinite`;
+      return css`
+        animation: ${pulse} ${props.$duration}s ease-in-out infinite;
+      `;
     }
-    return `${float} ${props.$duration}s ease-in-out infinite, ${rotate} ${props.$duration * 2}s linear infinite`;
-  }};
+    return css`
+      animation: ${float} ${props.$duration}s ease-in-out infinite, 
+                 ${rotate} ${props.$duration * 2}s linear infinite;
+    `;
+  }}
+  
   animation-delay: ${props => props.$delay}s;
   opacity: ${props => props.$baseOpacity};
   left: ${props => props.$left}%;
