@@ -111,9 +111,9 @@ const ModalContainer = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   border-radius: 16px;
-  max-width: 850px;
+  max-width: 950px; /* ✅ ZVÄČŠENÉ z 850px */
   width: 100%;
-  max-height: 70vh; /* ✅ ZMENENÉ z 90vh na 70vh */
+  max-height: 75vh; /* ✅ Vyššie okno */
   overflow: hidden;
   display: flex;
   flex-direction: row;
@@ -144,16 +144,16 @@ const ModalContainer = styled.div`
     }
   }
   
-  @media (max-width: 768px) {
+   @media (max-width: 768px) {
     max-width: 90%;
-    max-height: 75vh; /* ✅ ZMENENÉ z 90vh */
+    max-height: 80vh;
     flex-direction: column;
     border-radius: 12px;
   }
   
   @media (max-width: 480px) {
     max-width: 95%;
-    max-height: 80vh; /* ✅ ZMENENÉ z 90vh */
+    max-height: 85vh;
   }
 `;
 
@@ -184,8 +184,8 @@ const CountdownBadge = styled.div`
 
 const DetectiveImageContainer = styled.div`
   position: relative;
-  width: 50%;
-  min-height: 320px; /* ✅ Kompaktné okno */
+  width: 55%; /* ✅ ZVÄČŠENÉ z 50% - viac priestoru pre obrázok */
+  min-height: 450px; /* ✅ ZVÄČŠENÉ z 320px - vyšší obrázok */
   background: linear-gradient(135deg, 
     ${p => p.theme.ACCENT_COLOR}33, 
     ${p => p.theme.ACCENT_COLOR_2}33
@@ -198,14 +198,15 @@ const DetectiveImageContainer = styled.div`
   
   @media (max-width: 768px) {
     width: 100%;
-    min-height: 160px; /* ✅ Menšie */
+    min-height: 280px; /* ✅ ZVÄČŠENÉ */
     order: 1;
   }
   
   @media (max-width: 480px) {
-    min-height: 140px; /* ✅ Menšie */
+    min-height: 240px; /* ✅ ZVÄČŠENÉ */
   }
 `;
+
 
 
 
@@ -287,9 +288,9 @@ const DetectiveName = styled.div`
 // ✅ OPRAVA - ContentContainer s lepším paddingom a spacing
 
 const ContentContainer = styled.div`
-  width: 50%;
+  width: 45%; /* ✅ ZMENŠENÉ z 50% */
   padding: 24px;
-  padding-bottom: 28px; // ✅ PRIDAJ - Extra padding pre button
+  padding-bottom: 28px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -313,13 +314,13 @@ const ContentContainer = styled.div`
   @media (max-width: 768px) {
     width: 100%;
     padding: 20px;
-    padding-bottom: 24px; // ✅ PRIDAJ
+    padding-bottom: 24px;
     order: 2;
   }
   
   @media (max-width: 480px) {
     padding: 16px;
-    padding-bottom: 20px; // ✅ PRIDAJ
+    padding-bottom: 20px;
   }
 `;
 

@@ -6,7 +6,7 @@ const darkTheme = {
   BACKGROUND_COLOR: '#2f2f2f',
   SECONDARY_BACKGROUND: '#3a3a3a',
   PRIMARY_TEXT_COLOR: '#ffffff', // ⬅️ Ostáva rovnaké
-  SECONDARY_TEXT_COLOR: '#a000d5ff', // ⬅️ Svetlejšia royal purple
+  SECONDARY_TEXT_COLOR: '#ff4848ff', // ⬅️ Svetlejšia royal purple
   
   // ✅ Akcentové farby - Sky blue škála 💧
   ACCENT_COLOR: '#87ceeb',
@@ -31,7 +31,7 @@ const lightTheme = {
   BACKGROUND_COLOR: '#faf8f0', // ⬅️ Kremová (svetlá, teplá)
   SECONDARY_BACKGROUND: '#ffffff',
   PRIMARY_TEXT_COLOR: '#000000', // ⬅️ Ostáva rovnaké
-  SECONDARY_TEXT_COLOR: '#a900d5ff', // ⬅️ Royal purple
+  SECONDARY_TEXT_COLOR: '#ff4848ff', // ⬅️ Royal purple
   
   // ✅ Akcentové farby - Sky blue škála 💧
   ACCENT_COLOR: '#2563a8', // ⬅️ O něco tmavší modrá pro lepší kontrast
