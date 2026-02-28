@@ -1,4 +1,4 @@
-// src/components/shared/DetectiveTipLarge.js
+//Hotovo
 // ✅ OPRAVENÁ VERZIA - Obrázok detektíva na celú plochu bez okrajov
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -72,11 +72,11 @@ const DetectiveIconFallback = styled.div`
   font-size: 40px;
   
   @media (max-width: 768px) {
-    font-size: 32px;
+    font-size: 30px;
   }
   
   @media (max-width: 480px) {
-    font-size: 28px;
+    font-size: 30px;
   }
 `;
 
@@ -163,7 +163,7 @@ const CountdownBadge = styled.div`
   color: white;
   padding: 6px 12px;
   border-radius: 16px;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 700;
   z-index: 10;
   display: flex;
@@ -173,7 +173,7 @@ const CountdownBadge = styled.div`
   backdrop-filter: blur(4px);
   
   @media (max-width: 480px) {
-    font-size: 11px;
+    font-size: 10px;
     padding: 5px 10px;
     top: 10px;
     right: 10px;
@@ -260,18 +260,11 @@ const DetectiveName = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  
-  &::before {
-    content: '🕵️';
-    font-size: 22px;
-  }
+
   
   @media (max-width: 480px) {
-    font-size: 18px;
+    font-size: 10px;
     
-    &::before {
-      font-size: 20px;
-    }
   }
 `;
 
@@ -289,7 +282,7 @@ const ContentContainer = styled.div`
   
   /* Custom scrollbar */
   &::-webkit-scrollbar {
-    width: 6px;
+    width: 5px;
   }
   
   &::-webkit-scrollbar-track {
@@ -324,9 +317,9 @@ const TipText = styled.div`
   overflow-y: auto; // ✅ PRIDAJ - Scroll len pre text ak je dlhý
   
   @media (max-width: 480px) {
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.6;
-    margin-bottom: 16px;
+    margin-bottom: 15px;
   }
   
   strong {
@@ -352,7 +345,7 @@ const TipText = styled.div`
     padding-left: 20px;
     
     li {
-      margin-bottom: 6px;
+      margin-bottom: 5px;
     }
   }
 `;
@@ -410,7 +403,7 @@ const ActionButton = styled.button`
   
   @media (max-width: 480px) {
     padding: 10px 16px;
-    font-size: 14px;
+    font-size: 15px;
   }
 `;
 
@@ -565,9 +558,9 @@ const DetectiveTipLarge = ({
               <ActionButton 
                 onClick={handleClose}
                 disabled={!canClose}
-                title={!canClose ? `Zostávajúci čas ${countdown}s` : buttonText}
+                title={!canClose ? `Zostávajúci čas: ${countdown}s` : buttonText}
               >
-                {!canClose ? `Prečítajte si prosím informácie ${countdown}s...` : buttonText}
+                {!canClose ? `Prečítajte si prosím informácie. ${countdown}s...` : buttonText}
               </ActionButton>
             </ContentContainer>
             

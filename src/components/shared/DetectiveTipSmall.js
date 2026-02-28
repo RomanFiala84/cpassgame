@@ -1,4 +1,4 @@
-// src/components/shared/DetectiveTipSmall.js
+//HOTOVO
 // ✅ OPRAVENÁ VERZIA - Avatar bez okrajov, bez badge
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -109,25 +109,25 @@ const DetectiveAvatarFallback = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 20px;
   box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}33;
   flex-shrink: 0; /* ✅ PRIDANÉ */
   
   @media (max-width: 480px) {
     width: 32px;
     height: 32px;
-    font-size: 16px;
+    font-size: 15px;
   }
 `;
 
 const DetectiveName = styled.div`
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
-  font-size: 14px;
+  font-size: 15px;
   flex: 1;
   
   @media (max-width: 480px) {
-    font-size: 13px;
+    font-size: 15px;
   }
 `;
 
@@ -155,7 +155,7 @@ const CloseButton = styled.button`
   }
   
   @media (max-width: 480px) {
-    font-size: 18px;
+    font-size: 20px;
     width: 22px;
     height: 22px;
   }
@@ -163,13 +163,13 @@ const CloseButton = styled.button`
 
 const TipText = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.6;
   position: relative;
   z-index: 1;
   
   @media (max-width: 480px) {
-    font-size: 13px;
+    font-size: 15px;
     line-height: 1.5;
   }
   
@@ -211,7 +211,7 @@ const TipText = styled.div`
     border-radius: 4px;
     padding: 2px 6px;
     font-family: 'Courier New', monospace;
-    font-size: 0.9em;
+    font-size: 1rem;
   }
 `;
 
@@ -276,12 +276,12 @@ const DetectiveTipSmall = ({
             onError={handleImageError}
           />
         ) : (
-          <DetectiveAvatarFallback>🕵️</DetectiveAvatarFallback>
+          <DetectiveAvatarFallback></DetectiveAvatarFallback>
         )}
         <DetectiveName>{detectiveName}</DetectiveName>
         <CloseButton 
           onClick={handleClose}
-          aria-label="Zavrieť tip"
+          aria-label="Zavrieť tip inšpektora"
         >
           ×
         </CloseButton>

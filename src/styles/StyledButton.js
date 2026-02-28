@@ -1,4 +1,4 @@
-// src/styles/StyledButton.js
+//HOTOVO
 // OPTIMALIZOVANÝ - Viac variantov, lepšie transitions, accessibility
 
 import React from 'react';
@@ -12,7 +12,7 @@ const buttonVariants = {
     
     &:hover:not(:disabled) {
       background: ${props => props.theme.ACCENT_COLOR_2};
-      box-shadow: 0 6px 20px ${props => props.theme.ACCENT_COLOR}44;
+      box-shadow: 0 6px 20px ${props => props.theme.ACCENT_COLOR}45;
     }
   `,
   
@@ -22,7 +22,7 @@ const buttonVariants = {
     
     &:hover:not(:disabled) {
       background: ${props => props.theme.ACCENT_COLOR_3};
-      box-shadow: 0 6px 20px ${props => props.theme.BUTTON_COLOR}44;
+      box-shadow: 0 6px 20px ${props => props.theme.BUTTON_COLOR}45;
     }
   `,
   
@@ -34,7 +34,7 @@ const buttonVariants = {
     &:hover:not(:disabled) {
       background: ${props => props.theme.ACCENT_COLOR};
       color: #FFFFFF;
-      box-shadow: 0 6px 20px ${props => props.theme.ACCENT_COLOR}44;
+      box-shadow: 0 6px 20px ${props => props.theme.ACCENT_COLOR}45;
     }
   `,
   
@@ -44,7 +44,7 @@ const buttonVariants = {
     border: none;
     
     &:hover:not(:disabled) {
-      background: ${props => props.theme.ACCENT_COLOR}22;
+      background: ${props => props.theme.ACCENT_COLOR}25;
     }
   `,
   
@@ -72,19 +72,19 @@ const buttonVariants = {
 // ✅ NOVÉ - Styly pre rôzne veľkosti
 const buttonSizes = {
   small: css`
-    font-size: 12px;
+    font-size: 15px;
     padding: 8px 16px;
     min-width: 80px;
   `,
   
   medium: css`
-    font-size: 14px;
+    font-size: 15px;
     padding: 10px 24px;
     min-width: 120px;
   `,
   
   large: css`
-    font-size: 16px;
+    font-size: 15px;
     padding: 14px 32px;
     min-width: 160px;
   `,

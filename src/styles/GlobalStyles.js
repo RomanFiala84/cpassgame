@@ -1,4 +1,4 @@
-// src/styles/GlobalStyles.js
+//HOTOVO
 // OPTIMALIZOVANÉ - Lepšie transitions, accessibility, responzivita
 
 import { createGlobalStyle } from 'styled-components';
@@ -17,7 +17,7 @@ export const GlobalStyles = createGlobalStyle`
 
   body {
     height: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Avenir Next', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
     background-color: ${props => props.theme.BACKGROUND_COLOR};
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};
     min-height: 100vh;
@@ -33,7 +33,7 @@ export const GlobalStyles = createGlobalStyle`
     }
     
     @media (max-width: 480px) {
-      font-size: 14px;
+      font-size: 15px;
     }
   }
 
@@ -55,8 +55,8 @@ export const GlobalStyles = createGlobalStyle`
 
   // ✅ NOVÉ - Scrollbar styling
   ::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
   }
 
   ::-webkit-scrollbar-track {
@@ -97,7 +97,7 @@ export const GlobalStyles = createGlobalStyle`
     border: 2px solid ${props => props.theme.BORDER_COLOR}; // ✅ ZMENENÉ z 1px na 2px
     transition: all 0.2s ease; // ✅ ZMENENÉ
     font-family: inherit;
-    font-size: 14px;
+    font-size: 15px;
     border-radius: 8px;
     padding: 12px 14px; // ✅ ZMENENÉ z 10px 12px
     width: 100%; // ✅ PRIDANÉ
@@ -140,7 +140,7 @@ export const GlobalStyles = createGlobalStyle`
     transition: all 0.2s ease; // ✅ ZMENENÉ
     border-radius: 8px;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 15px;
     padding: 12px 20px; // ✅ ZMENENÉ z 8px 16px
     
     &:hover:not(:disabled) {

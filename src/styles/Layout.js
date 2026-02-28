@@ -1,4 +1,4 @@
-// src/styles/Layout.js
+//HOTOVO
 // ✅ FINÁLNA VERZIA - S AnimatedBackground a správnymi props
 
 import React from 'react';

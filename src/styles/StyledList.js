@@ -1,4 +1,4 @@
-// src/styles/StyledList.js
+//HTOTOVO
 // ✅ Všetko v PRIMARY_TEXT_COLOR - jednotný vzhľad
 
 import styled from 'styled-components';
@@ -12,7 +12,7 @@ export const GradientCircleList = styled.ul`
     padding-left: 24px;
     position: relative;
     margin-bottom: 8px;
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.6;
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};
     list-style: none;
@@ -23,7 +23,7 @@ export const GradientCircleList = styled.ul`
       left: 0;
       top: 0;
       color: ${props => props.theme.PRIMARY_TEXT_COLOR};
-      font-size: 20px;
+      font-size: 15px;
       line-height: 1.6;
       font-weight: bold;
     }
@@ -46,10 +46,10 @@ export const GradientCircleList = styled.ul`
   @media (max-width: 768px) {
     > li {
       padding-left: 20px;
-      font-size: 13px;
+      font-size: 15px;
       
       &::before {
-        font-size: 18px;
+        font-size: 15px;
       }
     }
   }
@@ -57,11 +57,11 @@ export const GradientCircleList = styled.ul`
   @media (max-width: 480px) {
     > li {
       padding-left: 18px;
-      font-size: 12px;
+      font-size: 15px;
       margin-bottom: 6px;
       
       &::before {
-        font-size: 16px;
+        font-size: 15px;
       }
     }
   }
@@ -69,7 +69,7 @@ export const GradientCircleList = styled.ul`
 
 export const NestedListItem = styled.div`
   padding-left: 44px;
-  font-size: 14px;
+  font-size: 15px;
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   position: relative;
   margin-bottom: 8px;
@@ -81,7 +81,7 @@ export const NestedListItem = styled.div`
     left: 24px;
     top: 0;
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};  /* ✅ PRIMARY */
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1.6;
   }
   
@@ -101,21 +101,21 @@ export const NestedListItem = styled.div`
   
   @media (max-width: 768px) {
     padding-left: 38px;
-    font-size: 13px;
+    font-size: 15px;
     
     &::before {
       left: 20px;
-      font-size: 14px;
+      font-size: 15px;
     }
   }
   
   @media (max-width: 480px) {
     padding-left: 32px;
-    font-size: 12px;
+    font-size: 15px;
     
     &::before {
       left: 18px;
-      font-size: 13px;
+      font-size: 15px;
     }
   }
 `;

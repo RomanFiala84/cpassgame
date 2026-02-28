@@ -1,4 +1,4 @@
-// src/components/shared/AnimatedBackground.js
+//HOTOVO
 // ✅ FINÁLNA VERZIA - Bez ESLint chýb
 
 import React, { useMemo } from 'react';

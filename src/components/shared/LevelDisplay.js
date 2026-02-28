@@ -1,3 +1,4 @@
+//HOTOVO
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useUserStats } from '../../contexts/UserStatsContext';
@@ -66,7 +67,7 @@ const ToggleButton = styled.button`
   );
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   color: white;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -92,14 +93,14 @@ const ToggleButton = styled.button`
     left: ${p => p.isOpen ? '120px' : '0'};
     width: 36px;
     height: 36px;
-    font-size: 14px;
+    font-size: 15px;
   }
 
   @media (max-width: 480px) {
     left: ${p => p.isOpen ? '110px' : '0'};
     width: 32px;
     height: 32px;
-    font-size: 13px;
+    font-size: 15px;
   }
 `;
 
@@ -141,7 +142,7 @@ const MiniIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 700;
   color: white;
   box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}66;
@@ -156,7 +157,7 @@ const MiniIcon = styled.div`
   @media (max-width: 480px) {
     width: 28px;
     height: 28px;
-    font-size: 14px;
+    font-size: 15px;
   }
 `;
 
@@ -168,7 +169,7 @@ const MiniInfo = styled.div`
 `;
 
 const MiniLabel = styled.div`
-  font-size: 8px;
+  font-size: 15px;
   font-weight: 600;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   text-transform: uppercase;
@@ -176,12 +177,12 @@ const MiniLabel = styled.div`
 `;
 
 const MiniValue = styled.div`
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
 
   @media (max-width: 480px) {
-    font-size: 11px;
+    font-size: 15px;
   }
 `;
 
@@ -249,7 +250,7 @@ const LevelIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 25px;
   font-weight: 700;
   color: white;
   box-shadow: 0 3px 10px ${p => p.theme.ACCENT_COLOR}66;
@@ -276,7 +277,7 @@ const LevelIcon = styled.div`
   @media (max-width: 768px) {
     width: 40px;
     height: 40px;
-    font-size: 22px;
+    font-size: 20px;
   }
 
   @media (max-width: 480px) {
@@ -297,24 +298,24 @@ const LevelInfo = styled.div`
 `;
 
 const LevelLabel = styled.div`
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 600;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   text-transform: uppercase;
   letter-spacing: 0.3px;
 
   @media (max-width: 480px) {
-    font-size: 7px;
+    font-size: 10px;
   }
 `;
 
 const LevelValue = styled.div`
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
 
   @media (max-width: 480px) {
-    font-size: 11px;
+    font-size: 10px;
   }
 `;
 
@@ -341,25 +342,25 @@ const StatItem = styled.div`
 `;
 
 const StatLabel = styled.div`
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 600;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   text-transform: uppercase;
   letter-spacing: 0.2px;
 
   @media (max-width: 480px) {
-    font-size: 7px;
+    font-size: 10px;
   }
 `;
 
 const StatValue = styled.div`
-  font-size: ${p => p.$large ? '14px' : '12px'};
+  font-size: ${p => p.$large ? '15px' : '10px'};
   font-weight: 700;
   color: ${p => p.$highlight ? p.theme.ACCENT_COLOR : p.theme.PRIMARY_TEXT_COLOR};
   text-shadow: ${p => p.$highlight ? `0 1px 3px ${p.theme.ACCENT_COLOR}33` : 'none'};
 
   @media (max-width: 480px) {
-    font-size: ${p => p.$large ? '12px' : '10px'};
+    font-size: ${p => p.$large ? '10px' : '10px'};
   }
 `;
 
@@ -379,7 +380,7 @@ const ProgressSection = styled.div`
 `;
 
 const ProgressLabel = styled.div`
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 600;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   text-transform: uppercase;
@@ -388,7 +389,7 @@ const ProgressLabel = styled.div`
 
 const ProgressBarContainer = styled.div`
   width: 100%;
-  height: 5px;
+  height: 10px;
   background: ${p => p.theme.BORDER_COLOR};
   border-radius: 3px;
   overflow: hidden;
@@ -432,7 +433,7 @@ const ProgressBar = styled.div`
 const ProgressInfo = styled.div`
   display: flex;
   justify-content: space-between;
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 600;
   gap: 4px;
 `;
@@ -490,7 +491,7 @@ const LevelDisplay = () => {
       <ToggleButton 
         isOpen={isOpen} 
         onClick={toggleSidebar}
-        aria-label={isOpen ? 'Zatvoriť sidebar' : 'Otvoriť sidebar'}
+        aria-label={isOpen ? 'Zatvoriť panel' : 'Otvoriť panel'}
       >
         {isOpen ? '◀' : '▶'}
       </ToggleButton>
@@ -514,35 +515,35 @@ const LevelDisplay = () => {
           <LevelSection>
             <LevelIcon>{level}</LevelIcon>
             <LevelInfo>
-              <LevelLabel>Level</LevelLabel>
-              <LevelValue>Detektív</LevelValue>
+              <LevelLabel>Úroveň</LevelLabel>
+              <LevelValue>Detektíva</LevelValue>
             </LevelInfo>
           </LevelSection>
 
           {/* Stats - Všetko pod sebou */}
           <StatItem>
-            <StatLabel>Misie</StatLabel>
+            <StatLabel>Body za misie:</StatLabel>
             <StatValue $highlight>{mission}</StatValue>
           </StatItem>
 
           <StatItem>
-            <StatLabel>Bonus</StatLabel>
+            <StatLabel>Bonusové body:</StatLabel>
             <StatValue>{bonus}</StatValue>
           </StatItem>
 
           <StatItem>
-            <StatLabel>Referrals</StatLabel>
+            <StatLabel>Počet zdieľaní:</StatLabel>
             <StatValue>{referrals}</StatValue>
           </StatItem>
 
           <StatItem>
-            <StatLabel>Spolu</StatLabel>
+            <StatLabel>Celkovo bodov:</StatLabel>
             <StatValue $large $highlight>{total}</StatValue>
           </StatItem>
 
           {/* Progress */}
           <ProgressSection>
-            <ProgressLabel>Pokrok</ProgressLabel>
+            <ProgressLabel>Progres v účasti:</ProgressLabel>
             <ProgressBarContainer>
               <ProgressBar $progress={progress} />
             </ProgressBarContainer>

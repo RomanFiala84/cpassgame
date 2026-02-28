@@ -1,4 +1,4 @@
-// src/styles/ThemeToggle.js
+//HOTOVO
 import React from 'react';
 import styled from 'styled-components';
 
@@ -10,7 +10,7 @@ const Toggle = styled.button`
   padding: 10px 16px;
   border-radius: 12px;
   border: 2px solid ${props => props.theme.ACCENT_COLOR};
-  background: ${props => props.theme.CARD_BACKGROUND};
+  background: ${props => props.theme.CARD_BACKGROUND}45;
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   font-size: 15px;
   font-weight: 600;
@@ -23,9 +23,9 @@ const Toggle = styled.button`
   
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px ${props => props.theme.ACCENT_COLOR}66;
+    box-shadow: 0 6px 16px ${props => props.theme.ACCENT_COLOR}45;
     border-color: ${props => props.theme.ACCENT_COLOR};
-    background: ${props => props.theme.ACCENT_COLOR}22;
+    background: ${props => props.theme.ACCENT_COLOR}25;
   }
   
   &:active {
@@ -47,14 +47,14 @@ const Toggle = styled.button`
 `;
 
 const Icon = styled.span`
-  font-size: 20px;
+  font-size: 15px;
   
   @media (max-width: 768px) {
-    font-size: 22px; /* ✅ Trochu väčšia ikona na mobile */
+    font-size: 15px; /* ✅ Trochu väčšia ikona na mobile */
   }
   
   @media (max-width: 480px) {
-    font-size: 20px;
+    font-size: 15px;
   }
 `;
 

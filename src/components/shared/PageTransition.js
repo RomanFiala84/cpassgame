@@ -1,4 +1,4 @@
-// src/components/shared/PageTransition.js
+//HOTOVO
 // FINÁLNA VERZIA - Neovplyvňuje fixed elementy (modály)
 
 import { motion } from 'framer-motion';
