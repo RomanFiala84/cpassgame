@@ -126,11 +126,13 @@ export const GradientCircleList = styled.ul`
   padding-left: 0;
   margin: ${props => props.margin || '12px 0'};
   
-  /* PRVÁ ÚROVEŇ - veľké gradient odrážky */
+  /* ════════════════════════════════════════════════════
+     1. ÚROVEŇ - 12px gradient kruh
+     ════════════════════════════════════════════════════ */
   > li {
-    padding-left: ${props => props.size === 'small' ? '28px' : '32px'};
+    padding-left: 32px;
     position: relative;
-    margin-bottom: ${props => props.gap || '12px'};
+    margin-bottom: 12px;
     font-size: ${props => props.fontSize || '14px'};
     line-height: 1.6;
     color: ${props => props.theme.PRIMARY_TEXT_COLOR};
@@ -140,8 +142,8 @@ export const GradientCircleList = styled.ul`
       position: absolute;
       left: 0;
       top: 6px;
-      width: ${props => props.size === 'small' ? '10px' : '12px'};
-      height: ${props => props.size === 'small' ? '10px' : '12px'};
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background: linear-gradient(
         135deg,
@@ -156,29 +158,29 @@ export const GradientCircleList = styled.ul`
       box-shadow: 0 2px 8px ${props => props.theme.ACCENT_COLOR}66;
     }
     
-    /* ✅ VNORENÉ <ul> */
-    ul {
+    /* ════════════════════════════════════════════════════
+       2. ÚROVEŇ - 10px gradient kruh (trochu menší)
+       ════════════════════════════════════════════════════ */
+    > ul {
       margin-top: 8px;
       margin-bottom: 8px;
       padding-left: 0;
-      list-style: none; /* Vypni default odrážky */
+      list-style: none;
       
-      /* DRUHÁ ÚROVEŇ - menšie gradient odrážky */
-      li {
-        padding-left: 20px; /* Menší padding */
+      > li {
+        padding-left: 28px;
         margin-bottom: 6px;
-        font-size: 0.95em; /* Mierne menší text */
+        font-size: 0.95em;
         position: relative;
         
-        /* Menšia gradient odrážka */
         &::before {
           content: '';
           display: block;
           position: absolute;
           left: 0;
-          top: 7px;
-          width: 8px; /* Menšia ako hlavná odrážka */
-          height: 8px;
+          top: 6px;
+          width: 10px;
+          height: 10px;
           border-radius: 50%;
           background: linear-gradient(
             135deg,
@@ -189,17 +191,59 @@ export const GradientCircleList = styled.ul`
         }
         
         &:hover::before {
-          transform: scale(1.2);
-          box-shadow: 0 1px 6px ${props => props.theme.ACCENT_COLOR}66;
+          transform: scale(1.3);
+          box-shadow: 0 2px 8px ${props => props.theme.ACCENT_COLOR}66;
+        }
+        
+        /* ════════════════════════════════════════════════════
+           3. ÚROVEŇ - 8px gradient kruh (ešte menší)
+           ════════════════════════════════════════════════════ */
+        > ul {
+          margin-top: 6px;
+          margin-bottom: 6px;
+          padding-left: 0;
+          list-style: none;
+          
+          > li {
+            padding-left: 24px;
+            margin-bottom: 4px;
+            font-size: 0.9em;
+            position: relative;
+            
+            &::before {
+              content: '';
+              display: block;
+              position: absolute;
+              left: 0;
+              top: 6px;
+              width: 8px;
+              height: 8px;
+              border-radius: 50%;
+              background: linear-gradient(
+                135deg,
+                ${props => props.theme.ACCENT_COLOR},
+                ${props => props.theme.ACCENT_COLOR_2}
+              );
+              transition: all 0.3s ease;
+            }
+            
+            &:hover::before {
+              transform: scale(1.3);
+              box-shadow: 0 2px 8px ${props => props.theme.ACCENT_COLOR}66;
+            }
+          }
         }
       }
     }
   }
   
+  /* ════════════════════════════════════════════════════
+     RESPONZÍVNE (Mobile)
+     ════════════════════════════════════════════════════ */
   @media (max-width: 480px) {
     > li {
-      padding-left: 24px;
-      font-size: ${props => props.fontSize || '13px'};
+      padding-left: 28px;
+      font-size: 13px;
       
       &::before {
         width: 10px;
@@ -207,19 +251,29 @@ export const GradientCircleList = styled.ul`
         top: 5px;
       }
       
-      ul li {
-        padding-left: 18px;
+      > ul > li {
+        padding-left: 24px;
         font-size: 12px;
         
         &::before {
-          width: 7px;
-          height: 7px;
-          top: 6px;
+          width: 8px;
+          height: 8px;
+        }
+        
+        > ul > li {
+          padding-left: 20px;
+          font-size: 11px;
+          
+          &::before {
+            width: 7px;
+            height: 7px;
+          }
         }
       }
     }
   }
 `;
+
 
 
 // ═══════════════════════════════════════════════════
