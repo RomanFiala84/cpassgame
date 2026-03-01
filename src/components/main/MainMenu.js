@@ -15,6 +15,7 @@ import DetectiveTipLarge from '../shared/DetectiveTipLarge';
 const GradientCircleList = styled.ul`
   list-style: none;
   padding-left: 20px;
+  padding-right: 20px;
   margin: 0;
   
   > li {
@@ -51,7 +52,8 @@ const GradientCircleList = styled.ul`
 `;
 
 const NestedListItem = styled.div`
-  padding-left: 20px;
+  padding-left: 40px;
+  padding-right: 20px;
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   position: relative;
   margin-bottom: 10px;
@@ -60,7 +62,7 @@ const NestedListItem = styled.div`
   &::before {
     content: '→';
     position: absolute;
-    left: 0;
+    left: 20px;
     top: 0;
     color: ${props => props.theme.ACCENT_COLOR};
     line-height: 1.6;

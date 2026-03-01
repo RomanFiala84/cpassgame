@@ -1400,9 +1400,9 @@ export default function Instruction() {
               <strong>Namiesto 1. znaku: Zadajte 1. písmeno okresu v ktorom žijete.</strong>
             </LocalNestedItem>
             
-            <LocalList>
+            <LocalNestedItem>
               <li>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín = TORK11.</li>
-            </LocalList>
+            </LocalNestedItem>
           </InfoText>
         </InfoBox>
 

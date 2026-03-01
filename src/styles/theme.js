@@ -27,21 +27,21 @@ const darkTheme = {
 
 
 const lightTheme = {
-  // ☀️ SVETLÝ REŽIM - Kremová + Sky blue akcent
-  BACKGROUND_COLOR: '#faf8f0', // ⬅️ Kremová (svetlá, teplá)
-  SECONDARY_BACKGROUND: '#ffffff',
-  PRIMARY_TEXT_COLOR: '#000000', // ⬅️ Ostáva rovnaké
-  SECONDARY_TEXT_COLOR: '#ff4848ff', // ⬅️ Royal purple
+  // ☀️ SVETLÝ REŽIM - Soft káva s mlékem + Sky blue akcent
+  BACKGROUND_COLOR: '#ebe5d9', // ⬅️ Káva s mlékem (dark cream)
+  SECONDARY_BACKGROUND: '#f2ede3', // ⬅️ Stredná káva s mlékem
+  PRIMARY_TEXT_COLOR: '#000000',
+  SECONDARY_TEXT_COLOR: '#ff4848ff',
   
   // ✅ Akcentové farby - Sky blue škála 💧
-  ACCENT_COLOR: '#2563a8', // ⬅️ O něco tmavší modrá pro lepší kontrast
+  ACCENT_COLOR: '#2563a8',
   ACCENT_COLOR_2: '#1e4d8b',
   ACCENT_COLOR_3: '#163a6f',
   
-  CARD_BACKGROUND: '#ffffff',
-  INPUT_BACKGROUND: '#ffffff',
+  CARD_BACKGROUND: '#f7f3ea', // ⬅️ Light latte
+  INPUT_BACKGROUND: '#fdfaf4', // ⬅️ Najsvetlejšia latte
   BUTTON_COLOR: '#2563a8',
-  BORDER_COLOR: '#d8e8f0', // ⬅️ Svetlo modrá border
+  BORDER_COLOR: '#dcd0bf', // ⬅️ Tmavšia béžová border
   HOVER_OVERLAY: 'rgba(135, 206, 235, 0.15)',
   
   // Stavové farby
@@ -49,6 +49,9 @@ const lightTheme = {
   ERROR_COLOR: '#ff0000',
   WARNING_COLOR: '#ff8c00',
 };
+
+
+
 
 
 export { lightTheme, darkTheme };
