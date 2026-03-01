@@ -103,7 +103,7 @@ const Container = styled.div`
 // =====================
 
 const WelcomeCard = styled.div`
-  background: ${p => `${p.theme.ACCENT_COLOR}45`};
+  background: ${p => `${p.theme.ACCENT_COLOR}25`};
   border: 2px solid ${p => p.theme.ACCENT_COLOR}60;
   border-radius: 12px;
   padding: 24px; /* ✅ Väčší padding pre úvodné okno */
@@ -116,7 +116,7 @@ const WelcomeCard = styled.div`
   
   &:hover {
     border-color: ${p => p.theme.ACCENT_COLOR};
-    box-shadow: 0 4px 16px ${p => `${p.theme.ACCENT_COLOR}60`}; /* ✅ Svetelný efekt */
+    box-shadow: 0 4px 16px ${p => `${p.theme.ACCENT_COLOR}45`}; /* ✅ Svetelný efekt */
   }
   
   @media (max-width: 768px) {
