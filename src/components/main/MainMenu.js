@@ -909,7 +909,7 @@ const MainMenu = () => {
           <div style="padding-left: 20px; margin-top: 8px;">
             <p style="font-size: 15px; font-weight: bold; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
               <span style="position: absolute; left: 0; top: 0; color: ${theme.ACCENT_COLOR};">→</span>
-              Po ukončení predvýskumu bude táto misia uzamknutá a účasť v nej už nebude možná.
+              <strong>Po ukončení predvýskumu bude táto misia uzamknutá a účasť v nej už nebude možná.</strong>
             </p>
           </div>
         </li>
@@ -921,11 +921,11 @@ const MainMenu = () => {
           <div style="padding-left: 20px; margin-top: 8px;">
             <p style="font-size: 15px; font-weight: bold; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
               <span style="position: absolute; left: 0; top: 0; color: ${theme.ACCENT_COLOR};">→</span>
-              Po ukončení predvýskumu budú tieto misie neustále odomknuté.
+              <strong>Po ukončení predvýskumu budú tieto misie neustále odomknuté.</strong>
             </p>
             <p style="font-size: 15px; font-weight: bold; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
               <span style="position: absolute; left: 0; top: 0; color: ${theme.ACCENT_COLOR};">→</span>
-              Pre spustenie týchto misií nie je potrebné mať absolvovanú Misiu 0.
+              <strong>Pre spustenie týchto misií nie je potrebné mať absolvovanú Misiu 0.</strong>
             </p>
           </div>
         </li>
@@ -937,11 +937,11 @@ const MainMenu = () => {
           <div style="padding-left: 20px; margin-top: 8px;">
             <p style="font-size: 15px; font-weight: bold; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
               <span style="position: absolute; left: 0; top: 0; color: ${theme.ACCENT_COLOR};">→</span>
-              Po ukončení prvej časti hlavného výskumu bude táto misia neustále odomknutá.
+              <strong>Po ukončení prvej časti hlavného výskumu bude táto misia neustále odomknutá.</strong>
             </p>
             <p style="font-size: 15px; font-weight: bold; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
               <span style="position: absolute; left: 0; top: 0; color: ${theme.ACCENT_COLOR};">→</span>
-              Pred spustením Misie 3 si prosím skontrolujte v hlavnom menu, či máte dokončenú Misiu 1 a Misiu 2.
+              <strong>Pred spustením Misie 3 si prosím skontrolujte v hlavnom menu, či máte dokončenú Misiu 1 a Misiu 2.</strong>
             </p>
           </div>
         </li>
@@ -955,31 +955,31 @@ const MainMenu = () => {
     <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
       <li style="font-size: 15px; font-weight: bold; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
         <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-        Bočný panel s aktuálnou detektívnou úrovňou a bodmi.
+        <strong>Bočný panel s aktuálnou detektívnou úrovňou a bodmi.</strong>
       </li>
       <li style="font-size: 15px; font-weight: bold; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
         <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-        Panel s aktuálnym progresom misií a celkový počet nazbieraných bodov.
+        <strong>Panel s aktuálnym progresom misií a celkový počet nazbieraných bodov.</strong>
       </li>
       <li style="font-size: 15px; font-weight: bold; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
         <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-        Zoznam všetkých misií.
+        <strong>Zoznam všetkých misií.</strong>
       </li>
       <li style="font-size: 15px; font-weight: bold; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
         <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-        Odkaz na pomoc.
+        <strong>Odkaz na pomoc.</strong>
       </li>
       <li style="font-size: 15px; font-weight: bold; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
         <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-        Odkaz na pravidlá a podmienky súťaže.
+        <strong>Odkaz na pravidlá a podmienky súťaže.</strong>
       </li>
       <li style="font-size: 15px; font-weight: bold; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
         <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-        Možnosť odhlásenia z aplikácie.
+        <strong>Možnosť odhlásenia z aplikácie.</strong>
       </li>
       <li style="font-size: 15px; font-weight: bold; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
         <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-        Váš osobný referral kód, ktorý môžete zdieľať s priateľmi.
+        <strong>Váš osobný referral kód, ktorý môžete zdieľať s priateľmi.</strong>
       </li>
     </ul>
   `;
