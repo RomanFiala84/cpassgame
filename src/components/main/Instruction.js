@@ -211,7 +211,7 @@ const AccordionHeader = styled.button`
   align-items: center;
   font-size: 15px;
   font-weight: 600;
-  color: ${props => props.$isOpen ? props.theme.ACCENT_COLOR : props.theme.PRIMARY_TEXT_COLOR};
+  color: ${props => props.$isOpen ? props.theme.ACCENT_COLOR : props.theme.ACCENT_COLOR};
   transition: all 0.2s ease;
   font-family: inherit;
   
@@ -308,7 +308,7 @@ const ContestHeader = styled.button`
   align-items: center;
   font-size: 15px;
   font-weight: 600;
-  color: ${props => props.$isOpen ? props.theme.ACCENT_COLOR : props.theme.PRIMARY_TEXT_COLOR};
+  color: ${props => props.$isOpen ? props.theme.ACCENT_COLOR : props.theme.ACCENT_COLOR};
   transition: all 0.2s ease;
   font-family: inherit;
   
@@ -415,6 +415,7 @@ const FormCard = styled.div`
 const ConsentText = styled.div`
   font-size: 10px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  border-top: 2px solid ${props => props.theme.ACCENT_COLOR}45;
   line-height: 1.5;
   margin-top: 12px;
 `;
