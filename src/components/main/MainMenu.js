@@ -348,7 +348,7 @@ const InfoButton = styled(StyledButton)`
     background: linear-gradient(135deg, 
       #00ffa6ff, 
       #00ff84ff
-    )/15;
+    );
     color: white;
     transform: translateY(-2px);
   }
@@ -367,7 +367,7 @@ const ContestButton = styled(StyledButton)`
     background: linear-gradient(135deg, 
       #fbbf24, 
       #f59e0b
-    )/15;
+    );
     color: white;
     transform: translateY(-2px);
   }
@@ -385,7 +385,7 @@ const LogoutButton = styled(StyledButton)`
     background: linear-gradient(135deg, 
       #ef4444, 
       #dc2626
-    )/15;
+    );
     color: white;
     transform: translateY(-2px);
   }
