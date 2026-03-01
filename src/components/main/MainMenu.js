@@ -8,6 +8,8 @@ import Layout from '../../styles/Layout';
 import StyledButton from '../../styles/StyledButton';
 import { useUserStats } from '../../contexts/UserStatsContext';
 import DetectiveTipLarge from '../shared/DetectiveTipLarge';
+import { useContext } from 'react';
+import { ThemeContext } from 'styled-components';
 
 // =====================
 // STYLED COMPONENTS - OPTIMALIZOVANÁ VERZIA
@@ -104,61 +106,54 @@ const Header = styled.div`
 `;
 
 const Title = styled.h1`
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 28px;
+  color: ${p => p.theme.ACCENT_COLOR};
+  font-size: 25px;
   font-weight: 700;
   margin-bottom: 6px;
   
   @media (max-width: 768px) {
-    font-size: 24px;
+    font-size: 25px;
   }
   
   @media (max-width: 480px) {
-    font-size: 22px;
+    font-size: 25px;
   }
 `;
 
 const InstructionCard = styled.div`
-  background: ${p => p.theme.CARD_BACKGROUND};
-  border-left: 3px solid ${p => p.theme.ACCENT_COLOR};
-  border-radius: 8px;
-  padding: 14px 16px;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    background: ${p => p.theme.CARD_BACKGROUND};
+  border: 2px solid ${p => p.theme.BORDER_COLOR};
+  border-radius: 12px;
+  padding: 20px;
+  margin: 16px 0;
+  max-width: 700px;
+  width: 100%;
   transition: all 0.2s ease;
   
   &:hover {
-    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
-    border-left-width: 4px;
-  }
-  
-  h4 {
-    color: ${p => p.theme.ACCENT_COLOR};
-    font-size: 15px;
-    font-weight: 700;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    border-color: ${p => p.theme.ACCENT_COLOR}60;
   }
   
   @media (max-width: 480px) {
-    padding: 12px 14px;
+    padding: 14px;
   }
 `;
 
 const SubNote = styled.div`
-  background: ${p => p.theme.ACCENT_COLOR}33;
+  background: ${p => p.theme.ACCENT_COLOR}45;
   border-radius: 6px;
-  padding: 8px 10px;
+  padding: 10px;
   margin-top: 6px;
-  font-size: 12px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 15px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   line-height: 1.4;
-  border-left: 2px solid ${p => p.theme.ACCENT_COLOR}44;
   
+  &:hover {
+    border-color: ${p => p.theme.ACCENT_COLOR}60;
+  }
+ 
   @media (max-width: 480px) {
-    font-size: 11px;
+    font-size: 15px;
   }
 `;
 
@@ -168,89 +163,17 @@ const InstructionsWrapper = styled.div`
   margin-bottom: 20px;
 `;
 
-const StatsCard = styled.div`
-  background: ${p => p.theme.CARD_BACKGROUND};
-  border: 2px solid ${p => p.theme.ACCENT_COLOR}44;
-  border-radius: 12px;
-  padding: 16px;
-  display: flex;
-  justify-content: space-around;
-  gap: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  transition: all 0.2s ease;
-  position: relative;
-  overflow: hidden;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-      135deg,
-      ${p => p.theme.ACCENT_COLOR}08 0%,
-      transparent 60%
-    );
-    pointer-events: none;
-  }
-  
-  &:hover {
-    border-color: ${p => p.theme.ACCENT_COLOR}66;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-  }
-  
-  @media (max-width: 480px) {
-    flex-direction: column;
-    gap: 12px;
-    padding: 14px;
-  }
-`;
 
-const StatItem = styled.div`
-  text-align: center;
-  flex: 1;
-  position: relative;
-  z-index: 1;
-  padding: 8px;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  
-  &:hover {
-    background: ${p => p.theme.ACCENT_COLOR}08;
-  }
-`;
-
-const StatValue = styled.div`
-  font-size: 28px;
-  font-weight: 700;
-  color: ${p => p.theme.ACCENT_COLOR};
-  margin-bottom: 4px;
-  text-shadow: 0 1px 3px ${p => p.theme.ACCENT_COLOR}22;
-  
-  @media (max-width: 768px) {
-    font-size: 24px;
-  }
-`;
-
-const StatLabel = styled.div`
-  font-size: 11px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 600;
-`;
 
 const SectionTitle = styled.h2`
-  font-size: 20px;
+  font-size: 15px;
   font-weight: 700;
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  color: ${p => p.theme.ACCENT_COLOR};
   margin-bottom: 16px;
   text-align: center;
   
   @media (max-width: 480px) {
-    font-size: 18px;
+    font-size: 15px;
   }
 `;
 
@@ -266,8 +189,8 @@ const MissionsList = styled.div`
 `;
 
 const MissionCard = styled.div`
-  background: ${p => p.theme.CARD_BACKGROUND};
-  border: 2px solid ${p => p.locked ? p.theme.BORDER_COLOR : p.theme.ACCENT_COLOR}44;
+  background: ${p => p.theme.ACCENT_COLOR}45;
+  border: 2px solid ${p => p.locked ? p.theme.BORDER_COLOR : p.theme.ACCENT_COLOR}60;
   border-radius: 12px;
   padding: 16px;
   display: flex;
@@ -303,7 +226,7 @@ const MissionCard = styled.div`
   &:hover {
     transform: ${p => p.locked ? 'none' : 'translateY(-2px)'};
     border-color: ${p => p.locked ? p.theme.BORDER_COLOR : p.theme.ACCENT_COLOR};
-    box-shadow: ${p => p.locked ? '0 2px 6px rgba(0,0,0,0.08)' : `0 4px 12px ${p.theme.ACCENT_COLOR}33`};
+    box-shadow: ${p => p.locked ? '0 2px 6px rgba(0,0,0,0.08)' : `0 4px 12px ${p.theme.ACCENT_COLOR}60`};
   }
   
   @media (max-width: 480px) {
@@ -324,14 +247,14 @@ const MissionIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
-  box-shadow: 0 2px 8px ${p => p.theme.ACCENT_COLOR}44;
+  font-size: 15px;
+  box-shadow: 0 2px 8px ${p => p.theme.ACCENT_COLOR_2}45;
   
   @media (max-width: 480px) {
     width: 56px;
     height: 56px;
     min-width: 56px;
-    font-size: 28px;
+    font-size: 15px;
   }
 `;
 
@@ -346,8 +269,8 @@ const MissionContent = styled.div`
 `;
 
 const MissionNumber = styled.div`
-  font-size: 11px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 15px;
+  color: ${p => p.theme.ACCENT_COLOR};
   margin-bottom: 3px;
   font-weight: 600;
   text-transform: uppercase;
@@ -356,19 +279,19 @@ const MissionNumber = styled.div`
 
 const MissionTitle = styled.h3`
   font-size: 15px;
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  color: ${p => p.theme.ACCENT_COLOR};
   margin-bottom: 4px;
   font-weight: 600;
   line-height: 1.3;
   
   @media (max-width: 480px) {
-    font-size: 14px;
+    font-size: 15px;
   }
 `;
 
 const MissionStatus = styled.div`
-  font-size: 11px;
-  color: ${p => p.completed ? '#10b981' : p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 10px;
+  color: ${p => p.completed ? '#00ff00ff' : p.theme.PRIMARY_TEXT_COLOR};
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -385,7 +308,7 @@ const AdminButtons = styled.div`
 `;
 
 const AdminButton = styled.button`
-  background: ${p => p.$unlock ? '#10b981' : p.theme.ACCENT_COLOR};
+  background: ${p => p.$unlock ? '#590000ff' : p.theme.ACCENT_COLOR};
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -427,13 +350,13 @@ const InfoButton = styled(StyledButton)`
     #00D9FF22, 
     #00FFD922
   );
-  border: 2px solid #00D9FF;
-  color: #00D9FF;
+  border: 2px solid #00ffa6ff;
+  color: #00ffa6ff;
   
   &:hover {
     background: linear-gradient(135deg, 
-      #00D9FF, 
-      #00FFD9
+      #00ffa6ff, 
+      #00ff84ff
     );
     color: white;
     transform: translateY(-2px);
@@ -479,8 +402,8 @@ const LogoutButton = styled(StyledButton)`
 
 const SharingSection = styled.div`
   background: linear-gradient(135deg, 
-    ${p => p.theme.ACCENT_COLOR}22, 
-    ${p => p.theme.ACCENT_COLOR_2}22
+    ${p => p.theme.ACCENT_COLOR}45, 
+    ${p => p.theme.ACCENT_COLOR_2}45
   );
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   border-radius: 16px;
@@ -500,7 +423,7 @@ const SharingSection = styled.div`
     height: 200%;
     background: radial-gradient(
       circle at center,
-      ${p => p.theme.ACCENT_COLOR}15 0%,
+      ${p => p.theme.ACCENT_COLOR}45 0%,
       transparent 50%
     );
     pointer-events: none;
@@ -514,7 +437,7 @@ const SharingSection = styled.div`
 const SharingTitle = styled.h3`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   margin-bottom: 12px;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 700;
   position: relative;
   z-index: 1;
@@ -525,7 +448,7 @@ const SharingTitle = styled.h3`
   }
   
   @media (max-width: 480px) {
-    font-size: 16px;
+    font-size: 15px;
   }
 `;
 
@@ -546,8 +469,8 @@ const SharingCodeDisplay = styled.div`
 `;
 
 const SharingCodeLabel = styled.div`
-  font-size: 12px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 15px;
+  color: ${p => p.theme.ACCENT_COLOR};
   margin-bottom: 8px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -555,20 +478,20 @@ const SharingCodeLabel = styled.div`
 `;
 
 const SharingCode = styled.code`
-  font-size: 32px;
+  font-size: 25px;
   font-weight: bold;
   letter-spacing: 4px;
   color: ${p => p.theme.ACCENT_COLOR};
   font-family: 'Courier New', monospace;
-  text-shadow: 0 2px 4px ${p => p.theme.ACCENT_COLOR}22;
+  text-shadow: 0 2px 4px ${p => p.theme.SECONDARY_TEXT_COLOR}60;
   
   @media (max-width: 768px) {
-    font-size: 28px;
+    font-size: 25px;
     letter-spacing: 3px;
   }
   
   @media (max-width: 480px) {
-    font-size: 24px;
+    font-size: 25px;
     letter-spacing: 2px;
   }
 `;
@@ -580,19 +503,19 @@ const LinkDisplay = styled.div`
   padding: 12px;
   margin: 12px 0;
   word-break: break-all;
-  text-align: left;
+  text-align: center;
   position: relative;
   z-index: 1;
   transition: all 0.2s ease;
   
   &:hover {
-    border-color: ${p => p.theme.ACCENT_COLOR}66;
+    border-color: ${p => p.theme.ACCENT_COLOR}60;
   }
 `;
 
 const LinkLabel = styled.div`
-  font-size: 11px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 15px;
+  color: ${p => p.theme.ACCENT_COLOR};
   margin-bottom: 6px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -600,13 +523,13 @@ const LinkLabel = styled.div`
 `;
 
 const LinkText = styled.code`
-  font-size: 13px;
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  font-size: 15px;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   font-family: 'Courier New', monospace;
   line-height: 1.5;
   
   @media (max-width: 480px) {
-    font-size: 11px;
+    font-size: 15px;
   }
 `;
 
@@ -624,8 +547,8 @@ const ShareButtonsGroup = styled.div`
 `;
 
 const SharingInfo = styled.p`
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 13px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  font-size: 15px;
   margin: 12px 0;
   line-height: 1.5;
   position: relative;
@@ -659,19 +582,19 @@ const ReferralStat = styled.div`
 `;
 
 const ReferralStatValue = styled.div`
-  font-size: 24px;
+  font-size: 15px;
   font-weight: bold;
   color: ${p => p.theme.ACCENT_COLOR};
-  text-shadow: 0 1px 3px ${p => p.theme.ACCENT_COLOR}33;
+  text-shadow: 0 1px 3px ${p => p.theme.ACCENT_COLOR}45;
   
   @media (max-width: 768px) {
-    font-size: 20px;
+    font-size: 15px;
   }
 `;
 
 const ReferralStatLabel = styled.div`
-  font-size: 10px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 15px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   margin-top: 4px;
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -726,24 +649,24 @@ const ModalContent = styled.div`
   h3 {
     color: ${p => p.theme.ACCENT_COLOR};
     margin-bottom: 16px;
-    font-size: 20px;
+    font-size: 15px;
     text-align: center;
   }
   
   h4 {
     color: ${p => p.theme.ACCENT_COLOR};
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 700;
     margin-top: 16px;
     margin-bottom: 8px;
-    border-bottom: 2px solid ${p => p.theme.ACCENT_COLOR}33;
+    border-bottom: 2px solid ${p => p.theme.ACCENT_COLOR}45;
     padding-bottom: 4px;
   }
   
   p {
     line-height: 1.6;
     margin-bottom: 10px;
-    font-size: 14px;
+    font-size: 15px;
   }
   
   a {
@@ -760,7 +683,7 @@ const ModalContent = styled.div`
   }
   
   &::-webkit-scrollbar-track {
-    background: ${p => p.theme.BORDER_COLOR}33;
+    background: ${p => p.theme.BORDER_COLOR}45;
     border-radius: 3px;
   }
   
@@ -774,15 +697,15 @@ const ModalContent = styled.div`
     max-height: 90vh;
     
     h3 {
-      font-size: 18px;
+      font-size: 15px;
     }
     
     h4 {
-      font-size: 13px;
+      font-size: 15px;
     }
     
     p {
-      font-size: 13px;
+      font-size: 15px;
     }
   }
 `;
@@ -791,10 +714,10 @@ const CloseButton = styled.button`
   position: absolute;
   top: 12px;
   right: 12px;
-  background: ${p => p.theme.BORDER_COLOR}44;
+  background: ${p => p.theme.BORDER_COLOR}45;
   border: none;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 20px;
+  font-size: 15px;
   cursor: pointer;
   width: 28px;
   height: 28px;
@@ -812,15 +735,15 @@ const CloseButton = styled.button`
 `;
 
 const makeMissionList = (p) => [
-  { id: 0, title: 'Misia 0 (Predvýskum)', route: '/mission0/intro', completed: !!p.mission0_completed, locked: !p.mission0_unlocked, icon: '🎯' },
-  { id: 1, title: 'Misia 1 (Úvodný dotazník)', route: '/mission1/intro', completed: !!p.mission1_completed, locked: !p.mission1_unlocked, icon: '🔍' },
-  { id: 2, title: 'Misia 2 (Prvá časť hlavného výskumu)', route: '/mission2/intro', completed: !!p.mission2_completed, locked: !p.mission2_unlocked, icon: '🕵️' },
-  { id: 3, title: 'Misia 3 (Druhá časť hlavného výskumu)', route: '/mission3/intro', completed: !!p.mission3_completed, locked: !p.mission3_unlocked, icon: '🎭' }
+  { id: 0, title: 'Predvýskum', route: '/mission0/intro', completed: !!p.mission0_completed, locked: !p.mission0_unlocked, icon: '🔍' },
+  { id: 1, title: 'Úvodný dotazník', route: '/mission1/intro', completed: !!p.mission1_completed, locked: !p.mission1_unlocked, icon: '📝' },
+  { id: 2, title: 'Prvá časť hlavného výskumu', route: '/mission2/intro', completed: !!p.mission2_completed, locked: !p.mission2_unlocked, icon: '🕵️' },
+  { id: 3, title: 'Druhá časť hlavného výskumu', route: '/mission3/intro', completed: !!p.mission3_completed, locked: !p.mission3_unlocked, icon: '🕵️' }
 ];
 
 const MainMenu = () => {
   const navigate = useNavigate();
-  const { userStats, dataManager, userId, logout } = useUserStats();
+  const {dataManager, userId, logout } = useUserStats();
   const [missions, setMissions] = useState([]);
   const [modal, setModal] = useState({ open: false, type: '' });
   const [isUpdating, setIsUpdating] = useState(false);
@@ -931,7 +854,7 @@ const MainMenu = () => {
       const p = central[userId] || {};
       setMissions(makeMissionList(p));
       setUserProgress(p);
-      alert(`✅ Misia ${id} bola odomknutá`);
+      alert(`✅ Misia ${id} bola odomknutá.`);
     } catch (error) {
       alert(`❌ Chyba: ${error.message}`);
     } finally {
@@ -950,7 +873,7 @@ const MainMenu = () => {
       const p = central[userId] || {};
       setMissions(makeMissionList(p));
       setUserProgress(p);
-      alert(`✅ Misia ${id} bola zamknutá`);
+      alert(`✅ Misia ${id} bola zamknutá.`);
     } catch (error) {
       alert(`❌ Chyba: ${error.message}`);
     } finally {
@@ -976,61 +899,95 @@ const MainMenu = () => {
       navigate('/instruction', { replace: true });
     }
   };
-
+ const theme = useContext(ThemeContext);
  const detectiveStory = `
-  <div style="margin-bottom: 20px;">
-    <p style="font-weight: 600; color: var(--accent-color); margin-bottom: 12px; font-size: 15px;">
-      Ktorou časťou mám začať?
+   <p style="font-size: 15px; font-weight: 700; color: ${theme.ACCENT_COLOR}; margin-bottom: 12px;">
+      <strong>Ktorou časťou mám začať?</strong>
     </p>
     
-    <div style="margin-bottom: 16px;">
-      <p style="margin-bottom: 8px; line-height: 1.6;">
-        • Ak sa účastníte <strong>predvýskumu</strong> začnite prosím <strong>Misiou 0</strong>.
-      </p>
-      <p style="padding-left: 20px; font-size: 0.95em; color: var(--secondary-text); margin-bottom: 4px; line-height: 1.5;">
-        ↳ Po ukončení predvýskumu bude táto misia uzamknutá a účasť v nej už nebude možná.
-      </p>
+    <div style="background: ${theme.ACCENT_COLOR}15; padding: 12px; border-radius: 8px; margin: 16px 0; border: 1px solid ${theme.ACCENT_COLOR}30;">
+      <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
+        <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 16px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+          <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+          <strong>Ak sa účastníte predvýskumu začnite prosím Misiou 0.</strong>
+          
+          <div style="padding-left: 20px; margin-top: 8px;">
+            <p style="font-size: 14px; color: ${theme.SECONDARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
+              <span style="position: absolute; left: 0; top: 0; color: ${theme.ACCENT_COLOR};">→</span>
+              Po ukončení predvýskumu bude táto misia uzamknutá a účasť v nej už nebude možná.
+            </p>
+          </div>
+        </li>
+        
+        <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 16px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+          <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+          <strong>Ak sa účastníte prvej časti hlavného výskumu začnite prosím Misiou 1 a pokračujte Misiou 2.</strong>
+          
+          <div style="padding-left: 20px; margin-top: 8px;">
+            <p style="font-size: 14px; color: ${theme.SECONDARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
+              <span style="position: absolute; left: 0; top: 0; color: ${theme.ACCENT_COLOR};">→</span>
+              Po ukončení predvýskumu budú tieto misie neustále odomknuté.
+            </p>
+            <p style="font-size: 14px; color: ${theme.SECONDARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
+              <span style="position: absolute; left: 0; top: 0; color: ${theme.ACCENT_COLOR};">→</span>
+              Pre spustenie týchto misií nie je potrebné mať absolvovanú Misiu 0.
+            </p>
+          </div>
+        </li>
+        
+        <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+          <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+          <strong>Ak sa účastníte druhej časti hlavného výskumu pokračujte prosím Misiou 3.</strong>
+          
+          <div style="padding-left: 20px; margin-top: 8px;">
+            <p style="font-size: 14px; color: ${theme.SECONDARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
+              <span style="position: absolute; left: 0; top: 0; color: ${theme.ACCENT_COLOR};">→</span>
+              Po ukončení prvej časti hlavného výskumu bude táto misia neustále odomknutá.
+            </p>
+            <p style="font-size: 14px; color: ${theme.SECONDARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
+              <span style="position: absolute; left: 0; top: 0; color: ${theme.ACCENT_COLOR};">→</span>
+              Pred spustením Misie 3 si prosím skontrolujte v hlavnom menu, či máte dokončenú Misiu 1 a Misiu 2.
+            </p>
+          </div>
+        </li>
+      </ul>
     </div>
     
-    <div style="margin-bottom: 16px;">
-      <p style="margin-bottom: 8px; line-height: 1.6;">
-        • Ak sa účastníte <strong>prvej časti hlavného výskumu</strong> začnite prosím <strong>Misiou 1</strong> a pokračujete <strong>Misiou 2</strong>.
-      </p>
-      <p style="padding-left: 20px; font-size: 0.95em; color: var(--secondary-text); margin-bottom: 4px; line-height: 1.5;">
-        ↳ Po ukončení predvýskumu budú tieto misie neustále odomknuté.
-      </p>
-      <p style="padding-left: 20px; font-size: 0.95em; color: var(--secondary-text); margin-bottom: 4px; line-height: 1.5;">
-        ↳ Pre spustenie týchto misií nie je potrebné mať absolvovanú Misiu 0.
-      </p>
-    </div>
-    
-    <div style="margin-bottom: 16px;">
-      <p style="margin-bottom: 8px; line-height: 1.6;">
-        • Ak sa účastníte <strong>druhej časti hlavného výskumu</strong> pokračujte prosím <strong>Misiou 3</strong>.
-      </p>
-      <p style="padding-left: 20px; font-size: 0.95em; color: var(--secondary-text); margin-bottom: 4px; line-height: 1.5;">
-        ↳ Po ukončení prvej časti hlavného výskumu bude táto misia neustále odomknutá.
-      </p>
-      <p style="padding-left: 20px; font-size: 0.95em; color: var(--secondary-text); margin-bottom: 4px; line-height: 1.5;">
-        ↳ Pred spustením Misie 3 si prosím skontrolujte v hlavnom menu, či máte dokončenú Misiu 1 a Misiu 2.
-      </p>
-    </div>
-  </div>
-  
-  <div style="margin-top: 24px;">
-    <p style="font-weight: 600; color: var(--accent-color); margin-bottom: 12px; font-size: 15px;">
-      Čo nájdem v hlavnom menu?
+    <p style="font-size: 15px; font-weight: 700; color: ${theme.ACCENT_COLOR}; margin-bottom: 12px; margin-top: 24px;">
+      <strong>Čo nájdem v hlavnom menu?</strong>
     </p>
     
-    <p style="margin-bottom: 6px; line-height: 1.6;">• Bočný panel s aktuálnou detektívnou úrovňou a bodmi.</p>
-    <p style="margin-bottom: 6px; line-height: 1.6;">• Panel s aktuálnym progresom misií a celkový počet nazbieraných bodov.</p>
-    <p style="margin-bottom: 6px; line-height: 1.6;">• Zoznam všetkých misií.</p>
-    <p style="margin-bottom: 6px; line-height: 1.6;">• Odkaz na pomoc.</p>
-    <p style="margin-bottom: 6px; line-height: 1.6;">• Odkaz na pravidlá a podmienky súťaže.</p>
-    <p style="margin-bottom: 6px; line-height: 1.6;">• Možnosť odhlásenia z aplikácie.</p>
-    <p style="margin-bottom: 6px; line-height: 1.6;">• Váš osobný referral kód, ktorý môžete zdieľať s priateľmi.</p>
-  </div>
-`;
+    <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
+      <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+        <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+        Bočný panel s aktuálnou detektívnou úrovňou a bodmi.
+      </li>
+      <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+        <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+        Panel s aktuálnym progresom misií a celkový počet nazbieraných bodov.
+      </li>
+      <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+        <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+        Zoznam všetkých misií.
+      </li>
+      <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+        <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+        Odkaz na pomoc.
+      </li>
+      <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+        <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+        Odkaz na pravidlá a podmienky súťaže.
+      </li>
+      <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+        <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+        Možnosť odhlásenia z aplikácie.
+      </li>
+      <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+        <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+        Váš osobný referral kód, ktorý môžete zdieľať s priateľmi.
+      </li>
+    </ul>
+  `;
 
 
   // ✅ NOVÉ - Loading state
@@ -1059,46 +1016,30 @@ const MainMenu = () => {
           <Title>CP-PASS</Title>
           <InstructionsWrapper>
             <InstructionCard>
-              <h4>Ktorou časťou mám začať?</h4>
+              <h4><strong>Ktorou časťou mám začať?</strong></h4>
               
               {/* ✅ GRADIENT ODRÁŽKY */}
-              <GradientCircleList>
-                <li><strong>Ak sa účastníte predvýskumu - začnite prosím Misiou 0.</strong></li>
-              </GradientCircleList>
-              <SubNote>
+              <SubNote style={{ marginTop: '12px' }}>
+                <strong>Ak sa účastníte predvýskumu - začnite prosím Misiou 0.<br/> </strong>
                 Po ukončení predvýskumu bude táto misia uzamknutá a účasť v nej už nebude možná.
               </SubNote>
               
-              <GradientCircleList style={{ marginTop: '12px' }}>
-                <li><strong>Ak sa účastníte prvej časti hlavného výskumu - začnite prosím Misiou 1 a pokračujete Misiou 2.</strong></li>
-              </GradientCircleList>
-              <SubNote>
+              <SubNote style={{ marginTop: '12px' }}>
+                <strong>Ak sa účastníte prvej časti hlavného výskumu - začnite prosím Misiou 1 a pokračujete Misiou 2. </strong><br/>
                 Po ukončení predvýskumu budú tieto misie neustále odomknuté.<br/>
                 Pre spustenie týchto misií nie je potrebné mať absolvovanú Misiu 0.
               </SubNote>
               
-              <GradientCircleList style={{ marginTop: '12px' }}>
-                <li><strong>Ak sa účastníte druhej časti hlavného výskumu - pokračujte prosím Misiou 3.</strong></li>
-              </GradientCircleList>
-              <SubNote>
+              <SubNote style={{ marginTop: '12px' }}>
+                <strong>Ak sa účastníte druhej časti hlavného výskumu - pokračujte prosím Misiou 3.</strong><br/>
                 Po ukončení prvej časti hlavného výskumu bude táto misia neustále odomknutá.<br/>
                 Pred spustením Misie 3 si prosím skontrulujte v hlavnom menu, či máte dokočenú Misiu 1 a Misiu 2.
               </SubNote>
             </InstructionCard>
           </InstructionsWrapper>
-          <StatsCard>
-            <StatItem>
-              <StatValue>{userStats.totalPoints || 0}</StatValue>
-              <StatLabel>Celkové získané body:</StatLabel>
-            </StatItem>
-            <StatItem>
-              <StatValue>{missions.filter(m => m.completed).length}/4</StatValue>
-              <StatLabel>Počet dokončených misií:</StatLabel>
-            </StatItem>
-          </StatsCard>
         </Header>
 
-        <SectionTitle>Misie (časti výskumu):</SectionTitle>
+        <SectionTitle><strong>Misie (časti výskumu):</strong></SectionTitle>
         <MissionsList>
           {missions.map(m => (
             <MissionCard
@@ -1163,10 +1104,10 @@ const MainMenu = () => {
         </ButtonGroup>
 
         <SharingSection>
-          <SharingTitle>Zdieľajte výskum a získajte body!</SharingTitle>
+          <SharingTitle><strong>Zdieľajte výskum a získajte body!</strong></SharingTitle>
           
           <SharingCodeDisplay>
-            <SharingCodeLabel>Váš refferal kód:</SharingCodeLabel>
+            <SharingCodeLabel><strong>š refferal kód:</strong></SharingCodeLabel>
             <SharingCode>
               {userProgress?.sharing_code || '━━━━━━'}
             </SharingCode>
@@ -1182,30 +1123,30 @@ const MainMenu = () => {
               variant="accent"
               onClick={handleCopyCode}
             >
-              {copySuccess === 'code' ? '✅ Kód bol skopírovaný!' : '📋 Kopírovať iba kód'}
+              {copySuccess === 'code' ? '✅ Kód bol skopírovaný!' : '📋 Skopírovať iba kód'}
             </StyledButton>
             <StyledButton 
               variant="success"
               onClick={handleCopyLink}
             >
-              {copySuccess === 'link' ? '✅ Link bol skopírovaný!' : '🔗 Kopírovať link s kódom'}
+              {copySuccess === 'link' ? '✅ Link bol skopírovaný!' : '🔗 Skopírovať link s kódom'}
             </StyledButton>
           </ShareButtonsGroup>
           
           <SharingInfo>
-            Zdieľajte kód alebo link s priateľmi!<br/>
-            Za každého nového respondenta získate <strong>+10 bodov</strong>
+            <strong>Zdieľajte kód alebo link s priateľmi!</strong><br/>
+           <strong>Za každého nového respondenta získate</strong> <strong>+10 bodov</strong>
           </SharingInfo>
           
           {userProgress?.referrals_count > 0 && (
             <ReferralStats>
               <ReferralStat>
                 <ReferralStatValue>{userProgress.referrals_count}</ReferralStatValue>
-                <ReferralStatLabel>Počet odporúčaní</ReferralStatLabel>
+                <ReferralStatLabel>Počet nových respondentov vďaka odporúčaniu:</ReferralStatLabel>
               </ReferralStat>
               <ReferralStat>
                 <ReferralStatValue>+{userProgress.referrals_count * 10}</ReferralStatValue>
-                <ReferralStatLabel>Počet bonusových bodov</ReferralStatLabel>
+                <ReferralStatLabel>Počet bonusových bodov:</ReferralStatLabel>
               </ReferralStat>
             </ReferralStats>
           )}
@@ -1281,7 +1222,7 @@ const MainMenu = () => {
 
                   <h4>Trvanie súťaže:</h4>
                   <GradientCircleList>
-                    <li>Súťaž prebieha v období od spustenia predvýskumu - marec 2026 do ukončenia hlavného výskumu - apríl 2026.</li>
+                    <li>Súťaž prebieha v období od spustenia predvýskumu do ukončenia hlavného výskumu - marec 2026.</li>
                     <li>Pozor - predvýskum bude dostupný iba do spustenia hlavného výskumu, to znamená že po jeho spustení predvýskum už nebude možné absolvovať.</li>
                     <li>Do žrebovania budú zaradení len účastníci, ktorí splnia podmienky účasti v tomto časovom intervale.</li>
                   </GradientCircleList>

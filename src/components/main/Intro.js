@@ -401,7 +401,7 @@ const Intro = () => {
             imageUrl="/images/detective.png"
             iconUrl="/images/detective-icon.png"
             tip={`
-              <p style="font-size: 15px; font-weight: 700; color: ${theme.ACCENT_COLOR}; margin-bottom: 12px;">
+              <p style="font-size: 15px; font-weight: 700; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 12px;">
                 <strong>Ahoj, milý/á respondent/ka!</strong>
               </p>
               
@@ -414,7 +414,7 @@ const Intro = () => {
                 <strong>Nájdete ma vždy v pravom dolnom rohu obrazovky.</strong>
               </p>
               
-              <div style="background: ${theme.ACCENT_COLOR}15; padding: 12px; border-radius: 8px; margin: 16px 0; border: 1px solid ${theme.ACCENT_COLOR}30;">
+              <div style="background: ${theme.ACCENT_COLOR}15; padding: 12px; border-radius: 8px; margin: 16px 0; border: 1px solid ${theme.PRIMARY_TEXT_COLOR}30;">
                 <p style="font-size: 15px; margin-bottom: 8px; color: ${theme.PRIMARY_TEXT_COLOR};">
                   <strong>Počas tohto výskumu:</strong>
                 </p>

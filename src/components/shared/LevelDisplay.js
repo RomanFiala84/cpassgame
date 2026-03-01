@@ -526,7 +526,7 @@ const LevelDisplay = () => {
           {/* Stats - Všetko pod sebou */}
           <StatItem>
             <StatLabel>Body za misie:</StatLabel>
-            <StatValue $highlight>{mission}</StatValue>
+            <StatValue>{mission}</StatValue>
           </StatItem>
 
           <StatItem>
