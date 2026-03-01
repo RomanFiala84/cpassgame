@@ -126,15 +126,16 @@ const InstructionCard = styled.div`
   border-radius: 12px;
   padding: 20px;
   margin: 16px 0;
-  max-width: 700px;
+  max-width: 800px;
   width: 100%;
   transition: all 0.2s ease;
-  
+  font-size: 15px;
+  color: ${p => p.theme.ACCENT_COLOR};
   &:hover {
     border-color: ${p => p.theme.ACCENT_COLOR}60;
   }
   
-  @media (max-width: 480px) {
+  @media (max-width: 768px) {
     padding: 14px;
   }
 `;
@@ -165,17 +166,7 @@ const InstructionsWrapper = styled.div`
 
 
 
-const SectionTitle = styled.h2`
-  font-size: 15px;
-  font-weight: 700;
-  color: ${p => p.theme.ACCENT_COLOR};
-  margin-bottom: 16px;
-  text-align: center;
-  
-  @media (max-width: 480px) {
-    font-size: 15px;
-  }
-`;
+
 
 const MissionsList = styled.div`
   display: grid;
@@ -279,7 +270,7 @@ const MissionNumber = styled.div`
 
 const MissionTitle = styled.h3`
   font-size: 15px;
-  color: ${p => p.theme.ACCENT_COLOR};
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   margin-bottom: 4px;
   font-weight: 600;
   line-height: 1.3;
@@ -435,7 +426,7 @@ const SharingSection = styled.div`
 `;
 
 const SharingTitle = styled.h3`
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  color: ${p => p.theme.ACCENT_COLOR};
   margin-bottom: 12px;
   font-size: 15px;
   font-weight: 700;
@@ -464,7 +455,7 @@ const SharingCodeDisplay = styled.div`
   
   &:hover {
     border-style: solid;
-    box-shadow: 0 2px 8px ${p => p.theme.ACCENT_COLOR}33;
+    box-shadow: 0 2px 8px ${p => p.theme.ACCENT_COLOR}45;
   }
 `;
 
@@ -555,7 +546,7 @@ const SharingInfo = styled.p`
   z-index: 1;
   
   strong {
-    color: ${p => p.theme.ACCENT_COLOR};
+    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
     font-weight: 600;
   }
 `;
@@ -576,7 +567,7 @@ const ReferralStats = styled.div`
 const ReferralStat = styled.div`
   text-align: center;
   padding: 8px 16px;
-  background: ${p => p.theme.CARD_BACKGROUND}88;
+  background: ${p => p.theme.CARD_BACKGROUND}60;
   border-radius: 10px;
   backdrop-filter: blur(4px);
 `;
@@ -735,10 +726,10 @@ const CloseButton = styled.button`
 `;
 
 const makeMissionList = (p) => [
-  { id: 0, title: 'Predvýskum', route: '/mission0/intro', completed: !!p.mission0_completed, locked: !p.mission0_unlocked, icon: '🔍' },
-  { id: 1, title: 'Úvodný dotazník', route: '/mission1/intro', completed: !!p.mission1_completed, locked: !p.mission1_unlocked, icon: '📝' },
-  { id: 2, title: 'Prvá časť hlavného výskumu', route: '/mission2/intro', completed: !!p.mission2_completed, locked: !p.mission2_unlocked, icon: '🕵️' },
-  { id: 3, title: 'Druhá časť hlavného výskumu', route: '/mission3/intro', completed: !!p.mission3_completed, locked: !p.mission3_unlocked, icon: '🕵️' }
+  { id: 0, title: 'Predvýskum', route: '/mission0/intro', completed: !!p.mission0_completed, locked: !p.mission0_unlocked, icon: '/images/preresearch.png' },
+  { id: 1, title: 'Úvodný dotazník', route: '/mission1/intro', completed: !!p.mission1_completed, locked: !p.mission1_unlocked, icon: '/images/quest.png' },
+  { id: 2, title: 'Prvá časť hlavného výskumu', route: '/mission2/intro', completed: !!p.mission2_completed, locked: !p.mission2_unlocked, icon: '/images/research.png' },
+  { id: 3, title: 'Druhá časť hlavného výskumu', route: '/mission3/intro', completed: !!p.mission3_completed, locked: !p.mission3_unlocked, icon: '/images/research.png' }
 ];
 
 const MainMenu = () => {
@@ -901,11 +892,10 @@ const MainMenu = () => {
   };
  const theme = useContext(ThemeContext);
  const detectiveStory = `
-   <p style="font-size: 15px; font-weight: 700; color: ${theme.ACCENT_COLOR}; margin-bottom: 12px;">
+   <p style="font-size: 15px; font-weight: 700; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 12px;">
       <strong>Ktorou časťou mám začať?</strong>
     </p>
     
-    <div style="background: ${theme.ACCENT_COLOR}15; padding: 12px; border-radius: 8px; margin: 16px 0; border: 1px solid ${theme.ACCENT_COLOR}30;">
       <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
         <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 16px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
           <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
@@ -924,11 +914,11 @@ const MainMenu = () => {
           <strong>Ak sa účastníte prvej časti hlavného výskumu začnite prosím Misiou 1 a pokračujte Misiou 2.</strong>
           
           <div style="padding-left: 20px; margin-top: 8px;">
-            <p style="font-size: 14px; color: ${theme.SECONDARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
+            <p style="font-size: 14px; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
               <span style="position: absolute; left: 0; top: 0; color: ${theme.ACCENT_COLOR};">→</span>
               Po ukončení predvýskumu budú tieto misie neustále odomknuté.
             </p>
-            <p style="font-size: 14px; color: ${theme.SECONDARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
+            <p style="font-size: 14px; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
               <span style="position: absolute; left: 0; top: 0; color: ${theme.ACCENT_COLOR};">→</span>
               Pre spustenie týchto misií nie je potrebné mať absolvovanú Misiu 0.
             </p>
@@ -940,11 +930,11 @@ const MainMenu = () => {
           <strong>Ak sa účastníte druhej časti hlavného výskumu pokračujte prosím Misiou 3.</strong>
           
           <div style="padding-left: 20px; margin-top: 8px;">
-            <p style="font-size: 14px; color: ${theme.SECONDARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
+            <p style="font-size: 14px; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
               <span style="position: absolute; left: 0; top: 0; color: ${theme.ACCENT_COLOR};">→</span>
               Po ukončení prvej časti hlavného výskumu bude táto misia neustále odomknutá.
             </p>
-            <p style="font-size: 14px; color: ${theme.SECONDARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
+            <p style="font-size: 14px; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
               <span style="position: absolute; left: 0; top: 0; color: ${theme.ACCENT_COLOR};">→</span>
               Pred spustením Misie 3 si prosím skontrolujte v hlavnom menu, či máte dokončenú Misiu 1 a Misiu 2.
             </p>
@@ -953,7 +943,7 @@ const MainMenu = () => {
       </ul>
     </div>
     
-    <p style="font-size: 15px; font-weight: 700; color: ${theme.ACCENT_COLOR}; margin-bottom: 12px; margin-top: 24px;">
+    <p style="font-size: 15px; font-weight: 700; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 12px; margin-top: 24px;">
       <strong>Čo nájdem v hlavnom menu?</strong>
     </p>
     
@@ -1025,7 +1015,7 @@ const MainMenu = () => {
               </SubNote>
               
               <SubNote style={{ marginTop: '12px' }}>
-                <strong>Ak sa účastníte prvej časti hlavného výskumu - začnite prosím Misiou 1 a pokračujete Misiou 2. </strong><br/>
+                <strong>Ak sa účastníte prvej časti hlavného výskumu - začnite prosím Misiou 1 a pokračujte Misiou 2. </strong><br/>
                 Po ukončení predvýskumu budú tieto misie neustále odomknuté.<br/>
                 Pre spustenie týchto misií nie je potrebné mať absolvovanú Misiu 0.
               </SubNote>
@@ -1039,7 +1029,6 @@ const MainMenu = () => {
           </InstructionsWrapper>
         </Header>
 
-        <SectionTitle><strong>Misie (časti výskumu):</strong></SectionTitle>
         <MissionsList>
           {missions.map(m => (
             <MissionCard
@@ -1048,7 +1037,22 @@ const MainMenu = () => {
               completed={m.completed}
               onClick={() => handleMissionClick(m)}
             >
-              <MissionIcon>{m.icon}</MissionIcon>
+              <MissionIcon><MissionIcon>
+                {m.icon.startsWith('/') || m.icon.startsWith('http') ? (
+                   <img 
+                      src={m.icon} 
+                      alt={m.title}
+                      style={{ 
+                        width: '64px', 
+                        height: '64px',
+                        objectFit: 'contain'
+                      }}
+                    />
+                ) : (
+                  m.icon
+                )}
+              </MissionIcon>
+              </MissionIcon>
               <MissionContent>
                 <MissionNumber>Misia {m.id}</MissionNumber>
                 <MissionTitle>{m.title}</MissionTitle>
@@ -1107,7 +1111,7 @@ const MainMenu = () => {
           <SharingTitle><strong>Zdieľajte výskum a získajte body!</strong></SharingTitle>
           
           <SharingCodeDisplay>
-            <SharingCodeLabel><strong>š refferal kód:</strong></SharingCodeLabel>
+            <SharingCodeLabel><strong>Váš refferal kód:</strong></SharingCodeLabel>
             <SharingCode>
               {userProgress?.sharing_code || '━━━━━━'}
             </SharingCode>
