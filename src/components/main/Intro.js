@@ -414,7 +414,7 @@ const Intro = () => {
                 <strong>Nájdete ma vždy v pravom dolnom rohu obrazovky.</strong>
               </p>
               
-              <div style="background: ${theme.ACCENT_COLOR}15; padding: 12px; border-radius: 8px; margin: 16px 0; border: 1px solid ${theme.PRIMARY_TEXT_COLOR}30;">
+              
                 <p style="font-size: 15px; font-weight: bold;margin-bottom: 8px; color: ${theme.PRIMARY_TEXT_COLOR};">
                   <strong>Počas tohto výskumu:</strong>
                 </p>
