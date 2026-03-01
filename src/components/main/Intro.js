@@ -263,7 +263,6 @@ const LoadingSpinner = styled.div`
   height: 40px;
   border: 3px solid ${p => p.theme.BORDER_COLOR};
   border-radius: 50%;
-  border-top-color: ${p => p.theme.ACCENT_COLOR};
   animation: spin 0.8s linear infinite;
   
   @keyframes spin {

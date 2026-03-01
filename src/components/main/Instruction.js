@@ -130,7 +130,7 @@ const WelcomeCard = styled.div`
 
 const WelcomeTitle = styled.h2`
   font-size: 25px;
-  margin-bottom: 12px;
+  margin-bottom: 20px;
   background: linear-gradient(
     135deg,
     ${props => props.theme.ACCENT_COLOR},
@@ -165,7 +165,6 @@ const WelcomeInstructions = styled.div`
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 2px solid ${props => props.theme.ACCENT_COLOR}45;
   
   p {
     margin-bottom: 12px;
@@ -418,7 +417,6 @@ const FormCard = styled.div`
 const ConsentText = styled.div`
   font-size: 10px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  border-top: 2px solid ${props => props.theme.ACCENT_COLOR}45;
   line-height: 1.5;
   margin-top: 12px;
 `;
@@ -547,7 +545,6 @@ const InfoText = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   font-size: 15px;
   line-height: 1.6;
-  border-top: 2px solid ${props => props.theme.ACCENT_COLOR}45;
   strong {
     color: ${p => p.theme.PRIMARY_TEXT_COLOR};
     font-weight: 600;
@@ -696,7 +693,6 @@ const CompetitionTitle = styled.h3`
 
 const CompetitionText = styled.p`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  border-top: 2px solid ${props => props.theme.ACCENT_COLOR}45;
   font-size: 15px;
   line-height: 1.5;
   margin-bottom: 12px;

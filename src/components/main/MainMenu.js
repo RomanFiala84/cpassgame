@@ -282,7 +282,7 @@ const MissionTitle = styled.h3`
 
 const MissionStatus = styled.div`
   font-size: 10px;
-  color: ${p => p.completed ? '#00ff00ff' : p.theme.PRIMARY_TEXT_COLOR};
+  color: ${p => p.completed ? '#4ce16cff' : p.theme.PRIMARY_TEXT_COLOR};
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -962,7 +962,7 @@ const MainMenu = () => {
   complexity="medium">
       <Container>
         <Header>
-          <Title>CP-PASS</Title>
+          <Title>HLAVNÉ MENU</Title>
           <InstructionsWrapper>
             <InstructionCard>
               <h4 style={{ color: theme.ACCENT_COLOR }}><strong>Ktorou časťou mám začať?</strong></h4>
