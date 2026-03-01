@@ -58,7 +58,7 @@ const LocalNestedItem = styled.div`
   line-height: 1.6;
   
   &::before {
-    content: '‣';
+    content: '→';
     position: absolute;
     left: 0;
     top: 0;
@@ -146,7 +146,7 @@ const WelcomeTitle = styled.h2`
 const WelcomeSubtitle = styled.p`
   font-size: 15px;
   line-height: 1.6;
-  color: ${props => props.theme.SECONDARY_TEXT_COLOR};
+  color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   margin-bottom: 16px;
   font-weight: 600;
   
@@ -156,10 +156,10 @@ const WelcomeSubtitle = styled.p`
 `;
 
 const WelcomeInstructions = styled.div`
-  text-align: left;
+  text-align: center;
   font-size: 15px;
   line-height: 1.6;
-  color: ${props => props.theme.SECONDARY_TEXT_COLOR};
+  color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   margin-top: 16px;
   padding-top: 16px;
   border-top: 2px solid ${props => props.theme.ACCENT_COLOR}45;
@@ -543,7 +543,7 @@ const InfoText = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   font-size: 15px;
   line-height: 1.6;
-  
+  border-top: 2px solid ${props => props.theme.ACCENT_COLOR}45;
   strong {
     color: ${p => p.theme.PRIMARY_TEXT_COLOR};
     font-weight: 600;
@@ -610,7 +610,7 @@ const BlockedTitle = styled.h2`
 `;
 
 const BlockedMessage = styled.p`
-  color: #fecaca;
+  color: #ffffff;
   font-size: 15px;
   line-height: 1.6;
   margin-bottom: 8px;
@@ -625,7 +625,7 @@ const ContactInfo = styled.div`
   border-radius: 8px;
   padding: 16px;
   margin-top: 20px;
-  color: #fef2f2;
+  color: #ffffff;
   font-size: 15px;
   
   strong {
@@ -679,7 +679,7 @@ const ReferralNoticeText = styled.div`
 `;
 
 const CompetitionSection = styled(FormCard)`
-  background: ${p => `${p.theme.ACCENT_COLOR}45`};
+  background: ${p => `${p.theme.CARD_BACKGROUND}45`};
   border-color: ${p => p.theme.ACCENT_COLOR}60;
 `;
 
@@ -1358,7 +1358,7 @@ export default function Instruction() {
         </FormCard>
 
         <InfoBox>
-          <InfoTitle>Inštrukcie pre prihlásenie:</InfoTitle>
+          <InfoTitle>Inštrukcie pre prihlásenie</InfoTitle>
           <InfoText>
             <LocalList>
               <li>Do výskumu sa ako respondenti budete prihlasovať pomocou identifikačného kódu respondenta (IKR).</li> 
