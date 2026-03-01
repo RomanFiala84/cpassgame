@@ -1145,11 +1145,11 @@ const MainMenu = () => {
             <ReferralStats>
               <ReferralStat>
                 <ReferralStatValue>{userProgress.referrals_count}</ReferralStatValue>
-                <ReferralStatLabel>Počet nových respondentov vďaka odporúčaniu:</ReferralStatLabel>
+                <ReferralStatLabel>Použití vášho referral kódu.</ReferralStatLabel>
               </ReferralStat>
               <ReferralStat>
                 <ReferralStatValue>+{userProgress.referrals_count * 10}</ReferralStatValue>
-                <ReferralStatLabel>Počet bonusových bodov:</ReferralStatLabel>
+                <ReferralStatLabel>Získaných bonusových bodov.</ReferralStatLabel>
               </ReferralStat>
             </ReferralStats>
           )}
