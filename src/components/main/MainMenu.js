@@ -326,7 +326,7 @@ const ButtonGroup = styled.div`
   gap: 10px;
   flex-wrap: wrap;
   margin-bottom: 24px;
-  
+  background: ${p => p.theme.CARD_BACKGROUND}45;
   @media (max-width: 480px) {
     flex-direction: column;
     
