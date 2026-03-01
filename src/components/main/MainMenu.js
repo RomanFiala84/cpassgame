@@ -440,7 +440,7 @@ const SharingTitle = styled.h3`
 
   &::after {
     content: '🎁';
-    margin-right: 8px;
+    margin-left: 8px;
   }
   
   @media (max-width: 480px) {
