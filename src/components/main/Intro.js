@@ -365,21 +365,21 @@ const Intro = () => {
         ) : (
           <>
             <GroupCard>
-              <GroupLabel><strong>Vaše detektívne oddelenie</strong></GroupLabel>
+              <GroupLabel><strong>Vaše detektívne oddelenie:</strong></GroupLabel>
               <GroupValue>{getGroupDescription(groupCode)}</GroupValue>
             </GroupCard>
 
             <Text>
-              <strong>Výborne! Boli ste priradení do oddelenia</strong> <strong>{getGroupDescription(groupCode)}</strong>.
+              <strong>Výborne! Boli ste priradení do oddelenia </strong> <strong>{getGroupDescription(groupCode)}</strong>.<br/>
               <strong>Ste pripravení začať svoju cestu detektíva? Pozrime sa, čo vás čaká v tejto aplikácii.</strong>
             </Text>
 
             <InfoSection>
               <InfoTitle><strong>Čo vás čaká?</strong></InfoTitle>
               <InfoList>
-                <InfoItem><strong>4 zaujímavé detektívne misie</strong></InfoItem>
-                <InfoItem><strong>Zbieranie bodov a levelovanie</strong></InfoItem>
-                <InfoItem><strong>Možnosť získať ceny v súťaži</strong></InfoItem>
+                <InfoItem><strong>4 zaujímavé detektívne misie.</strong></InfoItem>
+                <InfoItem><strong>Zbieranie bodov a levelovanie.</strong></InfoItem>
+                <InfoItem><strong>Možnosť získať ceny v súťaži.</strong></InfoItem>
               </InfoList>
             </InfoSection>
 
@@ -421,15 +421,15 @@ const Intro = () => {
                 <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
                   <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
                     <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-                    Budete zastávať rolu detektíva.
+                    <strong>Budete zastávať rolu detektíva.</strong>
                   </li>
                   <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
                     <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-                    Získate detektívne body a levely.
+                    <strong>Získate detektívne body a levely.</strong>
                   </li>
                   <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
                     <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-                    Môžete súťažiť o ceny.
+                    <strong>Môžete súťažiť o ceny.</strong>
                   </li>
                 </ul>
               </div>
