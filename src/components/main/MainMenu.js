@@ -327,9 +327,7 @@ const ButtonGroup = styled.div`
   flex-wrap: wrap;
   margin-bottom: 24px;
    background:radial-gradient(
-      circle at center,
-      ${p => p.theme.ACCENT_COLOR}45 0%,
-      transparent 50%
+      linear-gradient(135deg, ${p => p.theme.ACCENT_COLOR}45, transparent 70%) 0 0,
     );;
   border: 2px solid ${p => p.theme.BORDER_COLOR};
   border-radius: 12px;
