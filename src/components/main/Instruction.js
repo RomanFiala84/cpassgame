@@ -22,7 +22,7 @@ const LocalList = styled.ul`
     position: relative;
     margin-bottom: 10px;
     line-height: 1.6;
-    color: ${props => props.theme.SECONDARY_TEXT_COLOR};
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
     
     &::before {
       content: '•';
@@ -40,7 +40,7 @@ const LocalList = styled.ul`
     }
     
     a {
-      color: ${props => props.theme.ACCENT_COLOR};
+      color: ${props => props.theme.PRIMARY_TEXT_COLOR};
       text-decoration: none;
       
       &:hover {
@@ -52,13 +52,13 @@ const LocalList = styled.ul`
 
 const LocalNestedItem = styled.div`
   padding-left: 20px; /* ✅ ZMENENÉ z 25px na 20px */
-  color: ${props => props.theme.SECONDARY_TEXT_COLOR};
+  color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   position: relative;
   margin-bottom: 10px;
   line-height: 1.6;
   
   &::before {
-    content: '→';
+    content: '‣';
     position: absolute;
     left: 0;
     top: 0;
@@ -72,7 +72,7 @@ const LocalNestedItem = styled.div`
   }
   
   a {
-    color: ${props => props.theme.ACCENT_COLOR};
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
     text-decoration: none;
     
     &:hover {
@@ -103,8 +103,8 @@ const Container = styled.div`
 // =====================
 
 const WelcomeCard = styled.div`
-  background: ${p => `${p.theme.ACCENT_COLOR}11`};
-  border: 2px solid ${p => p.theme.ACCENT_COLOR}44;
+  background: ${p => `${p.theme.ACCENT_COLOR}45`};
+  border: 2px solid ${p => p.theme.ACCENT_COLOR}60;
   border-radius: 12px;
   padding: 24px; /* ✅ Väčší padding pre úvodné okno */
   margin-bottom: 20px; /* ✅ Väčší spacing */
@@ -116,7 +116,7 @@ const WelcomeCard = styled.div`
   
   &:hover {
     border-color: ${p => p.theme.ACCENT_COLOR};
-    box-shadow: 0 4px 16px ${p => `${p.theme.ACCENT_COLOR}33`}; /* ✅ Svetelný efekt */
+    box-shadow: 0 4px 16px ${p => `${p.theme.ACCENT_COLOR}60`}; /* ✅ Svetelný efekt */
   }
   
   @media (max-width: 768px) {
@@ -139,14 +139,14 @@ const WelcomeTitle = styled.h2`
   font-weight: 700;
   
   @media (max-width: 768px) {
-    font-size: 22px;
+    font-size: 25px;
   }
 `;
 
 const WelcomeSubtitle = styled.p`
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.6;
-  color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+  color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   margin-bottom: 16px;
   font-weight: 600;
   
@@ -162,7 +162,7 @@ const WelcomeInstructions = styled.div`
   color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 2px solid ${props => props.theme.ACCENT_COLOR}33;
+  border-top: 2px solid ${props => props.theme.ACCENT_COLOR}45;
   
   p {
     margin-bottom: 12px;
@@ -172,7 +172,7 @@ const WelcomeInstructions = styled.div`
     }
     
     strong {
-      color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+      color: ${props => props.theme.SECONDARY_TEXT_COLOR};
       font-weight: 600;
     }
   }
@@ -228,14 +228,14 @@ const AccordionHeader = styled.button`
 // ✅ OPTIMALIZOVANÉ ACCORDION KOMPONENTY
 
 const AccordionContent = styled.div`
-  max-height: ${props => props.$isOpen ? '2000px' : '0'};
+  max-height: ${props => props.$isOpen ? '3000px' : '0'};
   overflow: hidden;
   transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
 const AccordionInner = styled.div`
   padding: 16px; /* ✅ FIXNÝ padding, BEZ animácie */
-  color: ${props => props.theme.SECONDARY_TEXT_COLOR};
+  color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   line-height: 1.6;
   font-size: 15px;
   opacity: ${props => props.$isOpen ? '1' : '0'};
@@ -332,7 +332,7 @@ const ContestContent = styled.div`
 
 const ContestInner = styled.div`
   padding: 16px; /* ✅ FIXNÝ padding, BEZ animácie */
-  color: ${props => props.theme.SECONDARY_TEXT_COLOR};
+  color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   line-height: 1.6;
   font-size: 10px;
   opacity: ${props => props.$isOpen ? '1' : '0'};
@@ -340,14 +340,14 @@ const ContestInner = styled.div`
   /* ✅ ODSTRÁNENÉ: padding-top a padding-bottom animácie */
   
   h3 {
-    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+    color: ${props => props.theme.ACCENT_COLOR};
     margin: 12px 0 6px 0;
     font-size: 15px;
     font-weight: 600;
   }
   
   h4 {
-    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+    color: ${props => props.theme.ACCENT_COLOR};
     margin: 12px 0 6px 0;
     font-size: 15px;
     font-weight: 600;
@@ -358,7 +358,7 @@ const ContestInner = styled.div`
   }
   
   strong {
-    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+    color: ${props => props.theme.ACCENT_COLOR};
     font-weight: 600;
   }
   
@@ -393,7 +393,7 @@ const ContestIcon = styled.span`
 
 const FormCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
-  border: 2px solid ${p => p.$hasError ? '#ef4444' : p.theme.BORDER_COLOR};
+  border: 2px solid ${p => p.$hasError ? '#ff0000' : p.theme.BORDER_COLOR};
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 12px;
@@ -404,7 +404,7 @@ const FormCard = styled.div`
   scroll-margin-top: 20px;
   
   &:hover {
-    border-color: ${p => p.$hasError ? '#ef4444' : p.theme.ACCENT_COLOR}66;
+    border-color: ${p => p.$hasError ? '#ff0000' : p.theme.ACCENT_COLOR}60;
   }
   
   @media (max-width: 768px) {
@@ -413,7 +413,7 @@ const FormCard = styled.div`
 `;
 
 const ConsentText = styled.div`
-  font-size: 15px;
+  font-size: 10px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   line-height: 1.5;
   margin-top: 12px;
@@ -449,14 +449,14 @@ const InputLabel = styled.label`
   display: block;
   font-weight: 600;
   margin-bottom: 8px;
-  color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+  color: ${props => props.theme.SECONDARY_TEXT_COLOR};
   font-size: 15px;
 `;
 
 const Input = styled.input`
   width: 100%;
   padding: 12px 14px;
-  border: 2px solid ${props => props.$hasError ? '#ef4444' : props.theme.BORDER_COLOR};
+  border: 2px solid ${props => props.$hasError ? '#ff0000' : props.theme.BORDER_COLOR};
   border-radius: 8px;
   font-size: 15px;
   background: ${props => props.theme.INPUT_BACKGROUND};
@@ -469,8 +469,8 @@ const Input = styled.input`
 
   &:focus {
     outline: none;
-    border-color: ${props => props.$hasError ? '#ef4444' : props.theme.ACCENT_COLOR};
-    box-shadow: 0 0 0 3px ${props => props.$hasError ? '#ef444422' : `${props.theme.ACCENT_COLOR}22`};
+    border-color: ${props => props.$hasError ? '#ff0000' : props.theme.ACCENT_COLOR};
+    box-shadow: 0 0 0 3px ${props => props.$hasError ? '#ff000022' : `${props.theme.ACCENT_COLOR}45`};
   }
 
   &:disabled {
@@ -488,7 +488,7 @@ const Input = styled.input`
 `;
 
 const ErrorText = styled.div`
-  color: #ef4444;
+  color: #ff0000;
   font-size: 15px;
   margin-top: 6px;
   font-weight: 500;
@@ -502,15 +502,15 @@ const ErrorText = styled.div`
 `;
 
 const Note = styled.div`
-  font-size: 15px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 10px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   margin-top: 6px;
   line-height: 1.4;
 `;
 
 const InfoBox = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
-  border: 2px solid ${p => p.$hasError ? '#ef4444' : p.theme.BORDER_COLOR};
+  border: 2px solid ${p => p.$hasError ? '#ff0000' : p.theme.BORDER_COLOR};
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 12px;
@@ -521,7 +521,7 @@ const InfoBox = styled.div`
   scroll-margin-top: 20px;
   
   &:hover {
-    border-color: ${p => p.$hasError ? '#ef4444' : p.theme.ACCENT_COLOR}66;
+    border-color: ${p => p.$hasError ? '#ff0000' : p.theme.ACCENT_COLOR}60;
   }
   
   @media (max-width: 768px) {
@@ -530,7 +530,7 @@ const InfoBox = styled.div`
 `;
 
 const InfoTitle = styled.div`
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  color: ${p => p.theme.ACCENT_COLOR};
   font-weight: 700;
   margin-bottom: 8px;
   font-size: 15px;
@@ -540,7 +540,7 @@ const InfoTitle = styled.div`
 `;
 
 const InfoText = styled.div`
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   font-size: 15px;
   line-height: 1.6;
   
@@ -564,7 +564,7 @@ const ButtonContainer = styled.div`
 `;
 
 const BlockedWarning = styled.div`
-  background: linear-gradient(135deg, #ef4444, #dc2626);
+  background: linear-gradient(135deg, #ff0000, #dc2626);
   border: 2px solid #b91c1c;
   border-radius: 16px;
   padding: 32px;
@@ -643,7 +643,7 @@ const ClearCodeButton = styled(StyledButton)`
 `;
 
 const ReferralNotice = styled.div`
-  background: ${p => `${p.theme.ACCENT_COLOR}22`};
+  background: ${p => `${p.theme.ACCENT_COLOR}45`};
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   border-radius: 10px;
   padding: 12px;
@@ -679,8 +679,8 @@ const ReferralNoticeText = styled.div`
 `;
 
 const CompetitionSection = styled(FormCard)`
-  background: ${p => `${p.theme.ACCENT_COLOR}11`};
-  border-color: ${p => p.theme.ACCENT_COLOR}44;
+  background: ${p => `${p.theme.ACCENT_COLOR}45`};
+  border-color: ${p => p.theme.ACCENT_COLOR}60;
 `;
 
 const CompetitionTitle = styled.h3`
@@ -691,7 +691,7 @@ const CompetitionTitle = styled.h3`
 `;
 
 const CompetitionText = styled.p`
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   font-size: 15px;
   line-height: 1.5;
   margin-bottom: 12px;
@@ -709,7 +709,7 @@ const RulesSection = styled.div`
 `;
 
 const RulesAccordion = styled(ContestItem)`
-  border-color: ${p => p.theme.ACCENT_COLOR}44;
+  border-color: ${p => p.theme.ACCENT_COLOR}60;
   
   &:hover {
     border-color: ${p => p.theme.ACCENT_COLOR};
@@ -886,7 +886,7 @@ export default function Instruction() {
     
     const codeValidation = validateParticipantCode(participantCode);
     if (!codeValidation.valid) {
-      e.participant = 'Zadali ste neplatný formát identifikačného kódu respondenta. Zadajte identifikačný kód respondenta podľa inštrukcií.';
+      e.participant = 'Zadali ste neplatný formát identifikačného kódu respondenta. Zadajte prosím identifikačný kód respondenta podľa inštrukcií.';
       if (!firstErrorRef) firstErrorRef = participantCodeRef;
     }
     
@@ -1006,7 +1006,7 @@ export default function Instruction() {
           await dataManager.processReferral(upperCode, referralCode.trim().toUpperCase());
         } catch (error) {
           console.error('Referral processing error:', error);
-          setErrors({ referral: 'Chyba pri spracovaní referral kódu. Zadajte kód znova.' });
+          setErrors({ referral: 'Chyba pri spracovaní referral kódu. Zadajte kód znova prosím.' });
           return;
         }
       }
@@ -1096,7 +1096,7 @@ export default function Instruction() {
       content: (
       <>
         <LocalList>
-          <li>V predvýskume prejdete sériou otázok a tvrdení - dotazník (5-10 minút).</li>
+          <li>V predvýskume prejdete sériou otázok a tvrdení - Misia 0 v aplikácii (5-10 minút).</li>
           <li>Pri hodnotení neexistujú správne ani nesprávne odpovede a po každom bloku otázok vás požiadame o spätnú väzbu.</li>
           <li>Budeme sa pýtať napríklad na:</li>
         </LocalList>
@@ -1127,13 +1127,13 @@ export default function Instruction() {
         </LocalList>
         
         <LocalNestedItem>
-          Úvodný dotazník (5-10 minút)
+          Misia 1 (5-10 minút) - Úvodný dotazník
         </LocalNestedItem>
         <LocalNestedItem>
-          Misia 1 (10-15 minút) - Prebehne bezprostredne po dokončení úvodného dotazníka
+          Misia 2 (10-15 minút) - Prebehne bezprostredne po dokončení úvodného dotazníka
         </LocalNestedItem>
         <LocalNestedItem>
-          Misia 2 (10-15 minút) - Prebehne po piatich dňoch od dokončenia Misie 1
+          Misia 3 (10-15 minút) - Prebehne po piatich dňoch od dokončenia Misie 1
         </LocalNestedItem>
         
         <LocalList>
@@ -1151,7 +1151,7 @@ export default function Instruction() {
         <li>Výsledky budú spracované a zverejňované len v anonymizovanej, súhrnnej forme, takže z nich nebude možné spätne identifikovať konkrétnu osobu.</li>
         <li>V dotazníku neuvádzate žiadne osobné identifikačné údaje ani IP adresu a namiesto mena si vytvoríte jedinečný kód.</li>
         <li>Všetky údaje sú anonymné, dôverné a uložené v zabezpečenej databáze, ku ktorej má prístup len výskumný tím.</li>
-        <li>Ak poskytnete e‑mailovú adresu kvôli zapojeniu sa do súťaže alebo do ďalšej časti výskumu, bude použitá výhradne na tieto účely a po ukončení súťaže a výskumu bude bezprostredne vymazaná.</li>
+        <li>Ak poskytnete e-mailovú adresu kvôli zapojeniu sa do súťaže alebo do ďalšej časti výskumu, bude použitá výhradne na tieto účely a po ukončení súťaže a výskumu bude bezprostredne vymazaná.</li>
       </LocalList>
       )
     },
@@ -1223,7 +1223,7 @@ export default function Instruction() {
       title: 'Kontakt',
       content: (
       <LocalList>
-        <li>V prípade, že máte otázky k samotnému výskumu, môžete nás kontaktovať na uvedenom e‑maile - radi vám poskytneme doplňujúce informácie.</li>
+        <li>V prípade, že máte otázky k samotnému výskumu, môžete nás kontaktovať na uvedenej e-mailovej adrese - radi vám poskytneme doplňujúce informácie.</li>
         <li>Výskumník:<br/>
         Roman Fiala<br/>
         Psychológia, 3. roč. Bc.<br/>
@@ -1241,7 +1241,7 @@ export default function Instruction() {
   complexity="medium">
       <Container>
         <WelcomeCard>
-          <WelcomeTitle>Vitajte v aplikácií CP-PASS</WelcomeTitle>
+          <WelcomeTitle><strong>Vitajte v aplikácií CP-PASS</strong></WelcomeTitle>
           
           <WelcomeSubtitle>
             <strong>Milá respondentka, milý respondent, ďakujeme vám za váš čas a ochotu zúčastniť sa v našom výskume.</strong>
@@ -1278,7 +1278,7 @@ export default function Instruction() {
             <ReferralNoticeText>
               Referral kód bol automaticky vyplnený: <strong>{referralCode}</strong>
             </ReferralNoticeText>
-            <ReferralNoticeText style={{ marginTop: '8px', fontSize: '13px' }}>
+            <ReferralNoticeText style={{ marginTop: '8px', fontSize: '15px' }}>
               Váš priateľ/ka dostane +10 bodov za odporúčanie!
             </ReferralNoticeText>
           </ReferralNotice>
@@ -1292,7 +1292,7 @@ export default function Instruction() {
               Váš účet <strong>{participantCode}</strong> bol zablokovaný administrátorom.
             </BlockedMessage>
             <BlockedMessage>
-              Nemôžete sa prihlásiť do aplikácie výskumu, kým vám administrátor váš účet neodblokuje.
+              <strong>Nemôžete sa prihlásiť do aplikácie výskumu, kým vám administrátor váš účet neodblokuje.</strong>
             </BlockedMessage>
             <ContactInfo>
               <strong>V prípade ak sa chcete dozvedieť z akého dôvodu bol váš účet zablokovaný alebo pokračovať vo výskume, kontaktujte prosím administrátora.</strong><br/>
@@ -1320,7 +1320,7 @@ export default function Instruction() {
                 disabled={isBlocked}
                 onChange={(e) => setConsentGiven(e.target.checked)}
               />
-              <label>SÚHLASÍM SO SPRACOVANÍM ÚDAJOV A PARTICIPÁCIOU VO VÝSKUME</label>
+              <label><strong>SÚHLASÍM SO SPRACOVANÍM ÚDAJOV A PARTICIPÁCIOU VO VÝSKUME</strong></label>
             </CheckboxContainer>
             
             <ConsentText>
@@ -1329,28 +1329,28 @@ export default function Instruction() {
               </LocalList>
               
               <LocalNestedItem>
-                <strong>Bol(a) som informovaný(á) o účele, priebehu a podmienkach výskumu prostredníctvom informačného listu.</strong>
+               Bol(a) som informovaný(á) o účele, priebehu a podmienkach výskumu prostredníctvom informačného listu.
               </LocalNestedItem>
               <LocalNestedItem>
-                <strong>Rozumiem, že v prípade porušenia podmienok výskumu, môžem byť z výskumu a súťaže o ceny vylúčený, následkom čoho bude zablokovanie môjho prístupu do aplikácie.</strong>
+                Rozumiem, že v prípade porušenia podmienok výskumu, môžem byť z výskumu a súťaže o ceny vylúčený, následkom čoho bude zablokovanie môjho prístupu do aplikácie.
               </LocalNestedItem>
               <LocalNestedItem>
-                <strong>Mám vedomosť o svojich právach a povinnostiach počas výskumu.</strong>
+                Mám vedomosť o svojich právach a povinnostiach počas výskumu.
               </LocalNestedItem>
               <LocalNestedItem>
-                <strong>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</strong>
+                Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.
               </LocalNestedItem>
               <LocalNestedItem>
-                <strong>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</strong>
+                Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..
               </LocalNestedItem>
               <LocalNestedItem>
-                <strong>Rozumiem, že budú zaznamenávané moje interakcie s aplikáciou pre vedeckú analýzu.</strong>
+                Rozumiem, že budú zaznamenávané moje interakcie s aplikáciou pre vedeckú analýzu.
               </LocalNestedItem>
               <LocalNestedItem>
-                <strong>Súhlasím s anonymizáciou a publikáciou mojich údajov v súhrnnej forme.</strong>
+                Súhlasím s anonymizáciou a publikáciou mojich údajov v súhrnnej forme.
               </LocalNestedItem>
               <LocalNestedItem>
-                <strong>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</strong>
+                Uvedomujem si a súhlasím so všetkým uvedeným vyššie.
               </LocalNestedItem>
             </ConsentText>
           </div>
@@ -1361,9 +1361,9 @@ export default function Instruction() {
           <InfoTitle>Inštrukcie pre prihlásenie:</InfoTitle>
           <InfoText>
             <LocalList>
-              <li><strong>Do výskumu sa ako respondenti budete prihlasovať pomocou identifikačného kódu respondenta (IKR).</strong></li> 
-              <li><strong>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom.</strong></li> 
-              <li><strong>Tento kód slúži na to aby bola zachovaná vaša anonymita a aby ste si kód pri ďalšom prihlásení nemuseli pamätať.</strong></li> 
+              <li>Do výskumu sa ako respondenti budete prihlasovať pomocou identifikačného kódu respondenta (IKR).</li> 
+              <li>Kód sa skladá zo štyroch znakov a dvojčíslia, ktoré budú pri vašom zadávaní zapísané automaticky veľkým písmom.</li> 
+              <li>Tento kód slúži na to aby bola zachovaná vaša anonymita a aby ste si kód pri ďalšom prihlásení nemuseli pamätať.</li> 
               <li><strong>Prosím zadajte kód podľa následujúcich inštrukcií:</strong></li>
             </LocalList>
             
@@ -1383,7 +1383,7 @@ export default function Instruction() {
               <strong>Pre dvojčíslie: Zadajte číselne váš mesiac narodenia vo formáte MM (napr. pre 1. január zadajte 01).</strong>
             </LocalNestedItem>
             <LocalNestedItem>
-              <strong>Príklad: Jožko Mrkvička narodený v novembri = JORK11.</strong>
+              Príklad: Jožko Mrkvička narodený v novembri = JORK11.
             </LocalNestedItem>
             
             <LocalList>
@@ -1395,13 +1395,13 @@ export default function Instruction() {
             </LocalNestedItem>
             
             <LocalList>
-              <li><strong>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín = TORK11.</strong></li>
+              <li>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín = TORK11.</li>
             </LocalList>
           </InfoText>
         </InfoBox>
 
         <FormCard ref={participantCodeRef} $hasError={!!errors.participant || !!errors.blocked}>
-          <InputLabel htmlFor="participant-code">Zadajte váš identifikačný kód respondenta pre prihlásenie:</InputLabel>
+          <InputLabel htmlFor="participant-code"><strong>Zadajte váš identifikačný kód respondenta pre prihlásenie:</strong></InputLabel>
           <Input
             id="participant-code"
             type="text"
@@ -1428,16 +1428,16 @@ export default function Instruction() {
             </LocalList>
             
             <LocalNestedItem>
-              <strong>Za absolvovanie predvýskumu získava účastník 50 bodov.</strong>
+              Za absolvovanie predvýskumu získava účastník 50 bodov.
             </LocalNestedItem>
             <LocalNestedItem>
-              <strong>Za absolvovanie prvej časti hlavného výskumu získava účastník 50 bodov.</strong>
+              Za absolvovanie prvej časti hlavného výskumu získava účastník 50 bodov.
             </LocalNestedItem>
             <LocalNestedItem>
-              <strong>Za absolvovanie druhej časti hlavného výskumu (follow up meranie) získava účastník 25 bodov.</strong>
+              Za absolvovanie druhej časti hlavného výskumu (follow up meranie) získava účastník 25 bodov.
             </LocalNestedItem>
             <LocalNestedItem>
-              <strong>Za odporúčanie ďalším účastníkom získava účastník 10 bodov za každého nového účastníka.</strong>
+              Za odporúčanie ďalším účastníkom získava účastník 10 bodov za každého nového účastníka.
             </LocalNestedItem>
             
             <LocalList>
@@ -1447,7 +1447,7 @@ export default function Instruction() {
             </LocalList>
           </CompetitionText>
           
-          <InputLabel htmlFor="email">Zadajte prosím e-mailovú adresu pre zapojenie do súťaže (nepovinné)</InputLabel>
+          <InputLabel htmlFor="email"><strong>Zadajte prosím e-mailovú adresu pre zapojenie do súťaže (nepovinné):</strong></InputLabel>
           <EmailInput
             id="email"
             type="email"
@@ -1461,8 +1461,8 @@ export default function Instruction() {
           {errors.email && <ErrorText>{errors.email}</ErrorText>}
           <Note>
             <LocalList>
-              <li><strong>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</strong></li>
-              <li><strong>E-mailová adresa bude použitá výhradne na účely kontaktovania výhercov a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</strong></li>
+              <li>Kontaktný e-mail nebude spájaný s odpoveďami v predvýskume ani v hlavnom výskume.</li>
+              <li>E-mailová adresa bude použitá výhradne na účely kontaktovania výhercov a budú uchovávané len po dobu trvania súťaže a odovzdania výhry, následne budú bezpečne zlikvidované.</li>
             </LocalList>
           </Note>
         </CompetitionSection>
@@ -1480,7 +1480,7 @@ export default function Instruction() {
                   onChange={(e) => setCompetitionConsent(e.target.checked)}
                 />
                 <label>
-                  SÚHLASÍM SO SPRACOVANÍM OSOBNÝCH ÚDAJOV A PARTICIPÁCIOU V SÚŤAŽI
+                  <strong>SÚHLASÍM SO SPRACOVANÍM OSOBNÝCH ÚDAJOV A PARTICIPÁCIOU V SÚŤAŽI</strong>
                 </label>
               </CheckboxContainer>
               
@@ -1490,22 +1490,22 @@ export default function Instruction() {
                 </LocalList>
                 
                 <LocalNestedItem>
-                  <strong>Súhlasím s účasťou v súťaži a potvrdzujem, že som si Pravidlá a podmienky súťaže prečítal/a, porozumel/a im a súhlasím s nimi.</strong>
+                  Súhlasím s účasťou v súťaži a potvrdzujem, že som si Pravidlá a podmienky súťaže prečítal/a, porozumel/a im a súhlasím s nimi.
                 </LocalNestedItem>
                 <LocalNestedItem>
-                  <strong>Rozumiem, že v prípade porušenia podmienok súťaže, môžem byť zo súťaže o ceny vylúčený.</strong>
+                  Rozumiem, že v prípade porušenia podmienok súťaže, môžem byť zo súťaže o ceny vylúčený.
                 </LocalNestedItem>
                 <LocalNestedItem>
-                  <strong>Mám vedomosť o svojich právach a povinnostiach počas súťaže.</strong>
+                  Mám vedomosť o svojich právach a povinnostiach počas súťaže.
                 </LocalNestedItem>
                 <LocalNestedItem>
-                  <strong>Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.</strong>
+                  Rozumiem, že moja účasť je dobrovoľná a môžem kedykoľvek odstúpiť bez penalizácie.
                 </LocalNestedItem>
                 <LocalNestedItem>
-                  <strong>Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..</strong>
+                  Rozumiem, že moje osobné údaje budú spracované v súlade s GDPR a zákonom č. 18/2018 Z. z..
                 </LocalNestedItem>
                 <LocalNestedItem>
-                  <strong>Uvedomujem si a súhlasím so všetkým uvedeným vyššie.</strong>
+                  Uvedomujem si a súhlasím so všetkým uvedeným vyššie.
                 </LocalNestedItem>
               </ConsentText>
             </div>
@@ -1525,7 +1525,7 @@ export default function Instruction() {
                 disabled={isBlocked}
                 onChange={(e) => setHasReferral(e.target.checked)}
               />
-              <label>Mám referral kód</label>
+              <label><strong>Mám referral kód</strong></label>
             </CheckboxContainer>
 
             {hasReferral && (
@@ -1561,7 +1561,7 @@ export default function Instruction() {
               onClick={() => toggleSection('rules')}
               $isOpen={openSections['rules']}
             >
-              Pravidlá a podmienky súťaže
+              <strong>Pravidlá a podmienky súťaže</strong>
               <ContestIcon $isOpen={openSections['rules']}>▼</ContestIcon>
             </ContestHeader>
             <ContestContent $isOpen={openSections['rules']}>
@@ -1599,7 +1599,7 @@ export default function Instruction() {
 
                 <h4>Trvanie súťaže:</h4>
                 <LocalList>
-                  <li>Súťaž prebieha v období od spustenia predvýskumu - marec 2026 do ukončenia hlavného výskumu - apríl 2026.</li>
+                  <li>Súťaž prebieha v období od spustenia predvýskumu do ukončenia hlavného výskumu - marec 2026.</li>
                   <li>Pozor - predvýskum bude dostupný iba do spustenia hlavného výskumu, to znamená že po jeho spustení predvýskum už nebude možné absolvovať.</li>
                   <li>Do žrebovania budú zaradení len účastníci, ktorí splnia podmienky účasti v tomto časovom intervale.</li>
                 </LocalList>
