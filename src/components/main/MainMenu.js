@@ -351,13 +351,13 @@ const InfoButton = styled(StyledButton)`
     #00D9FF22, 
     #00FFD922
   );
-  border: 2px solid #00ffa6ff;
-  color: #00ffa6ff;
+  border: 2px solid #16a600ff;
+  color: #16a600ff;
   
   &:hover {
     background: linear-gradient(135deg, 
-      #00ffa6ff, 
-      #00ff84ff
+      #16a600ff, 
+      #139000ff
     );
     color: white;
     transform: translateY(-2px);
@@ -403,7 +403,7 @@ const LogoutButton = styled(StyledButton)`
 
 const SharingSection = styled.div`
   background:${p => p.theme.CARD_BACKGROUND};
-  border: 2px solid ${p => p.theme.ACCENT_COLOR};
+  border: 2px solid ${p => p.theme.BORDER_COLOR};
   border-radius: 16px;
   padding: 20px;
   text-align: center;
@@ -411,7 +411,9 @@ const SharingSection = styled.div`
   margin-top: 16px;
   position: relative;
   overflow: hidden;
-  
+  &:hover {
+    border-color: ${p => p.theme.ACCENT_COLOR}60;
+  }
   @media (max-width: 768px) {
     padding: 16px;
   }

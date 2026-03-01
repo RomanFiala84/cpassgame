@@ -295,7 +295,7 @@ const ContestItem = styled.div`
   transition: all 0.2s ease;
   
   &:hover {
-    border-color: ${props => props.theme.ACCENT_COLOR}66;
+    border-color: ${props => props.theme.ACCENT_COLOR}60;
   }
 `;
 
