@@ -502,7 +502,7 @@ const LevelDisplay = () => {
         <MiniIcon>{level}</MiniIcon>
         <MiniInfo>
           <MiniLabel>Level</MiniLabel>
-          <MiniValue>{mission}/100</MiniValue>
+          <MiniValue>{mission}/125</MiniValue>
         </MiniInfo>
       </MiniVersion>
 
