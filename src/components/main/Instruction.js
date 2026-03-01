@@ -15,6 +15,7 @@ import { useUserStats } from '../../contexts/UserStatsContext';
 const LocalList = styled.ul`
   list-style: none;
   padding-left: 20px;
+  padding-right: 20px;
   margin: 0;
   
   > li {
@@ -51,7 +52,7 @@ const LocalList = styled.ul`
 `;
 
 const LocalNestedItem = styled.div`
-  padding-left: 20px;
+  padding-left: 40px;
   padding-right: 20px;
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   position: relative;
