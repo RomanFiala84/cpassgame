@@ -20,7 +20,7 @@ const darkTheme = {
   HOVER_OVERLAY: 'rgba(135, 206, 235, 0.18)',
   
   // Stavové farby
-  SUCCESS_COLOR: '#00ff00ff',
+  SUCCESS_COLOR: '#4ce16cff',
   ERROR_COLOR: '#ff0000',
   WARNING_COLOR: '#ff8c00',
 };
@@ -45,7 +45,7 @@ const lightTheme = {
   HOVER_OVERLAY: 'rgba(135, 206, 235, 0.15)',
   
   // Stavové farby
-  SUCCESS_COLOR: '#00ff00ff',
+  SUCCESS_COLOR: '#4ce16cff',
   ERROR_COLOR: '#ff0000',
   WARNING_COLOR: '#ff8c00',
 };
