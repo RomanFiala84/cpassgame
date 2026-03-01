@@ -340,7 +340,7 @@ const InfoButton = styled(StyledButton)`
   background: linear-gradient(135deg, 
     #00D9FF22, 
     #00FFD922
-  )/15;
+  );
   border: 2px solid #00ffa6ff;
   color: #00ffa6ff;
   
@@ -359,7 +359,7 @@ const ContestButton = styled(StyledButton)`
   background: linear-gradient(135deg, 
     #fbbf2422, 
     #f59e0b22
-  )/15;
+  );
   border: 2px solid #f59e0b;
   color: #f59e0b;
   
@@ -377,7 +377,7 @@ const LogoutButton = styled(StyledButton)`
   background: linear-gradient(135deg, 
     #ef444422, 
     #dc262622
-  )/15;
+  );
   border: 2px solid #ef4444;
   color: #ef4444;
   
