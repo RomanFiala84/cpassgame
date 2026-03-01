@@ -195,7 +195,7 @@ const AccordionItem = styled.div`
   transition: all 0.2s ease;
   
   &:hover {
-    border-color: ${props => props.theme.ACCENT_COLOR}66;
+    border-color: ${props => props.theme.ACCENT_COLOR}60;
   }
 `;
 
@@ -679,8 +679,8 @@ const ReferralNoticeText = styled.div`
 `;
 
 const CompetitionSection = styled(FormCard)`
-  background: ${p => `${p.theme.CARD_BACKGROUND}45`};
-  border-color: ${p => p.theme.ACCENT_COLOR}60;
+  background: ${p => p.theme.CARD_BACKGROUND};
+  border: 2px solid ${p => p.$hasError ? '#ff0000' : p.theme.BORDER_COLOR};
 `;
 
 const CompetitionTitle = styled.h3`
