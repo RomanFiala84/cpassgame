@@ -401,21 +401,21 @@ const Intro = () => {
             imageUrl="/images/detective.png"
             iconUrl="/images/detective-icon.png"
             tip={`
-              <p style="font-size: 15px; font-weight: 700; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 12px;">
+              <p style="font-size: 15px; font-weight: bold; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 12px;">
                 <strong>Ahoj, milý/á respondent/ka!</strong>
               </p>
               
-              <p style="font-size: 15px; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+              <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
                 <strong>Volám sa Inšpektor Kritan a budem vašim sprievodcom počas celého výskumu.</strong>
               </p>
               
-              <p style="font-size: 15px; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+              <p style="font-size: 15px; font-weight: bold;margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
                 <strong>Ak budete potrebovať pomoc, môžete sa kedykoľvek obrátiť na mňa.</strong>
                 <strong>Nájdete ma vždy v pravom dolnom rohu obrazovky.</strong>
               </p>
               
               <div style="background: ${theme.ACCENT_COLOR}15; padding: 12px; border-radius: 8px; margin: 16px 0; border: 1px solid ${theme.PRIMARY_TEXT_COLOR}30;">
-                <p style="font-size: 15px; margin-bottom: 8px; color: ${theme.PRIMARY_TEXT_COLOR};">
+                <p style="font-size: 15px; font-weight: bold;margin-bottom: 8px; color: ${theme.PRIMARY_TEXT_COLOR};">
                   <strong>Počas tohto výskumu:</strong>
                 </p>
                 <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
@@ -434,7 +434,7 @@ const Intro = () => {
                 </ul>
               </div>
               
-              <p style="font-size: 15px; margin-top: 16px; color: ${theme.ACCENT_COLOR}; line-height: 1.6;">
+              <p style="font-size: 15px; font-weight: bold;margin-top: 16px; color: ${theme.ACCENT_COLOR}; line-height: 1.6;">
                 <strong>Ak ste pripravený, poďme sa spolu pozrieť do ktorého oddelenia ste boli priradený!</strong> 
               </p>
             `}

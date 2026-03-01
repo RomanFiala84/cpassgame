@@ -340,7 +340,7 @@ const InfoButton = styled(StyledButton)`
   background: linear-gradient(135deg, 
     #00D9FF22, 
     #00FFD922
-  )/45;
+  )/15;
   border: 2px solid #00ffa6ff;
   color: #00ffa6ff;
   
@@ -348,7 +348,7 @@ const InfoButton = styled(StyledButton)`
     background: linear-gradient(135deg, 
       #00ffa6ff, 
       #00ff84ff
-    )/60;
+    )/15;
     color: white;
     transform: translateY(-2px);
   }
@@ -359,7 +359,7 @@ const ContestButton = styled(StyledButton)`
   background: linear-gradient(135deg, 
     #fbbf2422, 
     #f59e0b22
-  )/45;
+  )/15;
   border: 2px solid #f59e0b;
   color: #f59e0b;
   
@@ -367,7 +367,7 @@ const ContestButton = styled(StyledButton)`
     background: linear-gradient(135deg, 
       #fbbf24, 
       #f59e0b
-    )/60;
+    )/15;
     color: white;
     transform: translateY(-2px);
   }
@@ -377,7 +377,7 @@ const LogoutButton = styled(StyledButton)`
   background: linear-gradient(135deg, 
     #ef444422, 
     #dc262622
-  )/45;
+  )/15;
   border: 2px solid #ef4444;
   color: #ef4444;
   
@@ -385,7 +385,7 @@ const LogoutButton = styled(StyledButton)`
     background: linear-gradient(135deg, 
       #ef4444, 
       #dc2626
-    )/60;
+    )/15;
     color: white;
     transform: translateY(-2px);
   }
@@ -897,7 +897,7 @@ const MainMenu = () => {
   };
  const theme = useContext(ThemeContext);
  const detectiveStory = `
-   <p style="font-size: 15px; font-weight: 700; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 12px;">
+   <p style="font-size: 15px; font-weight: bold; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 12px;">
       <strong>Ktorou časťou mám začať?</strong>
     </p>
     
@@ -948,7 +948,7 @@ const MainMenu = () => {
       </ul>
     </div>
     
-    <p style="font-size: 15px; font-weight:  700; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 12px; margin-top: 24px;">
+    <p style="font-size: 15px; font-weight:  bold; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 12px; margin-top: 24px;">
       <strong>Čo nájdem v hlavnom menu?</strong>
     </p>
     
