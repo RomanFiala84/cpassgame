@@ -52,6 +52,7 @@ const LocalList = styled.ul`
 
 const LocalNestedItem = styled.div`
   padding-left: 20px;
+  padding-right: 20px;
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   position: relative;
   margin-bottom: 10px;
@@ -60,7 +61,7 @@ const LocalNestedItem = styled.div`
   &::before {
     content: '→';
     position: absolute;
-    left: 0;
+    left: 20px;
     top: 0;
     color: ${props => props.theme.ACCENT_COLOR};
     line-height: 1.6;
