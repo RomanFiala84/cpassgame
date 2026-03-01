@@ -60,7 +60,7 @@ const LocalNestedItem = styled.div`
   &::before {
     content: '→';
     position: absolute;
-    left: 0;
+    left: 20;
     top: 0;
     color: ${props => props.theme.ACCENT_COLOR};
     line-height: 1.6;
@@ -172,7 +172,7 @@ const WelcomeInstructions = styled.div`
     }
     
     strong {
-      color: ${props => props.theme.SECONDARY_TEXT_COLOR};
+      color: ${props => props.theme.PRIMARY_TEXT_COLOR};
       font-weight: 600;
     }
   }
@@ -427,8 +427,9 @@ const CheckboxContainer = styled.div`
   
   label {
     cursor: ${p => p.$disabled ? 'not-allowed' : 'pointer'};
-    color: ${p => p.$disabled ? p.theme.SECONDARY_TEXT_COLOR : p.theme.PRIMARY_TEXT_COLOR};
+    color: ${p => p.$disabled ? p.theme.ACCENT_COLOR : p.theme.ACCENT_COLOR};
     text-decoration: ${p => p.$disabled ? 'line-through' : 'none'};
+    border-top: 2px solid ${props => props.theme.ACCENT_COLOR}45;
     opacity: ${p => p.$disabled ? 0.6 : 1};
     user-select: none;
     font-size: 15px;
@@ -692,6 +693,7 @@ const CompetitionTitle = styled.h3`
 
 const CompetitionText = styled.p`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  border-top: 2px solid ${props => props.theme.ACCENT_COLOR}45;
   font-size: 15px;
   line-height: 1.5;
   margin-bottom: 12px;
@@ -1531,7 +1533,7 @@ export default function Instruction() {
             {hasReferral && (
               <>
                 <InputLabel htmlFor="referral-code" style={{ marginTop: '16px' }}>
-                  Referral kód {referralFromUrl && '(automaticky vyplnený)'}
+                  <strong>Zadajte referral kód:</strong>{referralFromUrl && '(automaticky vyplnený)'}
                 </InputLabel>
                 <Input
                   id="referral-code"
