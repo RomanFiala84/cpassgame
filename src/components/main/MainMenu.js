@@ -8,11 +8,79 @@ import Layout from '../../styles/Layout';
 import StyledButton from '../../styles/StyledButton';
 import { useUserStats } from '../../contexts/UserStatsContext';
 import DetectiveTipLarge from '../shared/DetectiveTipLarge';
-import { GradientCircleList, NestedListItem } from '../../styles/StyledList'; // ✅ PRIDANÉ
 
 // =====================
 // STYLED COMPONENTS - OPTIMALIZOVANÁ VERZIA
 // =====================
+const GradientCircleList = styled.ul`
+  list-style: none;
+  padding-left: 20px; /* ✅ ZMENENÉ z 25px na 20px */
+  margin: 0;
+  
+  > li {
+    padding-left: 0;
+    position: relative;
+    margin-bottom: 10px;
+    line-height: 1.6;
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+    
+    &::before {
+      content: '•';
+      position: absolute;
+      left: -15px; /* ✅ ZMENENÉ z -20px na -15px pre lepšie zarovnanie */
+      top: 0;
+      color: ${props => props.theme.ACCENT_COLOR};
+      line-height: 1.6;
+      font-weight: bold;
+    }
+    
+    strong {
+      color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+      font-weight: 600;
+    }
+    
+    a {
+      color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+      text-decoration: none;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+`;
+
+const NestedListItem = styled.div`
+  padding-left: 40px; /* ✅ ZMENENÉ z 25px na 20px */
+  color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+  position: relative;
+  margin-bottom: 10px;
+  line-height: 1.6;
+  
+  &::before {
+    content: '→';
+    position: absolute;
+    left: 20px;
+    top: 0;
+    color: ${props => props.theme.ACCENT_COLOR};
+    line-height: 1.6;
+  }
+  
+  strong {
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+    font-weight: 600;
+  }
+  
+  a {
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
+
 
 const Container = styled.div`
   padding: 16px;

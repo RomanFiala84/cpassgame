@@ -1,4 +1,4 @@
-// src/components/main/Instruction.js
+// HOTOVO
 // ✅ FINÁLNA VERZIA - s lokálnymi zoznamami a správnym zarovnaním
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -14,7 +14,7 @@ import { useUserStats } from '../../contexts/UserStatsContext';
 
 const LocalList = styled.ul`
   list-style: none;
-  padding-left: 20px; /* ✅ ZMENENÉ z 25px na 20px */
+  padding-left: 20px;
   margin: 0;
   
   > li {
@@ -27,7 +27,7 @@ const LocalList = styled.ul`
     &::before {
       content: '•';
       position: absolute;
-      left: -15px; /* ✅ ZMENENÉ z -20px na -15px pre lepšie zarovnanie */
+      left: -15px;
       top: 0;
       color: ${props => props.theme.ACCENT_COLOR};
       line-height: 1.6;
@@ -51,7 +51,7 @@ const LocalList = styled.ul`
 `;
 
 const LocalNestedItem = styled.div`
-  padding-left: 40px; /* ✅ ZMENENÉ z 25px na 20px */
+  padding-left: 20px;
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   position: relative;
   margin-bottom: 10px;
@@ -60,7 +60,7 @@ const LocalNestedItem = styled.div`
   &::before {
     content: '→';
     position: absolute;
-    left: 20;
+    left: 0;
     top: 0;
     color: ${props => props.theme.ACCENT_COLOR};
     line-height: 1.6;
@@ -80,6 +80,7 @@ const LocalNestedItem = styled.div`
     }
   }
 `;
+
 
 // =====================
 // OSTATNÉ STYLED COMPONENTS
