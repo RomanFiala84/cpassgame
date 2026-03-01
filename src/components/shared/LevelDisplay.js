@@ -546,7 +546,7 @@ const LevelDisplay = () => {
 
           {/* Progress */}
           <ProgressSection>
-            <ProgressLabel>Progres v účasti:</ProgressLabel>
+            <ProgressLabel>Progres:</ProgressLabel>
             <ProgressBarContainer>
               <ProgressBar $progress={progress} />
             </ProgressBarContainer>

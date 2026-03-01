@@ -340,7 +340,7 @@ const InfoButton = styled(StyledButton)`
   background: linear-gradient(135deg, 
     #00D9FF22, 
     #00FFD922
-  );
+  )/45;
   border: 2px solid #00ffa6ff;
   color: #00ffa6ff;
   
@@ -348,7 +348,7 @@ const InfoButton = styled(StyledButton)`
     background: linear-gradient(135deg, 
       #00ffa6ff, 
       #00ff84ff
-    );
+    )/60;
     color: white;
     transform: translateY(-2px);
   }
@@ -359,7 +359,7 @@ const ContestButton = styled(StyledButton)`
   background: linear-gradient(135deg, 
     #fbbf2422, 
     #f59e0b22
-  );
+  )/45;
   border: 2px solid #f59e0b;
   color: #f59e0b;
   
@@ -367,7 +367,7 @@ const ContestButton = styled(StyledButton)`
     background: linear-gradient(135deg, 
       #fbbf24, 
       #f59e0b
-    );
+    )/60;
     color: white;
     transform: translateY(-2px);
   }
@@ -377,7 +377,7 @@ const LogoutButton = styled(StyledButton)`
   background: linear-gradient(135deg, 
     #ef444422, 
     #dc262622
-  );
+  )/45;
   border: 2px solid #ef4444;
   color: #ef4444;
   
@@ -385,7 +385,7 @@ const LogoutButton = styled(StyledButton)`
     background: linear-gradient(135deg, 
       #ef4444, 
       #dc2626
-    );
+    )/60;
     color: white;
     transform: translateY(-2px);
   }
@@ -434,6 +434,11 @@ const SharingTitle = styled.h3`
   z-index: 1;
   
   &::before {
+    content: '🎁';
+    margin-right: 8px;
+  }
+
+  &::after {
     content: '🎁';
     margin-right: 8px;
   }
@@ -897,44 +902,44 @@ const MainMenu = () => {
     </p>
     
       <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
-        <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 16px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+        <li style="font-size: 15px; font-weight: bold; padding-left: 0; position: relative; margin-bottom: 16px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
           <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
           <strong>Ak sa účastníte predvýskumu začnite prosím Misiou 0.</strong>
           
           <div style="padding-left: 20px; margin-top: 8px;">
-            <p style="font-size: 14px; color: ${theme.SECONDARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
+            <p style="font-size: 15px; font-weight: bold; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
               <span style="position: absolute; left: 0; top: 0; color: ${theme.ACCENT_COLOR};">→</span>
               Po ukončení predvýskumu bude táto misia uzamknutá a účasť v nej už nebude možná.
             </p>
           </div>
         </li>
         
-        <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 16px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+        <li style="font-size: 15px; font-weight: bold; padding-left: 0; position: relative; margin-bottom: 16px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
           <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
           <strong>Ak sa účastníte prvej časti hlavného výskumu začnite prosím Misiou 1 a pokračujte Misiou 2.</strong>
           
           <div style="padding-left: 20px; margin-top: 8px;">
-            <p style="font-size: 14px; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
+            <p style="font-size: 15px; font-weight: bold; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
               <span style="position: absolute; left: 0; top: 0; color: ${theme.ACCENT_COLOR};">→</span>
               Po ukončení predvýskumu budú tieto misie neustále odomknuté.
             </p>
-            <p style="font-size: 14px; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
+            <p style="font-size: 15px; font-weight: bold; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
               <span style="position: absolute; left: 0; top: 0; color: ${theme.ACCENT_COLOR};">→</span>
               Pre spustenie týchto misií nie je potrebné mať absolvovanú Misiu 0.
             </p>
           </div>
         </li>
         
-        <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+        <li style="font-size: 15px; font-weight: bold; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
           <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
           <strong>Ak sa účastníte druhej časti hlavného výskumu pokračujte prosím Misiou 3.</strong>
           
           <div style="padding-left: 20px; margin-top: 8px;">
-            <p style="font-size: 14px; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
+            <p style="font-size: 15px; font-weight: bold; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
               <span style="position: absolute; left: 0; top: 0; color: ${theme.ACCENT_COLOR};">→</span>
               Po ukončení prvej časti hlavného výskumu bude táto misia neustále odomknutá.
             </p>
-            <p style="font-size: 14px; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
+            <p style="font-size: 15px; font-weight: bold; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 4px; line-height: 1.5; position: relative; padding-left: 15px;">
               <span style="position: absolute; left: 0; top: 0; color: ${theme.ACCENT_COLOR};">→</span>
               Pred spustením Misie 3 si prosím skontrolujte v hlavnom menu, či máte dokončenú Misiu 1 a Misiu 2.
             </p>
@@ -943,36 +948,36 @@ const MainMenu = () => {
       </ul>
     </div>
     
-    <p style="font-size: 15px; font-weight: 700; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 12px; margin-top: 24px;">
+    <p style="font-size: 15px; font-weight:  700; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 12px; margin-top: 24px;">
       <strong>Čo nájdem v hlavnom menu?</strong>
     </p>
     
     <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
-      <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+      <li style="font-size: 15px; font-weight: bold; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
         <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
         Bočný panel s aktuálnou detektívnou úrovňou a bodmi.
       </li>
-      <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+      <li style="font-size: 15px; font-weight: bold; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
         <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
         Panel s aktuálnym progresom misií a celkový počet nazbieraných bodov.
       </li>
-      <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+      <li style="font-size: 15px; font-weight: bold; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
         <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
         Zoznam všetkých misií.
       </li>
-      <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+      <li style="font-size: 15px; font-weight: bold; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
         <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
         Odkaz na pomoc.
       </li>
-      <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+      <li style="font-size: 15px; font-weight: bold; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
         <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
         Odkaz na pravidlá a podmienky súťaže.
       </li>
-      <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+      <li style="font-size: 15px; font-weight: bold; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
         <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
         Možnosť odhlásenia z aplikácie.
       </li>
-      <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+      <li style="font-size: 15px; font-weight: bold; padding-left: 0; position: relative; margin-bottom: 8px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
         <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
         Váš osobný referral kód, ktorý môžete zdieľať s priateľmi.
       </li>
@@ -1006,7 +1011,7 @@ const MainMenu = () => {
           <Title>CP-PASS</Title>
           <InstructionsWrapper>
             <InstructionCard>
-              <h4><strong>Ktorou časťou mám začať?</strong></h4>
+              <h4 style={{ color: theme.ACCENT_COLOR }}><strong>Ktorou časťou mám začať?</strong></h4>
               
               {/* ✅ GRADIENT ODRÁŽKY */}
               <SubNote style={{ marginTop: '12px' }}>
