@@ -393,7 +393,7 @@ const LogoutButton = styled(StyledButton)`
 
 const SharingSection = styled.div`
   background: linear-gradient(135deg, 
-    ${p => p.theme.ACCENT_COLOR}45, 
+    ${p => p.theme.CARD_BACKGROUND}45, 
     ${p => p.theme.ACCENT_COLOR_2}45
   );
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
