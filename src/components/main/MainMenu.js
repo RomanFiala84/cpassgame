@@ -326,7 +326,17 @@ const ButtonGroup = styled.div`
   gap: 10px;
   flex-wrap: wrap;
   margin-bottom: 24px;
-  background: ${p => p.theme.CARD_BACKGROUND}45;
+   background: ${p => p.theme.CARD_BACKGROUND};
+  border: 2px solid ${p => p.theme.BORDER_COLOR};
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: all 0.2s ease;
+  
+  /* ✅ Hover efekt */
+  &:hover {
+    border-color: ${p => p.theme.ACCENT_COLOR}60;
+  }
   @media (max-width: 480px) {
     flex-direction: column;
     
@@ -392,10 +402,7 @@ const LogoutButton = styled(StyledButton)`
 `;
 
 const SharingSection = styled.div`
-  background: linear-gradient(135deg, 
-    ${p => p.theme.CARD_BACKGROUND}45, 
-    ${p => p.theme.ACCENT_COLOR_2}45
-  );
+  background:${p => p.theme.CARD_BACKGROUND};
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   border-radius: 16px;
   padding: 20px;
