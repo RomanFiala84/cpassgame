@@ -714,7 +714,7 @@ const RulesSection = styled.div`
 `;
 
 const RulesAccordion = styled(ContestItem)`
-  border-color: ${p => p.theme.ACCENT_COLOR}60;
+  border-color: ${p => p.theme.BORDER_COLOR}60;
   
   &:hover {
     border-color: ${p => p.theme.ACCENT_COLOR};
