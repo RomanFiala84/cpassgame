@@ -51,7 +51,7 @@ const LocalList = styled.ul`
 `;
 
 const LocalNestedItem = styled.div`
-  padding-left: 20px; /* ✅ ZMENENÉ z 25px na 20px */
+  padding-left: 40px; /* ✅ ZMENENÉ z 25px na 20px */
   color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   position: relative;
   margin-bottom: 10px;
