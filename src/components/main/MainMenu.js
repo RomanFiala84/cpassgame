@@ -550,46 +550,6 @@ const SharingInfo = styled.p`
   }
 `;
 
-const ReferralStats = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 24px;
-  margin-top: 16px;
-  position: relative;
-  z-index: 1;
-  
-  @media (max-width: 480px) {
-    gap: 16px;
-  }
-`;
-
-const ReferralStat = styled.div`
-  text-align: center;
-  padding: 8px 16px;
-  background: ${p => p.theme.CARD_BACKGROUND}60;
-  border-radius: 10px;
-  backdrop-filter: blur(4px);
-`;
-
-const ReferralStatValue = styled.div`
-  font-size: 15px;
-  font-weight: bold;
-  color: ${p => p.theme.ACCENT_COLOR};
-  text-shadow: 0 1px 3px ${p => p.theme.ACCENT_COLOR}45;
-  
-  @media (max-width: 768px) {
-    font-size: 15px;
-  }
-`;
-
-const ReferralStatLabel = styled.div`
-  font-size: 15px;
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  margin-top: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-`;
-
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -1140,19 +1100,7 @@ const MainMenu = () => {
             <strong>Zdieľajte kód alebo link s priateľmi!</strong><br/>
            <strong>Za každého nového respondenta získate</strong> <strong>+10 bodov</strong>
           </SharingInfo>
-          
-          {userProgress?.referrals_count > 0 && (
-            <ReferralStats>
-              <ReferralStat>
-                <ReferralStatValue>{userProgress.referrals_count}</ReferralStatValue>
-                <ReferralStatLabel>Použití vášho referral kódu.</ReferralStatLabel>
-              </ReferralStat>
-              <ReferralStat>
-                <ReferralStatValue>+{userProgress.referrals_count * 10}</ReferralStatValue>
-                <ReferralStatLabel>Získaných bonusových bodov.</ReferralStatLabel>
-              </ReferralStat>
-            </ReferralStats>
-          )}
+        
         </SharingSection>
 
         <DetectiveTipLarge
