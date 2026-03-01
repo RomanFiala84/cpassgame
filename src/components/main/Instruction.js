@@ -433,7 +433,6 @@ const CheckboxContainer = styled.div`
     cursor: ${p => p.$disabled ? 'not-allowed' : 'pointer'};
     color: ${p => p.$disabled ? p.theme.ACCENT_COLOR : p.theme.ACCENT_COLOR};
     text-decoration: ${p => p.$disabled ? 'line-through' : 'none'};
-    border-top: 2px solid ${props => props.theme.ACCENT_COLOR}45;
     opacity: ${p => p.$disabled ? 0.6 : 1};
     user-select: none;
     font-size: 15px;

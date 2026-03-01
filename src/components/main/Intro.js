@@ -8,7 +8,8 @@ import Layout from '../../styles/Layout';
 import StyledButton from '../../styles/StyledButton';
 import { useUserStats } from '../../contexts/UserStatsContext';
 import DetectiveTipLarge from '../shared/DetectiveTipLarge';
-
+import { useContext } from 'react';
+import { ThemeContext } from 'styled-components';
 const Container = styled.div`
   padding: 24px 16px;
   max-width: 900px;
@@ -34,7 +35,7 @@ const Header = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 32px;
+  font-size: 25px;
   margin-bottom: 8px;
   background: linear-gradient(
     135deg,
@@ -48,36 +49,36 @@ const Title = styled.h1`
   font-weight: 700;
   
   @media (max-width: 768px) {
-    font-size: 28px;
+    font-size: 25px;
   }
   
   @media (max-width: 480px) {
-    font-size: 24px;
+    font-size: 25px;
   }
 `;
 
 const Subtitle = styled.h2`
-  font-size: 18px;
+  font-size: 20px;
   margin-bottom: 4px;
-  color: ${props => props.theme.PRIMARY_TEXT_COLOR};
+  color: ${props => props.theme.ACCENT_COLOR};
   text-align: center;
   font-weight: 600;
   
   @media (max-width: 480px) {
-    font-size: 16px;
+    font-size: 20px;
   }
 `;
 
 const Text = styled.p`
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.6;
   margin-bottom: 20px;
-  color: ${props => props.theme.SECONDARY_TEXT_COLOR};
+  color: ${props => props.theme.PRIMARY_TEXT_COLOR};
   text-align: center;
   max-width: 700px;
   
   strong {
-    color: ${props => props.theme.ACCENT_COLOR};
+    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
     font-weight: 600;
   }
   
@@ -121,7 +122,7 @@ const GroupCard = styled.div`
   
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 24px ${p => p.theme.ACCENT_COLOR}33;
+    box-shadow: 0 8px 24px ${p => p.theme.ACCENT_COLOR}45;
     border-color: ${p => p.theme.ACCENT_COLOR_2};
   }
   
@@ -133,8 +134,8 @@ const GroupCard = styled.div`
 `;
 
 const GroupLabel = styled.div`
-  font-size: 12px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 20px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   text-transform: uppercase;
   letter-spacing: 1.5px;
   margin-bottom: 8px;
@@ -144,7 +145,7 @@ const GroupLabel = styled.div`
   z-index: 1;
   
   @media (max-width: 480px) {
-    font-size: 11px;
+    font-size: 20px;
   }
 `;
 
@@ -155,12 +156,12 @@ const GroupValue = styled.div`
   text-align: center;
   font-family: 'Courier New', monospace;
   letter-spacing: 2px;
-  text-shadow: 0 2px 8px ${p => p.theme.ACCENT_COLOR}33;
+  text-shadow: 0 2px 8px ${p => p.theme.ACCENT_COLOR}45;
   position: relative;
   z-index: 1;
   
   @media (max-width: 480px) {
-    font-size: 32px;
+    font-size: 20px;
   }
 `;
 
@@ -175,13 +176,15 @@ const InfoSection = styled.div`
   transition: all 0.2s ease;
   
   &:hover {
-    border-color: ${p => p.theme.ACCENT_COLOR}66;
+    border-color: ${p => p.theme.ACCENT_COLOR}60;
   }
   
   @media (max-width: 480px) {
     padding: 16px;
   }
 `;
+
+
 
 const InfoTitle = styled.h3`
   font-size: 16px;
@@ -211,8 +214,8 @@ const InfoList = styled.ul`
 `;
 
 const InfoItem = styled.li`
-  font-size: 14px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 15px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   padding: 8px 12px 8px 32px;
   position: relative;
   line-height: 1.5;
@@ -228,7 +231,7 @@ const InfoItem = styled.li`
     transform: translateY(-50%);
     color: ${p => p.theme.ACCENT_COLOR};
     font-weight: bold;
-    font-size: 16px;
+    font-size: 15px;
   }
   
   &:hover {
@@ -237,7 +240,7 @@ const InfoItem = styled.li`
   }
   
   @media (max-width: 480px) {
-    font-size: 13px;
+    font-size: 15px;
     padding: 7px 10px 7px 28px;
   }
 `;
@@ -277,10 +280,11 @@ const LoadingContainer = styled.div`
 `;
 
 const LoadingText = styled.div`
-  font-size: 14px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 15px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   font-weight: 500;
 `;
+
 
 const Intro = () => {
   const navigate = useNavigate();
@@ -338,7 +342,7 @@ const Intro = () => {
         return 'Oddelenie';
     }
   };
-
+  const theme = useContext(ThemeContext);
   return (
     <Layout showLevelDisplay={false} showAnimatedBackground={true}
   cubeCount={15}
@@ -346,13 +350,13 @@ const Intro = () => {
   complexity="medium">
       <Container>
         <Header>
-          <Title>Aplikácia CP-PASS</Title>
-          <Subtitle>Vitajte v detektívnej akadémii!</Subtitle>
+          <Title><strong>Aplikácia CP-PASS</strong></Title>
+          <Subtitle><strong>Vitajte v detektívnej akadémii!</strong></Subtitle>
         </Header>
         
         {isLoading ? (
           <GroupCard>
-            <GroupLabel>Priraďujem vás do oddelenia</GroupLabel>
+            <GroupLabel><strong>Priraďujem vás do oddelenia</strong></GroupLabel>
             <LoadingContainer>
               <LoadingSpinner />
               <LoadingText>Načítavam...</LoadingText>
@@ -361,21 +365,21 @@ const Intro = () => {
         ) : (
           <>
             <GroupCard>
-              <GroupLabel>Vaše detektívne oddelenie</GroupLabel>
+              <GroupLabel><strong>Vaše detektívne oddelenie</strong></GroupLabel>
               <GroupValue>{getGroupDescription(groupCode)}</GroupValue>
             </GroupCard>
 
             <Text>
-              Výborne! Boli ste priradení do oddelenia <strong>{getGroupDescription(groupCode)}</strong>.
-              Ste pripravení začať svoju cestu detektíva? Pozrime sa, čo vás čaká v tejto aplikácii.
+              <strong>Výborne! Boli ste priradení do oddelenia</strong> <strong>{getGroupDescription(groupCode)}</strong>.
+              <strong>Ste pripravení začať svoju cestu detektíva? Pozrime sa, čo vás čaká v tejto aplikácii.</strong>
             </Text>
 
             <InfoSection>
-              <InfoTitle>Čo vás čaká?</InfoTitle>
+              <InfoTitle><strong>Čo vás čaká?</strong></InfoTitle>
               <InfoList>
-                <InfoItem>4 zaujímavé detektívne misie</InfoItem>
-                <InfoItem>Zbieranie bodov a levelovanie</InfoItem>
-                <InfoItem>Možnosť získať ceny v súťaži</InfoItem>
+                <InfoItem><strong>4 zaujímavé detektívne misie</strong></InfoItem>
+                <InfoItem><strong>Zbieranie bodov a levelovanie</strong></InfoItem>
+                <InfoItem><strong>Možnosť získať ceny v súťaži</strong></InfoItem>
               </InfoList>
             </InfoSection>
 
@@ -390,37 +394,48 @@ const Intro = () => {
             </ButtonContainer>
           </>
         )}
-
+        
         {showTip && !isLoading && (
           <DetectiveTipLarge
             detectiveName="Inšpektor Kritan"
             imageUrl="/images/detective.png"
             iconUrl="/images/detective-icon.png"
             tip={`
-              <p style="font-size: 16px; font-weight: 700; color: #8b5cf6; margin-bottom: 12px;">
-                Ahoj, milý/á respondent/ka!
+              <p style="font-size: 15px; font-weight: 700; color: ${theme.ACCENT_COLOR}; margin-bottom: 12px;">
+                <strong>Ahoj, milý/á respondent/ka!</strong>
               </p>
               
-              <p style="margin-bottom: 10px; line-height: 1.6;">
-                Volám sa Inšpektor Kritan a budem vašim sprievodcom počas celého výskumu.
+              <p style="font-size: 15px; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                <strong>Volám sa Inšpektor Kritan a budem vašim sprievodcom počas celého výskumu.</strong>
               </p>
               
-              <p style="margin-bottom: 10px; line-height: 1.6;">
-                Ak budete potrebovať pomoc, môžete sa kedykoľvek obrátiť na mňa. 
-                Nájdete ma vždy v <strong>pravom dolnom rohu obrazovky</strong>
+              <p style="font-size: 15px; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                <strong>Ak budete potrebovať pomoc, môžete sa kedykoľvek obrátiť na mňa.</strong>
+                <strong>Nájdete ma vždy v pravom dolnom rohu obrazovky.</strong>
               </p>
               
-              <div style="background: rgba(139, 92, 246, 0.1); padding: 12px; border-radius: 8px; margin: 16px 0;">
-                <p style="margin-bottom: 8px;">
+              <div style="background: ${theme.ACCENT_COLOR}15; padding: 12px; border-radius: 8px; margin: 16px 0; border: 1px solid ${theme.ACCENT_COLOR}30;">
+                <p style="font-size: 15px; margin-bottom: 8px; color: ${theme.PRIMARY_TEXT_COLOR};">
                   <strong>Počas tohto výskumu:</strong>
                 </p>
-                <p style="padding-left: 20px; margin-bottom: 4px;">• Budete zastávať rolu detektíva</p>
-                <p style="padding-left: 20px; margin-bottom: 4px;">• Získate detektívne body a levely</p>
-                <p style="padding-left: 20px;">• Môžete súťažiť o ceny</p>
+                <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
+                  <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                    <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+                    Budete zastávať rolu detektíva.
+                  </li>
+                  <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                    <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+                    Získate detektívne body a levely.
+                  </li>
+                  <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                    <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+                    Môžete súťažiť o ceny.
+                  </li>
+                </ul>
               </div>
               
-              <p style="margin-top: 16px; font-style: italic; color: #c084fc;">
-                Ak ste pripravený, poďme sa spolu pozrieť do ktorého oddelenia ste boli priradený!
+              <p style="font-size: 15px; margin-top: 16px; color: ${theme.ACCENT_COLOR}; line-height: 1.6;">
+                <strong>Ak ste pripravený, poďme sa spolu pozrieť do ktorého oddelenia ste boli priradený!</strong> 
               </p>
             `}
 
