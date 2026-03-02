@@ -1259,9 +1259,9 @@ export default function Instruction() {
 
   return (
     <Layout showLevelDisplay={false} showAnimatedBackground={true}
-  cubeCount={10}
-  animationSpeed="slow"
-  complexity="high">
+  cubeCount={50}
+  animationSpeed="normal"
+  complexity="medium">
       <Container>
         <WelcomeCard>
           <WelcomeTitle><strong>Vitajte v aplikácií CP-PASS</strong></WelcomeTitle>

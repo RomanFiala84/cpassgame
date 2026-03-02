@@ -215,9 +215,9 @@ const IntroMission0 = () => {
     <Layout 
       showLevelDisplay={true} 
       showAnimatedBackground={true}
-      cubeCount={10}
-      animationSpeed="slow"
-      complexity="high"
+      cubeCount={50}
+      animationSpeed="normal"
+      complexity="medium"
     >
       <Container>
 

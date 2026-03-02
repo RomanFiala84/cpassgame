@@ -1,28 +1,90 @@
-//HOTOVO
-// ✅ FINÁLNA VERZIA - Bez ESLint chýb
+// ✅ FINÁLNA VERZIA - Particles (Jemné svietiace bodky)
+// ⭐ Subtílne, profesionálne, ideálne pre výskum
 
 import React, { useMemo } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 // =====================
-// ANIMÁCIE - ZJEDNODUŠENÉ
+// ANIMÁCIE - PARTICLES
 // =====================
 
-const floatSimple = keyframes`
-  0%, 100% {
-    transform: translateY(0) translateX(0) rotate(0deg);
+// Vytvorenie viacerých animácií pre rôzne smery
+const particleFloat1 = keyframes`
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
   }
-  50% {
-    transform: translateY(-30px) translateX(20px) rotate(180deg);
+  10% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(30px, -80px);
+    opacity: 0;
   }
 `;
 
-const pulse = keyframes`
+const particleFloat2 = keyframes`
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(-40px, -70px);
+    opacity: 0;
+  }
+`;
+
+const particleFloat3 = keyframes`
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(20px, -90px);
+    opacity: 0;
+  }
+`;
+
+const particleFloat4 = keyframes`
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(-30px, -85px);
+    opacity: 0;
+  }
+`;
+
+const twinkle = keyframes`
   0%, 100% {
-    opacity: 0.6;
+    opacity: 0.3;
+    transform: scale(1);
   }
   50% {
-    opacity: 0.9;
+    opacity: 0.8;
+    transform: scale(1.2);
   }
 `;
 
@@ -31,82 +93,41 @@ const pulse = keyframes`
 // =====================
 
 const SPEEDS = {
-  slow: 25,
-  normal: 20,
-  fast: 15
+  slow: 8,   // ⬅️ Pomalé particles
+  normal: 6,
+  fast: 4
 };
 
 const COMPLEXITY_SETTINGS = {
   low: {
-    minSize: 60,
-    maxSize: 100,
-    minOpacity: 25,
-    maxOpacity: 45,
-    baseOpacity: 0.35,
-    glowSize: 15,
-    glowOpacity: 30,
-    borderOpacity: 40
+    particleCount: 30,
+    minSize: 2,
+    maxSize: 4,
+    baseOpacity: 0.5,
   },
   medium: {
-    minSize: 50,
-    maxSize: 90,
-    minOpacity: 30,
-    maxOpacity: 50,
-    baseOpacity: 0.40,
-    glowSize: 18,
-    glowOpacity: 35,
-    borderOpacity: 45
+    particleCount: 50,
+    minSize: 2,
+    maxSize: 5,
+    baseOpacity: 0.6,
   },
   high: {
-    minSize: 40,
-    maxSize: 80,
-    minOpacity: 35,
-    maxOpacity: 55,
-    baseOpacity: 0.45,
-    glowSize: 20,
-    glowOpacity: 40,
-    borderOpacity: 50
+    particleCount: 80,
+    minSize: 2,
+    maxSize: 6,
+    baseOpacity: 0.7,
   }
 };
 
 // ✅ Pomocná funkcia na generovanie pozícií
-const generatePositions = (count, minDistance) => {
+const generatePositions = (count) => {
   const positions = [];
   
   for (let i = 0; i < count; i++) {
-    let attempts = 0;
-    const maxAttempts = 50;
-    let validPosition = null;
-    
-    while (attempts < maxAttempts && !validPosition) {
-      const candidate = {
-        left: Math.random() * 90 + 5,
-        top: Math.random() * 90 + 5
-      };
-      
-      const isTooClose = positions.some(existing => {
-        const dx = existing.left - candidate.left;
-        const dy = existing.top - candidate.top;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        return distance < minDistance;
-      });
-      
-      if (!isTooClose) {
-        validPosition = candidate;
-      }
-      
-      attempts++;
-    }
-    
-    // Fallback ak sa nepodarí nájsť validnú pozíciu
-    if (!validPosition) {
-      validPosition = {
-        left: Math.random() * 90 + 5,
-        top: Math.random() * 90 + 5
-      };
-    }
-    
-    positions.push(validPosition);
+    positions.push({
+      left: Math.random() * 100,
+      top: Math.random() * 100
+    });
   }
   
   return positions;
@@ -128,96 +149,103 @@ const BackgroundContainer = styled.div`
   background: ${props => props.theme.BACKGROUND_COLOR};
 `;
 
-const Cube = styled.div`
+// ✅ Mapa animácií
+const animations = [particleFloat1, particleFloat2, particleFloat3, particleFloat4];
+
+const Particle = styled.div`
   position: absolute;
   width: ${props => props.$size}px;
   height: ${props => props.$size}px;
-  background: linear-gradient(
-    135deg,
-    rgba(220, 38, 38, ${props => props.$baseOpacity}), /* ✅ Červená */
-    rgba(37, 99, 235, ${props => props.$baseOpacity})  /* ✅ Modrá */
-  );
-  border: 1px solid rgba(147, 51, 234, ${props => props.$borderOpacity / 100}); /* ✅ Fialový border (mix) */
-  border-radius: ${props => props.$borderRadius}px;
+  background: ${props => props.$gradient};
+  border-radius: 50%;
   animation: 
-    ${floatSimple} ${props => props.$duration}s ease-in-out infinite,
-    ${pulse} ${props => props.$duration * 0.8}s ease-in-out infinite;
+    ${props => animations[props.$animationIndex]} ${props => props.$duration}s ease-in-out infinite,
+    ${twinkle} ${props => props.$duration * 0.6}s ease-in-out infinite;
   animation-delay: ${props => props.$delay}s;
   left: ${props => props.$left}%;
   top: ${props => props.$top}%;
-  box-shadow: 
-    0 0 ${props => props.$glowSize}px rgba(220, 38, 38, ${props => props.$glowOpacity / 100}), /* ✅ Červený glow */
-    0 0 ${props => props.$glowSize * 1.5}px rgba(37, 99, 235, ${props => props.$glowOpacity / 100 * 0.6}); /* ✅ Modrý glow */
-  will-change: transform;
+  box-shadow: 0 0 ${props => props.$size * 2}px ${props => props.$glowColor};
+  will-change: transform, opacity;
   
   @media (max-width: 768px) {
-    width: ${props => props.$size * 0.7}px;
-    height: ${props => props.$size * 0.7}px;
-    animation: ${floatSimple} ${props => props.$duration * 1.5}s ease-in-out infinite;
+    width: ${props => props.$size * 0.8}px;
+    height: ${props => props.$size * 0.8}px;
   }
   
   @media (max-width: 480px) {
-    width: ${props => props.$size * 0.5}px;
-    height: ${props => props.$size * 0.5}px;
-    border: none;
+    width: ${props => props.$size * 0.6}px;
+    height: ${props => props.$size * 0.6}px;
     box-shadow: none;
   }
 `;
-
 
 // =====================
 // COMPONENT
 // =====================
 
 const AnimatedBackground = ({ 
-  cubeCount = 10,
-  animationSpeed = 'slow',
-  complexity = 'high'
+  cubeCount = 50, // ⬅️ Počet particles
+  animationSpeed = 'normal',
+  complexity = 'medium'
 }) => {
   const settings = COMPLEXITY_SETTINGS[complexity] || COMPLEXITY_SETTINGS.low;
   const duration = SPEEDS[animationSpeed] || SPEEDS.slow;
+  const particleCount = cubeCount || settings.particleCount;
 
-  const cubes = useMemo(() => {
-    const minDistance = 25;
-    const positions = generatePositions(cubeCount, minDistance);
+  const particles = useMemo(() => {
+    const positions = generatePositions(particleCount);
+    
+    // ✅ Farebné varianty - fialová škála
+    const colors = [
+      {
+        gradient: 'radial-gradient(circle, rgba(167, 139, 250, 0.9), rgba(147, 51, 234, 0.4))', // Fialová
+        glow: 'rgba(167, 139, 250, 0.6)'
+      },
+      {
+        gradient: 'radial-gradient(circle, rgba(196, 181, 253, 0.9), rgba(167, 139, 250, 0.4))', // Svetlejšia fialová
+        glow: 'rgba(196, 181, 253, 0.6)'
+      },
+      {
+        gradient: 'radial-gradient(circle, rgba(139, 92, 246, 0.9), rgba(124, 58, 237, 0.4))', // Tmavšia fialová
+        glow: 'rgba(139, 92, 246, 0.6)'
+      },
+      {
+        gradient: 'radial-gradient(circle, rgba(216, 180, 254, 0.9), rgba(192, 132, 252, 0.4))', // Ružovofialová
+        glow: 'rgba(216, 180, 254, 0.6)'
+      },
+    ];
     
     return positions.map((pos, i) => {
       const size = Math.random() * (settings.maxSize - settings.minSize) + settings.minSize;
-      const opacity = Math.floor(Math.random() * (settings.maxOpacity - settings.minOpacity) + settings.minOpacity);
+      const colorVariant = colors[i % colors.length];
       
       return {
-        id: `cube-${i}`,
+        id: `particle-${i}`,
         size: size,
         left: pos.left,
         top: pos.top,
-        delay: i * 2,
-        duration: duration + (i % 3) * 3,
-        opacity: opacity,
-        baseOpacity: settings.baseOpacity,
-        borderRadius: Math.random() * 8 + 4,
-        borderOpacity: settings.borderOpacity,
-        glowSize: settings.glowSize,
-        glowOpacity: settings.glowOpacity
+        delay: Math.random() * duration, // ⬅️ Náhodný delay pre každú particle
+        duration: duration + Math.random() * 3,
+        animationIndex: i % 4, // ⬅️ Index animácie (0-3)
+        gradient: colorVariant.gradient,
+        glowColor: colorVariant.glow
       };
     });
-  }, [cubeCount, duration, settings]);
+  }, [particleCount, duration, settings]);
 
   return (
     <BackgroundContainer>
-      {cubes.map(cube => (
-        <Cube
-          key={cube.id}
-          $size={cube.size}
-          $left={cube.left}
-          $top={cube.top}
-          $delay={cube.delay}
-          $duration={cube.duration}
-          $opacity={cube.opacity}
-          $baseOpacity={cube.baseOpacity}
-          $borderRadius={cube.borderRadius}
-          $borderOpacity={cube.borderOpacity}
-          $glowSize={cube.glowSize}
-          $glowOpacity={cube.glowOpacity}
+      {particles.map(particle => (
+        <Particle
+          key={particle.id}
+          $size={particle.size}
+          $left={particle.left}
+          $top={particle.top}
+          $delay={particle.delay}
+          $duration={particle.duration}
+          $animationIndex={particle.animationIndex}
+          $gradient={particle.gradient}
+          $glowColor={particle.glowColor}
         />
       ))}
     </BackgroundContainer>
