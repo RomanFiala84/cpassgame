@@ -33,56 +33,55 @@ export const UserStatsProvider = ({ children }) => {
 
   // ✅ PO - Bezpečné spracovanie null
   const login = useCallback(async (id) => {
-    try {
-      console.log(`🔐 Login attempt for: ${id}`);
-      
-      const userData = await dataManager.loadUserProgress(id, true);
-      
-      // ✅ Kontrola či userData existuje
-      if (!userData) {
-        console.error(`❌ Login failed: Nepodarilo sa načítať používateľa ${id}`);
-        return { 
-          success: false, 
-          blocked: false, 
-          error: 'Nepodarilo sa načítať používateľa. Skúste to znova.' 
-        };
-      }
-      
-      // Kontrola blocked stavu
-      if (userData.blocked) {
-        console.log(`❌ Login zamietnutý: Účastník ${id} je blokovaný`);
-        sessionStorage.removeItem('participantCode');
-        return { 
-          success: false, 
-          blocked: true, 
-          message: 'Účet je blokovaný administrátorom' 
-        };
-      }
-      
-      // ✅ Teraz vieme, že userData existuje a nie je null
-      sessionStorage.setItem('participantCode', id);
-      
-      
-      userData.instruction_completed = true;
-      userData.current_progress_step = 'intro';
-      
-      const saved = await dataManager.saveProgress(id, userData);
-      if (!saved) {
-        console.warn('⚠️ Progress not saved to server, but login successful');
-      }
-      
-      console.log(`✅ Login successful for: ${id}`);
-      return { success: true, blocked: false };
-      
-    } catch (error) {
-      console.error('❌ Login error:', error);
+  try {
+    console.log(`🔐 Login attempt for: ${id}`);
+    
+    const userData = await dataManager.loadUserProgress(id, true);
+    
+    if (!userData) {
+      console.error(`❌ Login failed: Nepodarilo sa načítať používateľa ${id}`);
       return { 
         success: false, 
         blocked: false, 
-        error: error.message || 'Neočakávaná chyba pri prihlásení' 
+        error: 'Nepodarilo sa načítať používateľa. Skúste to znova.' 
       };
     }
-  }, [dataManager]);
+    
+    if (userData.blocked) {
+      console.log(`❌ Login zamietnutý: Účastník ${id} je blokovaný`);
+      sessionStorage.removeItem('participantCode');
+      return { 
+        success: false, 
+        blocked: true, 
+        message: 'Účet je blokovaný administrátorom' 
+      };
+    }
+    
+    sessionStorage.setItem('participantCode', id);
+    
+    // ✅✅✅ PRIDAJ TENTO RIADOK - nastav userId okamžite ✅✅✅
+    setUserId(id);
+    
+    userData.instruction_completed = true;
+    userData.current_progress_step = 'intro';
+    
+    const saved = await dataManager.saveProgress(id, userData);
+    if (!saved) {
+      console.warn('⚠️ Progress not saved to server, but login successful');
+    }
+    
+    console.log(`✅ Login successful for: ${id}`);
+    return { success: true, blocked: false };
+    
+  } catch (error) {
+    console.error('❌ Login error:', error);
+    return { 
+      success: false, 
+      blocked: false, 
+      error: error.message || 'Neočakávaná chyba pri prihlásení' 
+    };
+  }
+}, [dataManager]);
 
 
   // ✅ PO - Vyčistí VŠETKY intervaly a listenery
