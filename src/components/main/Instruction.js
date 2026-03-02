@@ -956,6 +956,7 @@ export default function Instruction() {
   };
 
   const handleStart = async () => {
+    // ✅ Ochrana proti double-click
     if (isProcessing) {
       console.log('⏭️ Already processing, ignoring click');
       return;
@@ -965,16 +966,19 @@ export default function Instruction() {
     setIsLoading(true);
     
     try {
+      // ✅ Validácia
       const e = await validate();
       setErrors(e);
       
       if (Object.keys(e).length > 0) {
-        return;
+        console.log('❌ Validation failed:', e);
+        return; // ✅ finally resetuje flagy
       }
 
       const codeValidation = validateParticipantCode(participantCode);
       const upperCode = participantCode.toUpperCase();
       
+      // ✅ Ulož informovaný súhlas
       try {
         const userData = await dataManager.loadUserProgress(upperCode);
         
@@ -990,32 +994,38 @@ export default function Instruction() {
         console.log(`✅ Súhlasy uložené pre ${upperCode}`);
         
       } catch (error) {
-        console.error('Error saving consents:', error);
+        console.error('❌ Error saving consents:', error);
       }
 
+      // ✅ Ulož email pre súťaž
       if (email && validateEmail(email) && competitionConsent) {
         try {
           await dataManager.saveCompetitionEmail(upperCode, email);
           console.log(`✅ Email pre súťaž uložený: ${email}`);
         } catch (error) {
-          console.error('Email save error:', error);
+          console.error('❌ Email save error:', error);
         }
       }
       
+      // ✅ Spracuj referral kód
       if (hasReferral && !referralAlreadyUsed && referralCode.trim()) {
         try {
           await dataManager.processReferral(upperCode, referralCode.trim().toUpperCase());
+          console.log(`✅ Referral kód spracovaný: ${referralCode}`);
         } catch (error) {
-          console.error('Referral processing error:', error);
+          console.error('❌ Referral processing error:', error);
           setErrors({ referral: 'Chyba pri spracovaní referral kódu. Zadajte kód znova prosím.' });
-          return;
+          return; // ✅ finally resetuje flagy
         }
       }
       
+      // ✅ Prihlásenie
+      console.log(`🔐 Prihlasovanie používateľa: ${upperCode}`);
       const loginResult = await login(upperCode);
       
       if (!loginResult.success) {
         if (loginResult.blocked) {
+          console.log(`❌ Účet ${upperCode} je blokovaný`);
           setIsBlocked(true);
           setParticipantCode(upperCode);
           setErrors({ blocked: 'Tento účet bol zablokovaný administrátorom.' });
@@ -1023,23 +1033,29 @@ export default function Instruction() {
             blockedWarningRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }, 100);
         } else {
+          console.log('❌ Login failed:', loginResult.message);
           setErrors({ general: loginResult.message || 'Chyba pri prihlásení.' });
         }
-        return;
+        return; // ✅ finally resetuje flagy
       }
       
+      // ✅ Úspešné prihlásenie - navigácia s replace
+      console.log(`✅ Prihlásenie úspešné - presmerovanie (${codeValidation.type})`);
+      
       if (codeValidation.type === 'admin') {
-        navigate('/admin');
+        navigate('/admin', { replace: true }); // ✅ PRIDANÝ replace
       } else {
-        navigate('/intro');
+        navigate('/intro', { replace: true }); // ✅ PRIDANÝ replace
       }
       
     } catch (error) {
       console.error('❌ Unexpected error in handleStart:', error);
       setErrors({ general: 'Neočakávaná chyba. Skúste to znova prosím.' });
     } finally {
+      // ✅ VŽDY resetuj flagy (aj po return)
       setIsLoading(false);
       setIsProcessing(false);
+      console.log('🔄 Processing flags reset');
     }
   };
 
@@ -1054,7 +1070,9 @@ export default function Instruction() {
     setReferralCode('');
     setReferralFromUrl(false);
     setEmail('');
+    console.log('🧹 Formulár vyčistený');
   };
+
 
   const instructionsSections = [
     {

@@ -249,10 +249,6 @@ const IntroMission0 = () => {
             imageUrl="/images/detective.png"
             iconUrl="/images/detective-icon.png"
             tip={`
-              <p style="font-size: 15px; font-weight: bold; color: ${theme.ACCENT_COLOR}; margin-bottom: 12px;">
-                <strong>Vitajte!</strong>
-              </p>
-              
               <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
                 <strong>Ďakujeme, že ste sa rozhodli zúčastniť v predvýskume!</strong>
               </p>
