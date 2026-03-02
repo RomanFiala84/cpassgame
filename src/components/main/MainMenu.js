@@ -852,7 +852,7 @@ const MainMenu = () => {
  const theme = useContext(ThemeContext);
  const detectiveStory = `
    <p style="font-size: 15px; font-weight: bold; color: ${theme.PRIMARY_TEXT_COLOR}; margin-bottom: 12px;">
-      <strong>Ktorou časťou mám začať?</strong>
+      <strong>Ktorou misiou mám začať?</strong>
     </p>
     
       <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
@@ -965,7 +965,7 @@ const MainMenu = () => {
           <Title>HLAVNÉ MENU</Title>
           <InstructionsWrapper>
             <InstructionCard>
-              <h4 style={{ color: theme.ACCENT_COLOR }}><strong>Ktorou časťou mám začať?</strong></h4>
+              <h4 style={{ color: theme.ACCENT_COLOR }}><strong>Inštrukcie k postupu</strong></h4>
               
               {/* ✅ GRADIENT ODRÁŽKY */}
               <SubNote style={{ marginTop: '12px' }}>
