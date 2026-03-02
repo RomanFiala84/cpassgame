@@ -282,7 +282,7 @@ const MissionTitle = styled.h3`
 
 const MissionStatus = styled.div`
   font-size: 10px;
-  color: ${p => p.completed ? '#22c508ff' : p.theme.PRIMARY_TEXT_COLOR};
+  color: ${p => p.completed ? p.theme.SUCCESS_COLOR : p.theme.ERROR_COLOR};
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.3px;
