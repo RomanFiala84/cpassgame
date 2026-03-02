@@ -200,28 +200,28 @@ const AnimatedBackground = ({
 
     const colors = [
     {
-        gradient: 'radial-gradient(circle, rgba(185, 28, 28, 1.0), rgba(153, 27, 27, 0.7))', // ⬅️ 0.9 → 1.0, 0.4 → 0.7
-        glow: 'rgba(185, 28, 28, 0.9)' // ⬅️ 0.6 → 0.9
+        gradient: 'radial-gradient(circle, rgba(185, 28, 28, 1.0), rgba(153, 27, 27, 0.7))', // Tmavá bordová
+        glow: 'rgba(185, 28, 28, 0.9)'
     },
     {
-        gradient: 'radial-gradient(circle, rgba(220, 38, 38, 1.0), rgba(185, 28, 28, 0.7))',
+        gradient: 'radial-gradient(circle, rgba(220, 38, 38, 1.0), rgba(185, 28, 28, 0.7))', // Stredná bordová
         glow: 'rgba(220, 38, 38, 0.9)'
     },
     {
-        gradient: 'radial-gradient(circle, rgba(239, 68, 68, 1.0), rgba(220, 38, 38, 0.7))',
-        glow: 'rgba(239, 68, 68, 0.9)'
+        gradient: 'radial-gradient(circle, rgba(217, 119, 6, 1.0), rgba(180, 83, 9, 0.7))', // Zlatá/jantárová
+        glow: 'rgba(217, 119, 6, 0.9)'
     },
     {
-        gradient: 'radial-gradient(circle, rgba(159, 18, 57, 1.0), rgba(136, 19, 55, 0.7))',
+        gradient: 'radial-gradient(circle, rgba(245, 158, 11, 1.0), rgba(217, 119, 6, 0.7))', // Svetlejšia zlatá
+        glow: 'rgba(245, 158, 11, 0.9)'
+    },
+    {
+        gradient: 'radial-gradient(circle, rgba(159, 18, 57, 1.0), rgba(136, 19, 55, 0.7))', // Ružovobordová
         glow: 'rgba(159, 18, 57, 0.9)'
     },
     {
-        gradient: 'radial-gradient(circle, rgba(190, 24, 93, 1.0), rgba(159, 18, 57, 0.7))',
-        glow: 'rgba(190, 24, 93, 0.9)'
-    },
-    {
-        gradient: 'radial-gradient(circle, rgba(127, 29, 29, 1.0), rgba(109, 40, 40, 0.7))',
-        glow: 'rgba(127, 29, 29, 0.9)'
+        gradient: 'radial-gradient(circle, rgba(239, 68, 68, 1.0), rgba(220, 38, 38, 0.7))', // Svetlejšia bordová
+        glow: 'rgba(239, 68, 68, 0.9)'
     },
     ];
 
