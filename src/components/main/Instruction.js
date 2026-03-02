@@ -956,6 +956,19 @@ export default function Instruction() {
   };
 
   const handleStart = async () => {
+    // ✅ Kontrola už prihláseného používateľa
+    const existingSession = sessionStorage.getItem('participantCode');
+    if (existingSession && !['0', '1', '2'].includes(existingSession)) {
+      console.log('⚠️ Používateľ už je prihlásený, presmerovanie...');
+      const codeValidation = validateParticipantCode(existingSession);
+      if (codeValidation.type === 'admin') {
+        navigate('/admin', { replace: true });
+      } else {
+        navigate('/intro', { replace: true });
+      }
+      return;
+    }
+
     // ✅ Ochrana proti double-click
     if (isProcessing) {
       console.log('⏭️ Already processing, ignoring click');
@@ -977,6 +990,24 @@ export default function Instruction() {
 
       const codeValidation = validateParticipantCode(participantCode);
       const upperCode = participantCode.toUpperCase();
+      
+      // ✅ Kontrola, či nie je kód blokovaný pred pokračovaním
+      try {
+        const userData = await dataManager.loadUserProgress(upperCode, true);
+        
+        if (userData?.blocked) {
+          console.log(`❌ Účet ${upperCode} je blokovaný`);
+          setIsBlocked(true);
+          setParticipantCode(upperCode);
+          setErrors({ blocked: 'Tento účet bol zablokovaný administrátorom.' });
+          setTimeout(() => {
+            blockedWarningRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 100);
+          return;
+        }
+      } catch (error) {
+        console.error('❌ Error checking blocked status:', error);
+      }
       
       // ✅ Ulož informovaný súhlas
       try {
@@ -1043,9 +1074,9 @@ export default function Instruction() {
       console.log(`✅ Prihlásenie úspešné - presmerovanie (${codeValidation.type})`);
       
       if (codeValidation.type === 'admin') {
-        navigate('/admin', { replace: true }); // ✅ PRIDANÝ replace
+        navigate('/admin', { replace: true });
       } else {
-        navigate('/intro', { replace: true }); // ✅ PRIDANÝ replace
+        navigate('/intro', { replace: true });
       }
       
     } catch (error) {
@@ -1070,8 +1101,10 @@ export default function Instruction() {
     setReferralCode('');
     setReferralFromUrl(false);
     setEmail('');
+    sessionStorage.removeItem('participantCode'); // ✅ PRIDANÉ: Vyčisti aj session
     console.log('🧹 Formulár vyčistený');
   };
+
 
 
   const instructionsSections = [
