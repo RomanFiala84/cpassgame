@@ -1,7 +1,7 @@
-//UPRAVA
-// ✅ OPRAVENÁ VERZIA - Avatar bez okrajov, bez badge
+// ✅ VERZIA BEZ MOŽNOSTI ZATVORENIA
+// Avatar bez okrajov, bez badge, BEZ close button
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 // =====================
@@ -16,8 +16,7 @@ const TipContainer = styled.div`
   padding: 16px;
   margin-bottom: 16px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-  animation: ${p => p.$isClosing ? 'slideOut' : 'slideIn'} 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  animation-fill-mode: forwards;
+  animation: slideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   overflow: hidden;
   
   /* Decentný gradient pozadie */
@@ -30,7 +29,7 @@ const TipContainer = styled.div`
     bottom: 0;
     background: radial-gradient(
       circle at top left,
-      ${p => p.theme.ACCENT_COLOR}08 0%,
+      ${p => p.theme.ACCENT_COLOR}15 0%,
       transparent 60%
     );
     pointer-events: none;
@@ -44,17 +43,6 @@ const TipContainer = styled.div`
     to {
       opacity: 1;
       transform: translateY(0) scale(1);
-    }
-  }
-  
-  @keyframes slideOut {
-    from {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-    to {
-      opacity: 0;
-      transform: translateY(20px) scale(0.9);
     }
   }
   
@@ -84,11 +72,11 @@ const DetectiveAvatar = styled.img`
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  object-fit: cover; /* ✅ COVER namiesto contain */
+  object-fit: cover;
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
-  box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}33;
+  box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}45;
   transition: transform 0.3s ease;
-  flex-shrink: 0; /* ✅ PRIDANÉ - zabráni zmenšeniu */
+  flex-shrink: 0;
   
   &:hover {
     transform: scale(1.1) rotate(5deg);
@@ -111,7 +99,7 @@ const DetectiveAvatarFallback = styled.div`
   justify-content: center;
   font-size: 20px;
   box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}33;
-  flex-shrink: 0; /* ✅ PRIDANÉ */
+  flex-shrink: 0;
   
   @media (max-width: 480px) {
     width: 32px;
@@ -128,36 +116,6 @@ const DetectiveName = styled.div`
   
   @media (max-width: 480px) {
     font-size: 15px;
-  }
-`;
-
-const CloseButton = styled.button`
-  background: ${p => p.theme.BORDER_COLOR}44;
-  border: none;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 20px;
-  cursor: pointer;
-  padding: 0;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  transition: all 0.2s ease;
-  flex-shrink: 0; /* ✅ PRIDANÉ */
-  
-  &:hover {
-    background: ${p => p.theme.ACCENT_COLOR};
-    color: #ffffff;
-    transform: rotate(90deg);
-  }
-  
-  @media (max-width: 480px) {
-    font-size: 20px;
-    width: 22px;
-    height: 22px;
   }
 `;
 
@@ -206,8 +164,8 @@ const TipText = styled.div`
   }
   
   code {
-    background: ${p => p.theme.ACCENT_COLOR}11;
-    border: 1px solid ${p => p.theme.ACCENT_COLOR}33;
+    background: ${p => p.theme.ACCENT_COLOR}15;
+    border: 1px solid ${p => p.theme.ACCENT_COLOR}45;
     border-radius: 4px;
     padding: 2px 6px;
     font-family: 'Courier New', monospace;
@@ -215,29 +173,18 @@ const TipText = styled.div`
   }
 `;
 
+// ✅ KOMPONENT - ZJEDNODUŠENÝ (bez close logiky)
 const DetectiveTipSmall = ({ 
   tip, 
   detectiveName = "Inšpektor Kritan",
   autoOpen = true,
   autoOpenDelay = 0,
-  autoClose = false,
-  autoCloseDelay = 5000,
-  onOpen,
-  onClose
+  onOpen
 }) => {
   const [isVisible, setIsVisible] = useState(autoOpen);
-  const [isClosing, setIsClosing] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  const handleClose = useCallback(() => {
-    setIsClosing(true);
-    setTimeout(() => {
-      setIsClosing(false);
-      setIsVisible(false);
-      if (onClose) onClose();
-    }, 400);
-  }, [onClose]);
-
+  // ✅ Auto-open s delay
   useEffect(() => {
     if (autoOpen && autoOpenDelay > 0) {
       const timer = setTimeout(() => {
@@ -249,16 +196,7 @@ const DetectiveTipSmall = ({
     }
   }, [autoOpen, autoOpenDelay, onOpen]);
 
-  useEffect(() => {
-    if (isVisible && autoClose) {
-      const timer = setTimeout(() => {
-        handleClose();
-      }, autoCloseDelay);
-
-      return () => clearTimeout(timer);
-    }
-  }, [isVisible, autoClose, autoCloseDelay, handleClose]);
-
+  // ✅ Fallback pre obrázok
   const handleImageError = () => {
     console.warn('Detective image failed to load, using fallback');
     setImageError(true);
@@ -267,7 +205,7 @@ const DetectiveTipSmall = ({
   if (!tip || !isVisible) return null;
 
   return (
-    <TipContainer $isClosing={isClosing}>
+    <TipContainer>
       <TipHeader>
         {!imageError ? (
           <DetectiveAvatar 
@@ -276,15 +214,10 @@ const DetectiveTipSmall = ({
             onError={handleImageError}
           />
         ) : (
-          <DetectiveAvatarFallback></DetectiveAvatarFallback>
+          <DetectiveAvatarFallback>🔍</DetectiveAvatarFallback>
         )}
         <DetectiveName>{detectiveName}</DetectiveName>
-        <CloseButton 
-          onClick={handleClose}
-          aria-label="Zavrieť tip inšpektora"
-        >
-          ×
-        </CloseButton>
+        {/* ✅ CLOSE BUTTON ODSTRÁNENÝ */}
       </TipHeader>
       <TipText dangerouslySetInnerHTML={{ __html: tip }} />
     </TipContainer>
