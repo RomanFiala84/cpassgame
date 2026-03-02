@@ -1406,7 +1406,7 @@ export default function Instruction() {
               <strong>Pre dvojčíslie: Zadajte číselne váš mesiac narodenia vo formáte MM (napr. pre 1. január zadajte 01).</strong>
             </LocalNestedItem>
             <LocalNestedItem>
-              <li>Príklad: Jožko Mrkvička narodený v novembri = JORK11.</li>
+              Príklad: Jožko Mrkvička narodený v novembri = JORK11.
             </LocalNestedItem>
             
             <LocalList>
@@ -1418,7 +1418,7 @@ export default function Instruction() {
             </LocalNestedItem>
             
             <LocalNestedItem>
-              <li>Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín = TORK11.</li>
+              Príklad: Jožko Mrkvička narodený v novembri z okresu Trenčín = TORK11.
             </LocalNestedItem>
           </InfoText>
         </InfoBox>

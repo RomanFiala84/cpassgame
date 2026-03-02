@@ -376,7 +376,7 @@ const createFeedbackQuestions = (blockId, questionCount) => [
     instruction: 'Vyberte čísla otázok a tvrdení:',
     required: false,
     showIf: {
-      questionId: `spätná_väzba_${blockId}_problémy_zrozumitelnost`,
+      questionId: `spätná_väzba_${blockId}_zrozumitelnost`,
       operator: 'includes',
       value: 'zrozumitelnost'
     }
@@ -389,7 +389,7 @@ const createFeedbackQuestions = (blockId, questionCount) => [
     placeholder: 'Vyberte čísla otázok a tvrdení:',
     required: false,
     showIf: {
-      questionId: `spätná_väzba_${blockId}_problémy_jednoznacnost`,
+      questionId: `spätná_väzba_${blockId}_jednoznacnost`,
       operator: 'includes',
       value: 'jednoznacnost'
     }
@@ -402,7 +402,7 @@ const createFeedbackQuestions = (blockId, questionCount) => [
     placeholder: 'Vyberte čísla otázok a tvrdení:',
     required: false,
     showIf: {
-      questionId: `spätná_väzba_${blockId}_problémy_hodnotiaca_stupnica`,
+      questionId: `spätná_väzba_${blockId}_hodnotiaca_stupnica`,
       operator: 'includes',
       value: 'stupnica'
     }
