@@ -1,5 +1,5 @@
 // src/components/missions/mission0/OutroMission0.js
-// ✅ S PRIHLÁSENÍM NA NOTIFIKÁCIU
+// ✅ S PRIHLÁSENÍM NA ĎALŠIU ČASŤ A NOTIFIKÁCIU
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -219,13 +219,13 @@ const InfoItem = styled.li`
   }
 `;
 
-const NotificationSection = styled.div`
+const ParticipationSection = styled.div`
   margin-top: 24px;
   padding-top: 20px;
   border-top: 2px solid ${p => p.theme.BORDER_COLOR};
 `;
 
-const NotificationTitle = styled.h4`
+const SectionTitle = styled.h4`
   font-size: 15px;
   color: ${p => p.theme.ACCENT_COLOR};
   margin-bottom: 16px;
@@ -387,6 +387,9 @@ const OutroMission0 = () => {
   const { addMissionPoints, refreshUserStats, dataManager, userId } = useUserStats();
   const [isProcessing, setIsProcessing] = useState(false);
   
+  // ✅ Participation state
+  const [wantsParticipate, setWantsParticipate] = useState(false);
+  
   // ✅ Notification state
   const [wantsNotification, setWantsNotification] = useState(false);
   const [emailOption, setEmailOption] = useState('contest'); // 'contest' alebo 'new'
@@ -412,22 +415,29 @@ const OutroMission0 = () => {
     loadExistingEmail();
   }, [userId, dataManager]);
 
-  // ✅ Uloženie notifikačných preferencií
-  const saveNotificationPreferences = async () => {
-    if (!userId) return;
+  // ✅ Uloženie všetkých preferencií
+  const savePreferences = async () => {
+    if (!userId) return false;
     
     try {
       const progress = await dataManager.loadUserProgress(userId);
       
-      const notificationData = {
-        wants_notification: wantsNotification,
-        notification_email_option: emailOption,
-        notification_email: emailOption === 'new' ? newEmail : existingEmail,
-        notification_timestamp: new Date().toISOString()
-      };
+      // ✅ Uloženie účasti na ďalšej časti
+      progress.wants_to_participate_main_study = wantsParticipate;
+      progress.participation_response_timestamp = new Date().toISOString();
       
-      // Ulož do progress
-      Object.assign(progress, notificationData);
+      // ✅ Uloženie notifikačných preferencií
+      if (wantsNotification) {
+        const finalEmail = emailOption === 'new' ? newEmail : existingEmail;
+        
+        progress.wants_notification = true;
+        progress.notification_email_option = emailOption;
+        progress.notification_email = finalEmail;
+        progress.notification_timestamp = new Date().toISOString();
+      } else {
+        progress.wants_notification = false;
+      }
+      
       await dataManager.saveProgress(userId, progress);
       
       setSaveMessage({ success: true, text: 'Nastavenia uložené!' });
@@ -438,7 +448,7 @@ const OutroMission0 = () => {
       
       return true;
     } catch (error) {
-      console.error('Error saving notification preferences:', error);
+      console.error('Error saving preferences:', error);
       setSaveMessage({ success: false, text: 'Chyba pri ukladaní!' });
       return false;
     }
@@ -450,9 +460,8 @@ const OutroMission0 = () => {
     setIsProcessing(true);
     
     try {
-      // ✅ Ulož notifikačné preferencie ak chce notifikáciu
+      // ✅ Validácia ak chce notifikáciu
       if (wantsNotification) {
-        // Validácia emailu ak je vybraná nová adresa
         if (emailOption === 'new' && !newEmail) {
           setSaveMessage({ success: false, text: 'Prosím zadajte email!' });
           setIsProcessing(false);
@@ -464,12 +473,13 @@ const OutroMission0 = () => {
           setIsProcessing(false);
           return;
         }
-        
-        const saved = await saveNotificationPreferences();
-        if (!saved) {
-          setIsProcessing(false);
-          return;
-        }
+      }
+      
+      // ✅ Ulož všetky preferencie
+      const saved = await savePreferences();
+      if (!saved) {
+        setIsProcessing(false);
+        return;
       }
       
       console.log('🎯 Completing mission0...');
@@ -532,74 +542,91 @@ const OutroMission0 = () => {
             autoOpen={true}
           />
 
-          <NotificationSection>
-            <NotificationTitle><strong>📧 Upozornenie na hlavný výskum</strong></NotificationTitle>
+          {/* ✅ ÚČASŤ NA ĎALŠEJ ČASTI */}
+          <ParticipationSection>
+            <SectionTitle><strong>🎯 Hlavný výskum</strong></SectionTitle>
             
-            <CheckboxLabel checked={wantsNotification}>
+            <CheckboxLabel checked={wantsParticipate}>
               <Checkbox
                 type="checkbox"
-                checked={wantsNotification}
-                onChange={(e) => setWantsNotification(e.target.checked)}
+                checked={wantsParticipate}
+                onChange={(e) => setWantsParticipate(e.target.checked)}
               />
               <CheckboxText>
-                <strong>Chcem byť upozornený/á, keď bude hlavný výskum pripravený</strong>
+                <strong>Chcem sa zúčastniť ďalšej časti výskumu (hlavný výskum)</strong>
               </CheckboxText>
             </CheckboxLabel>
 
-            {wantsNotification && (
-              <EmailInputContainer show={wantsNotification}>
-                <EmailLabel>Vyberte možnosť pre email:</EmailLabel>
-                
-                <RadioGroup>
-                  {existingEmail && (
-                    <RadioLabel checked={emailOption === 'contest'}>
-                      <RadioButton
-                        type="radio"
-                        name="emailOption"
-                        value="contest"
-                        checked={emailOption === 'contest'}
-                        onChange={() => setEmailOption('contest')}
-                      />
-                      <RadioText>
-                        Použiť email zo súťaže: <strong>{existingEmail}</strong>
-                      </RadioText>
-                    </RadioLabel>
-                  )}
-                  
-                  <RadioLabel checked={emailOption === 'new'}>
-                    <RadioButton
-                      type="radio"
-                      name="emailOption"
-                      value="new"
-                      checked={emailOption === 'new'}
-                      onChange={() => setEmailOption('new')}
-                    />
-                    <RadioText>
-                      <strong>Zadať iný email</strong>
-                    </RadioText>
-                  </RadioLabel>
-                </RadioGroup>
+            {/* ✅ NOTIFIKÁCIA - len ak chce účasť */}
+            {wantsParticipate && (
+              <EmailInputContainer show={wantsParticipate}>
+                <CheckboxLabel checked={wantsNotification}>
+                  <Checkbox
+                    type="checkbox"
+                    checked={wantsNotification}
+                    onChange={(e) => setWantsNotification(e.target.checked)}
+                  />
+                  <CheckboxText>
+                    <strong>Chcem byť upozornený/á emailom, keď bude hlavný výskum pripravený</strong>
+                  </CheckboxText>
+                </CheckboxLabel>
 
-                {emailOption === 'new' && (
-                  <div style={{ marginTop: '12px' }}>
-                    <EmailLabel>Email pre upozornenie:</EmailLabel>
-                    <EmailInput
-                      type="email"
-                      value={newEmail}
-                      onChange={(e) => setNewEmail(e.target.value)}
-                      placeholder="vas@email.sk"
-                    />
+                {wantsNotification && (
+                  <div>
+                    <EmailLabel>Vyberte možnosť pre email:</EmailLabel>
+                    
+                    <RadioGroup>
+                      {existingEmail && (
+                        <RadioLabel checked={emailOption === 'contest'}>
+                          <RadioButton
+                            type="radio"
+                            name="emailOption"
+                            value="contest"
+                            checked={emailOption === 'contest'}
+                            onChange={() => setEmailOption('contest')}
+                          />
+                          <RadioText>
+                            Použiť email zo súťaže: <strong>{existingEmail}</strong>
+                          </RadioText>
+                        </RadioLabel>
+                      )}
+                      
+                      <RadioLabel checked={emailOption === 'new'}>
+                        <RadioButton
+                          type="radio"
+                          name="emailOption"
+                          value="new"
+                          checked={emailOption === 'new'}
+                          onChange={() => setEmailOption('new')}
+                        />
+                        <RadioText>
+                          <strong>Zadať iný email</strong>
+                        </RadioText>
+                      </RadioLabel>
+                    </RadioGroup>
+
+                    {emailOption === 'new' && (
+                      <div style={{ marginTop: '12px' }}>
+                        <EmailLabel>Email pre upozornenie:</EmailLabel>
+                        <EmailInput
+                          type="email"
+                          value={newEmail}
+                          onChange={(e) => setNewEmail(e.target.value)}
+                          placeholder="vas@email.sk"
+                        />
+                      </div>
+                    )}
                   </div>
-                )}
-
-                {saveMessage && (
-                  <SaveMessage success={saveMessage.success}>
-                    {saveMessage.text}
-                  </SaveMessage>
                 )}
               </EmailInputContainer>
             )}
-          </NotificationSection>
+
+            {saveMessage && (
+              <SaveMessage success={saveMessage.success}>
+                {saveMessage.text}
+              </SaveMessage>
+            )}
+          </ParticipationSection>
         </InfoSection>
 
         <ButtonContainer>
