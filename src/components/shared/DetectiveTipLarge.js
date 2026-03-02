@@ -182,7 +182,7 @@ const CountdownBadge = styled.div`
 
 const DetectiveImageContainer = styled.div`
   position: relative;
-  width: 50%;
+  width: 40%;
   min-height: 480px;
   background: linear-gradient(135deg, 
     ${p => p.theme.ACCENT_COLOR}33, 
