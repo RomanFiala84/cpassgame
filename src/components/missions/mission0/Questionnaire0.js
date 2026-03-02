@@ -1,5 +1,6 @@
 // src/components/missions/mission0/Questionnaire0.js
 // ✅ FEEDBACK PRIAMO V BLOKU OTÁZOK (na tej istej stránke)
+// ✅ S VALIDÁCIOU A SCROLL-TO-ERROR
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -60,12 +61,26 @@ const ProgressText = styled.div`
   font-weight: 600;
 `;
 
+// ✅ PRIDANÉ: Error state pre QuestionCard
 const QuestionCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
-  border: 1px solid ${p => p.theme.BORDER_COLOR};
+  border: 2px solid ${p => p.$hasError ? '#ff0000' : p.theme.BORDER_COLOR};
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 16px;
+  scroll-margin-top: 20px;
+  transition: all 0.2s ease;
+  
+  ${p => p.$hasError && `
+    box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+    animation: shake 0.3s ease-in-out;
+  `}
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
 `;
 
 const Question = styled.p`
@@ -75,7 +90,21 @@ const Question = styled.p`
   font-weight: 500;
 `;
 
-// ✅ FEEDBACK SEKCIA - vizuálne oddelená
+// ✅ PRIDANÉ: Error message pod otázkou
+const QuestionError = styled.div`
+  color: #ff0000;
+  font-size: 12px;
+  margin-top: 8px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  
+  &::before {
+    content: '⚠️';
+  }
+`;
+
 const FeedbackSection = styled.div`
   margin-top: 32px;
   padding-top: 24px;
@@ -306,10 +335,15 @@ const SelectedNumbers = styled.div`
 `;
 
 const ErrorText = styled.div`
-  color: ${p => p.theme.ACCENT_COLOR_2};
+  color: #ff0000;
   margin-bottom: 16px;
   text-align: center;
   font-size: 14px;
+  font-weight: 600;
+  padding: 12px;
+  background: rgba(255, 0, 0, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 0, 0, 0.3);
 `;
 
 const ButtonContainer = styled.div`
@@ -659,6 +693,7 @@ const Questionnaire0 = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [answers, setAnswers] = useState({});
   const [error, setError] = useState('');
+  const [questionErrors, setQuestionErrors] = useState({}); // ✅ PRIDANÉ
   const [startTime] = useState(Date.now());
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -674,6 +709,12 @@ const Questionnaire0 = () => {
     
     loadSaved();
   }, [userId, responseManager]);
+
+  // ✅ PRIDANÉ: Reset errors pri zmene stránky
+  useEffect(() => {
+    setQuestionErrors({});
+    setError('');
+  }, [currentPage]);
 
   const shouldShowQuestion = (question, responses) => {
     if (!question.showIf) return true;
@@ -707,11 +748,20 @@ const Questionnaire0 = () => {
     }
   };
 
+  // ✅ UPRAVENÉ: Vymaž error pri zmene odpovede
   const handleChange = async (questionId, value) => {
     setAnswers(prev => ({
       ...prev,
       [questionId]: value
     }));
+    
+    // ✅ Vymaž error pre túto otázku
+    setQuestionErrors(prev => {
+      const updated = { ...prev };
+      delete updated[questionId];
+      return updated;
+    });
+    
     setError('');
     
     try {
@@ -735,33 +785,67 @@ const Questionnaire0 = () => {
     handleChange(questionId, updated);
   };
 
-  const isCurrentPageComplete = () => {
+  // ✅ PRIDANÉ: Validácia stránky
+  const validateCurrentPage = () => {
     const currentPageData = PAGES[currentPage];
     const visibleQuestions = currentPageData.questions.filter(q => 
-      shouldShowQuestion(q, answers) && !q.isFeedback // Feedback nie je povinný
+      shouldShowQuestion(q, answers) && !q.isFeedback
     );
     
-    return visibleQuestions.every(q => {
-      if (q.required === false) return true;
-      const answer = answers[q.id];
-      return answer !== undefined && answer !== null && answer !== '';
+    const errors = {};
+    let isValid = true;
+    
+    visibleQuestions.forEach(q => {
+      if (q.required !== false) {
+        const answer = answers[q.id];
+        const isEmpty = answer === undefined || answer === null || answer === '';
+        
+        if (isEmpty) {
+          errors[q.id] = 'Táto otázka je povinná';
+          isValid = false;
+        }
+      }
     });
+    
+    return { isValid, errors };
   };
 
+  // ✅ PRIDANÉ: Scroll k prvej chybe
+  const scrollToFirstError = (errors) => {
+    const firstErrorId = Object.keys(errors)[0];
+    if (!firstErrorId) return;
+    
+    const element = document.getElementById(`question-${firstErrorId}`);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center' 
+      });
+    }
+  };
+
+  // ✅ UPRAVENÉ: Pridaj reset errors
   const handlePrevious = () => {
     if (currentPage > 0) {
       setCurrentPage(prev => prev - 1);
       setError('');
+      setQuestionErrors({});
       window.scrollTo(0, 0);
     }
   };
 
+  // ✅ UPRAVENÉ: Validácia a scroll
   const handleNext = async () => {
-    if (!isCurrentPageComplete()) {
-      setError('Prosím odpovedzte na všetky povinné otázky na tejto stránke.');
+    const validation = validateCurrentPage();
+    
+    if (!validation.isValid) {
+      setQuestionErrors(validation.errors);
+      setError('Prosím odpovedzte na všetky povinné otázky označené červenou farbou.');
+      scrollToFirstError(validation.errors);
       return;
     }
     
+    setQuestionErrors({});
     setError('');
     
     if (currentPage < PAGES.length - 1) {
@@ -800,13 +884,20 @@ const Questionnaire0 = () => {
     }
   };
 
+  // ✅ UPRAVENÉ: Pridaj error state a ID
   const renderQuestion = (question, index) => {
     if (!shouldShowQuestion(question, answers)) {
       return null;
     }
 
+    const hasError = !!questionErrors[question.id];
+
     return (
-      <QuestionCard key={question.id}>
+      <QuestionCard 
+        key={question.id}
+        id={`question-${question.id}`}  // ✅ PRIDANÉ: ID pre scroll
+        $hasError={hasError}  // ✅ PRIDANÉ: Error prop
+      >
         <Question>{index + 1}. {question.text}</Question>
         
         {question.type === 'likert' && (
@@ -953,6 +1044,11 @@ const Questionnaire0 = () => {
             placeholder="Napíšte odpoveď..."
           />
         )}
+        
+        {/* ✅ PRIDANÉ: Error message */}
+        {hasError && (
+          <QuestionError>{questionErrors[question.id]}</QuestionError>
+        )}
       </QuestionCard>
     );
   };
@@ -961,7 +1057,6 @@ const Questionnaire0 = () => {
   const totalPages = PAGES.length;
   const progress = ((currentPage + 1) / totalPages) * 100;
   
-  // Rozdeľ otázky na content a feedback
   const contentQuestions = currentPageData.questions.filter(q => !q.isFeedback);
   const feedbackQuestions = currentPageData.questions.filter(q => q.isFeedback);
   
@@ -1000,7 +1095,7 @@ const Questionnaire0 = () => {
           {/* ✅ CONTENT OTÁZKY */}
           {contentQuestions.map((question, idx) => renderQuestion(question, idx))}
           
-          {/* ✅ FEEDBACK SEKCIA - vizuálne oddelená */}
+          {/* ✅ FEEDBACK SEKCIA */}
           {feedbackQuestions.length > 0 && (
             <FeedbackSection>
               <FeedbackTitle>
@@ -1029,7 +1124,7 @@ const Questionnaire0 = () => {
             <StyledButton 
               accent 
               onClick={handleNext}
-              disabled={!isCurrentPageComplete() || isSubmitting}
+              disabled={isSubmitting}
             >
               {currentPage === totalPages - 1
                 ? (isSubmitting ? 'Ukladám...' : 'Dokončiť')
