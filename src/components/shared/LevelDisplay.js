@@ -31,7 +31,7 @@ const Wrapper = styled.div`
   }
   
   &::-webkit-scrollbar-track {
-    background: ${p => p.theme.BORDER_COLOR}33;
+    background: ${p => p.theme.BORDER_COLOR}45;
   }
   
   &::-webkit-scrollbar-thumb {
@@ -145,7 +145,7 @@ const MiniIcon = styled.div`
   font-size: 15px;
   font-weight: 700;
   color: white;
-  box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}66;
+  box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}60;
   flex-shrink: 0;
 
   @media (max-width: 768px) {
@@ -207,7 +207,7 @@ const LevelSection = styled.div`
   gap: 6px;
   padding: 10px 8px;
   background: ${p => p.theme.SECONDARY_BACKGROUND};
-  border: 1px solid ${p => p.theme.BORDER_COLOR}44;
+  border: 1px solid ${p => p.theme.BORDER_COLOR}45;
   border-radius: 8px;
   position: relative;
   overflow: hidden;
@@ -222,7 +222,7 @@ const LevelSection = styled.div`
     bottom: 0;
     background: radial-gradient(
       circle at top,
-      ${p => p.theme.ACCENT_COLOR}08 0%,
+      ${p => p.theme.ACCENT_COLOR}15 0%,
       transparent 70%
     );
     pointer-events: none;
@@ -253,7 +253,7 @@ const LevelIcon = styled.div`
   font-size: 25px;
   font-weight: 700;
   color: white;
-  box-shadow: 0 3px 10px ${p => p.theme.ACCENT_COLOR}66;
+  box-shadow: 0 3px 10px ${p => p.theme.ACCENT_COLOR}60;
   flex-shrink: 0;
   position: relative;
   z-index: 1;
@@ -326,12 +326,12 @@ const StatItem = styled.div`
   gap: 3px;
   padding: 8px 6px;
   background: ${p => p.theme.SECONDARY_BACKGROUND};
-  border: 1px solid ${p => p.theme.BORDER_COLOR}44;
+  border: 1px solid ${p => p.theme.BORDER_COLOR}45;
   border-radius: 6px;
   transition: all 0.2s ease;
   
   &:hover {
-    border-color: ${p => p.theme.ACCENT_COLOR}66;
+    border-color: ${p => p.theme.ACCENT_COLOR}60;
     transform: translateX(2px);
   }
 
@@ -357,7 +357,7 @@ const StatValue = styled.div`
   font-size: ${p => p.$large ? '15px' : '10px'};
   font-weight: 700;
   color: ${p => p.$highlight ? p.theme.ACCENT_COLOR : p.theme.PRIMARY_TEXT_COLOR};
-  text-shadow: ${p => p.$highlight ? `0 1px 3px ${p.theme.ACCENT_COLOR}33` : 'none'};
+  text-shadow: ${p => p.$highlight ? `0 1px 3px ${p.theme.ACCENT_COLOR}45` : 'none'};
 
   @media (max-width: 480px) {
     font-size: ${p => p.$large ? '10px' : '10px'};

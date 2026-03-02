@@ -1554,7 +1554,7 @@ export default function Instruction() {
             {hasReferral && (
               <>
                 <InputLabel htmlFor="referral-code" style={{ marginTop: '16px' }}>
-                  <strong>Zadajte referral kód:</strong>{referralFromUrl && '(automaticky vyplnený)'}
+                  <strong>Zadajte referral kód: </strong>{referralFromUrl && '(automaticky vyplnený)'}
                 </InputLabel>
                 <Input
                   id="referral-code"
