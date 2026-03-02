@@ -28,8 +28,8 @@ const darkTheme = {
 
 const lightTheme = {
   // ☀️ SVETLÝ REŽIM - Soft káva s mlékem + Sky blue akcent
-  BACKGROUND_COLOR: '#ebe5d9', // ⬅️ Káva s mlékem (dark cream)
-  SECONDARY_BACKGROUND: '#f2ede3', // ⬅️ Stredná káva s mlékem
+  BACKGROUND_COLOR: '#aaaaaaff', // ⬅️ ZMENENÉ: Hlavné pozadie bledošedá
+  SECONDARY_BACKGROUND: '#b8b8b8', // ⬅️ ZMENENÉ: Stredná bledošedá
   PRIMARY_TEXT_COLOR: '#000000',
   SECONDARY_TEXT_COLOR: '#ff4848ff',
   
@@ -38,10 +38,10 @@ const lightTheme = {
   ACCENT_COLOR_2: '#1e4d8b',
   ACCENT_COLOR_3: '#163a6f',
   
-  CARD_BACKGROUND: '#f7f3ea', // ⬅️ Light latte
-  INPUT_BACKGROUND: '#fdfaf4', // ⬅️ Najsvetlejšia latte
+  CARD_BACKGROUND: '#c5c5c5', // ⬅️ ZMENENÉ: Svetlá bledošedá pre karty
+  INPUT_BACKGROUND: '#d4d4d4', // ⬅️ ZMENENÉ: Najsvetlejšia bledošedá pre inputy
   BUTTON_COLOR: '#2563a8',
-  BORDER_COLOR: '#dcd0bf', // ⬅️ Tmavšia béžová border
+  BORDER_COLOR: '#8a8a8a', // ⬅️ ZMENENÉ: Tmavšia šedá border
   HOVER_OVERLAY: 'rgba(135, 206, 235, 0.15)',
   
   // Stavové farby

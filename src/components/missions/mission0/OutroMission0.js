@@ -8,7 +8,8 @@ import Layout from '../../../styles/Layout';
 import StyledButton from '../../../styles/StyledButton';
 import DetectiveTipSmall from '../../shared/DetectiveTipSmall';
 import { useUserStats } from '../../../contexts/UserStatsContext';
-
+import { useContext } from 'react';
+import { ThemeContext } from 'styled-components';
 const Container = styled.div`
   padding: 24px 16px;
   max-width: 900px;
@@ -79,7 +80,7 @@ const MissionLabel = styled.div`
   z-index: 1;
   
   @media (max-width: 480px) {
-    font-size: 20px;
+    font-size: 25px;
   }
 `;
 
@@ -105,7 +106,7 @@ const SuccessBox = styled.div`
 `;
 
 const PointsEarned = styled.div`
-  font-size: 56px;
+  font-size: 50px;
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
   margin: 20px 0;
@@ -124,12 +125,12 @@ const PointsEarned = styled.div`
   }
   
   @media (max-width: 480px) {
-    font-size: 42px;
+    font-size: 50px;
   }
 `;
 
 const PointsLabel = styled.div`
-  font-size: 16px;
+  font-size: 15px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   margin-bottom: 8px;
   text-align: center;
@@ -138,7 +139,7 @@ const PointsLabel = styled.div`
 
 const LevelUpText = styled.div`
   font-size: 15px;
-  color: ${p => p.theme.ACCENT_COLOR_2};
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   margin-top: 20px;
   font-weight: 600;
   padding-top: 16px;
@@ -209,7 +210,7 @@ const InfoItem = styled.li`
   }
   
   &:hover {
-    background: ${p => p.theme.ACCENT_COLOR}25;
+    background: ${p => p.theme.ACCENT_COLOR}45;
     transform: translateX(4px);
   }
   
@@ -282,7 +283,7 @@ const EmailInputContainer = styled.div`
 
 const EmailLabel = styled.label`
   display: block;
-  font-size: 14px;
+  font-size: 15px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   margin-bottom: 8px;
   font-weight: 500;
@@ -293,16 +294,16 @@ const EmailInput = styled.input`
   padding: 12px;
   border: 2px solid ${p => p.theme.BORDER_COLOR};
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 15px;
   font-family: inherit;
   background: ${p => p.theme.INPUT_BACKGROUND || p.theme.CARD_BACKGROUND};
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   transition: all 0.2s ease;
   
   &:focus {
     outline: none;
     border-color: ${p => p.theme.ACCENT_COLOR};
-    box-shadow: 0 0 0 3px ${p => p.theme.ACCENT_COLOR}22;
+    box-shadow: 0 0 0 3px ${p => p.theme.ACCENT_COLOR}45;
   }
   
   &::placeholder {
@@ -341,7 +342,7 @@ const RadioButton = styled.input`
 `;
 
 const RadioText = styled.span`
-  font-size: 14px;
+  font-size: 15px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   line-height: 1.4;
 `;
@@ -352,7 +353,7 @@ const SaveMessage = styled.div`
   background: ${p => p.success ? `${p.theme.ACCENT_COLOR}15` : '#ff000015'};
   border: 1px solid ${p => p.success ? `${p.theme.ACCENT_COLOR}33` : '#ff000033'};
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 15px;
   color: ${p => p.success ? p.theme.ACCENT_COLOR : '#ff0000'};
   font-weight: 500;
   display: flex;
@@ -396,7 +397,7 @@ const OutroMission0 = () => {
   const [newEmail, setNewEmail] = useState('');
   const [saveMessage, setSaveMessage] = useState(null);
   const [existingEmail, setExistingEmail] = useState('');
-
+  const theme = useContext(ThemeContext);
   // ✅ Načítaj existujúci email zo súťaže
   useEffect(() => {
     const loadExistingEmail = async () => {
@@ -519,32 +520,41 @@ const OutroMission0 = () => {
     >
       <Container>
         <MissionCard>
-          <MissionLabel><strong>🎉 Misia dokončená!</strong></MissionLabel>
+          <MissionLabel><strong>Gratulujeme!</strong></MissionLabel>
         </MissionCard>
 
         <SuccessBox>
-          <PointsLabel>Získané body za misiu:</PointsLabel>
-          <PointsEarned>+25 ⭐</PointsEarned>
-          <LevelUpText>🎯 Misia 0 dokončená!</LevelUpText>
+          <PointsLabel><strong>ZÍSKALI STE:</strong></PointsLabel>
+          <PointsEarned>+50 🎖</PointsEarned>
+          <LevelUpText><strong>BODOV</strong></LevelUpText>
         </SuccessBox>
 
         <InfoSection>
           <InfoTitle><strong>Čo ste dosiahli?</strong></InfoTitle>
           <InfoList>
-            <InfoItem><strong>Úspešne ste dokončili úvodný dotazník.</strong></InfoItem>
-            <InfoItem><strong>Získali ste svoje prvé detektívne body.</strong></InfoItem>
-            <InfoItem><strong>Pomohli ste nám zlepšiť výskum.</strong></InfoItem>
+            <InfoItem><strong>Úspešne ste dokončili predvýskum.</strong></InfoItem>
+            <InfoItem><strong>Získali ste 50 bodov potrebných pre zapojenie sa do súťaže.</strong></InfoItem>
+            <InfoItem><strong>Pomohli ste nám zlepšiť hlavnývýskum.</strong></InfoItem>
           </InfoList>
 
           <DetectiveTipSmall
-            tip="Výborne! Úspešne ste dokončili predvýskum. Vaše odpovede a pripomienky nám pomôžu vylepšiť dotazník pre hlavný výskum. Teraz môžete pokračovať ďalej a získavať ďalšie body!"
-            detectiveName="Inšpektor Kritan"
+            tip={`
+            <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                <strong>Výborne! Úspešne ste dokončili predvýskum. Vaše odpovede a spätná väzba nám pomôžu vylepšiť hlavný výskum.</strong>
+            <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                <strong>V blízkej dobe bude odmknutý hlavný výskum. Ak máte záujem, môžete sa zúčastniť.</strong>
+            <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                <strong>Ak sa rozhodnete zúčastniť, nižšie môžete potvrdiť a zvoliť si, či chcete byť jednorázovo upozornený/á e-mailom.</strong>
+            <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                <strong>Ešte raz ďakujeme za účasť v predvýskume, dúfame že sa vám predvýskum páčil a snáď sa v blízkej dobe vidíme znova.</strong>
+            `}
+              detectiveName="Inšpektor Kritan"
             autoOpen={true}
           />
 
           {/* ✅ ÚČASŤ NA ĎALŠEJ ČASTI */}
           <ParticipationSection>
-            <SectionTitle><strong>🎯 Hlavný výskum</strong></SectionTitle>
+            <SectionTitle><strong>Hlavný výskum</strong></SectionTitle>
             
             <CheckboxLabel checked={wantsParticipate}>
               <Checkbox
@@ -553,7 +563,7 @@ const OutroMission0 = () => {
                 onChange={(e) => setWantsParticipate(e.target.checked)}
               />
               <CheckboxText>
-                <strong>Chcem sa zúčastniť ďalšej časti výskumu (hlavný výskum)</strong>
+                <strong>Chcem sa zúčastniť ďalšej časti výskumu (hlavný výskum).</strong>
               </CheckboxText>
             </CheckboxLabel>
 
@@ -567,13 +577,13 @@ const OutroMission0 = () => {
                     onChange={(e) => setWantsNotification(e.target.checked)}
                   />
                   <CheckboxText>
-                    <strong>Chcem byť upozornený/á emailom, keď bude hlavný výskum pripravený</strong>
+                    <strong>Chcem byť upozornený/á e-mailom, keď bude hlavný výskum odomknutý.</strong>
                   </CheckboxText>
                 </CheckboxLabel>
 
                 {wantsNotification && (
                   <div>
-                    <EmailLabel>Vyberte možnosť pre email:</EmailLabel>
+                    <EmailLabel>Na ktorú e-mailovú adresu chcete aby vám prišlo upozornenie?</EmailLabel>
                     
                     <RadioGroup>
                       {existingEmail && (
@@ -586,8 +596,9 @@ const OutroMission0 = () => {
                             onChange={() => setEmailOption('contest')}
                           />
                           <RadioText>
-                            Použiť email zo súťaže: <strong>{existingEmail}</strong>
+                            <strong>E-mailovú adresu zadanú pre zapojenie sa do súťaže.</strong>
                           </RadioText>
+                          
                         </RadioLabel>
                       )}
                       
@@ -600,19 +611,19 @@ const OutroMission0 = () => {
                           onChange={() => setEmailOption('new')}
                         />
                         <RadioText>
-                          <strong>Zadať iný email</strong>
+                          <strong>Inú e-mailovú adresu</strong>
                         </RadioText>
                       </RadioLabel>
                     </RadioGroup>
 
                     {emailOption === 'new' && (
                       <div style={{ marginTop: '12px' }}>
-                        <EmailLabel>Email pre upozornenie:</EmailLabel>
+                        <EmailLabel><strong>Zadajte e-mailovú adresu na ktorú vám príde upozornenie:</strong></EmailLabel>
                         <EmailInput
                           type="email"
                           value={newEmail}
                           onChange={(e) => setNewEmail(e.target.value)}
-                          placeholder="vas@email.sk"
+                          placeholder="vas.email@priklad.sk"
                         />
                       </div>
                     )}
@@ -636,7 +647,7 @@ const OutroMission0 = () => {
             onClick={handleContinue}
             disabled={isProcessing}
           >
-            {isProcessing ? '⏳ Ukladám...' : '🏠 Hlavné menu'}
+            {isProcessing ? '⏳ Ukladám...' : 'Pokračovať do hlavnéhomenu'}
           </StyledButton>
         </ButtonContainer>
       </Container>

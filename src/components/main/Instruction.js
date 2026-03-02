@@ -1474,7 +1474,7 @@ export default function Instruction() {
           <EmailInput
             id="email"
             type="email"
-            placeholder="vas.email@príklad.com"
+            placeholder="vas.email@priklad.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={isBlocked}
