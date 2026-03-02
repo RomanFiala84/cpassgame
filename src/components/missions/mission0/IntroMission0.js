@@ -209,7 +209,7 @@ const IntroMission0 = () => {
     recordStart();
   }, [dataManager, navigate]);
 
-  const handleContinue = () => navigate('/mission0/questionnaire0');
+  const handleContinue = () => navigate('/mission0/questionnaire');
 
   return (
     <Layout 
