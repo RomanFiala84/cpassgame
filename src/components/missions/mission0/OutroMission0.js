@@ -1,12 +1,12 @@
 // src/components/missions/mission0/OutroMission0.js
-// ✅ UPRAVENÁ VERZIA - Štýl podľa IntroMission0
+// ✅ S PRIHLÁSENÍM NA NOTIFIKÁCIU
 
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styled, { ThemeContext } from 'styled-components';
+import styled from 'styled-components';
 import Layout from '../../../styles/Layout';
 import StyledButton from '../../../styles/StyledButton';
-import DetectiveTipLarge from '../../shared/DetectiveTipLarge';
+import DetectiveTipSmall from '../../shared/DetectiveTipSmall';
 import { useUserStats } from '../../../contexts/UserStatsContext';
 
 const Container = styled.div`
@@ -182,7 +182,7 @@ const InfoTitle = styled.h3`
 const InfoList = styled.ul`
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 0 20px 0;
   display: grid;
   gap: 8px;
 `;
@@ -219,6 +219,157 @@ const InfoItem = styled.li`
   }
 `;
 
+const NotificationSection = styled.div`
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 2px solid ${p => p.theme.BORDER_COLOR};
+`;
+
+const NotificationTitle = styled.h4`
+  font-size: 15px;
+  color: ${p => p.theme.ACCENT_COLOR};
+  margin-bottom: 16px;
+  font-weight: 600;
+`;
+
+const CheckboxLabel = styled.label`
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  background: ${p => p.checked ? `${p.theme.ACCENT_COLOR}15` : 'transparent'};
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: ${p => p.theme.ACCENT_COLOR}15;
+  }
+`;
+
+const Checkbox = styled.input`
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  cursor: pointer;
+  accent-color: ${p => p.theme.ACCENT_COLOR};
+  margin-top: 2px;
+`;
+
+const CheckboxText = styled.span`
+  font-size: 15px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  line-height: 1.5;
+`;
+
+const EmailInputContainer = styled.div`
+  display: ${p => p.show ? 'block' : 'none'};
+  margin-top: 16px;
+  animation: ${p => p.show ? 'slideDown 0.3s ease' : 'none'};
+  
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`;
+
+const EmailLabel = styled.label`
+  display: block;
+  font-size: 14px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  margin-bottom: 8px;
+  font-weight: 500;
+`;
+
+const EmailInput = styled.input`
+  width: 100%;
+  padding: 12px;
+  border: 2px solid ${p => p.theme.BORDER_COLOR};
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  background: ${p => p.theme.INPUT_BACKGROUND || p.theme.CARD_BACKGROUND};
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  transition: all 0.2s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: ${p => p.theme.ACCENT_COLOR};
+    box-shadow: 0 0 0 3px ${p => p.theme.ACCENT_COLOR}22;
+  }
+  
+  &::placeholder {
+    color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+    opacity: 0.6;
+  }
+`;
+
+const RadioGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+`;
+
+const RadioLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 8px;
+  background: ${p => p.checked ? `${p.theme.ACCENT_COLOR}15` : 'transparent'};
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: ${p => p.theme.ACCENT_COLOR}15;
+  }
+`;
+
+const RadioButton = styled.input`
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: ${p => p.theme.ACCENT_COLOR};
+`;
+
+const RadioText = styled.span`
+  font-size: 14px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  line-height: 1.4;
+`;
+
+const SaveMessage = styled.div`
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: ${p => p.success ? `${p.theme.ACCENT_COLOR}15` : '#ff000015'};
+  border: 1px solid ${p => p.success ? `${p.theme.ACCENT_COLOR}33` : '#ff000033'};
+  border-radius: 8px;
+  font-size: 13px;
+  color: ${p => p.success ? p.theme.ACCENT_COLOR : '#ff0000'};
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: fadeIn 0.3s ease;
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  &::before {
+    content: '${p => p.success ? '✓' : '⚠️'}';
+  }
+`;
+
 const ButtonContainer = styled.div`
   display: flex;
   gap: 12px;
@@ -233,10 +384,65 @@ const ButtonContainer = styled.div`
 
 const OutroMission0 = () => {
   const navigate = useNavigate();
-  const { addMissionPoints, refreshUserStats } = useUserStats();
+  const { addMissionPoints, refreshUserStats, dataManager, userId } = useUserStats();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [showTip, setShowTip] = useState(false);
-  const theme = useContext(ThemeContext);
+  
+  // ✅ Notification state
+  const [wantsNotification, setWantsNotification] = useState(false);
+  const [emailOption, setEmailOption] = useState('contest'); // 'contest' alebo 'new'
+  const [newEmail, setNewEmail] = useState('');
+  const [saveMessage, setSaveMessage] = useState(null);
+  const [existingEmail, setExistingEmail] = useState('');
+
+  // ✅ Načítaj existujúci email zo súťaže
+  useEffect(() => {
+    const loadExistingEmail = async () => {
+      if (!userId) return;
+      
+      try {
+        const progress = await dataManager.loadUserProgress(userId);
+        if (progress?.contest_email) {
+          setExistingEmail(progress.contest_email);
+        }
+      } catch (error) {
+        console.error('Error loading existing email:', error);
+      }
+    };
+    
+    loadExistingEmail();
+  }, [userId, dataManager]);
+
+  // ✅ Uloženie notifikačných preferencií
+  const saveNotificationPreferences = async () => {
+    if (!userId) return;
+    
+    try {
+      const progress = await dataManager.loadUserProgress(userId);
+      
+      const notificationData = {
+        wants_notification: wantsNotification,
+        notification_email_option: emailOption,
+        notification_email: emailOption === 'new' ? newEmail : existingEmail,
+        notification_timestamp: new Date().toISOString()
+      };
+      
+      // Ulož do progress
+      Object.assign(progress, notificationData);
+      await dataManager.saveProgress(userId, progress);
+      
+      setSaveMessage({ success: true, text: 'Nastavenia uložené!' });
+      
+      setTimeout(() => {
+        setSaveMessage(null);
+      }, 3000);
+      
+      return true;
+    } catch (error) {
+      console.error('Error saving notification preferences:', error);
+      setSaveMessage({ success: false, text: 'Chyba pri ukladaní!' });
+      return false;
+    }
+  };
 
   const handleContinue = async () => {
     if (isProcessing) return;
@@ -244,6 +450,28 @@ const OutroMission0 = () => {
     setIsProcessing(true);
     
     try {
+      // ✅ Ulož notifikačné preferencie ak chce notifikáciu
+      if (wantsNotification) {
+        // Validácia emailu ak je vybraná nová adresa
+        if (emailOption === 'new' && !newEmail) {
+          setSaveMessage({ success: false, text: 'Prosím zadajte email!' });
+          setIsProcessing(false);
+          return;
+        }
+        
+        if (emailOption === 'new' && !newEmail.includes('@')) {
+          setSaveMessage({ success: false, text: 'Neplatný formát emailu!' });
+          setIsProcessing(false);
+          return;
+        }
+        
+        const saved = await saveNotificationPreferences();
+        if (!saved) {
+          setIsProcessing(false);
+          return;
+        }
+      }
+      
       console.log('🎯 Completing mission0...');
       
       // ✅ Pridaj body za misiu
@@ -255,8 +483,10 @@ const OutroMission0 = () => {
         // ✅ Refresh stats po pridaní bodov
         await refreshUserStats();
         
-        // ✅ Zobraz tip pred navigáciou
-        setShowTip(true);
+        // ✅ Navigate po krátkej pauze
+        setTimeout(() => {
+          navigate('/mainmenu');
+        }, 500);
       } else {
         console.warn('⚠️ Mission0 already completed or error');
         navigate('/mainmenu');
@@ -267,13 +497,6 @@ const OutroMission0 = () => {
     } finally {
       setIsProcessing(false);
     }
-  };
-
-  const handleTipClose = () => {
-    setShowTip(false);
-    setTimeout(() => {
-      navigate('/mainmenu');
-    }, 300);
   };
 
   return (
@@ -302,6 +525,81 @@ const OutroMission0 = () => {
             <InfoItem><strong>Získali ste svoje prvé detektívne body.</strong></InfoItem>
             <InfoItem><strong>Pomohli ste nám zlepšiť výskum.</strong></InfoItem>
           </InfoList>
+
+          <DetectiveTipSmall
+            tip="Výborne! Úspešne ste dokončili predvýskum. Vaše odpovede a pripomienky nám pomôžu vylepšiť dotazník pre hlavný výskum. Teraz môžete pokračovať ďalej a získavať ďalšie body!"
+            detectiveName="Inšpektor Kritan"
+            autoOpen={true}
+          />
+
+          <NotificationSection>
+            <NotificationTitle><strong>📧 Upozornenie na hlavný výskum</strong></NotificationTitle>
+            
+            <CheckboxLabel checked={wantsNotification}>
+              <Checkbox
+                type="checkbox"
+                checked={wantsNotification}
+                onChange={(e) => setWantsNotification(e.target.checked)}
+              />
+              <CheckboxText>
+                <strong>Chcem byť upozornený/á, keď bude hlavný výskum pripravený</strong>
+              </CheckboxText>
+            </CheckboxLabel>
+
+            {wantsNotification && (
+              <EmailInputContainer show={wantsNotification}>
+                <EmailLabel>Vyberte možnosť pre email:</EmailLabel>
+                
+                <RadioGroup>
+                  {existingEmail && (
+                    <RadioLabel checked={emailOption === 'contest'}>
+                      <RadioButton
+                        type="radio"
+                        name="emailOption"
+                        value="contest"
+                        checked={emailOption === 'contest'}
+                        onChange={() => setEmailOption('contest')}
+                      />
+                      <RadioText>
+                        Použiť email zo súťaže: <strong>{existingEmail}</strong>
+                      </RadioText>
+                    </RadioLabel>
+                  )}
+                  
+                  <RadioLabel checked={emailOption === 'new'}>
+                    <RadioButton
+                      type="radio"
+                      name="emailOption"
+                      value="new"
+                      checked={emailOption === 'new'}
+                      onChange={() => setEmailOption('new')}
+                    />
+                    <RadioText>
+                      <strong>Zadať iný email</strong>
+                    </RadioText>
+                  </RadioLabel>
+                </RadioGroup>
+
+                {emailOption === 'new' && (
+                  <div style={{ marginTop: '12px' }}>
+                    <EmailLabel>Email pre upozornenie:</EmailLabel>
+                    <EmailInput
+                      type="email"
+                      value={newEmail}
+                      onChange={(e) => setNewEmail(e.target.value)}
+                      placeholder="vas@email.sk"
+                    />
+                  </div>
+                )}
+
+                {saveMessage && (
+                  <SaveMessage success={saveMessage.success}>
+                    {saveMessage.text}
+                  </SaveMessage>
+                )}
+              </EmailInputContainer>
+            )}
+          </NotificationSection>
         </InfoSection>
 
         <ButtonContainer>
@@ -314,61 +612,6 @@ const OutroMission0 = () => {
             {isProcessing ? '⏳ Ukladám...' : '🏠 Hlavné menu'}
           </StyledButton>
         </ButtonContainer>
-
-        {showTip && (
-          <DetectiveTipLarge
-            detectiveName="Inšpektor Kritan"
-            imageUrl="/images/detective.png"
-            iconUrl="/images/detective-icon.png"
-            tip={`
-              <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                <strong>Výborne! Úspešne ste dokončili predvýskum!</strong>
-              </p>
-              
-              <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                <strong>Ďakujeme za vašu spätnú väzbu!</strong>
-              </p>
-              <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
-                <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                  <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-                  <strong>Vaše odpovede a pripomienky nám pomôžu vylepšiť dotazník pre hlavný výskum.</strong>
-                </li>
-                <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                  <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-                  <strong>Získali ste 25 bodov a môžete pokračovať ďalej.</strong>
-                </li>
-              </ul>
-
-              <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                <strong>Čo vás čaká ďalej?</strong>
-              </p>
-              <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
-                <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                  <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-                  <strong>Pripravte sa na detektívne výzvy v ďalších misiách.</strong>
-                </li>
-                <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                  <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-                  <strong>Získavajte ďalšie body a postupujte na vyššie úrovne.</strong>
-                </li>
-                <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                  <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-                  <strong>Staňte sa najlepším detektívom!</strong>
-                </li>
-              </ul>
-
-              <p style="font-size: 15px; font-weight: bold; margin-top: 16px; color: ${theme.ACCENT_COLOR}; line-height: 1.6;">
-                <strong>Veľa šťastia v ďalších výzvach!</strong>
-              </p>
-            `}
-            buttonText="Do hlavného menu!"
-            onClose={handleTipClose}
-            autoOpen={true}
-            autoOpenDelay={500}
-            autoClose={false}
-            showBadge={true}
-          />
-        )}
       </Container>
     </Layout>
   );
