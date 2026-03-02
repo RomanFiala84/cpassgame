@@ -183,7 +183,8 @@ const CountdownBadge = styled.div`
 const DetectiveImageContainer = styled.div`
   position: relative;
   width: 40%;
-  min-height: 480px;
+  height: 480px;        // ✅ PRIDAJ - Pevná výška (nie min-height)
+  max-height: 480px;    // ✅ PRIDAJ - Maximálna výška
   background: linear-gradient(135deg, 
     ${p => p.theme.ACCENT_COLOR}33, 
     ${p => p.theme.ACCENT_COLOR_2}33
@@ -193,17 +194,18 @@ const DetectiveImageContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  /* ✅ ODSTRÁNENÉ - Dekoratívny pattern overlay */
+  flex-shrink: 0;       // ✅ PRIDAJ - Zabráni zmenšovaniu
   
   @media (max-width: 768px) {
     width: 100%;
-    min-height: 220px;
+    height: 220px;
+    max-height: 220px;
     order: 1;
   }
   
   @media (max-width: 480px) {
-    min-height: 180px;
+    height: 180px;
+    max-height: 180px;
   }
 `;
 

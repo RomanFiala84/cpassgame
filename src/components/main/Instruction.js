@@ -955,6 +955,8 @@ export default function Instruction() {
     return e;
   };
 
+  const isProcessingRef = useRef(false); // ✅ PRIDAJ
+  
   const handleStart = async () => {
     // ✅ Kontrola už prihláseného používateľa
     const existingSession = sessionStorage.getItem('participantCode');
@@ -969,25 +971,24 @@ export default function Instruction() {
       return;
     }
 
-    // ✅ Ochrana proti double-click
-    if (isProcessing) {
-      console.log('⏭️ Already processing, ignoring click');
+    // ✅ ZLEPŠENÁ OCHRANA - useRef pre okamžitý efekt
+    if (isProcessingRef.current) {
+      console.log('⏭️ Already processing (ref check), ignoring click');
       return;
     }
     
+    isProcessingRef.current = true; // ✅ Okamžite nastav
     setIsProcessing(true);
     setIsLoading(true);
     
     try {
-      // ✅ Validácia
       const e = await validate();
       setErrors(e);
       
       if (Object.keys(e).length > 0) {
         console.log('❌ Validation failed:', e);
-        return; // ✅ finally resetuje flagy
+        return;
       }
-
       const codeValidation = validateParticipantCode(participantCode);
       const upperCode = participantCode.toUpperCase();
       
@@ -1083,9 +1084,10 @@ export default function Instruction() {
       console.error('❌ Unexpected error in handleStart:', error);
       setErrors({ general: 'Neočakávaná chyba. Skúste to znova prosím.' });
     } finally {
-      // ✅ VŽDY resetuj flagy (aj po return)
+      // ✅ VŽDY resetuj OBE flagy
       setIsLoading(false);
       setIsProcessing(false);
+      isProcessingRef.current = false; // ✅ PRIDAJ
       console.log('🔄 Processing flags reset');
     }
   };
@@ -1731,9 +1733,9 @@ export default function Instruction() {
         <ButtonContainer>
           <StyledButton
             onClick={handleStart}
-            disabled={isLoading || isBlocked || isCheckingCode}
+            disabled={isLoading || isBlocked || isCheckingCode || isProcessing} // ✅ PRIDAJ isProcessing
           >
-            {isLoading ? 'Načítavam...' : isCheckingCode ? 'Kontrolujem kód...' : 'Prihlásiť sa do aplikácie výskumu →'}
+            {isLoading ? 'Načítavam...' : isCheckingCode ? 'Kontrolujem kód...' : isProcessing ? 'Spracovávam...' : 'Prihlásiť sa do aplikácie výskumu →'}
           </StyledButton>
         </ButtonContainer>
       </Container>
