@@ -161,7 +161,7 @@ const ModalContainer = styled.div`
 
 const DetectiveImageContainer = styled.div`
   position: relative;
-  width: 40%;
+  width: 45%;
   height: 100%;            // ✅ 100% výšky modalu (580px)
   background: linear-gradient(135deg, 
     ${p => p.theme.ACCENT_COLOR}30, 
@@ -195,7 +195,7 @@ const DetectiveImage = styled.img`
 `;
 
 const ContentContainer = styled.div`
-  width: 60%;
+  width: 55%;
   height: 100%;            // ✅ 100% výšky modalu (580px)
   padding: 24px;
   padding-bottom: 28px;
