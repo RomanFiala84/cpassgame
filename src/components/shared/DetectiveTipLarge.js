@@ -161,7 +161,7 @@ const ModalContainer = styled.div`
 
 const DetectiveImageContainer = styled.div`
   position: relative;
-  width: 45%;
+  width: 40%;
   height: 100%;            // ✅ 100% výšky modalu (580px)
   background: linear-gradient(135deg, 
     ${p => p.theme.ACCENT_COLOR}30, 
@@ -192,10 +192,17 @@ const DetectiveImage = styled.img`
   object-position: center top;  // ✅ Zamerá na tvár (hore)
   position: relative;
   z-index: 2;
+@media (max-width: 768px) {
+    object-position: center 25%; // ✅ Tablet - o trošku nižšie
+  }
+  
+  @media (max-width: 480px) {
+    object-position: center 30%; // ✅ Mobile - zamerá sa na tvár + okuliare
+  }
 `;
 
 const ContentContainer = styled.div`
-  width: 55%;
+  width: 60%;
   height: 100%;            // ✅ 100% výšky modalu (580px)
   padding: 24px;
   padding-bottom: 28px;
