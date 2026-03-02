@@ -272,7 +272,7 @@ const DetectiveName = styled.div`
 // ✅ OPRAVA - ContentContainer s lepším paddingom a spacing
 
 const ContentContainer = styled.div`
-  width: 50%;
+  width: 60%;
   padding: 24px;
   padding-bottom: 28px; // ✅ PRIDAJ - Extra padding pre button
   overflow-y: auto;
