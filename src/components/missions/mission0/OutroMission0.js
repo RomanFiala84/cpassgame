@@ -407,8 +407,11 @@ const OutroMission0 = () => {
         const progress = await dataManager.loadUserProgress(userId);
         if (progress?.contest_email) {
           setExistingEmail(progress.contest_email);
+          setEmailOption('contest'); // ✅ Nastav contest ako default
+        } else {
+          setExistingEmail('');
+          setEmailOption('new'); // ✅ Automaticky prepni na 'new' ak nie je contest email
         }
-        // ✅ Už nenastav default na 'new', nechaj 'contest'
       } catch (error) {
         console.error('Error loading existing email:', error);
       }
@@ -620,7 +623,7 @@ const OutroMission0 = () => {
                             </>
                           ) : (
                             <>
-                              <strong>E-mailovú adresu zadanú pre zapojenie sa do súťaže</strong>
+                              <strong>E-mailovú adresu zadanú pre zapojenie sa do súťaže:</strong>
                               <br />
                               <span style={{ 
                                 fontSize: '15px', 
@@ -643,7 +646,7 @@ const OutroMission0 = () => {
                           onChange={() => setEmailOption('new')}
                         />
                         <RadioText>
-                          <strong>Inú e-mailovú adresu</strong>
+                          <strong>Inú e-mailovú adresu:</strong>
                         </RadioText>
                       </RadioLabel>
                     </RadioGroup>
