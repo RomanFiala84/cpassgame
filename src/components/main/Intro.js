@@ -219,7 +219,7 @@ const InfoItem = styled.li`
   padding: 8px 12px 8px 32px;
   position: relative;
   line-height: 1.5;
-  background: ${p => p.theme.ACCENT_COLOR}08;
+  background: ${p => p.theme.ACCENT_COLOR}15;
   border-radius: 8px;
   transition: all 0.2s ease;
   
