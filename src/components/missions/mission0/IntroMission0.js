@@ -217,7 +217,7 @@ const IntroMission0 = () => {
       showAnimatedBackground={true}
       cubeCount={10}
       animationSpeed="slow"
-      complexity="low"
+      complexity="high"
     >
       <Container>
 

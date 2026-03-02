@@ -970,7 +970,7 @@ const MainMenu = () => {
     <Layout  showAnimatedBackground={true}
   cubeCount={10}
   animationSpeed="slow"
-  complexity="low">
+  complexity="high">
       <Container>
         <Header>
           <Title>HLAVNÉ MENU</Title>
