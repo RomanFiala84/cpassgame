@@ -113,7 +113,8 @@ const ModalContainer = styled.div`
   border-radius: 16px;
   max-width: 850px;
   width: 100%;
-  max-height: 90vh;       // ✅ Modal môže rásť podľa obsahu
+  height: 580px;           // ✅ FIXNÁ výška modalu
+  max-height: 90vh;        // ✅ Limit pre malé obrazovky
   overflow: hidden;
   display: flex;
   flex-direction: row;
@@ -146,74 +147,62 @@ const ModalContainer = styled.div`
   
   @media (max-width: 768px) {
     max-width: 90%;
+    height: auto;          // ✅ Mobile - automatická výška
+    min-height: 400px;     // ✅ Minimálna výška
     flex-direction: column;
     border-radius: 12px;
   }
   
   @media (max-width: 480px) {
     max-width: 95%;
+    min-height: 360px;
   }
 `;
 
 const DetectiveImageContainer = styled.div`
   position: relative;
   width: 40%;
-  height: 480px;          // ✅ FIXNÁ výška - vždy 480px
-  min-height: 480px;      // ✅ PRIDAJ - Zabezpečí minimálnu výšku
-  max-height: 480px;      // ✅ PRIDAJ - Zabezpečí maximálnu výšku
+  height: 100%;            // ✅ 100% výšky modalu (580px)
   background: linear-gradient(135deg, 
-    ${p => p.theme.ACCENT_COLOR}45, 
-    ${p => p.theme.ACCENT_COLOR_2}45
+    ${p => p.theme.ACCENT_COLOR}30, 
+    ${p => p.theme.ACCENT_COLOR_2}30
   );
   overflow: hidden;
   order: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;         // ✅ Zabráni zmenšovaniu
+  flex-shrink: 0;
   
   @media (max-width: 768px) {
     width: 100%;
-    height: 220px;
-    min-height: 220px;
-    max-height: 220px;
+    height: 250px;         // ✅ Fixná výška pre mobile
     order: 1;
   }
   
   @media (max-width: 480px) {
-    height: 180px;
-    min-height: 180px;
-    max-height: 180px;
+    height: 200px;
   }
 `;
 
 const DetectiveImage = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: contain;    // ✅ CONTAIN - zobrazí celý obrázok
-  object-position: center;
+  object-fit: cover;       // ✅ Vyplní celú plochu
+  object-position: center top;  // ✅ Zamerá na tvár (hore)
   position: relative;
   z-index: 2;
-  padding: 20px;          // ✅ Spacing okolo obrázka
-  
-  @media (max-width: 768px) {
-    padding: 16px;
-  }
-  
-  @media (max-width: 480px) {
-    padding: 12px;
-  }
 `;
 
 const ContentContainer = styled.div`
   width: 60%;
+  height: 100%;            // ✅ 100% výšky modalu (580px)
   padding: 24px;
   padding-bottom: 28px;
-  overflow-y: auto;       // ✅ Scrolluje pri dlhom texte
+  overflow-y: auto;        // ✅ Scroll pri dlhom texte
   display: flex;
   flex-direction: column;
   order: 1;
-  min-height: 480px;      // ✅ PRIDAJ - Minimálna výška = image container
   
   /* Custom scrollbar */
   &::-webkit-scrollbar {
@@ -221,7 +210,7 @@ const ContentContainer = styled.div`
   }
   
   &::-webkit-scrollbar-track {
-    background: ${p => p.theme.BORDER_COLOR}45;
+    background: ${p => p.theme.BORDER_COLOR}33;
     border-radius: 3px;
   }
   
@@ -232,10 +221,10 @@ const ContentContainer = styled.div`
   
   @media (max-width: 768px) {
     width: 100%;
+    height: auto;          // ✅ Mobile - automatická výška
     padding: 20px;
     padding-bottom: 24px;
     order: 2;
-    min-height: 0;        // ✅ Mobile - bez min-height
   }
   
   @media (max-width: 480px) {
@@ -244,6 +233,24 @@ const ContentContainer = styled.div`
   }
 `;
 
+const DetectiveImageFallback = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 100px;
+  position: relative;
+  z-index: 2;
+  
+  @media (max-width: 768px) {
+    font-size: 80px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 60px;
+  }
+`;
 
 
 const CountdownBadge = styled.div`
@@ -271,26 +278,6 @@ const CountdownBadge = styled.div`
   }
 `;
 
-
-
-const DetectiveImageFallback = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 100px;
-  position: relative;
-  z-index: 2;
-  
-  @media (max-width: 768px) {
-    font-size: 80px;
-  }
-  
-  @media (max-width: 480px) {
-    font-size: 60px;
-  }
-`;
 
 const Header = styled.div`
   display: flex;
