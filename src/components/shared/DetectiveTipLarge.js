@@ -193,11 +193,11 @@ const DetectiveImage = styled.img`
   position: relative;
   z-index: 2;
 @media (max-width: 768px) {
-    object-position: center 25%; // ✅ Tablet - o trošku nižšie
+    object-position: center 30%; // ✅ Tablet - o trošku nižšie
   }
   
   @media (max-width: 480px) {
-    object-position: center 30%; // ✅ Mobile - zamerá sa na tvár + okuliare
+    object-position: center 35%; // ✅ Mobile - zamerá sa na tvár + okuliare
   }
 `;
 
