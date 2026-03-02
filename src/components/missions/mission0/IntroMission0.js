@@ -79,7 +79,7 @@ const MissionLabel = styled.div`
   z-index: 1;
   
   @media (max-width: 480px) {
-    font-size: 20px;
+    font-size: 25px;
   }
 `;
 

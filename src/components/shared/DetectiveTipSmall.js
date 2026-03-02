@@ -153,12 +153,12 @@ const TipText = styled.div`
   }
   
   strong {
-    color: ${p => p.theme.ACCENT_COLOR};
+    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
     font-weight: 600;
   }
   
   em {
-    color: ${p => p.theme.ACCENT_COLOR_2};
+    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
     font-style: normal;
     font-weight: 500;
   }

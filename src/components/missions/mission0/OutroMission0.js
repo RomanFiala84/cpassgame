@@ -284,7 +284,7 @@ const EmailInputContainer = styled.div`
 const EmailLabel = styled.label`
   display: block;
   font-size: 15px;
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   margin-bottom: 8px;
   font-weight: 500;
 `;
@@ -408,6 +408,7 @@ const OutroMission0 = () => {
         if (progress?.contest_email) {
           setExistingEmail(progress.contest_email);
         }
+        // ✅ Už nenastav default na 'new', nechaj 'contest'
       } catch (error) {
         console.error('Error loading existing email:', error);
       }
@@ -461,16 +462,28 @@ const OutroMission0 = () => {
     setIsProcessing(true);
     
     try {
-      // ✅ Validácia ak chce notifikáciu
+      // ✅ Validácia emailu
       if (wantsNotification) {
-        if (emailOption === 'new' && !newEmail) {
-          setSaveMessage({ success: false, text: 'Prosím zadajte email!' });
+        // ✅ Ak vybral contest email, ale neexistuje
+        if (emailOption === 'contest' && !existingEmail) {
+          setSaveMessage({ 
+            success: false, 
+            text: 'Pre súťaž ste nezadali email! Prosím zvoľte možnosť "Inú e-mailovú adresu".' 
+          });
           setIsProcessing(false);
           return;
         }
         
+        // ✅ Ak vybral nový email, ale nezadal ho
+        if (emailOption === 'new' && !newEmail) {
+          setSaveMessage({ success: false, text: 'Prosím zadajte e-mailovú adresu.' });
+          setIsProcessing(false);
+          return;
+        }
+        
+        // ✅ Validácia formátu nového emailu
         if (emailOption === 'new' && !newEmail.includes('@')) {
-          setSaveMessage({ success: false, text: 'Neplatný formát emailu!' });
+          setSaveMessage({ success: false, text: 'Neplatný formát e-mailovej adresy.' });
           setIsProcessing(false);
           return;
         }
@@ -525,7 +538,7 @@ const OutroMission0 = () => {
 
         <SuccessBox>
           <PointsLabel><strong>ZÍSKALI STE:</strong></PointsLabel>
-          <PointsEarned>+50 🎖</PointsEarned>
+          <PointsEarned>+50 🌟</PointsEarned>
           <LevelUpText><strong>BODOV</strong></LevelUpText>
         </SuccessBox>
 
@@ -534,7 +547,7 @@ const OutroMission0 = () => {
           <InfoList>
             <InfoItem><strong>Úspešne ste dokončili predvýskum.</strong></InfoItem>
             <InfoItem><strong>Získali ste 50 bodov potrebných pre zapojenie sa do súťaže.</strong></InfoItem>
-            <InfoItem><strong>Pomohli ste nám zlepšiť hlavnývýskum.</strong></InfoItem>
+            <InfoItem><strong>Pomohli ste nám zlepšiť hlavný výskum.</strong></InfoItem>
           </InfoList>
 
           <DetectiveTipSmall
@@ -544,7 +557,7 @@ const OutroMission0 = () => {
             <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
                 <strong>V blízkej dobe bude odmknutý hlavný výskum. Ak máte záujem, môžete sa zúčastniť.</strong>
             <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                <strong>Ak sa rozhodnete zúčastniť, nižšie môžete potvrdiť a zvoliť si, či chcete byť jednorázovo upozornený/á e-mailom.</strong>
+                <strong>Ak sa rozhodnete zúčastniť, nižšie môžete potvrdiť účasť a zvoliť si, či chcete byť jednorázovo upozornený/á e-mailom.</strong>
             <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
                 <strong>Ešte raz ďakujeme za účasť v predvýskume, dúfame že sa vám predvýskum páčil a snáď sa v blízkej dobe vidíme znova.</strong>
             `}
@@ -583,24 +596,43 @@ const OutroMission0 = () => {
 
                 {wantsNotification && (
                   <div>
-                    <EmailLabel>Na ktorú e-mailovú adresu chcete aby vám prišlo upozornenie?</EmailLabel>
+                    <EmailLabel><strong>Na ktorú e-mailovú adresu chcete aby vám prišlo upozornenie?</strong></EmailLabel>
                     
                     <RadioGroup>
-                      {existingEmail && (
-                        <RadioLabel checked={emailOption === 'contest'}>
-                          <RadioButton
-                            type="radio"
-                            name="emailOption"
-                            value="contest"
-                            checked={emailOption === 'contest'}
-                            onChange={() => setEmailOption('contest')}
-                          />
-                          <RadioText>
-                            <strong>E-mailovú adresu zadanú pre zapojenie sa do súťaže.</strong>
-                          </RadioText>
-                          
-                        </RadioLabel>
-                      )}
+                      {/* ✅ VŽDY zobraz túto možnosť */}
+                      <RadioLabel checked={emailOption === 'contest'}>
+                        <RadioButton
+                          type="radio"
+                          name="emailOption"
+                          value="contest"
+                          checked={emailOption === 'contest'}
+                          onChange={() => setEmailOption('contest')}
+                          disabled={!existingEmail} // ✅ Disable ak nie je email
+                        />
+                        <RadioText style={{ 
+                          color: !existingEmail ? '#ff0000' : 'inherit',
+                          opacity: !existingEmail ? 0.7 : 1 
+                        }}>
+                          {existingEmail ? (
+                            <>
+                              <strong>E-mailovú adresu zadanú pre zapojenie sa do súťaže: </strong>
+                              <span style={{ color: theme.ACCENT_COLOR }}>{existingEmail}</span>
+                            </>
+                          ) : (
+                            <>
+                              <strong>E-mailovú adresu zadanú pre zapojenie sa do súťaže</strong>
+                              <br />
+                              <span style={{ 
+                                fontSize: '15px', 
+                                fontStyle: 'bold',
+                                color: '#ff0000'
+                              }}>
+                                <strong>Pre účasť v súťaži ste nezadali žiadny email.</strong>
+                              </span>
+                            </>
+                          )}
+                        </RadioText>
+                      </RadioLabel>
                       
                       <RadioLabel checked={emailOption === 'new'}>
                         <RadioButton
@@ -618,7 +650,7 @@ const OutroMission0 = () => {
 
                     {emailOption === 'new' && (
                       <div style={{ marginTop: '12px' }}>
-                        <EmailLabel><strong>Zadajte e-mailovú adresu na ktorú vám príde upozornenie:</strong></EmailLabel>
+                        <EmailLabel><strong>Zadajte e-mailovú adresu na ktorú vám pošleme upozornenie:</strong></EmailLabel>
                         <EmailInput
                           type="email"
                           value={newEmail}
@@ -647,7 +679,7 @@ const OutroMission0 = () => {
             onClick={handleContinue}
             disabled={isProcessing}
           >
-            {isProcessing ? '⏳ Ukladám...' : 'Pokračovať do hlavnéhomenu'}
+            {isProcessing ? 'Ukladám...' : 'Pokračovať do hlavného menu'}
           </StyledButton>
         </ButtonContainer>
       </Container>
