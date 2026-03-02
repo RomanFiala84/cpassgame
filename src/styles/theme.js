@@ -1,52 +1,52 @@
-// ✅ MODERNÁ PASTELOVÁ SCHÉMA - Jemná na oči
-// 🎨 Inšpirované Notion, Linear, Figma
+// ✅ FINÁLNA VERZIA - Fialová schéma, optimalizovaná pre čitateľnosť
+// 🎨 Moderná, elegantná, príjemná na oči
 
 const darkTheme = {
-  // 🌙 TMAVÝ REŽIM - Tmavý slate s teplými pastelmi
-  BACKGROUND_COLOR: '#1a1d23', // ⬅️ Tmavý slate (nie čisto čierna)
-  SECONDARY_BACKGROUND: '#22252b', // ⬅️ O niečo svetlejšia
-  PRIMARY_TEXT_COLOR: '#ffffffff', // ⬅️ Mäkká biela (nie oslnivá)
-  SECONDARY_TEXT_COLOR: '#e90000ff', // ⬅️ Jemná šedá
+  // 🌙 TMAVÝ REŽIM - Tmavošedá + fialová pastel
+  BACKGROUND_COLOR: '#1a1a1a',
+  SECONDARY_BACKGROUND: '#242424',
+  PRIMARY_TEXT_COLOR: '#ffffff',
+  SECONDARY_TEXT_COLOR: '#ff4848',
   
-  // ✅ Akcentové farby - Pastelová modrá/tyrkys
-  ACCENT_COLOR: '#7dd3fc', // ⬅️ Sky blue pastel
-  ACCENT_COLOR_2: '#60c5e8', // ⬅️ Stredná tyrkys
-  ACCENT_COLOR_3: '#4db3d9', // ⬅️ Hlbšia tyrkys
+  // ✅ Akcentové farby - Fialová škála 💜
+  ACCENT_COLOR: '#a78bfa', // Pastelová fialová (svetlejšia)
+  ACCENT_COLOR_2: '#9333ea', // Stredná fialová
+  ACCENT_COLOR_3: '#7e22ce', // Tmavšia fialová
   
-  CARD_BACKGROUND: '#252930', // ⬅️ Jemne svetlejšia než pozadie
-  INPUT_BACKGROUND: '#2d3139', // ⬅️ Kontrastnejšia pre inputy
-  BUTTON_COLOR: '#7dd3fc',
-  BORDER_COLOR: '#33373f', // ⬅️ Subtílna border
-  HOVER_OVERLAY: 'rgba(125, 211, 252, 0.12)', // ⬅️ Jemný pastel hover
+  CARD_BACKGROUND: '#2a2a2a',
+  INPUT_BACKGROUND: '#303030',
+  BUTTON_COLOR: '#a78bfa',
+  BORDER_COLOR: '#404040',
+  HOVER_OVERLAY: 'rgba(167, 139, 250, 0.12)',
   
-  // Stavové farby - pastelové
-  SUCCESS_COLOR: '#6ee7b7', // ⬅️ Pastelová zelená
-  ERROR_COLOR: '#fca5a5', // ⬅️ Pastelová červená (nie ostrá)
-  WARNING_COLOR: '#fcd34d', // ⬅️ Pastelová žltá
+  // Stavové farby
+  SUCCESS_COLOR: '#4ce16c',
+  ERROR_COLOR: '#ff0000',
+  WARNING_COLOR: '#ff8c00',
 };
 
 const lightTheme = {
-  // ☀️ SVETLÝ REŽIM - Warm cream s pastelmi
-  BACKGROUND_COLOR: '#faf9f7', // ⬅️ Teplá krémová (nie biela)
-  SECONDARY_BACKGROUND: '#f3f2ef', // ⬅️ Stredná cream
-  PRIMARY_TEXT_COLOR: '#000000ff', // ⬅️ Tmavošedá (nie čierna)
-  SECONDARY_TEXT_COLOR: '#e90000ff', // ⬅️ Stredná šedá
+  // ☀️ SVETLÝ REŽIM - Stredná šedá + tmavá fialová
+  BACKGROUND_COLOR: '#d8d8d8', // Stredná šedá (nesvietí)
+  SECONDARY_BACKGROUND: '#c8c8c8',
+  PRIMARY_TEXT_COLOR: '#000000',
+  SECONDARY_TEXT_COLOR: '#ff4848',
   
-  // ✅ Akcentové farby - Pastelová modrá/fialová
-  ACCENT_COLOR: '#818cf8', // ⬅️ Indigo pastel
-  ACCENT_COLOR_2: '#6366f1', // ⬅️ Stredná indigo
-  ACCENT_COLOR_3: '#4f46e5', // ⬅️ Hlbšia indigo
+  // ✅ Akcentové farby - Fialová škála 💜
+  ACCENT_COLOR: '#7c3aed', // Tmavá fialová (funguje aj ako pozadie)
+  ACCENT_COLOR_2: '#6d28d9', // Stredná fialová
+  ACCENT_COLOR_3: '#5b21b6', // Najtemnejšia fialová
   
-  CARD_BACKGROUND: '#ffffff', // ⬅️ Čistá biela pre karty (kontrast)
-  INPUT_BACKGROUND: '#f9fafb', // ⬅️ Veľmi svetlá šedá
-  BUTTON_COLOR: '#818cf8',
-  BORDER_COLOR: '#e5e7eb', // ⬅️ Jemná svetlošedá border
-  HOVER_OVERLAY: 'rgba(129, 140, 248, 0.08)', // ⬅️ Jemný indigo hover
+  CARD_BACKGROUND: '#e8e8e8', // Svetlejšia než pozadie
+  INPUT_BACKGROUND: '#f0f0f0', // Najsvetlejšia (ale nie biela)
+  BUTTON_COLOR: '#7c3aed',
+  BORDER_COLOR: '#b0b0b0',
+  HOVER_OVERLAY: 'rgba(124, 58, 237, 0.08)',
   
-  // Stavové farby - pastelové
-  SUCCESS_COLOR: '#34d399', // ⬅️ Pastelová zelená
-  ERROR_COLOR: '#f87171', // ⬅️ Pastelová červená
-  WARNING_COLOR: '#fbbf24', // ⬅️ Pastelová žltá
+  // Stavové farby
+  SUCCESS_COLOR: '#4ce16c',
+  ERROR_COLOR: '#ff0000',
+  WARNING_COLOR: '#ff8c00',
 };
 
 export { lightTheme, darkTheme };
