@@ -113,7 +113,7 @@ const ModalContainer = styled.div`
   border-radius: 16px;
   max-width: 850px;
   width: 100%;
-  max-height: 90vh;
+  max-height: 90vh;       // ✅ Modal môže rásť podľa obsahu
   overflow: hidden;
   display: flex;
   flex-direction: row;
@@ -155,6 +155,97 @@ const ModalContainer = styled.div`
   }
 `;
 
+const DetectiveImageContainer = styled.div`
+  position: relative;
+  width: 40%;
+  height: 480px;          // ✅ FIXNÁ výška - vždy 480px
+  min-height: 480px;      // ✅ PRIDAJ - Zabezpečí minimálnu výšku
+  max-height: 480px;      // ✅ PRIDAJ - Zabezpečí maximálnu výšku
+  background: linear-gradient(135deg, 
+    ${p => p.theme.ACCENT_COLOR}45, 
+    ${p => p.theme.ACCENT_COLOR_2}45
+  );
+  overflow: hidden;
+  order: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;         // ✅ Zabráni zmenšovaniu
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 220px;
+    min-height: 220px;
+    max-height: 220px;
+    order: 1;
+  }
+  
+  @media (max-width: 480px) {
+    height: 180px;
+    min-height: 180px;
+    max-height: 180px;
+  }
+`;
+
+const DetectiveImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: contain;    // ✅ CONTAIN - zobrazí celý obrázok
+  object-position: center;
+  position: relative;
+  z-index: 2;
+  padding: 20px;          // ✅ Spacing okolo obrázka
+  
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 12px;
+  }
+`;
+
+const ContentContainer = styled.div`
+  width: 60%;
+  padding: 24px;
+  padding-bottom: 28px;
+  overflow-y: auto;       // ✅ Scrolluje pri dlhom texte
+  display: flex;
+  flex-direction: column;
+  order: 1;
+  min-height: 480px;      // ✅ PRIDAJ - Minimálna výška = image container
+  
+  /* Custom scrollbar */
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: ${p => p.theme.BORDER_COLOR}45;
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: ${p => p.theme.ACCENT_COLOR};
+    border-radius: 3px;
+  }
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 20px;
+    padding-bottom: 24px;
+    order: 2;
+    min-height: 0;        // ✅ Mobile - bez min-height
+  }
+  
+  @media (max-width: 480px) {
+    padding: 16px;
+    padding-bottom: 20px;
+  }
+`;
+
+
+
 const CountdownBadge = styled.div`
   position: absolute;
   top: 12px;
@@ -180,52 +271,7 @@ const CountdownBadge = styled.div`
   }
 `;
 
-const DetectiveImageContainer = styled.div`
-  position: relative;
-  width: 40%;
-  height: 480px;        // ✅ PRIDAJ - Pevná výška (nie min-height)
-  max-height: 480px;    // ✅ PRIDAJ - Maximálna výška
-  background: linear-gradient(135deg, 
-    ${p => p.theme.ACCENT_COLOR}33, 
-    ${p => p.theme.ACCENT_COLOR_2}33
-  );
-  overflow: hidden;
-  order: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;       // ✅ PRIDAJ - Zabráni zmenšovaniu
-  
-  @media (max-width: 768px) {
-    width: 100%;
-    height: 220px;
-    max-height: 220px;
-    order: 1;
-  }
-  
-  @media (max-width: 480px) {
-    height: 180px;
-    max-height: 180px;
-  }
-`;
 
-const DetectiveImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* ✅ COVER namiesto contain - vyplní celú plochu */
-  object-position: center;
-  position: relative;
-  z-index: 2;
-  /* ✅ ODSTRÁNENÉ - padding */
-  
-  @media (max-width: 768px) {
-    /* ✅ ODSTRÁNENÉ - padding */
-  }
-  
-  @media (max-width: 480px) {
-    /* ✅ ODSTRÁNENÉ - padding */
-  }
-`;
 
 const DetectiveImageFallback = styled.div`
   width: 100%;
@@ -273,42 +319,6 @@ const DetectiveName = styled.div`
 // src/components/shared/DetectiveTipLarge.js
 // ✅ OPRAVA - ContentContainer s lepším paddingom a spacing
 
-const ContentContainer = styled.div`
-  width: 60%;
-  padding: 24px;
-  padding-bottom: 28px; // ✅ PRIDAJ - Extra padding pre button
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  order: 1;
-  
-  /* Custom scrollbar */
-  &::-webkit-scrollbar {
-    width: 5px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: ${p => p.theme.BORDER_COLOR}33;
-    border-radius: 3px;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: ${p => p.theme.ACCENT_COLOR};
-    border-radius: 3px;
-  }
-  
-  @media (max-width: 768px) {
-    width: 100%;
-    padding: 20px;
-    padding-bottom: 24px; // ✅ PRIDAJ
-    order: 2;
-  }
-  
-  @media (max-width: 480px) {
-    padding: 16px;
-    padding-bottom: 20px; // ✅ PRIDAJ
-  }
-`;
 
 const TipText = styled.div`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};

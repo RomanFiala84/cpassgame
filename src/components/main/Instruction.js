@@ -955,23 +955,10 @@ export default function Instruction() {
     return e;
   };
 
-  const isProcessingRef = useRef(false); // ✅ PRIDAJ
-  
-  const handleStart = async () => {
-    // ✅ Kontrola už prihláseného používateľa
-    const existingSession = sessionStorage.getItem('participantCode');
-    if (existingSession && !['0', '1', '2'].includes(existingSession)) {
-      console.log('⚠️ Používateľ už je prihlásený, presmerovanie...');
-      const codeValidation = validateParticipantCode(existingSession);
-      if (codeValidation.type === 'admin') {
-        navigate('/admin', { replace: true });
-      } else {
-        navigate('/intro', { replace: true });
-      }
-      return;
-    }
+  const isProcessingRef = useRef(false); // ✅ PRIDANÉ
 
-    // ✅ ZLEPŠENÁ OCHRANA - useRef pre okamžitý efekt
+  const handleStart = async () => {
+    // ✅ ZMENA 1: OKAMŽITÁ OCHRANA - useRef kontrola NA ZAČIATKU (pred sessionStorage check)
     if (isProcessingRef.current) {
       console.log('⏭️ Already processing (ref check), ignoring click');
       return;
@@ -982,6 +969,7 @@ export default function Instruction() {
     setIsLoading(true);
     
     try {
+      // ✅ ZMENA 2: VALIDÁCIA NA ZAČIATKU (pred akýmikoľvek kontrolami)
       const e = await validate();
       setErrors(e);
       
@@ -989,10 +977,11 @@ export default function Instruction() {
         console.log('❌ Validation failed:', e);
         return;
       }
+
       const codeValidation = validateParticipantCode(participantCode);
       const upperCode = participantCode.toUpperCase();
       
-      // ✅ Kontrola, či nie je kód blokovaný pred pokračovaním
+      // ✅ ZMENA 3: KONTROLA BLOKOVANIA (pred uložením do sessionStorage)
       try {
         const userData = await dataManager.loadUserProgress(upperCode, true);
         
@@ -1010,7 +999,11 @@ export default function Instruction() {
         console.error('❌ Error checking blocked status:', error);
       }
       
-      // ✅ Ulož informovaný súhlas
+      // ✅ ZMENA 4: ULOŽIŤ sessionStorage PRED login() (ako v starej verzii)
+      sessionStorage.setItem('participantCode', upperCode);
+      console.log(`💾 SessionStorage nastavené: ${upperCode}`);
+      
+      // ✅ ZMENA 5: Ulož informovaný súhlas
       try {
         const userData = await dataManager.loadUserProgress(upperCode);
         
@@ -1047,11 +1040,11 @@ export default function Instruction() {
         } catch (error) {
           console.error('❌ Referral processing error:', error);
           setErrors({ referral: 'Chyba pri spracovaní referral kódu. Zadajte kód znova prosím.' });
-          return; // ✅ finally resetuje flagy
+          return;
         }
       }
       
-      // ✅ Prihlásenie
+      // ✅ ZMENA 6: PRIHLÁSENIE (ako v starej verzii)
       console.log(`🔐 Prihlasovanie používateľa: ${upperCode}`);
       const loginResult = await login(upperCode);
       
@@ -1068,10 +1061,10 @@ export default function Instruction() {
           console.log('❌ Login failed:', loginResult.message);
           setErrors({ general: loginResult.message || 'Chyba pri prihlásení.' });
         }
-        return; // ✅ finally resetuje flagy
+        return;
       }
       
-      // ✅ Úspešné prihlásenie - navigácia s replace
+      // ✅ ZMENA 7: NAVIGÁCIA (ako v starej verzii - až PO úspešnom login)
       console.log(`✅ Prihlásenie úspešné - presmerovanie (${codeValidation.type})`);
       
       if (codeValidation.type === 'admin') {
@@ -1084,10 +1077,10 @@ export default function Instruction() {
       console.error('❌ Unexpected error in handleStart:', error);
       setErrors({ general: 'Neočakávaná chyba. Skúste to znova prosím.' });
     } finally {
-      // ✅ VŽDY resetuj OBE flagy
+      // ✅ ZMENA 8: VŽDY resetuj TRI flagy (state + ref)
       setIsLoading(false);
       setIsProcessing(false);
-      isProcessingRef.current = false; // ✅ PRIDAJ
+      isProcessingRef.current = false;
       console.log('🔄 Processing flags reset');
     }
   };
@@ -1103,9 +1096,10 @@ export default function Instruction() {
     setReferralCode('');
     setReferralFromUrl(false);
     setEmail('');
-    sessionStorage.removeItem('participantCode'); // ✅ PRIDANÉ: Vyčisti aj session
+    sessionStorage.removeItem('participantCode');
     console.log('🧹 Formulár vyčistený');
   };
+
 
 
 
@@ -1735,8 +1729,9 @@ export default function Instruction() {
             onClick={handleStart}
             disabled={isLoading || isBlocked || isCheckingCode || isProcessing} // ✅ PRIDAJ isProcessing
           >
-            {isLoading ? 'Načítavam...' : isCheckingCode ? 'Kontrolujem kód...' : isProcessing ? 'Spracovávam...' : 'Prihlásiť sa do aplikácie výskumu →'}
+            {isLoading ? 'Načítavam...' : isCheckingCode ? 'Kontrolujem kód...' : 'Prihlásiť sa do aplikácie výskumu →'}
           </StyledButton>
+
         </ButtonContainer>
       </Container>
     </Layout>
