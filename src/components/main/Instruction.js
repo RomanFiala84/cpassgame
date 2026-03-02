@@ -1312,7 +1312,7 @@ export default function Instruction() {
             <BlockedIcon>🚫</BlockedIcon>
             <BlockedTitle>Váš prístup do aplikácie bol zamietnutý.</BlockedTitle>
             <BlockedMessage>
-              Váš účet <strong>{participantCode.toUpperCase()}</strong> bol zablokovaný administrátorom.
+              Váš účet <strong style={{ textTransform: 'uppercase' }}>{participantCode}</strong>  bol zablokovaný administrátorom.
             </BlockedMessage>
             <BlockedMessage>
               <strong>Nemôžete sa prihlásiť do aplikácie výskumu, kým vám administrátor váš účet neodblokuje.</strong>
@@ -1701,7 +1701,10 @@ export default function Instruction() {
 
         <ButtonContainer>
           <StyledButton
-            onClick={handleStart}
+            onMouseDown={(e) => {
+              e.preventDefault(); // ✅ Zabráni onBlur eventu
+              handleStart();
+            }}
             disabled={isLoading || isBlocked || isCheckingCode || isProcessing} // ✅ PRIDAJ isProcessing
           >
             {isLoading ? 'Načítavam...' : isCheckingCode ? 'Kontrolujem kód...' : 'Prihlásiť sa do aplikácie výskumu →'}
