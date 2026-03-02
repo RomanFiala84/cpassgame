@@ -344,9 +344,9 @@ const Intro = () => {
   const theme = useContext(ThemeContext);
   return (
     <Layout showLevelDisplay={false} showAnimatedBackground={true}
-  cubeCount={15}
-  animationSpeed="normal"
-  complexity="medium">
+  cubeCount={6}
+  animationSpeed="slow"
+  complexity="low">
       <Container>
         <Header>
           <Title><strong>Aplikácia CP-PASS</strong></Title>

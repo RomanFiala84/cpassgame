@@ -56,9 +56,9 @@ const Layout = ({
   children, 
   showLevelDisplay = true,
   showAnimatedBackground = false,
-  cubeCount = 15,
-  animationSpeed = 'normal', // 'slow' | 'normal' | 'fast'
-  complexity = 'medium' // 'low' | 'medium' | 'high'
+  cubeCount = 6,
+  animationSpeed = 'slow', // 'slow' | 'normal' | 'fast'
+  complexity = 'low' // 'low' | 'medium' | 'high'
 }) => {
   return (
     <LayoutContainer>

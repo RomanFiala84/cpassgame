@@ -20,9 +20,9 @@ const darkTheme = {
   HOVER_OVERLAY: 'rgba(167, 139, 250, 0.12)',
   
   // Stavové farby
-  SUCCESS_COLOR: '#4ce16c',
-  ERROR_COLOR: '#ff0000',
-  WARNING_COLOR: '#ff8c00',
+  SUCCESS_COLOR: '#6ee7b7', // ⬅️ Svetlejšia zelená (miesto #4ce16c)
+  ERROR_COLOR: '#fca5a5', // ⬅️ Svetlejšia červená (miesto #ff0000)
+  WARNING_COLOR: '#fbbf24', // ⬅️ Svetlejšia oranžová (miesto #ff8c00)
 };
 
 const lightTheme = {
@@ -44,9 +44,9 @@ const lightTheme = {
   HOVER_OVERLAY: 'rgba(124, 58, 237, 0.08)',
   
   // Stavové farby
-  SUCCESS_COLOR: '#4ce16c',
-  ERROR_COLOR: '#ff0000',
-  WARNING_COLOR: '#ff8c00',
+  SUCCESS_COLOR: '#059669', // Tmavá zelená
+  ERROR_COLOR: '#dc2626', // Tmavá červená
+  WARNING_COLOR: '#d97706', // Tmavá oranžová
 };
 
 export { lightTheme, darkTheme };

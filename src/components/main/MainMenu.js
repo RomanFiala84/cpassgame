@@ -968,9 +968,9 @@ const MainMenu = () => {
 
   return (
     <Layout  showAnimatedBackground={true}
-  cubeCount={12}
+  cubeCount={6}
   animationSpeed="slow"
-  complexity="medium">
+  complexity="low">
       <Container>
         <Header>
           <Title>HLAVNÉ MENU</Title>

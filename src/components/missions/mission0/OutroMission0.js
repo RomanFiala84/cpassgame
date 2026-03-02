@@ -530,9 +530,9 @@ const OutroMission0 = () => {
     <Layout 
       showLevelDisplay={true} 
       showAnimatedBackground={true}
-      cubeCount={15}
-      animationSpeed="normal"
-      complexity="medium"
+      cubeCount={6}
+      animationSpeed="slow"
+      complexity="low"
     >
       <Container>
         <MissionCard>
