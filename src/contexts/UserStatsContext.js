@@ -142,13 +142,11 @@ export const UserStatsProvider = ({ children }) => {
     };
 
     updateUserId();
-    intervalRef.current = setInterval(updateUserId, 5000);
 
     window.addEventListener('storage', updateUserId);
     window.addEventListener('focus', updateUserId);
 
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
       window.removeEventListener('storage', updateUserId);
       window.removeEventListener('focus', updateUserId);
     };

@@ -1038,8 +1038,10 @@ export default function Instruction() {
       }
       
       // ✅ ZMENA 7: NAVIGÁCIA (ako v starej verzii - až PO úspešnom login)
+      await new Promise(resolve => setTimeout(resolve, 150));
+
       console.log(`✅ Prihlásenie úspešné - presmerovanie (${codeValidation.type})`);
-      
+
       if (codeValidation.type === 'admin') {
         navigate('/admin', { replace: true });
       } else {

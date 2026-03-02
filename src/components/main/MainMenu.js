@@ -706,16 +706,22 @@ const MainMenu = () => {
     const checkAuth = () => {
       const storedCode = sessionStorage.getItem('participantCode');
       
+      // ✅ ZMENA: Redirect len ak OBIDVE sú null
       if (!userId && !storedCode) {
         console.log('🚫 No authentication found, redirecting to instruction');
-        navigate('/instruction');
+        navigate('/instruction', { replace: true });
         return false;
       }
       
       return true;
     };
 
-    if (!checkAuth()) return;
+    // ✅ ZMENA: Pridaj timeout pre stabilitu
+    const timeoutId = setTimeout(() => {
+      checkAuth();
+    }, 100);
+    
+    return () => clearTimeout(timeoutId);
   }, [userId, navigate]);
 
   useEffect(() => {
