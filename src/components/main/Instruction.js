@@ -1312,7 +1312,7 @@ export default function Instruction() {
             <BlockedIcon>🚫</BlockedIcon>
             <BlockedTitle>Váš prístup do aplikácie bol zamietnutý.</BlockedTitle>
             <BlockedMessage>
-              Váš účet <strong>{participantCode}</strong> bol zablokovaný administrátorom.
+              Váš účet <strong>{participantCode.toUpperCase()}</strong> bol zablokovaný administrátorom.
             </BlockedMessage>
             <BlockedMessage>
               <strong>Nemôžete sa prihlásiť do aplikácie výskumu, kým vám administrátor váš účet neodblokuje.</strong>
