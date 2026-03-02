@@ -209,7 +209,7 @@ const IntroMission0 = () => {
     recordStart();
   }, [dataManager, navigate]);
 
-  const handleContinue = () => navigate('/mission0/Questionnaire0');
+  const handleContinue = () => navigate('/mission0/questionnaire0');
 
   return (
     <Layout 
@@ -258,7 +258,7 @@ const IntroMission0 = () => {
               </p>
               
               <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                <strong>Čo je cieľom predvýskumu?/strong>
+                <strong>Čo je cieľom predvýskumu?</strong>
               </p>
               <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
                 <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
@@ -269,7 +269,7 @@ const IntroMission0 = () => {
 
 
               <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                <strong>Aká je vaša úloha?/strong>
+                <strong>Aká je vaša úloha?</strong>
               </p>
               <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
                 <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
@@ -286,7 +286,7 @@ const IntroMission0 = () => {
                 </li>
                 <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
                   <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-                  <strong>Budeme sa pýtať napríklad na zrozumiteľnosť, jednoznačnosť, významovú zhodu otázok a tvrdení. Taktiež budeme zisťovať, či dokážete vybratou hodnotiacou stupnicov vyjadriť svoj skutočný postoj.</strong>
+                  <strong>Budeme sa pýtať napríklad na zrozumiteľnosť, jednoznačnosť a významovú zhodu otázok a tvrdení.</strong>
                 </li>
                 <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
                   <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
