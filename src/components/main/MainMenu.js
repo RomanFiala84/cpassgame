@@ -282,7 +282,7 @@ const MissionTitle = styled.h3`
 
 const MissionStatus = styled.div`
   font-size: 10px;
-  color: ${p => p.completed ? '#4ce16cff' : p.theme.PRIMARY_TEXT_COLOR};
+  color: ${p => p.completed ? '#22c508ff' : p.theme.PRIMARY_TEXT_COLOR};
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -326,7 +326,7 @@ const ButtonGroup = styled.div`
   gap: 10px;
   flex-wrap: wrap;
   margin-bottom: 24px;
-   background:${p => `${p.theme.ACCENT_COLOR}45`};
+  background: ${p => `${p.theme.ACCENT_COLOR}15`}; // ⬅️ Jemnejšie pozadie (15% miesto 45%)
   border: 2px solid ${p => p.theme.BORDER_COLOR};
   border-radius: 12px;
   padding: 16px;
@@ -335,8 +335,10 @@ const ButtonGroup = styled.div`
   
   /* ✅ Hover efekt */
   &:hover {
-    border-color: ${p => p.theme.ACCENT_COLOR}60;
+    border-color: ${p => p.theme.ACCENT_COLOR};
+    box-shadow: 0 4px 12px ${p => `${p.theme.ACCENT_COLOR}25`};
   }
+  
   @media (max-width: 480px) {
     flex-direction: column;
     
@@ -346,60 +348,63 @@ const ButtonGroup = styled.div`
   }
 `;
 
+// ✅ INFO BUTTON - Zelená (SUCCESS)
 const InfoButton = styled(StyledButton)`
-  background: linear-gradient(135deg, 
-    #00D9FF22, 
-    #00FFD922
-  );
-  border: 2px solid #16a600ff;
-  color: #16a600ff;
+  background: ${p => `${p.theme.SUCCESS_COLOR}15`}; // ⬅️ Jemné pozadie
+  border: 2px solid ${p => p.theme.SUCCESS_COLOR};
+  color: ${p => p.theme.SUCCESS_COLOR};
+  font-weight: 600;
   
   &:hover {
-    background: linear-gradient(135deg, 
-      #16a600ff, 
-      #139000ff
-    );
-    color: white;
+    background: ${p => p.theme.SUCCESS_COLOR};
+    color: ${p => p.theme.BACKGROUND_COLOR}; // ⬅️ Kontrast s pozadím
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px ${p => `${p.theme.SUCCESS_COLOR}40`};
+  }
+  
+  &:active {
+    transform: translateY(0);
   }
 `;
 
-
+// ✅ CONTEST BUTTON - Oranžová (WARNING)
 const ContestButton = styled(StyledButton)`
-  background: linear-gradient(135deg, 
-    #fbbf2422, 
-    #f59e0b22
-  );
-  border: 2px solid #f59e0b;
-  color: #f59e0b;
+  background: ${p => `${p.theme.WARNING_COLOR}15`}; // ⬅️ Jemné pozadie
+  border: 2px solid ${p => p.theme.WARNING_COLOR};
+  color: ${p => p.theme.WARNING_COLOR};
+  font-weight: 600;
   
   &:hover {
-    background: linear-gradient(135deg, 
-      #fbbf24, 
-      #f59e0b
-    );
-    color: white;
+    background: ${p => p.theme.WARNING_COLOR};
+    color: ${p => p.theme.BACKGROUND_COLOR}; // ⬅️ Kontrast s pozadím
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px ${p => `${p.theme.WARNING_COLOR}40`};
+  }
+  
+  &:active {
+    transform: translateY(0);
   }
 `;
 
+// ✅ LOGOUT BUTTON - Červená (ERROR)
 const LogoutButton = styled(StyledButton)`
-  background: linear-gradient(135deg, 
-    #ef444422, 
-    #dc262622
-  );
-  border: 2px solid #ef4444;
-  color: #ef4444;
+  background: ${p => `${p.theme.ERROR_COLOR}15`}; // ⬅️ Jemné pozadie
+  border: 2px solid ${p => p.theme.ERROR_COLOR};
+  color: ${p => p.theme.ERROR_COLOR};
+  font-weight: 600;
   
   &:hover {
-    background: linear-gradient(135deg, 
-      #ef4444, 
-      #dc2626
-    );
-    color: white;
+    background: ${p => p.theme.ERROR_COLOR};
+    color: #ffffff; // ⬅️ Biela pre červenú
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px ${p => `${p.theme.ERROR_COLOR}40`};
+  }
+  
+  &:active {
+    transform: translateY(0);
   }
 `;
+
 
 const SharingSection = styled.div`
   background:${p => p.theme.CARD_BACKGROUND};
