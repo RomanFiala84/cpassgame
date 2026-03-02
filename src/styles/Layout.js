@@ -26,7 +26,7 @@ const ContentWrapper = styled.div`
   position: relative;
   z-index: 1;
   
-  padding-top: ${p => p.$showLevel ? '140px' : '20px'};
+  padding-top: ${p => p.$showLevel ? '70px' : '20px'};  // ✅ Zmenené z 140px
   
   @media (max-width: 1400px) {
     max-width: 1200px;
@@ -34,17 +34,17 @@ const ContentWrapper = styled.div`
   
   @media (max-width: 1024px) {
     max-width: 960px;
-    padding-top: ${p => p.$showLevel ? '130px' : '20px'};
+    padding-top: ${p => p.$showLevel ? '70px' : '20px'};  // ✅ Zmenené z 130px
   }
   
   @media (max-width: 768px) {
     padding: 15px;
-    padding-top: ${p => p.$showLevel ? '180px' : '15px'};
+    padding-top: ${p => p.$showLevel ? '80px' : '15px'};  // ✅ Zmenené z 180px
   }
   
   @media (max-width: 480px) {
     padding: 10px;
-    padding-top: ${p => p.$showLevel ? '280px' : '10px'};
+    padding-top: ${p => p.$showLevel ? '90px' : '10px'};  // ✅ Zmenené zo 280px
   }
 `;
 
