@@ -1259,7 +1259,7 @@ export default function Instruction() {
 
   return (
     <Layout showLevelDisplay={false} showAnimatedBackground={true}
-  cubeCount={6}
+  cubeCount={10}
   animationSpeed="slow"
   complexity="low">
       <Container>

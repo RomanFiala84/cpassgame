@@ -1,37 +1,23 @@
-// ✅ FINÁLNA VERZIA - Ambient Background Motion
-// 🎨 Plynulé tekuté tvary s gradientmi
+//HOTOVO
+// ✅ FINÁLNA VERZIA - Bez ESLint chýb
 
 import React, { useMemo } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 // =====================
-// ANIMÁCIE - TEKUTÉ POHYBY
+// ANIMÁCIE - ZJEDNODUŠENÉ
 // =====================
 
-const liquidFlow = keyframes`
-  0% {
-    transform: translate(0, 0) scale(1);
-    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-  }
-  25% {
-    transform: translate(30px, -30px) scale(1.1);
-    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+const floatSimple = keyframes`
+  0%, 100% {
+    transform: translateY(0) translateX(0) rotate(0deg);
   }
   50% {
-    transform: translate(-20px, -50px) scale(1.15);
-    border-radius: 40% 60% 50% 40% / 60% 50% 60% 40%;
-  }
-  75% {
-    transform: translate(-40px, -20px) scale(1.08);
-    border-radius: 70% 30% 50% 50% / 30% 50% 50% 60%;
-  }
-  100% {
-    transform: translate(0, 0) scale(1);
-    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    transform: translateY(-30px) translateX(20px) rotate(180deg);
   }
 `;
 
-const breathe = keyframes`
+const pulse = keyframes`
   0%, 100% {
     opacity: 0.6;
   }
@@ -45,26 +31,41 @@ const breathe = keyframes`
 // =====================
 
 const SPEEDS = {
-  slow: 20,
-  normal: 15,
-  fast: 10
+  slow: 25,
+  normal: 20,
+  fast: 15
 };
 
 const COMPLEXITY_SETTINGS = {
   low: {
-    minSize: 150,
-    maxSize: 300,
-    baseOpacity: 0.5,
+    minSize: 60,
+    maxSize: 100,
+    minOpacity: 25,
+    maxOpacity: 45,
+    baseOpacity: 0.35,
+    glowSize: 15,
+    glowOpacity: 30,
+    borderOpacity: 40
   },
   medium: {
-    minSize: 180,
-    maxSize: 350,
-    baseOpacity: 0.6,
+    minSize: 50,
+    maxSize: 90,
+    minOpacity: 30,
+    maxOpacity: 50,
+    baseOpacity: 0.40,
+    glowSize: 18,
+    glowOpacity: 35,
+    borderOpacity: 45
   },
   high: {
-    minSize: 200,
-    maxSize: 400,
-    baseOpacity: 0.7,
+    minSize: 40,
+    maxSize: 80,
+    minOpacity: 35,
+    maxOpacity: 55,
+    baseOpacity: 0.45,
+    glowSize: 20,
+    glowOpacity: 40,
+    borderOpacity: 50
   }
 };
 
@@ -79,8 +80,8 @@ const generatePositions = (count, minDistance) => {
     
     while (attempts < maxAttempts && !validPosition) {
       const candidate = {
-        left: Math.random() * 100,
-        top: Math.random() * 100
+        left: Math.random() * 90 + 5,
+        top: Math.random() * 90 + 5
       };
       
       const isTooClose = positions.some(existing => {
@@ -97,10 +98,11 @@ const generatePositions = (count, minDistance) => {
       attempts++;
     }
     
+    // Fallback ak sa nepodarí nájsť validnú pozíciu
     if (!validPosition) {
       validPosition = {
-        left: Math.random() * 100,
-        top: Math.random() * 100
+        left: Math.random() * 90 + 5,
+        top: Math.random() * 90 + 5
       };
     }
     
@@ -126,92 +128,96 @@ const BackgroundContainer = styled.div`
   background: ${props => props.theme.BACKGROUND_COLOR};
 `;
 
-const LiquidBlob = styled.div`
+const Cube = styled.div`
   position: absolute;
   width: ${props => props.$size}px;
   height: ${props => props.$size}px;
-  background: ${props => props.$gradient};
-  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  background: linear-gradient(
+    135deg,
+    rgba(220, 38, 38, ${props => props.$baseOpacity}), /* ✅ Červená */
+    rgba(37, 99, 235, ${props => props.$baseOpacity})  /* ✅ Modrá */
+  );
+  border: 1px solid rgba(147, 51, 234, ${props => props.$borderOpacity / 100}); /* ✅ Fialový border (mix) */
+  border-radius: ${props => props.$borderRadius}px;
   animation: 
-    ${liquidFlow} ${props => props.$duration}s ease-in-out infinite,
-    ${breathe} ${props => props.$duration * 1.5}s ease-in-out infinite;
+    ${floatSimple} ${props => props.$duration}s ease-in-out infinite,
+    ${pulse} ${props => props.$duration * 0.8}s ease-in-out infinite;
   animation-delay: ${props => props.$delay}s;
   left: ${props => props.$left}%;
   top: ${props => props.$top}%;
-  filter: blur(${props => props.$blur}px);
-  opacity: ${props => props.$baseOpacity};
-  mix-blend-mode: ${props => props.$blendMode};
-  will-change: transform, opacity;
+  box-shadow: 
+    0 0 ${props => props.$glowSize}px rgba(220, 38, 38, ${props => props.$glowOpacity / 100}), /* ✅ Červený glow */
+    0 0 ${props => props.$glowSize * 1.5}px rgba(37, 99, 235, ${props => props.$glowOpacity / 100 * 0.6}); /* ✅ Modrý glow */
+  will-change: transform;
   
   @media (max-width: 768px) {
     width: ${props => props.$size * 0.7}px;
     height: ${props => props.$size * 0.7}px;
+    animation: ${floatSimple} ${props => props.$duration * 1.5}s ease-in-out infinite;
   }
   
   @media (max-width: 480px) {
     width: ${props => props.$size * 0.5}px;
     height: ${props => props.$size * 0.5}px;
-    filter: blur(${props => props.$blur * 0.7}px);
+    border: none;
+    box-shadow: none;
   }
 `;
+
 
 // =====================
 // COMPONENT
 // =====================
 
 const AnimatedBackground = ({ 
-  cubeCount = 5,
+  cubeCount = 10,
   animationSpeed = 'slow',
   complexity = 'low'
 }) => {
   const settings = COMPLEXITY_SETTINGS[complexity] || COMPLEXITY_SETTINGS.low;
   const duration = SPEEDS[animationSpeed] || SPEEDS.slow;
 
-  const blobs = useMemo(() => {
-    const minDistance = 15;
+  const cubes = useMemo(() => {
+    const minDistance = 25;
     const positions = generatePositions(cubeCount, minDistance);
-    
-    // ✅ Výrazné červeno-modré gradienty
-    const gradients = [
-      'radial-gradient(circle at 30% 50%, rgba(220, 38, 38, 0.7), rgba(185, 28, 28, 0.3))', // Červená
-      'radial-gradient(circle at 70% 50%, rgba(37, 99, 235, 0.7), rgba(29, 78, 216, 0.3))', // Modrá
-      'radial-gradient(circle at 50% 30%, rgba(239, 68, 68, 0.7), rgba(220, 38, 38, 0.3))', // Svetlejšia červená
-      'radial-gradient(circle at 50% 70%, rgba(59, 130, 246, 0.7), rgba(37, 99, 235, 0.3))', // Svetlejšia modrá
-      'radial-gradient(circle at 40% 60%, rgba(248, 113, 113, 0.7), rgba(239, 68, 68, 0.3))', // Extra červená
-    ];
     
     return positions.map((pos, i) => {
       const size = Math.random() * (settings.maxSize - settings.minSize) + settings.minSize;
+      const opacity = Math.floor(Math.random() * (settings.maxOpacity - settings.minOpacity) + settings.minOpacity);
       
       return {
-        id: `blob-${i}`,
+        id: `cube-${i}`,
         size: size,
         left: pos.left,
         top: pos.top,
         delay: i * 2,
         duration: duration + (i % 3) * 3,
+        opacity: opacity,
         baseOpacity: settings.baseOpacity,
-        blur: 20 + Math.random() * 20, // 20-40px blur
-        gradient: gradients[i % gradients.length],
-        blendMode: i % 2 === 0 ? 'normal' : 'screen' // Mix blend modes
+        borderRadius: Math.random() * 8 + 4,
+        borderOpacity: settings.borderOpacity,
+        glowSize: settings.glowSize,
+        glowOpacity: settings.glowOpacity
       };
     });
   }, [cubeCount, duration, settings]);
 
   return (
     <BackgroundContainer>
-      {blobs.map(blob => (
-        <LiquidBlob
-          key={blob.id}
-          $size={blob.size}
-          $left={blob.left}
-          $top={blob.top}
-          $delay={blob.delay}
-          $duration={blob.duration}
-          $baseOpacity={blob.baseOpacity}
-          $blur={blob.blur}
-          $gradient={blob.gradient}
-          $blendMode={blob.blendMode}
+      {cubes.map(cube => (
+        <Cube
+          key={cube.id}
+          $size={cube.size}
+          $left={cube.left}
+          $top={cube.top}
+          $delay={cube.delay}
+          $duration={cube.duration}
+          $opacity={cube.opacity}
+          $baseOpacity={cube.baseOpacity}
+          $borderRadius={cube.borderRadius}
+          $borderOpacity={cube.borderOpacity}
+          $glowSize={cube.glowSize}
+          $glowOpacity={cube.glowOpacity}
         />
       ))}
     </BackgroundContainer>

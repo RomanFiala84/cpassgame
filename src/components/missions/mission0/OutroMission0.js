@@ -530,7 +530,7 @@ const OutroMission0 = () => {
     <Layout 
       showLevelDisplay={true} 
       showAnimatedBackground={true}
-      cubeCount={6}
+      cubeCount={10}
       animationSpeed="slow"
       complexity="low"
     >
