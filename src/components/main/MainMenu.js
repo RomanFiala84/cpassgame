@@ -261,7 +261,7 @@ const MissionContent = styled.div`
 
 const MissionNumber = styled.div`
   font-size: 15px;
-  color: ${p => p.theme.ACCENT_COLOR};
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   margin-bottom: 3px;
   font-weight: 600;
   text-transform: uppercase;
