@@ -1,34 +1,42 @@
-// ✅ FINÁLNA VERZIA - Jemná vlnitá animácia ako na obrázku
-// 🎨 Pastelová fialovo-modrá škála
+// ✅ FINÁLNA VERZIA - Ambient Background Motion
+// 🎨 Plynulé tekuté tvary s gradientmi
 
 import React, { useMemo } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 // =====================
-// ANIMÁCIE - JEMNÉ VLNENIE
+// ANIMÁCIE - TEKUTÉ POHYBY
 // =====================
 
-const gentleFloat = keyframes`
-  0%, 100% {
-    transform: translateY(0) translateX(0) scale(1);
+const liquidFlow = keyframes`
+  0% {
+    transform: translate(0, 0) scale(1);
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
   }
   25% {
-    transform: translateY(-15px) translateX(10px) scale(1.05);
+    transform: translate(30px, -30px) scale(1.1);
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
   }
   50% {
-    transform: translateY(-25px) translateX(-5px) scale(1.1);
+    transform: translate(-20px, -50px) scale(1.15);
+    border-radius: 40% 60% 50% 40% / 60% 50% 60% 40%;
   }
   75% {
-    transform: translateY(-10px) translateX(-15px) scale(1.05);
+    transform: translate(-40px, -20px) scale(1.08);
+    border-radius: 70% 30% 50% 50% / 30% 50% 50% 60%;
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
   }
 `;
 
-const subtlePulse = keyframes`
+const breathe = keyframes`
   0%, 100% {
-    opacity: 0.4;
+    opacity: 0.6;
   }
   50% {
-    opacity: 0.6;
+    opacity: 0.9;
   }
 `;
 
@@ -37,41 +45,26 @@ const subtlePulse = keyframes`
 // =====================
 
 const SPEEDS = {
-  slow: 30,
-  normal: 25,
-  fast: 20
+  slow: 20,
+  normal: 15,
+  fast: 10
 };
 
 const COMPLEXITY_SETTINGS = {
   low: {
-    minSize: 80,
-    maxSize: 150,
-    minOpacity: 20,
-    maxOpacity: 35,
-    baseOpacity: 0.25,
-    glowSize: 25,
-    glowOpacity: 15,
-    borderOpacity: 20
+    minSize: 150,
+    maxSize: 300,
+    baseOpacity: 0.5,
   },
   medium: {
-    minSize: 100,
-    maxSize: 180,
-    minOpacity: 25,
-    maxOpacity: 40,
-    baseOpacity: 0.30,
-    glowSize: 30,
-    glowOpacity: 20,
-    borderOpacity: 25
+    minSize: 180,
+    maxSize: 350,
+    baseOpacity: 0.6,
   },
   high: {
-    minSize: 120,
-    maxSize: 200,
-    minOpacity: 30,
-    maxOpacity: 45,
-    baseOpacity: 0.35,
-    glowSize: 35,
-    glowOpacity: 25,
-    borderOpacity: 30
+    minSize: 200,
+    maxSize: 400,
+    baseOpacity: 0.7,
   }
 };
 
@@ -86,8 +79,8 @@ const generatePositions = (count, minDistance) => {
     
     while (attempts < maxAttempts && !validPosition) {
       const candidate = {
-        left: Math.random() * 90 + 5,
-        top: Math.random() * 90 + 5
+        left: Math.random() * 100,
+        top: Math.random() * 100
       };
       
       const isTooClose = positions.some(existing => {
@@ -106,8 +99,8 @@ const generatePositions = (count, minDistance) => {
     
     if (!validPosition) {
       validPosition = {
-        left: Math.random() * 90 + 5,
-        top: Math.random() * 90 + 5
+        left: Math.random() * 100,
+        top: Math.random() * 100
       };
     }
     
@@ -133,32 +126,32 @@ const BackgroundContainer = styled.div`
   background: ${props => props.theme.BACKGROUND_COLOR};
 `;
 
-const Blob = styled.div`
+const LiquidBlob = styled.div`
   position: absolute;
   width: ${props => props.$size}px;
   height: ${props => props.$size}px;
   background: ${props => props.$gradient};
-  border-radius: 45% 55% 60% 40% / 50% 45% 55% 50%; /* ⬅️ Organic blob shape */
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
   animation: 
-    ${gentleFloat} ${props => props.$duration}s ease-in-out infinite,
-    ${subtlePulse} ${props => props.$duration * 1.2}s ease-in-out infinite;
+    ${liquidFlow} ${props => props.$duration}s ease-in-out infinite,
+    ${breathe} ${props => props.$duration * 1.5}s ease-in-out infinite;
   animation-delay: ${props => props.$delay}s;
   left: ${props => props.$left}%;
   top: ${props => props.$top}%;
-  filter: blur(${props => props.$blur}px); /* ⬅️ Jemné rozmazanie */
+  filter: blur(${props => props.$blur}px);
   opacity: ${props => props.$baseOpacity};
+  mix-blend-mode: ${props => props.$blendMode};
   will-change: transform, opacity;
   
   @media (max-width: 768px) {
     width: ${props => props.$size * 0.7}px;
     height: ${props => props.$size * 0.7}px;
-    filter: blur(${props => props.$blur * 0.8}px);
   }
   
   @media (max-width: 480px) {
     width: ${props => props.$size * 0.5}px;
     height: ${props => props.$size * 0.5}px;
-    filter: blur(${props => props.$blur * 0.6}px);
+    filter: blur(${props => props.$blur * 0.7}px);
   }
 `;
 
@@ -167,7 +160,7 @@ const Blob = styled.div`
 // =====================
 
 const AnimatedBackground = ({ 
-  cubeCount = 6, // ⬅️ Menej shapes pre jemnejší efekt
+  cubeCount = 5,
   animationSpeed = 'slow',
   complexity = 'low'
 }) => {
@@ -175,19 +168,17 @@ const AnimatedBackground = ({
   const duration = SPEEDS[animationSpeed] || SPEEDS.slow;
 
   const blobs = useMemo(() => {
-    const minDistance = 20;
+    const minDistance = 15;
     const positions = generatePositions(cubeCount, minDistance);
     
-    // ✅ Pastelová fialovo-modrá paleta (ako na obrázku)
+    // ✅ Výrazné červeno-modré gradienty
     const gradients = [
-      'radial-gradient(circle, rgba(220, 38, 38, 0.35), rgba(220, 38, 38, 0.15))', // Červená
-      'radial-gradient(circle, rgba(37, 99, 235, 0.35), rgba(37, 99, 235, 0.15))', // Modrá
-      'radial-gradient(circle, rgba(239, 68, 68, 0.35), rgba(220, 38, 38, 0.15))', // Svetlejšia červená
-      'radial-gradient(circle, rgba(59, 130, 246, 0.35), rgba(37, 99, 235, 0.15))', // Svetlejšia modrá
-      'radial-gradient(circle, rgba(185, 28, 28, 0.35), rgba(153, 27, 27, 0.15))', // Tmavšia červená
-      'radial-gradient(circle, rgba(29, 78, 216, 0.35), rgba(30, 64, 175, 0.15))', // Tmavšia modrá
+      'radial-gradient(circle at 30% 50%, rgba(220, 38, 38, 0.7), rgba(185, 28, 28, 0.3))', // Červená
+      'radial-gradient(circle at 70% 50%, rgba(37, 99, 235, 0.7), rgba(29, 78, 216, 0.3))', // Modrá
+      'radial-gradient(circle at 50% 30%, rgba(239, 68, 68, 0.7), rgba(220, 38, 38, 0.3))', // Svetlejšia červená
+      'radial-gradient(circle at 50% 70%, rgba(59, 130, 246, 0.7), rgba(37, 99, 235, 0.3))', // Svetlejšia modrá
+      'radial-gradient(circle at 40% 60%, rgba(248, 113, 113, 0.7), rgba(239, 68, 68, 0.3))', // Extra červená
     ];
-
     
     return positions.map((pos, i) => {
       const size = Math.random() * (settings.maxSize - settings.minSize) + settings.minSize;
@@ -197,11 +188,12 @@ const AnimatedBackground = ({
         size: size,
         left: pos.left,
         top: pos.top,
-        delay: i * 3,
-        duration: duration + (i % 3) * 5,
+        delay: i * 2,
+        duration: duration + (i % 3) * 3,
         baseOpacity: settings.baseOpacity,
-        blur: 40 + Math.random() * 30, // ⬅️ Jemné rozmazanie 40-70px
-        gradient: gradients[i % gradients.length]
+        blur: 20 + Math.random() * 20, // 20-40px blur
+        gradient: gradients[i % gradients.length],
+        blendMode: i % 2 === 0 ? 'normal' : 'screen' // Mix blend modes
       };
     });
   }, [cubeCount, duration, settings]);
@@ -209,7 +201,7 @@ const AnimatedBackground = ({
   return (
     <BackgroundContainer>
       {blobs.map(blob => (
-        <Blob
+        <LiquidBlob
           key={blob.id}
           $size={blob.size}
           $left={blob.left}
@@ -219,6 +211,7 @@ const AnimatedBackground = ({
           $baseOpacity={blob.baseOpacity}
           $blur={blob.blur}
           $gradient={blob.gradient}
+          $blendMode={blob.blendMode}
         />
       ))}
     </BackgroundContainer>
