@@ -614,9 +614,12 @@ class DataManager {
     data.participant_code = normalizedCode; // ✅ Vždy UPPERCASE
     
     // Vygeneruj unikátny sharing code
-    if (!data.sharing_code) {
-      data.sharing_code = await this.generateUniqueSharingCode(normalizedCode);
-    }
+      if (!data.sharing_code || data.sharing_code === '') {
+        console.log(`🔄 Generujem nový sharing code pre ${normalizedCode}...`);
+        data.sharing_code = await this.generateUniqueSharingCode(normalizedCode);
+      } else {
+        console.log(`✅ Sharing code už existuje pre ${normalizedCode}: ${data.sharing_code}`);
+      }
     
     if (!['0', '1', '2'].includes(data.group_assignment)) {
       data.group_assignment = Math.random() < 0.33 ? '0' : Math.random() < 0.66 ? '1' : '2';
@@ -730,7 +733,9 @@ class DataManager {
 
   // Generuje unikátny sharing code s kontrolou duplicity
   async generateUniqueSharingCode(participantCode) {
-    const normalizedCode = participantCode.toUpperCase().trim(); // ✅ PRIDANÉ
+    const normalizedCode = participantCode.toUpperCase().trim();
+    
+    console.log(`🎲 Začínam generovať sharing code pre ${normalizedCode}...`);
     
     let attempts = 0;
     const maxAttempts = 50;
@@ -744,14 +749,15 @@ class DataManager {
       );
       
       if (!codeExists) {
-        console.log(`✅ Vygenerovaný unikátny sharing code pre ${normalizedCode}: ${code}`);
-        return code;
+        console.log(`✅ Vygenerovaný unikátny sharing code pre ${normalizedCode}: ${code} (pokus ${attempts + 1})`);
+        return code; // ✅ NÁVRAT hneď po prvom platnom kóde
       }
       
       console.warn(`⚠️ Duplicita! Sharing code ${code} už existuje, pokus ${attempts + 1}/${maxAttempts}`);
       attempts++;
     }
     
+    // Fallback len ak zlyhalo všetkých 50 pokusov
     const fallbackCode = this.generatePersistentSharingCode(
       normalizedCode + Date.now(), 
       Math.random() * 1000
