@@ -24,70 +24,10 @@ const Container = styled.div`
   }
 `;
 
-const Header = styled.div`
-  text-align: center;
-  margin-bottom: 24px;
-  
-  @media (max-width: 768px) {
-    margin-bottom: 20px;
-  }
-`;
-
-const Title = styled.h1`
-  font-size: 25px;
-  margin-bottom: 8px;
-  background: linear-gradient(
-    135deg,
-    ${props => props.theme.ACCENT_COLOR},
-    ${props => props.theme.ACCENT_COLOR_2}
-  );
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-align: center;
-  font-weight: 700;
-  
-  @media (max-width: 768px) {
-    font-size: 25px;
-  }
-`;
-
-const Subtitle = styled.h2`
-  font-size: 20px;
-  margin-bottom: 4px;
-  color: ${props => props.theme.ACCENT_COLOR};
-  text-align: center;
-  font-weight: 600;
-  
-  @media (max-width: 480px) {
-    font-size: 20px;
-  }
-`;
-
-const Text = styled.p`
-  font-size: 15px;
-  line-height: 1.6;
-  margin-bottom: 20px;
-  color: ${props => props.theme.PRIMARY_TEXT_COLOR};
-  text-align: center;
-  max-width: 700px;
-  
-  strong {
-    color: ${props => props.theme.PRIMARY_TEXT_COLOR};
-    font-weight: 600;
-  }
-  
-  @media (max-width: 480px) {
-    font-size: 15px;
-    line-height: 1.5;
-    margin-bottom: 16px;
-  }
-`;
-
 const MissionCard = styled.div`
   background: linear-gradient(135deg, 
-    ${p => p.theme.ACCENT_COLOR}22, 
-    ${p => p.theme.ACCENT_COLOR_2}22
+    ${p => p.theme.ACCENT_COLOR}45, 
+    ${p => p.theme.ACCENT_COLOR_2}45
   );
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   border-radius: 16px;
@@ -127,16 +67,8 @@ const MissionCard = styled.div`
   }
 `;
 
-const MissionIcon = styled.div`
-  font-size: 48px;
-  margin-bottom: 16px;
-  text-align: center;
-  position: relative;
-  z-index: 1;
-`;
-
 const MissionLabel = styled.div`
-  font-size: 20px;
+  font-size: 25px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   text-transform: uppercase;
   letter-spacing: 1.5px;
@@ -171,7 +103,7 @@ const InfoSection = styled.div`
 `;
 
 const InfoTitle = styled.h3`
-  font-size: 16px;
+  font-size: 15px;
   color: ${p => p.theme.ACCENT_COLOR};
   margin-bottom: 12px;
   font-weight: 600;
@@ -179,10 +111,6 @@ const InfoTitle = styled.h3`
   align-items: center;
   gap: 8px;
   
-  &::before {
-    content: '🎯';
-    font-size: 18px;
-  }
   
   @media (max-width: 480px) {
     font-size: 15px;
@@ -203,7 +131,7 @@ const InfoItem = styled.li`
   padding: 8px 12px 8px 32px;
   position: relative;
   line-height: 1.5;
-  background: ${p => p.theme.ACCENT_COLOR}08;
+  background: ${p => p.theme.ACCENT_COLOR}15;
   border-radius: 8px;
   transition: all 0.2s ease;
   
@@ -281,7 +209,7 @@ const IntroMission0 = () => {
     recordStart();
   }, [dataManager, navigate]);
 
-  const handleContinue = () => navigate('/mission0/questionnaire');
+  const handleContinue = () => navigate('/mission0/Questionnaire0');
 
   return (
     <Layout 
@@ -292,27 +220,16 @@ const IntroMission0 = () => {
       complexity="medium"
     >
       <Container>
-        <Header>
-          <Title><strong>Misia 0</strong></Title>
-          <Subtitle><strong>🔍 Predvýskum</strong></Subtitle>
-        </Header>
 
         <MissionCard>
-          <MissionIcon>🕵️</MissionIcon>
-          <MissionLabel><strong>Špeciálny Agent</strong></MissionLabel>
+          <MissionLabel><strong>Misia 0: Predvýskum</strong></MissionLabel>
         </MissionCard>
-
-        <Text>
-          <strong>Vitajte v prvej misii detektívnej akadémie!</strong><br/>
-          <strong>Vstúpte do kože špeciálneho agenta a pomôžte nám odhaliť pravdu.</strong>
-        </Text>
 
         <InfoSection>
           <InfoTitle><strong>Čo vás čaká v tejto misii?</strong></InfoTitle>
           <InfoList>
-            <InfoItem><strong>Demografický dotazník.</strong></InfoItem>
+            <InfoItem><strong>Dotazník (5-10 minút) - séria otázok a tvrdení.</strong></InfoItem>
             <InfoItem><strong>Získate prvé detektívne body.</strong></InfoItem>
-            <InfoItem><strong>Posunete sa vyššie v rebríčku.</strong></InfoItem>
           </InfoList>
         </InfoSection>
 
@@ -333,37 +250,55 @@ const IntroMission0 = () => {
             iconUrl="/images/detective-icon.png"
             tip={`
               <p style="font-size: 15px; font-weight: bold; color: ${theme.ACCENT_COLOR}; margin-bottom: 12px;">
-                <strong>Prvá misia začína!</strong>
+                <strong>Vitajte!</strong>
               </p>
               
               <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                <strong>V tejto misii vyplníte demografický dotazník.</strong>
+                <strong>Ďakujeme, že ste sa rozhodli zúčastniť v predvýskume!</strong>
               </p>
               
               <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                <strong>Po dokončení získate svoje prvé detektívne body!</strong>
+                <strong>Čo je cieľom predvýskumu?/strong>
               </p>
-              
               <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
                 <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
                   <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-                  <strong>Odpovedajte pravdivo a úprimne.</strong>
-                </li>
-                <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                  <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-                  <strong>Všetky údaje sú anonymné.</strong>
-                </li>
-                <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                  <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-                  <strong>Dotazník trvá približne 5 minút.</strong>
+                  <strong>Predtým ako spustíme hlavný výskum, potrebujeme overiť, že všetky otázky a tvrdenia v dotazníku sú zrozumiteľné a jednoznačné.</strong>
                 </li>
               </ul>
-              
+
+
+              <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                <strong>Aká je vaša úloha?/strong>
+              </p>
+              <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
+                <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                  <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+                  <strong>Pozorne si prečítajte každú otázku a tvrdenie, odpovedajte prosím úprimne.</strong>
+                </li>
+                <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                  <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+                  <strong>Veľmi dlho nad otázkami a tvrdeniami nepremýšľajte. Pri jednotlivých položkách nie sú správne alebo nesprávne odpovede.</strong>
+                </li>
+                <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                  <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+                  <strong>Po každom bloku otázok vás požiadame o spätnú väzbu.</strong>
+                </li>
+                <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                  <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+                  <strong>Budeme sa pýtať napríklad na zrozumiteľnosť, jednoznačnosť, významovú zhodu otázok a tvrdení. Taktiež budeme zisťovať, či dokážete vybratou hodnotiacou stupnicov vyjadriť svoj skutočný postoj.</strong>
+                </li>
+                <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                  <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+                  <strong>Taktiež budeme zisťovať, či dokážete vybranou hodnotiacou stupnicou vyjadriť svoj skutočný postoj.</strong>
+                </li>
+              </ul>
+
               <p style="font-size: 15px; font-weight: bold; margin-top: 16px; color: ${theme.ACCENT_COLOR}; line-height: 1.6;">
-                <strong>Poďme na to, detektív!</strong>
+                <strong>Pripravený?</strong>
               </p>
             `}
-            buttonText="Začať misiu!"
+            buttonText="Poďme na to!"
             autoOpen={true}
             autoOpenDelay={800}
             autoClose={false}
