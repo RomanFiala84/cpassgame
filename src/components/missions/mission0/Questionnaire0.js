@@ -1097,6 +1097,8 @@ const PAGES = [
         text: '',
         type: 'accordion-likert',
         required: false,
+        hasOther: true,
+        otherLabel: 'Iné (prosím špecifikujte)',
         questions: [
           // Televízne spravodajstvo
           { id: 'ts1', text: 'Televízne noviny TV Markíza', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' }, scaleValueLabels: ['Nikdy', 'Menej ako raz mesačne', 'Približne raz mesačne', 'Niekoľkokrát mesačne', 'Približne raz týždenne', 'Niekoľkokrát týždenne', 'Denne'] },
@@ -1132,13 +1134,6 @@ const PAGES = [
           { id: 'sm5', text: 'Telegram', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' }, scaleValueLabels: ['Nikdy', 'Menej ako raz mesačne', 'Približne raz mesačne', 'Niekoľkokrát mesačne', 'Približne raz týždenne', 'Niekoľkokrát týždenne', 'Denne'] },
           { id: 'sm6', text: 'X (Twitter)', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' }, scaleValueLabels: ['Nikdy', 'Menej ako raz mesačne', 'Približne raz mesačne', 'Niekoľkokrát mesačne', 'Približne raz týždenne', 'Niekoľkokrát týždenne', 'Denne'] }
         ]
-      },
-      {
-        id: 'ost1',
-        text: 'Iné spravodajské weby alebo platformy (prosím uveďte):',
-        type: 'text',
-        required: false,
-        placeholder: 'Napíšte názvy média alebo platformy...'
       }
     ]
   },
