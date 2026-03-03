@@ -1096,9 +1096,7 @@ const PAGES = [
         id: 'media_accordion',
         text: '',
         type: 'accordion-likert',
-        required: false,
-        hasOther: true,
-        otherLabel: 'Iné (prosím špecifikujte)',
+        required: true,
         questions: [
           // Televízne spravodajstvo
           { id: 'ts1', text: 'Televízne noviny TV Markíza', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' }, scaleValueLabels: ['Nikdy', 'Menej ako raz mesačne', 'Približne raz mesačne', 'Niekoľkokrát mesačne', 'Približne raz týždenne', 'Niekoľkokrát týždenne', 'Denne'] },
@@ -1848,6 +1846,9 @@ const Questionnaire0 = () => {
       );
 
       case 'radio':
+      // ✅ Kontrola, či je vybraté "Iné" (hodnota neexistuje v definovaných options)
+      const isOtherSelected = value && !question.options.find(o => o.value === value);
+      
       return (
         <RadioGroup>
           {question.options.map(option => (
@@ -1863,25 +1864,22 @@ const Questionnaire0 = () => {
             </RadioOption>
           ))}
           
-          {/* ✅ PRIDAJ TÚTO ČASŤ - "Iné" možnosť */}
+          {/* ✅ "Iné" možnosť */}
           {question.hasOther && (
             <>
               <RadioOption>
                 <input
                   type="radio"
                   name={question.id}
-                  value="__other__"
-                  checked={value && !question.options.find(o => o.value === value)}
-                  onChange={() => {
-                    handleAnswer(question.id, '');
-                    // Focus na input automaticky
-                  }}
+                  value="__custom_other__"
+                  checked={isOtherSelected}
+                  onChange={() => handleAnswer(question.id, '__custom__')}
                 />
                 <span>{question.otherLabel || 'Iné (prosím špecifikujte)'}</span>
               </RadioOption>
               
-              {/* Input zobrazený len ak je "Iné" vybrané */}
-              {value && !question.options.find(o => o.value === value) && (
+              {/* ✅ Input zobrazený len keď je "Iné" vybrané */}
+              {isOtherSelected && (
                 <div style={{ 
                   marginTop: '8px', 
                   paddingLeft: '36px',
@@ -1890,17 +1888,17 @@ const Questionnaire0 = () => {
                   <Input
                     type="text"
                     placeholder="Zadajte text..."
-                    value={value}
-                    onChange={(e) => handleAnswer(question.id, e.target.value)}
+                    value={value.startsWith('__custom__') ? value.substring(10) : value}
+                    onChange={(e) => handleAnswer(question.id, '__custom__' + e.target.value)}
                     autoFocus
                   />
                 </div>
               )}
             </>
           )}
-
         </RadioGroup>
       );
+
 
       case 'checkbox':
         return (
