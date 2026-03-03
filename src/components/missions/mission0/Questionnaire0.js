@@ -9,6 +9,7 @@ import StyledButton from '../../../styles/StyledButton';
 import DetectiveTipSmall from '../../shared/DetectiveTipSmall';
 import { useUserStats } from '../../../contexts/UserStatsContext';
 import { getResponseManager } from '../../../utils/ResponseManager';
+import ReactMarkdown from 'react-markdown';
 
 // ==========================================
 // STYLED COMPONENTS - LAYOUT
@@ -2095,9 +2096,14 @@ const Questionnaire0 = () => {
         ref={el => (questionRefs.current[question.id] = el)}
         hasError={hasError}
       >
+        {/* ✅ ZMENENÉ: Použitie ReactMarkdown pre text s markdown */}
         <Question>
           {!isFeedback && `${index + 1}. `}
-          {question.text}
+          {question.text.includes('**') || question.text.includes('\\n') ? (
+            <ReactMarkdown>{question.text}</ReactMarkdown>
+          ) : (
+            question.text
+          )}
         </Question>
 
         {renderQuestionInput(question)}
@@ -2106,6 +2112,7 @@ const Questionnaire0 = () => {
       </QuestionCard>
     );
   };
+
 
   // ==========================================
   // RENDER HLAVNÉHO UI
