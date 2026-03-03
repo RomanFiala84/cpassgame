@@ -8,29 +8,49 @@ import { useUserStats } from '../../../contexts/UserStatsContext';
 import { getResponseManager } from '../../../utils/ResponseManager';
 
 // ==========================================
-// KOMPAKTNÉ STYLED COMPONENTS
+// STYLED COMPONENTS - ŠTÝL AKO Questionnaire2A
 // ==========================================
 
 const Container = styled.div`
-  padding: 12px;
-  max-width: 700px;
+  padding: 20px;
+  max-width: 600px;
   margin: 0 auto;
-
-  @media (max-width: 768px) {
-    padding: 8px;
-  }
 `;
 
 const Card = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 1px solid ${p => p.theme.BORDER_COLOR};
   border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+`;
 
-  @media (max-width: 768px) {
-    padding: 12px;
-  }
+const Title = styled.h2`
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 600;
+`;
+
+const Subtitle = styled.h3`
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  text-align: center;
+  font-size: 14px;
+  font-style: italic;
+  margin-top: -12px;
+  margin-bottom: 20px;
+`;
+
+const Instruction = styled.div`
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 14px;
+  margin-bottom: 20px;
+  padding: 12px;
+  background: ${p => p.theme.ACCENT_COLOR}10;
+  border-radius: 6px;
+  line-height: 1.5;
+  text-align: center;
 `;
 
 const ProgressBar = styled.div`
@@ -38,146 +58,67 @@ const ProgressBar = styled.div`
   height: 6px;
   background: ${p => p.theme.BORDER_COLOR};
   border-radius: 3px;
-  margin-bottom: 12px;
+  margin-bottom: 20px;
   overflow: hidden;
 `;
 
 const ProgressFill = styled.div`
   height: 100%;
-  background: linear-gradient(90deg, ${p => p.theme.ACCENT_COLOR}, ${p => p.theme.ACCENT_COLOR2});
+  background: ${p => p.theme.ACCENT_COLOR};
   transition: width 0.3s ease;
   width: ${p => p.progress}%;
 `;
 
 const ProgressText = styled.div`
   text-align: center;
-  font-size: 13px;
+  font-size: 14px;
   color: ${p => p.theme.ACCENT_COLOR};
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   font-weight: 600;
 `;
 
 const QuestionCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
-  border-left: 3px solid ${p => p.hasError ? '#ff0000' : p.theme.ACCENT_COLOR};
-  padding: 12px;
-  margin-bottom: 12px;
+  border: 1px solid ${p => p.hasError ? '#ff0000' : p.theme.BORDER_COLOR};
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
   scroll-margin-top: 20px;
   transition: all 0.2s ease;
 
   ${p => p.hasError && `
-    background: rgba(255, 0, 0, 0.05);
-    animation: shake 0.3s ease-in-out;
+    box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
   `}
-
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-3px); }
-    75% { transform: translateX(3px); }
-  }
 `;
 
 const Question = styled.p`
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   font-size: 14px;
   font-weight: 500;
-  line-height: 1.4;
-
-  @media (max-width: 768px) {
-    font-size: 13px;
-  }
+  line-height: 1.5;
 `;
 
 const QuestionError = styled.div`
   color: #ff0000;
-  font-size: 12px;
-  margin-top: 6px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-
-  &:before {
-    content: '⚠';
-    font-size: 14px;
-  }
-`;
-
-const FeedbackSection = styled.div`
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 2px dashed ${p => p.theme.BORDER_COLOR};
-`;
-
-const FeedbackTitle = styled.h3`
-  color: ${p => p.theme.ACCENT_COLOR};
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-
-  &:before {
-    content: '💬';
-  }
-`;
-
-const FeedbackSubtitle = styled.p`
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 12px;
-  margin-bottom: 12px;
-`;
-
-const PageTitle = styled.h2`
-  color: ${p => p.theme.ACCENT_COLOR};
-  font-size: 16px;
-  font-weight: 700;
-  margin-bottom: 4px;
-  line-height: 1.3;
-`;
-
-const PageSubtitle = styled.h3`
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 12px;
-  font-style: italic;
-  margin-bottom: 8px;
-`;
-
-const Instruction = styled.p`
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   font-size: 13px;
-  margin-bottom: 14px;
-  line-height: 1.4;
-  padding: 8px;
-  background: ${p => p.theme.ACCENT_COLOR}08;
-  border-radius: 4px;
-
-  @media (max-width: 768px) {
-    font-size: 12px;
-    padding: 6px;
-  }
+  margin-top: 8px;
+  font-weight: 500;
 `;
 
 const ScaleContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  gap: 4px;
-  margin-bottom: 6px;
-
-  @media (max-width: 768px) {
-    gap: 3px;
-  }
+  gap: 8px;
+  margin-bottom: 8px;
 `;
 
-const ScaleButtonWithLabel = styled.div`
+const ScaleButtonWrapper = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  min-width: 0;
+  gap: 6px;
 `;
 
 const RadioLabel = styled.label`
@@ -185,311 +126,236 @@ const RadioLabel = styled.label`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 8px 4px;
+  padding: 12px 8px;
   border: 1px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
   background: ${p => p.checked ? p.theme.ACCENT_COLOR : 'transparent'};
   color: ${p => p.checked ? '#FFFFFF' : p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
-
+  
   &:hover {
     background: ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.HOVER_OVERLAY};
   }
-
+  
   input {
     display: none;
-  }
-
-  @media (max-width: 768px) {
-    padding: 6px 3px;
-    font-size: 12px;
   }
 `;
 
 const ScaleValueLabel = styled.span`
-  font-size: 9px;
+  font-size: 11px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   text-align: center;
-  line-height: 1.2;
+  line-height: 1.3;
   word-break: break-word;
   hyphens: auto;
-  max-width: 100%;
-
-  @media (max-width: 768px) {
-    font-size: 8px;
-  }
 `;
 
 const ScaleLabels = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: 6px;
-  font-size: 10px;
+  margin-top: 8px;
+  font-size: 12px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  padding: 0 4px;
-
-  @media (max-width: 768px) {
-    font-size: 9px;
-  }
 `;
 
 const RadioGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 `;
 
 const RadioOption = styled.label`
   display: flex;
   align-items: center;
-  padding: 10px;
+  padding: 12px;
   border: 1px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
   background: ${p => p.checked ? p.theme.ACCENT_COLOR : 'transparent'};
   color: ${p => p.checked ? '#FFFFFF' : p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 13px;
-  line-height: 1.3;
-
+  font-size: 14px;
+  
   &:hover {
-    background: ${p => p.checked ? p.theme.ACCENT_COLOR : `${p.theme.ACCENT_COLOR}15`};
+    background: ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.HOVER_OVERLAY};
   }
-
+  
   input {
-    margin-right: 10px;
+    margin-right: 12px;
     accent-color: ${p => p.theme.ACCENT_COLOR};
-    flex-shrink: 0;
-  }
-
-  @media (max-width: 768px) {
-    padding: 8px;
-    font-size: 12px;
-  }
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 8px;
-  border: 1px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 4px;
-  font-size: 13px;
-  background: ${p => p.theme.CARD_BACKGROUND};
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-
-  &:focus {
-    outline: none;
-    border-color: ${p => p.theme.ACCENT_COLOR};
-  }
-
-  @media (max-width: 768px) {
-    font-size: 12px;
-  }
-`;
-
-const Textarea = styled.textarea`
-  width: 100%;
-  padding: 10px;
-  border: 1px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 6px;
-  font-size: 13px;
-  font-family: inherit;
-  background: ${p => p.theme.INPUT_BACKGROUND};
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  resize: vertical;
-  min-height: 60px;
-  transition: all 0.2s ease;
-  line-height: 1.4;
-
-  &:focus {
-    outline: none;
-    border-color: ${p => p.theme.ACCENT_COLOR};
-    box-shadow: 0 0 0 2px ${p => p.theme.ACCENT_COLOR}22;
-  }
-
-  &::placeholder {
-    color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-    opacity: 0.6;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 12px;
-    padding: 8px;
   }
 `;
 
 const CheckboxGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 `;
 
 const CheckboxOption = styled.label`
   display: flex;
   align-items: center;
-  padding: 10px;
+  padding: 12px;
   border: 1px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: ${p => p.checked ? `${p.theme.ACCENT_COLOR}15` : 'transparent'};
-  font-size: 13px;
-  line-height: 1.3;
-
+  background: ${p => p.checked ? `${p.theme.ACCENT_COLOR}20` : 'transparent'};
+  font-size: 14px;
+  
   &:hover {
     background: ${p => p.theme.HOVER_OVERLAY};
   }
-
+  
   input {
-    margin-right: 10px;
+    margin-right: 12px;
     accent-color: ${p => p.theme.ACCENT_COLOR};
-    flex-shrink: 0;
   }
+`;
 
-  @media (max-width: 768px) {
-    padding: 8px;
-    font-size: 12px;
+const Input = styled.input`
+  width: 100%;
+  padding: 10px;
+  border: 1px solid ${p => p.theme.BORDER_COLOR};
+  border-radius: 4px;
+  font-size: 14px;
+  background: ${p => p.theme.CARD_BACKGROUND};
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  
+  &:focus {
+    outline: none;
+    border-color: ${p => p.theme.ACCENT_COLOR};
+  }
+`;
+
+const Textarea = styled.textarea`
+  width: 100%;
+  padding: 12px;
+  border: 1px solid ${p => p.theme.BORDER_COLOR};
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  background: ${p => p.theme.CARD_BACKGROUND};
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+  
+  &:focus {
+    outline: none;
+    border-color: ${p => p.theme.ACCENT_COLOR};
+  }
+  
+  &::placeholder {
+    color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+    opacity: 0.6;
   }
 `;
 
 const NumberSelectContainer = styled.div`
-  margin-top: 8px;
+  margin-top: 12px;
 `;
 
 const NumberSelectInstruction = styled.div`
-  font-size: 11px;
+  font-size: 12px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 `;
 
 const NumberGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
-  gap: 6px;
-  margin-top: 8px;
-
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
-    gap: 4px;
-  }
+  grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+  gap: 8px;
 `;
 
 const NumberButton = styled.button`
-  padding: 8px 4px;
+  padding: 10px;
   border: 1px solid ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.BORDER_COLOR};
-  border-radius: 6px;
+  border-radius: 8px;
   background: ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.CARD_BACKGROUND};
   color: ${p => p.checked ? '#ffffff' : p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 13px;
+  font-size: 14px;
   font-weight: ${p => p.checked ? '700' : '500'};
   cursor: pointer;
   transition: all 0.2s ease;
-
+  
   &:hover {
-    transform: translateY(-1px);
+    background: ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.HOVER_OVERLAY};
     border-color: ${p => p.theme.ACCENT_COLOR};
-    box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}40;
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-
-  @media (max-width: 768px) {
-    padding: 6px 3px;
-    font-size: 12px;
   }
 `;
 
 const SelectedNumbers = styled.div`
-  margin-top: 8px;
-  padding: 8px 10px;
+  margin-top: 12px;
+  padding: 10px;
   background: ${p => p.theme.ACCENT_COLOR}15;
   border: 1px solid ${p => p.theme.ACCENT_COLOR}60;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 13px;
   color: ${p => p.theme.ACCENT_COLOR};
-
-  strong {
-    color: ${p => p.theme.ACCENT_COLOR};
-    font-weight: 600;
-  }
 `;
 
 const LadderContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-top: 8px;
+  gap: 8px;
 `;
 
 const LadderOption = styled.label`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 12px;
-  border: 1px solid ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.BORDER_COLOR};
-  border-radius: 6px;
+  padding: 12px 16px;
+  border: 1px solid ${p => p.theme.BORDER_COLOR};
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
   background: ${p => p.checked ? p.theme.ACCENT_COLOR : 'transparent'};
   color: ${p => p.checked ? '#FFFFFF' : p.theme.PRIMARY_TEXT_COLOR};
   font-weight: ${p => p.checked ? '600' : '500'};
-  font-size: 13px;
-
+  
   &:hover {
-    background: ${p => p.checked ? p.theme.ACCENT_COLOR : `${p.theme.ACCENT_COLOR}15`};
-    border-color: ${p => p.theme.ACCENT_COLOR};
+    background: ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.HOVER_OVERLAY};
   }
-
+  
   input {
     display: none;
   }
-
+  
   span {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 700;
-  }
-
-  @media (max-width: 768px) {
-    padding: 8px 10px;
-    font-size: 12px;
   }
 `;
 
 const PreferNotToSayOption = styled.label`
   display: flex;
   align-items: center;
-  padding: 10px;
-  margin-top: 6px;
+  padding: 12px;
+  margin-top: 8px;
   border: 1px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  background: ${p => p.checked ? `${p.theme.ACCENT_COLOR}15` : 'transparent'};
-  font-size: 13px;
-
+  background: ${p => p.checked ? `${p.theme.ACCENT_COLOR}20` : 'transparent'};
+  font-size: 14px;
+  
   &:hover {
     background: ${p => p.theme.HOVER_OVERLAY};
   }
-
+  
   input {
-    margin-right: 10px;
+    margin-right: 12px;
     accent-color: ${p => p.theme.ACCENT_COLOR};
-  }
-
-  @media (max-width: 768px) {
-    padding: 8px;
-    font-size: 12px;
   }
 `;
 
 const BinaryGroup = styled.div`
   display: flex;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 12px;
 `;
 
 const BinaryOption = styled.label`
@@ -497,56 +363,76 @@ const BinaryOption = styled.label`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px;
+  padding: 14px;
   border: 2px solid ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.BORDER_COLOR};
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
   background: ${p => p.checked ? p.theme.ACCENT_COLOR : 'transparent'};
   color: ${p => p.checked ? '#FFFFFF' : p.theme.PRIMARY_TEXT_COLOR};
   font-weight: ${p => p.checked ? '700' : '500'};
-  font-size: 14px;
-
+  font-size: 15px;
+  
   &:hover {
-    background: ${p => p.checked ? p.theme.ACCENT_COLOR : `${p.theme.ACCENT_COLOR}15`};
-    border-color: ${p => p.theme.ACCENT_COLOR};
+    background: ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.HOVER_OVERLAY};
   }
-
+  
   input {
     display: none;
   }
+`;
 
-  @media (max-width: 768px) {
-    padding: 10px;
-    font-size: 13px;
+const FeedbackSection = styled.div`
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 2px dashed ${p => p.theme.BORDER_COLOR};
+`;
+
+const FeedbackTitle = styled.h3`
+  color: ${p => p.theme.ACCENT_COLOR};
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  &:before {
+    content: '💬';
   }
 `;
 
-const ErrorText = styled.div`
-  color: #ff0000;
-  margin-bottom: 12px;
-  text-align: center;
+const FeedbackSubtitle = styled.p`
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   font-size: 13px;
+  margin-bottom: 16px;
+`;
+
+const ErrorText = styled.div`
+  color: ${p => p.theme.ACCENT_COLOR_2 || '#ff0000'};
+  margin-bottom: 16px;
+  text-align: center;
+  font-size: 14px;
   font-weight: 600;
-  padding: 10px;
+  padding: 12px;
   background: rgba(255, 0, 0, 0.1);
-  border-radius: 6px;
-  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 8px;
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: 16px;
-  gap: 10px;
+  margin-top: 24px;
+  gap: 12px;
 `;
 
 const ProgressIndicator = styled.div`
   text-align: center;
-  font-size: 11px;
+  font-size: 12px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  margin-top: 10px;
+  margin-top: 16px;
 `;
+
 
 // ==========================================
 // HELPER FUNKCIA - FEEDBACK OTÁZKY
@@ -2438,7 +2324,7 @@ const Questionnaire0 = () => {
     setError('');
   }, [currentPage]);
 
-  // Funkcia na kontrolu podmienok zobrazenia otázky
+  // Kontrola podmienok zobrazenia otázky
   const shouldShowQuestion = (question, responses) => {
     if (!question.showIf) return true;
 
@@ -2463,8 +2349,8 @@ const Questionnaire0 = () => {
     }
   };
 
-  // Zmena odpovede
-  const handleAnswer = (questionId, value) => {
+  // Zmena odpovede s auto-save
+  const handleAnswer = async (questionId, value) => {
     setAnswers(prev => ({
       ...prev,
       [questionId]: value
@@ -2474,36 +2360,31 @@ const Questionnaire0 = () => {
       delete newErrors[questionId];
       return newErrors;
     });
+    
+    // Auto-save
+    await responseManager.saveAnswer(userId, COMPONENT_ID, questionId, value);
   };
 
   // Checkbox handler
-  const handleCheckboxChange = (questionId, optionValue) => {
-    setAnswers(prev => {
-      const currentValues = prev[questionId] || [];
-      const newValues = currentValues.includes(optionValue)
-        ? currentValues.filter(v => v !== optionValue)
-        : [...currentValues, optionValue];
-      return { ...prev, [questionId]: newValues };
-    });
-    setQuestionErrors(prev => {
-      const newErrors = { ...prev };
-      delete newErrors[questionId];
-      return newErrors;
-    });
+  const handleCheckboxChange = async (questionId, optionValue) => {
+    const currentValues = answers[questionId] || [];
+    const newValues = currentValues.includes(optionValue)
+      ? currentValues.filter(v => v !== optionValue)
+      : [...currentValues, optionValue];
+    
+    await handleAnswer(questionId, newValues);
   };
 
   // Number select handler
-  const handleNumberSelect = (questionId, number, multiple) => {
+  const handleNumberSelect = async (questionId, number, multiple) => {
     if (multiple) {
-      setAnswers(prev => {
-        const currentValues = prev[questionId] || [];
-        const newValues = currentValues.includes(number)
-          ? currentValues.filter(n => n !== number)
-          : [...currentValues, number].sort((a, b) => a - b);
-        return { ...prev, [questionId]: newValues };
-      });
+      const currentValues = answers[questionId] || [];
+      const newValues = currentValues.includes(number)
+        ? currentValues.filter(n => n !== number)
+        : [...currentValues, number].sort((a, b) => a - b);
+      await handleAnswer(questionId, newValues);
     } else {
-      handleAnswer(questionId, number);
+      await handleAnswer(questionId, number);
     }
   };
 
@@ -2514,21 +2395,16 @@ const Questionnaire0 = () => {
     let hasError = false;
 
     page.questions.forEach(question => {
-      // Skip ak je podmienečná a nemá byť zobrazená
       if (!shouldShowQuestion(question, answers)) return;
-
-      // Skip ak nie je required
       if (!question.required) return;
 
       const answer = answers[question.id];
 
-      // Kontrola prázdnych odpovedí
       if (answer === undefined || answer === null || answer === '') {
         errors[question.id] = 'Táto otázka je povinná';
         hasError = true;
       }
 
-      // Kontrola prázdnych polí pre checkbox
       if (question.type === 'checkbox' && (!Array.isArray(answer) || answer.length === 0)) {
         errors[question.id] = 'Vyberte aspoň jednu možnosť';
         hasError = true;
@@ -2539,7 +2415,6 @@ const Questionnaire0 = () => {
 
     if (hasError) {
       setError('Prosím vyplňte všetky povinné otázky');
-      // Scroll na prvú chybu
       const firstErrorId = Object.keys(errors)[0];
       if (firstErrorId && questionRefs.current[firstErrorId]) {
         questionRefs.current[firstErrorId].scrollIntoView({ 
@@ -2556,14 +2431,10 @@ const Questionnaire0 = () => {
   const handleNext = async () => {
     if (!validatePage()) return;
 
-    // Uložiť odpovede
-    await responseManager.saveResponses(userId, COMPONENT_ID, answers);
-
     if (currentPage < PAGES.length - 1) {
       setCurrentPage(currentPage + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      // Odoslať dotazník
       handleSubmit();
     }
   };
@@ -2592,10 +2463,7 @@ const Questionnaire0 = () => {
         }
       });
 
-      // Označiť komponent ako dokončený
       await dataManager.markComponentComplete(userId, COMPONENT_ID);
-
-      // Presmerovanie
       navigate('/mission0/complete');
     } catch (err) {
       console.error('Error submitting questionnaire:', err);
@@ -2604,9 +2472,8 @@ const Questionnaire0 = () => {
     }
   };
 
-  // Render funkcie pre rôzne typy otázok
+  // Render otázky
   const renderQuestion = (question, index) => {
-    // Kontrola podmienky zobrazenia
     if (!shouldShowQuestion(question, answers)) return null;
 
     const hasError = questionErrors[question.id];
@@ -2689,7 +2556,7 @@ const Questionnaire0 = () => {
           <>
             <ScaleContainer>
               {question.scale.map((scaleValue, idx) => (
-                <ScaleButtonWithLabel key={scaleValue}>
+                <ScaleButtonWrapper key={scaleValue}>
                   <RadioLabel checked={value === scaleValue}>
                     <input
                       type="radio"
@@ -2703,7 +2570,7 @@ const Questionnaire0 = () => {
                   {question.scaleValueLabels && question.scaleValueLabels[idx] && (
                     <ScaleValueLabel>{question.scaleValueLabels[idx]}</ScaleValueLabel>
                   )}
-                </ScaleButtonWithLabel>
+                </ScaleButtonWrapper>
               ))}
             </ScaleContainer>
             {question.scaleLabels && (
@@ -2806,7 +2673,7 @@ const Questionnaire0 = () => {
             </NumberGrid>
             {selectedNumbers.length > 0 && (
               <SelectedNumbers>
-                <strong>Vybrané otázky:</strong> {selectedNumbers.join(', ')}
+                <strong>Vybrané:</strong> {selectedNumbers.join(', ')}
               </SelectedNumbers>
             )}
           </NumberSelectContainer>
@@ -2840,8 +2707,6 @@ const Questionnaire0 = () => {
 
   const page = PAGES[currentPage];
   const progress = ((currentPage + 1) / PAGES.length) * 100;
-
-  // Rozdelenie otázok na hlavné a feedback
   const mainQuestions = page.questions.filter(q => !q.isFeedback);
   const feedbackQuestions = page.questions.filter(q => q.isFeedback);
 
@@ -2861,16 +2726,14 @@ const Questionnaire0 = () => {
             <ProgressFill progress={progress} />
           </ProgressBar>
 
-          {page.title && <PageTitle>{page.title}</PageTitle>}
-          {page.subtitle && <PageSubtitle>{page.subtitle}</PageSubtitle>}
+          {page.title && <Title>{page.title}</Title>}
+          {page.subtitle && <Subtitle>{page.subtitle}</Subtitle>}
           {page.instruction && <Instruction>{page.instruction}</Instruction>}
 
           {error && <ErrorText>{error}</ErrorText>}
 
-          {/* Hlavné otázky */}
           {mainQuestions.map((question, index) => renderQuestion(question, index))}
 
-          {/* Feedback sekcia */}
           {feedbackQuestions.length > 0 && (
             <FeedbackSection>
               <FeedbackTitle>Spätná väzba</FeedbackTitle>
@@ -2892,13 +2755,14 @@ const Questionnaire0 = () => {
             <StyledButton
               onClick={handleNext}
               disabled={isSubmitting}
+              accent
             >
-              {currentPage < PAGES.length - 1 ? 'Ďalej →' : 'Odoslať'}
+              {isSubmitting ? 'Ukladám...' : (currentPage < PAGES.length - 1 ? 'Ďalej →' : 'Odoslať')}
             </StyledButton>
           </ButtonContainer>
 
           <ProgressIndicator>
-            {mainQuestions.length} {mainQuestions.length === 1 ? 'otázka' : mainQuestions.length < 5 ? 'otázky' : 'otázok'} na tejto strane
+            Vyplnené: {Object.keys(answers).length} / {mainQuestions.length + feedbackQuestions.filter(q => shouldShowQuestion(q, answers)).length}
           </ProgressIndicator>
         </Card>
       </Container>
