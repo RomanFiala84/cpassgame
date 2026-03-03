@@ -32,22 +32,23 @@ const Title = styled.h2`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   text-align: center;
   margin-bottom: 20px;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
 `;
 
 const Subtitle = styled.h3`
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   text-align: center;
   font-size: 14px;
   font-style: italic;
   margin-top: -12px;
   margin-bottom: 20px;
+  opacity: 0.7;
 `;
 
 const Instruction = styled.div`
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 14px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  font-size: 15px;
   margin-bottom: 20px;
   padding: 12px;
   background: ${p => p.theme.ACCENT_COLOR}10;
@@ -97,14 +98,14 @@ const QuestionCard = styled.div`
 const Question = styled.p`
   margin-bottom: 12px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
   line-height: 1.5;
 `;
 
 const QuestionError = styled.div`
   color: #ff0000;
-  font-size: 13px;
+  font-size: 14px;
   margin-top: 8px;
   font-weight: 500;
 `;
@@ -120,14 +121,33 @@ const AccordionQuestionList = styled.div`
 `;
 
 const AccordionQuestionItem = styled.div`
-  border: 2px solid ${p => p.isActive ? p.theme.ACCENT_COLOR : p.isCompleted ? '#4CAF50' : p.theme.BORDER_COLOR};
-  border-radius: 8px;
-  background: ${p => p.theme.CARD_BACKGROUND};
-  transition: all 0.3s ease;
+  background: ${p => p.theme.SURFACE_COLOR};
+  border: 2px solid ${p => 
+    p.hasError ? '#f44336' : 
+    p.isCompleted ? p.theme.SUCCESS_COLOR : 
+    p.isActive ? p.theme.ACCENT_COLOR : 
+    p.theme.BORDER_COLOR
+  };
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: ${p => 
+    p.hasError ? '0 2px 8px rgba(244, 67, 54, 0.15)' :
+    p.isActive ? '0 4px 12px rgba(0, 0, 0, 0.1)' : 
+    '0 2px 4px rgba(0, 0, 0, 0.05)'
+  };
   
-  ${p => p.isActive && `
-    box-shadow: 0 4px 12px ${p.theme.ACCENT_COLOR}40;
-  `}
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: ${p => p.hasError ? '#f44336' : p.theme.ACCENT_COLOR};
+  }
+`;
+
+const AccordionQuestionText = styled.span`
+  color: ${p => p.hasError ? '#f44336' : p.theme.PRIMARY_TEXT_COLOR};
+  font-size: 15px;
+  line-height: 1.5;
+  font-weight: ${p => p.hasError ? '600' : '500'};
 `;
 
 const AccordionQuestionHeader = styled.div`
@@ -153,15 +173,8 @@ const AccordionQuestionTitle = styled.div`
 const AccordionQuestionNumber = styled.span`
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
-  font-size: 16px;
+  font-size: 15px;
   min-width: 30px;
-`;
-
-const AccordionQuestionText = styled.span`
-  font-size: 14px;
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-weight: 500;
-  line-height: 1.5;
 `;
 
 const AccordionQuestionStatus = styled.div`
@@ -169,12 +182,12 @@ const AccordionQuestionStatus = styled.div`
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
 `;
 
 const CheckIcon = styled.span`
   color: #4CAF50;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
 `;
 
@@ -217,12 +230,12 @@ const AccordionScaleButtons = styled.div`
 
 const AccordionScaleButton = styled.button`
   flex: 1;
-  padding: 12px 8px;
+  padding: 10px 6px;
   border: 2px solid ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.BORDER_COLOR};
   border-radius: 8px;
   background: ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.CARD_BACKGROUND};
   color: ${p => p.checked ? '#ffffff' : p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 16px;
+  font-size: 15px;
   font-weight: ${p => p.checked ? '700' : '600'};
   cursor: pointer;
   transition: all 0.2s ease;
@@ -241,10 +254,11 @@ const AccordionScaleButton = styled.button`
 const AccordionScaleLabels = styled.div`
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 13px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   font-style: italic;
   margin-bottom: 16px;
+  opacity: 0.8;
 `;
 
 const AccordionScaleDescriptions = styled.div`
@@ -260,8 +274,8 @@ const AccordionScaleDescItem = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
-  color: ${p => p.isSelected ? p.theme.ACCENT_COLOR : p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 14px;
+  color: ${p => p.isSelected ? p.theme.ACCENT_COLOR : p.theme.PRIMARY_TEXT_COLOR};
   font-weight: ${p => p.isSelected ? '600' : '400'};
   padding: 4px 8px;
   border-radius: 4px;
@@ -298,7 +312,7 @@ const RadioGroup = styled.div`
 const RadioOption = styled.label`
   display: flex;
   align-items: center;
-  padding: 14px 16px;
+  padding: 12px 14px;
   cursor: pointer;
   transition: background 0.2s ease;
   background: transparent;
@@ -310,11 +324,11 @@ const RadioOption = styled.label`
   
   input[type="radio"] {
     appearance: none;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border: 2px solid ${p => p.theme.BORDER_COLOR};
     border-radius: 50%;
-    margin-right: 16px;
+    margin-right: 14px;
     cursor: pointer;
     position: relative;
     flex-shrink: 0;
@@ -329,8 +343,8 @@ const RadioOption = styled.label`
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 10px;
-        height: 10px;
+        width: 9px;
+        height: 9px;
         border-radius: 50%;
         background: ${p => p.theme.ACCENT_COLOR};
       }
@@ -343,7 +357,7 @@ const RadioOption = styled.label`
   
   span {
     color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.5;
   }
 `;
@@ -357,7 +371,7 @@ const CheckboxGroup = styled.div`
 const CheckboxOption = styled.label`
   display: flex;
   align-items: center;
-  padding: 14px 16px;
+  padding: 12px 14px;
   cursor: pointer;
   transition: background 0.2s ease;
   background: transparent;
@@ -369,11 +383,11 @@ const CheckboxOption = styled.label`
   
   input[type="checkbox"] {
     appearance: none;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border: 2px solid ${p => p.theme.BORDER_COLOR};
     border-radius: 2px;
-    margin-right: 16px;
+    margin-right: 14px;
     cursor: pointer;
     position: relative;
     flex-shrink: 0;
@@ -386,10 +400,10 @@ const CheckboxOption = styled.label`
       &::after {
         content: '';
         position: absolute;
-        left: 6px;
+        left: 5px;
         top: 2px;
-        width: 5px;
-        height: 10px;
+        width: 4px;
+        height: 9px;
         border: solid white;
         border-width: 0 2px 2px 0;
         transform: rotate(45deg);
@@ -403,7 +417,7 @@ const CheckboxOption = styled.label`
   
   span {
     color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.5;
   }
 `;
@@ -425,7 +439,7 @@ const ScaleButtonWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 `;
 
 const ScaleRadioLabel = styled.label`
@@ -436,8 +450,8 @@ const ScaleRadioLabel = styled.label`
   
   input[type="radio"] {
     appearance: none;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border: 2px solid ${p => p.theme.BORDER_COLOR};
     border-radius: 50%;
     cursor: pointer;
@@ -454,8 +468,8 @@ const ScaleRadioLabel = styled.label`
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 10px;
-        height: 10px;
+        width: 9px;
+        height: 9px;
         border-radius: 50%;
         background: ${p => p.theme.ACCENT_COLOR};
       }
@@ -468,7 +482,7 @@ const ScaleRadioLabel = styled.label`
   }
   
   .scale-number {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     color: ${p => p.theme.PRIMARY_TEXT_COLOR};
     margin-bottom: 4px;
@@ -476,22 +490,24 @@ const ScaleRadioLabel = styled.label`
 `;
 
 const ScaleValueLabel = styled.span`
-  font-size: 10px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 11px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   text-align: center;
   line-height: 1.3;
   word-break: break-word;
   hyphens: auto;
   max-width: 100%;
+  opacity: 0.8;
 `;
 
 const ScaleLabels = styled.div`
   display: flex;
   justify-content: space-between;
   margin-top: 8px;
-  font-size: 12px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 13px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   font-style: italic;
+  opacity: 0.8;
 `;
 
 // ==========================================
@@ -503,13 +519,18 @@ const Input = styled.input`
   padding: 10px;
   border: 1px solid ${p => p.theme.BORDER_COLOR};
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 15px;
   background: ${p => p.theme.CARD_BACKGROUND};
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   
   &:focus {
     outline: none;
     border-color: ${p => p.theme.ACCENT_COLOR};
+  }
+  
+  &::placeholder {
+    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+    opacity: 0.5;
   }
 `;
 
@@ -518,7 +539,7 @@ const Textarea = styled.textarea`
   padding: 12px;
   border: 1px solid ${p => p.theme.BORDER_COLOR};
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 15px;
   font-family: inherit;
   background: ${p => p.theme.CARD_BACKGROUND};
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
@@ -532,10 +553,11 @@ const Textarea = styled.textarea`
   }
   
   &::placeholder {
-    color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-    opacity: 0.6;
+    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+    opacity: 0.5;
   }
 `;
+
 const BinaryGroup = styled.div`
   display: flex;
   flex-direction: column;
@@ -545,7 +567,7 @@ const BinaryGroup = styled.div`
 const BinaryOption = styled.label`
   display: flex;
   align-items: center;
-  padding: 14px 16px;
+  padding: 12px 14px;
   cursor: pointer;
   transition: background 0.2s ease;
   background: transparent;
@@ -557,11 +579,11 @@ const BinaryOption = styled.label`
   
   input[type="radio"] {
     appearance: none;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border: 2px solid ${p => p.theme.BORDER_COLOR};
     border-radius: 50%;
-    margin-right: 16px;
+    margin-right: 14px;
     cursor: pointer;
     position: relative;
     flex-shrink: 0;
@@ -576,8 +598,8 @@ const BinaryOption = styled.label`
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 10px;
-        height: 10px;
+        width: 9px;
+        height: 9px;
         border-radius: 50%;
         background: ${p => p.theme.ACCENT_COLOR};
       }
@@ -590,7 +612,7 @@ const BinaryOption = styled.label`
   
   span {
     color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
   }
 `;
@@ -605,7 +627,7 @@ const LadderOption = styled.label`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px;
+  padding: 12px 14px;
   cursor: pointer;
   transition: background 0.2s ease;
   background: transparent;
@@ -617,11 +639,11 @@ const LadderOption = styled.label`
   
   input[type="radio"] {
     appearance: none;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border: 2px solid ${p => p.theme.BORDER_COLOR};
     border-radius: 50%;
-    margin-right: 16px;
+    margin-right: 14px;
     cursor: pointer;
     position: relative;
     flex-shrink: 0;
@@ -636,8 +658,8 @@ const LadderOption = styled.label`
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 10px;
-        height: 10px;
+        width: 9px;
+        height: 9px;
         border-radius: 50%;
         background: ${p => p.theme.ACCENT_COLOR};
       }
@@ -652,10 +674,12 @@ const LadderOption = styled.label`
     display: flex;
     align-items: center;
     flex: 1;
+    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+    font-size: 15px;
   }
   
   .ladder-number {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
     color: ${p => p.theme.ACCENT_COLOR};
     margin-left: auto;
@@ -665,7 +689,7 @@ const LadderOption = styled.label`
 const PreferNotToSayOption = styled.label`
   display: flex;
   align-items: center;
-  padding: 14px 16px;
+  padding: 12px 14px;
   margin-top: 8px;
   cursor: pointer;
   transition: background 0.2s ease;
@@ -679,11 +703,11 @@ const PreferNotToSayOption = styled.label`
   
   input[type="checkbox"] {
     appearance: none;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border: 2px solid ${p => p.theme.BORDER_COLOR};
     border-radius: 2px;
-    margin-right: 16px;
+    margin-right: 14px;
     cursor: pointer;
     position: relative;
     flex-shrink: 0;
@@ -696,10 +720,10 @@ const PreferNotToSayOption = styled.label`
       &::after {
         content: '';
         position: absolute;
-        left: 6px;
+        left: 5px;
         top: 2px;
-        width: 5px;
-        height: 10px;
+        width: 4px;
+        height: 9px;
         border: solid white;
         border-width: 0 2px 2px 0;
         transform: rotate(45deg);
@@ -713,7 +737,7 @@ const PreferNotToSayOption = styled.label`
   
   span {
     color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-    font-size: 14px;
+    font-size: 15px;
     font-style: italic;
   }
 `;
@@ -727,9 +751,10 @@ const NumberSelectContainer = styled.div`
 `;
 
 const NumberSelectInstruction = styled.div`
-  font-size: 12px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 14px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   margin-bottom: 12px;
+  opacity: 0.8;
 `;
 
 const NumberGrid = styled.div`
@@ -744,7 +769,7 @@ const NumberButton = styled.button`
   border-radius: 6px;
   background: ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.CARD_BACKGROUND};
   color: ${p => p.checked ? '#ffffff' : p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 14px;
+  font-size: 15px;
   font-weight: ${p => p.checked ? '700' : '500'};
   cursor: pointer;
   transition: all 0.2s ease;
@@ -761,7 +786,7 @@ const SelectedNumbers = styled.div`
   background: ${p => p.theme.ACCENT_COLOR}15;
   border: 1px solid ${p => p.theme.ACCENT_COLOR}60;
   border-radius: 6px;
-  font-size: 13px;
+  font-size: 14px;
   color: ${p => p.theme.ACCENT_COLOR};
 `;
 
@@ -790,16 +815,17 @@ const FeedbackTitle = styled.h3`
 `;
 
 const FeedbackSubtitle = styled.p`
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 13px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  font-size: 14px;
   margin-bottom: 16px;
+  opacity: 0.8;
 `;
 
 const ErrorText = styled.div`
   color: ${p => p.theme.ACCENT_COLOR_2 || '#ff0000'};
   margin-bottom: 16px;
   text-align: center;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   padding: 12px;
   background: rgba(255, 0, 0, 0.1);
@@ -815,10 +841,12 @@ const ButtonContainer = styled.div`
 
 const ProgressIndicator = styled.div`
   text-align: center;
-  font-size: 12px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 13px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   margin-top: 16px;
+  opacity: 0.8;
 `;
+
 
 // ==========================================
 // KONŠTANTY
@@ -1343,6 +1371,126 @@ const PAGES = [
       { id: 'sds12', text: 'Niekedy som rozčúlený/rozčúlená, keď ľudia odo mňa niečo chcú.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
       { id: 'sds13', text: 'Nikdy som úmyselne nepovedal/nepovedala niečo, čo by niekoho zranilo.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] }
     ]
+  },
+  {
+    id: 'porovnanie_vyznamov',
+    title: 'Porovnanie významov tvrdení',
+    subtitle: 'Kontrolná úloha',
+    instruction: 'V predchádzajúcom dotazníku ste videli rôzne tvrdenia. Teraz Vás prosíme, aby ste posúdili, či sú nasledujúce páry tvrdení významově zhodné (hovoria o tom istom) alebo nie. Pre každý pár označte, či sú tvrdenia významovo zhodné alebo odlišné.',
+    questions: [
+      {
+        id: 'porovnanie_accordion',
+        text: '',
+        type: 'accordion-likert',
+        required: false,
+        questions: [
+          // Pár 1: ep1 vs epv1
+          {
+            id: 'comp_1',
+            text: 'Tvrdenie A: "Európska únia má skrytý plán systematicky zničiť suverenitu členských štátov."\n\nTvrdenie B: "Štáty si zachovávajú svoju suverenitu v rámci EÚ."\n\nSú tieto dve tvrdenia významovo zhodné?',
+            scale: [1, 2, 3, 4, 5],
+            scaleLabels: { min: 'Úplne odlišné', max: 'Úplne zhodné' },
+            scaleValueLabels: [
+              'Úplne odlišné významy',
+              'Skôr odlišné významy',
+              'Čiastočne podobné',
+              'Skôr zhodné významy',
+              'Úplne zhodné významy'
+            ]
+          },
+          
+          // Pár 2: ep2 vs epv2
+          {
+            id: 'comp_2',
+            text: 'Tvrdenie A: "Rozhodnutia EÚ sú transparentné a robené Európskym parlamentom a zvolenými poslancami."\n\nTvrdenie B: "Rozhodnutia EÚ v skutočnosti nerobí Európsky parlament, ale tajná skupina globálnych elít a veľkých korporácií."\n\nSú tieto dve tvrdenia významovo zhodné?',
+            scale: [1, 2, 3, 4, 5],
+            scaleLabels: { min: 'Úplne odlišné', max: 'Úplne zhodné' },
+            scaleValueLabels: [
+              'Úplne odlišné významy',
+              'Skôr odlišné významy',
+              'Čiastočne podobné',
+              'Skôr zhodné významy',
+              'Úplne zhodné významy'
+            ]
+          },
+          
+          // Pár 3: ep3 vs epv3
+          {
+            id: 'comp_3',
+            text: 'Tvrdenie A: "Európske inštitúcie a mainstreamové médiá spolupracujú na tom, aby pred občanmi zatajili skutočné negatívne dôsledky rozhodnutí EÚ."\n\nTvrdenie B: "Európske inštitúcie a mainstreamové médiá transparentne informujú občanov o rozhodnutiach EÚ."\n\nSú tieto dve tvrdenia významovo zhodné?',
+            scale: [1, 2, 3, 4, 5],
+            scaleLabels: { min: 'Úplne odlišné', max: 'Úplne zhodné' },
+            scaleValueLabels: [
+              'Úplne odlišné významy',
+              'Skôr odlišné významy',
+              'Čiastočne podobné',
+              'Skôr zhodné významy',
+              'Úplne zhodné významy'
+            ]
+          },
+          
+          // Pár 4: ep4 vs epv4
+          {
+            id: 'comp_4',
+            text: 'Tvrdenie A: "EÚ rešpektuje a chráni národné kultúry a tradície všetkých členských štátov."\n\nTvrdenie B: "EÚ má skrytý plán na zničenie národných kultúr a tradícií v prospech multikulturalizmu a liberálnych hodnôt."\n\nSú tieto dve tvrdenia významovo zhodné?',
+            scale: [1, 2, 3, 4, 5],
+            scaleLabels: { min: 'Úplne odlišné', max: 'Úplne zhodné' },
+            scaleValueLabels: [
+              'Úplne odlišné významy',
+              'Skôr odlišné významy',
+              'Čiastočne podobné',
+              'Skôr zhodné významy',
+              'Úplne zhodné významy'
+            ]
+          },
+          
+          // Pár 5: ep5 vs epv5
+          {
+            id: 'comp_5',
+            text: 'Tvrdenie A: "EÚ zámerne obchádza demokratické procesy a ignoruje vôľu občanov, pretože sú riadené skrytou agendou globálnych elít."\n\nTvrdenie B: "Všetky rozhodnutia EÚ sú prijaté v plne transparentných procesoch, kde všetci poslanci verejne hlasujú, a žiadna krajina nie je nútená ich nasledovať."\n\nSú tieto dve tvrdenia významovo zhodné?',
+            scale: [1, 2, 3, 4, 5],
+            scaleLabels: { min: 'Úplne odlišné', max: 'Úplne zhodné' },
+            scaleValueLabels: [
+              'Úplne odlišné významy',
+              'Skôr odlišné významy',
+              'Čiastočne podobné',
+              'Skôr zhodné významy',
+              'Úplne zhodné významy'
+            ]
+          },
+          
+          // Pár 6: ep6 vs epv6
+          {
+            id: 'comp_6',
+            text: 'Tvrdenie A: "Regulácie EÚ sú navrhnuté aby chránili hospodárstvo všetkých členských štátov vrátane Slovenska, nie aby mu ublížili."\n\nTvrdenie B: "EÚ vedome zavádza škodlivé regulácie s cieľom ekonomicky zničiť Slovensko a prinútiť nás byť úplne závislí na Bruseli."\n\nSú tieto dve tvrdenia významovo zhodné?',
+            scale: [1, 2, 3, 4, 5],
+            scaleLabels: { min: 'Úplne odlišné', max: 'Úplne zhodné' },
+            scaleValueLabels: [
+              'Úplne odlišné významy',
+              'Skôr odlišné významy',
+              'Čiastočne podobné',
+              'Skôr zhodné významy',
+              'Úplne zhodné významy'
+            ]
+          },
+          
+          // Pár 7: ep7 vs epv7
+          {
+            id: 'comp_7',
+            text: 'Tvrdenie A: "Migračná kríza bola naplánovaná autoritami EÚ."\n\nTvrdenie B: "Migračná kríza bola prirodzená udalosť, nie naplánovaná autoritami EÚ."\n\nSú tieto dve tvrdenia významovo zhodné?',
+            scale: [1, 2, 3, 4, 5],
+            scaleLabels: { min: 'Úplne odlišné', max: 'Úplne zhodné' },
+            scaleValueLabels: [
+              'Úplne odlišné významy',
+              'Skôr odlišné významy',
+              'Čiastočne podobné',
+              'Skôr zhodné významy',
+              'Úplne zhodné významy'
+            ]
+          }
+        ]
+      }
+    ]
   }
 ].map(page => ({
   ...page,
@@ -1351,6 +1499,9 @@ const PAGES = [
     ...createFeedbackQuestions(page.id, page.questions.filter(q => !q.isFeedback && q.type !== 'accordion-likert').length)
   ]
 }));
+
+export { PAGES, createFeedbackQuestions };
+
 
 
 
@@ -1461,34 +1612,49 @@ const Questionnaire0 = () => {
   };
 
   const handleAccordionAnswer = async (accordionQuestions, subQuestionId, scaleValue) => {
-    await handleAnswer(subQuestionId, scaleValue);
-    
-    const currentIndex = accordionQuestions.findIndex(q => q.id === subQuestionId);
-    
-    if (currentIndex < accordionQuestions.length - 1) {
-      setTimeout(() => {
-        const nextQuestion = accordionQuestions[currentIndex + 1];
-        setActiveAccordionId(nextQuestion.id);
-        
-        const nextElement = questionRefs.current[nextQuestion.id];
-        if (nextElement) {
-          nextElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }, 300);
-    } else {
-      setTimeout(() => {
-        setActiveAccordionId(null);
-      }, 300);
-    }
-  };
+  await handleAnswer(subQuestionId, scaleValue);
+  
+  // Vymaž error pre túto otázku
+  setQuestionErrors(prev => {
+    const newErrors = { ...prev };
+    delete newErrors[subQuestionId];
+    return newErrors;
+  });
+  
+  const currentIndex = accordionQuestions.findIndex(q => q.id === subQuestionId);
+  
+  if (currentIndex < accordionQuestions.length - 1) {
+    setTimeout(() => {
+      const nextQuestion = accordionQuestions[currentIndex + 1];
+      setActiveAccordionId(nextQuestion.id);
+      
+      const nextElement = questionRefs.current[nextQuestion.id];
+      if (nextElement) {
+        // Scroll s lepším offsetom
+        const offset = 120; // väčší offset pre lepšiu viditeľnosť
+        const elementPosition = nextElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }, 300);
+  } else {
+    setTimeout(() => {
+      setActiveAccordionId(null);
+    }, 300);
+  }
+};
 
   // Validácia stránky
   const validatePage = () => {
-    const page = PAGES[currentPage];
-    const errors = {};
-    let hasError = false;
+  const page = PAGES[currentPage];
+  const errors = {};
+  let hasError = false;
 
-    const validateQuestion = (question) => {
+  const validateQuestion = (question) => {
       if (!shouldShowQuestion(question, answers)) return;
       if (!question.required) return;
 
@@ -1506,9 +1672,20 @@ const Questionnaire0 = () => {
     };
 
     page.questions.forEach(question => {
+      // Pre accordion-likert validuj všetky sub-questions
       if (question.type === 'accordion-likert' && question.questions) {
-        question.questions.forEach(validateQuestion);
+        question.questions.forEach(subQuestion => {
+          // Sub-questions v accordion sú vždy required (okrem feedback)
+          if (!subQuestion.isFeedback) {
+            const answer = answers[subQuestion.id];
+            if (answer === undefined || answer === null || answer === '') {
+              errors[subQuestion.id] = 'Táto otázka je povinná';
+              hasError = true;
+            }
+          }
+        });
       } else {
+        // Normálne otázky
         validateQuestion(question);
       }
     });
@@ -1519,9 +1696,15 @@ const Questionnaire0 = () => {
       setError('Prosím vyplňte všetky povinné otázky');
       const firstErrorId = Object.keys(errors)[0];
       if (firstErrorId && questionRefs.current[firstErrorId]) {
-        questionRefs.current[firstErrorId].scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'center' 
+        // Scroll s offsetom aby bola otázka viditeľná
+        const element = questionRefs.current[firstErrorId];
+        const offset = 100; // px od vrchu
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
         });
       }
     }
@@ -1579,99 +1762,110 @@ const Questionnaire0 = () => {
   // ==========================================
 
   const renderQuestionInput = (question) => {
-    const value = answers[question.id];
+  const value = answers[question.id];
 
-    switch (question.type) {
-      case 'accordion-likert':
-        const accordionQuestions = question.questions || [];
-        
-        return (
-          <AccordionQuestionList>
-            {accordionQuestions.map((subQuestion, index) => {
-              const subValue = answers[subQuestion.id];
-              const isActive = activeAccordionId === subQuestion.id;
-              const isCompleted = subValue !== undefined && subValue !== null;
-              
-              let valueDescription = '';
-              if (isCompleted && subQuestion.scaleValueLabels) {
-                const valueIndex = subQuestion.scale.indexOf(subValue);
-                valueDescription = subQuestion.scaleValueLabels[valueIndex] || '';
-              }
-              
-              return (
-                <AccordionQuestionItem
-                  key={subQuestion.id}
-                  ref={el => (questionRefs.current[subQuestion.id] = el)}
-                  isActive={isActive}
-                  isCompleted={isCompleted}
+  switch (question.type) {
+    case 'accordion-likert':
+      const accordionQuestions = question.questions || [];
+      
+      return (
+        <AccordionQuestionList>
+          {accordionQuestions.map((subQuestion, index) => {
+            const subValue = answers[subQuestion.id];
+            const isActive = activeAccordionId === subQuestion.id;
+            const isCompleted = subValue !== undefined && subValue !== null;
+            const hasError = questionErrors[subQuestion.id];
+            
+            let valueDescription = '';
+            if (isCompleted && subQuestion.scaleValueLabels) {
+              const valueIndex = subQuestion.scale.indexOf(subValue);
+              valueDescription = subQuestion.scaleValueLabels[valueIndex] || '';
+            }
+            
+            return (
+              <AccordionQuestionItem
+                key={subQuestion.id}
+                ref={el => (questionRefs.current[subQuestion.id] = el)}
+                isActive={isActive}
+                isCompleted={isCompleted}
+                hasError={hasError}
+              >
+                <AccordionQuestionHeader
+                  onClick={() => handleAccordionClick(subQuestion.id)}
                 >
-                  <AccordionQuestionHeader
-                    onClick={() => handleAccordionClick(subQuestion.id)}
-                  >
-                    <AccordionQuestionTitle>
-                      <AccordionQuestionNumber>{index + 1}.</AccordionQuestionNumber>
-                      <AccordionQuestionText>{subQuestion.text}</AccordionQuestionText>
-                    </AccordionQuestionTitle>
-                    
-                    <AccordionQuestionStatus>
-                      {isCompleted && (
-                        <>
-                          <CheckIcon>✓</CheckIcon>
-                          <AccordionAnswerPreview>
-                            {subValue} - {valueDescription}
-                          </AccordionAnswerPreview>
-                        </>
-                      )}
-                      {!isCompleted && (
-                        <span style={{ color: '#ff9800', fontSize: '12px' }}>Nevyplnené</span>
-                      )}
-                    </AccordionQuestionStatus>
-                  </AccordionQuestionHeader>
+                  <AccordionQuestionTitle>
+                    <AccordionQuestionNumber>{index + 1}.</AccordionQuestionNumber>
+                    <AccordionQuestionText hasError={hasError}>
+                      {subQuestion.text}
+                    </AccordionQuestionText>
+                  </AccordionQuestionTitle>
                   
-                  {isActive && (
-                    <AccordionScaleContainer>
-                      <AccordionScaleButtons>
-                        {subQuestion.scale.map(scaleValue => (
-                          <AccordionScaleButton
+                  <AccordionQuestionStatus>
+                    {isCompleted && !hasError && (
+                      <>
+                        <CheckIcon>✓</CheckIcon>
+                        <AccordionAnswerPreview>
+                          {subValue} - {valueDescription}
+                        </AccordionAnswerPreview>
+                      </>
+                    )}
+                    {!isCompleted && !hasError && (
+                      <span style={{ color: '#ff9800', fontSize: '12px', fontWeight: '500' }}>
+                        Nevyplnené
+                      </span>
+                    )}
+                    {hasError && (
+                      <span style={{ color: '#f44336', fontSize: '12px', fontWeight: '600' }}>
+                        ⚠ Povinné
+                      </span>
+                    )}
+                  </AccordionQuestionStatus>
+                </AccordionQuestionHeader>
+                
+                {isActive && (
+                  <AccordionScaleContainer>
+                    <AccordionScaleButtons>
+                      {subQuestion.scale.map(scaleValue => (
+                        <AccordionScaleButton
+                          key={scaleValue}
+                          type="button"
+                          checked={subValue === scaleValue}
+                          onClick={() => handleAccordionAnswer(accordionQuestions, subQuestion.id, scaleValue)}
+                        >
+                          {scaleValue}
+                        </AccordionScaleButton>
+                      ))}
+                    </AccordionScaleButtons>
+                    
+                    {subQuestion.scaleLabels && (
+                      <AccordionScaleLabels>
+                        <span>{subQuestion.scaleLabels.min}</span>
+                        <span>{subQuestion.scaleLabels.max}</span>
+                      </AccordionScaleLabels>
+                    )}
+                    
+                    {subQuestion.scaleValueLabels && (
+                      <AccordionScaleDescriptions>
+                        {subQuestion.scale.map((scaleValue, idx) => (
+                          <AccordionScaleDescItem
                             key={scaleValue}
-                            type="button"
-                            checked={subValue === scaleValue}
-                            onClick={() => handleAccordionAnswer(accordionQuestions, subQuestion.id, scaleValue)}
+                            isSelected={subValue === scaleValue}
                           >
-                            {scaleValue}
-                          </AccordionScaleButton>
+                            <span className="number">{scaleValue}:</span>
+                            <span className="description">
+                              {subQuestion.scaleValueLabels[idx]}
+                            </span>
+                          </AccordionScaleDescItem>
                         ))}
-                      </AccordionScaleButtons>
-                      
-                      {subQuestion.scaleLabels && (
-                        <AccordionScaleLabels>
-                          <span>{subQuestion.scaleLabels.min}</span>
-                          <span>{subQuestion.scaleLabels.max}</span>
-                        </AccordionScaleLabels>
-                      )}
-                      
-                      {subQuestion.scaleValueLabels && (
-                        <AccordionScaleDescriptions>
-                          {subQuestion.scale.map((scaleValue, idx) => (
-                            <AccordionScaleDescItem
-                              key={scaleValue}
-                              isSelected={subValue === scaleValue}
-                            >
-                              <span className="number">{scaleValue}:</span>
-                              <span className="description">
-                                {subQuestion.scaleValueLabels[idx]}
-                              </span>
-                            </AccordionScaleDescItem>
-                          ))}
-                        </AccordionScaleDescriptions>
-                      )}
-                    </AccordionScaleContainer>
-                  )}
-                </AccordionQuestionItem>
-              );
-            })}
-          </AccordionQuestionList>
-        );
+                      </AccordionScaleDescriptions>
+                    )}
+                  </AccordionScaleContainer>
+                )}
+              </AccordionQuestionItem>
+            );
+          })}
+        </AccordionQuestionList>
+      );
 
       case 'radio':
         return (
