@@ -2107,8 +2107,8 @@ const Questionnaire0 = () => {
         
         {page.instruction && (
           <DetectiveTipSmall
-            message={page.instruction}
-            emoji="📋"
+            tip={page.instruction}  // ← SPRÁVNY PROP
+            detectiveName="Inšpektor Kritan 📋"  // emoji pridaj sem
           />
         )}
 
