@@ -28,25 +28,6 @@ const Card = styled.div`
   margin-bottom: 20px;
 `;
 
-const Title = styled.h2`
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 18px;
-  font-weight: 600;
-`;
-
-const Subtitle = styled.h3`
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  text-align: center;
-  font-size: 14px;
-  font-style: italic;
-  margin-top: -12px;
-  margin-bottom: 20px;
-  opacity: 0.7;
-`;
-
-
 const ProgressBar = styled.div`
   width: 100%;
   height: 6px;
@@ -65,7 +46,7 @@ const ProgressFill = styled.div`
 
 const ProgressText = styled.div`
   text-align: center;
-  font-size: 14px;
+  font-size: 15px;
   color: ${p => p.theme.ACCENT_COLOR};
   margin-bottom: 12px;
   font-weight: 600;
@@ -94,8 +75,8 @@ const Question = styled.p`
 `;
 
 const QuestionError = styled.div`
-  color: #ff0000;
-  font-size: 14px;
+  color:${p => p.theme.ERROR_COLOR}; ;
+  font-size: 15px;
   margin-top: 8px;
   font-weight: 500;
 `;
@@ -113,7 +94,7 @@ const AccordionQuestionList = styled.div`
 const AccordionQuestionItem = styled.div`
   background: ${p => p.theme.SURFACE_COLOR};
   border: 2px solid ${p => 
-    p.hasError ? '#f44336' : 
+    p.hasError ? p.theme.ERROR_COLOR : 
     p.isCompleted ? p.theme.SUCCESS_COLOR : 
     p.isActive ? p.theme.ACCENT_COLOR : 
     p.theme.BORDER_COLOR
@@ -129,12 +110,12 @@ const AccordionQuestionItem = styled.div`
   
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    border-color: ${p => p.hasError ? '#f44336' : p.theme.ACCENT_COLOR};
+    border-color: ${p => p.hasError ? p.theme.ERROR_COLOR : p.theme.ACCENT_COLOR};
   }
 `;
 
 const AccordionQuestionText = styled.span`
-  color: ${p => p.hasError ? '#f44336' : p.theme.PRIMARY_TEXT_COLOR};
+  color: ${p => p.hasError ? p.theme.ERROR_COLOR : p.theme.PRIMARY_TEXT_COLOR};
   font-size: 15px;
   line-height: 1.5;
   font-weight: ${p => p.hasError ? '600' : '500'};
@@ -171,18 +152,18 @@ const AccordionQuestionStatus = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 15px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
 `;
 
 const CheckIcon = styled.span`
-  color: #4CAF50;
-  font-size: 18px;
+  color: ${p => p.theme.SUCCESS_COLOR};
+  font-size: 15px;
   font-weight: 700;
 `;
 
 const AccordionAnswerPreview = styled.div`
-  font-size: 13px;
+  font-size: 15px;
   color: ${p => p.theme.ACCENT_COLOR};
   font-weight: 600;
   padding: 4px 12px;
@@ -244,15 +225,14 @@ const AccordionScaleButton = styled.button`
 const AccordionScaleLabels = styled.div`
   display: flex;
   justify-content: space-between;
-  font-size: 13px;
+  font-size: 15px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-style: italic;
   margin-bottom: 16px;
   opacity: 0.8;
 `;
 
 const AccordionScaleDescriptions = styled.div`
-  background: ${p => p.theme.ACCENT_COLOR}08;
+  background: ${p => p.theme.ACCENT_COLOR}15;
   border-radius: 6px;
   padding: 12px;
   display: flex;
@@ -264,7 +244,7 @@ const AccordionScaleDescItem = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
+  font-size: 15px;
   color: ${p => p.isSelected ? p.theme.ACCENT_COLOR : p.theme.PRIMARY_TEXT_COLOR};
   font-weight: ${p => p.isSelected ? '600' : '400'};
   padding: 4px 8px;
@@ -314,8 +294,8 @@ const RadioOption = styled.label`
   
   input[type="radio"] {
     appearance: none;
-    width: 18px;
-    height: 18px;
+    width: 15px;
+    height: 15px;
     border: 2px solid ${p => p.theme.BORDER_COLOR};
     border-radius: 50%;
     margin-right: 14px;
@@ -373,8 +353,8 @@ const CheckboxOption = styled.label`
   
   input[type="checkbox"] {
     appearance: none;
-    width: 18px;
-    height: 18px;
+    width: 15px;
+    height: 15px;
     border: 2px solid ${p => p.theme.BORDER_COLOR};
     border-radius: 2px;
     margin-right: 14px;
@@ -440,8 +420,8 @@ const ScaleRadioLabel = styled.label`
   
   input[type="radio"] {
     appearance: none;
-    width: 18px;
-    height: 18px;
+    width: 15px;
+    height: 15px;
     border: 2px solid ${p => p.theme.BORDER_COLOR};
     border-radius: 50%;
     cursor: pointer;
@@ -472,7 +452,7 @@ const ScaleRadioLabel = styled.label`
   }
   
   .scale-number {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     color: ${p => p.theme.PRIMARY_TEXT_COLOR};
     margin-bottom: 4px;
@@ -480,7 +460,7 @@ const ScaleRadioLabel = styled.label`
 `;
 
 const ScaleValueLabel = styled.span`
-  font-size: 11px;
+  font-size: 15px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   text-align: center;
   line-height: 1.3;
@@ -494,9 +474,8 @@ const ScaleLabels = styled.div`
   display: flex;
   justify-content: space-between;
   margin-top: 8px;
-  font-size: 13px;
+  font-size: 15px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-style: italic;
   opacity: 0.8;
 `;
 
@@ -569,8 +548,8 @@ const BinaryOption = styled.label`
   
   input[type="radio"] {
     appearance: none;
-    width: 18px;
-    height: 18px;
+    width: 15px;
+    height: 15px;
     border: 2px solid ${p => p.theme.BORDER_COLOR};
     border-radius: 50%;
     margin-right: 14px;
@@ -629,8 +608,8 @@ const LadderOption = styled.label`
   
   input[type="radio"] {
     appearance: none;
-    width: 18px;
-    height: 18px;
+    width: 15px;
+    height: 15px;
     border: 2px solid ${p => p.theme.BORDER_COLOR};
     border-radius: 50%;
     margin-right: 14px;
@@ -693,8 +672,8 @@ const PreferNotToSayOption = styled.label`
   
   input[type="checkbox"] {
     appearance: none;
-    width: 18px;
-    height: 18px;
+    width: 15px;
+    height: 15px;
     border: 2px solid ${p => p.theme.BORDER_COLOR};
     border-radius: 2px;
     margin-right: 14px;
@@ -728,7 +707,6 @@ const PreferNotToSayOption = styled.label`
   span {
     color: ${p => p.theme.PRIMARY_TEXT_COLOR};
     font-size: 15px;
-    font-style: italic;
   }
 `;
 
@@ -741,7 +719,7 @@ const NumberSelectContainer = styled.div`
 `;
 
 const NumberSelectInstruction = styled.div`
-  font-size: 14px;
+  font-size: 15px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   margin-bottom: 12px;
   opacity: 0.8;
@@ -776,7 +754,7 @@ const SelectedNumbers = styled.div`
   background: ${p => p.theme.ACCENT_COLOR}15;
   border: 1px solid ${p => p.theme.ACCENT_COLOR}60;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: 15px;
   color: ${p => p.theme.ACCENT_COLOR};
 `;
 
@@ -792,27 +770,24 @@ const FeedbackSection = styled.div`
 
 const FeedbackTitle = styled.h3`
   color: ${p => p.theme.ACCENT_COLOR};
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   margin-bottom: 8px;
   display: flex;
   align-items: center;
   gap: 8px;
   
-  &:before {
-    content: '💬';
-  }
 `;
 
 const FeedbackSubtitle = styled.p`
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 14px;
+  font-size: 15px;
   margin-bottom: 16px;
   opacity: 0.8;
 `;
 
 const ErrorText = styled.div`
-  color: ${p => p.theme.ACCENT_COLOR_2 || '#ff0000'};
+  color: ${p => p.theme.ACCENT_COLOR_2 || p.theme.ERROR_COLOR};
   margin-bottom: 16px;
   text-align: center;
   font-size: 15px;
@@ -831,7 +806,7 @@ const ButtonContainer = styled.div`
 
 const ProgressIndicator = styled.div`
   text-align: center;
-  font-size: 13px;
+  font-size: 15px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   margin-top: 16px;
   opacity: 0.8;
@@ -850,7 +825,7 @@ const COMPONENT_ID = 'questionnaire0';
 
 const createFeedbackQuestions = (blockId, questionCount) => [
   {
-    id: `spatnavazba_${blockId}_oblasti`,
+    id: `spatna_vazba_${blockId}_oblasti`,
     text: 'V ktorých oblastiach ste mali problémy? (Môžete vybrať viacero možností)',
     type: 'checkbox',
     isFeedback: true,
@@ -863,7 +838,7 @@ const createFeedbackQuestions = (blockId, questionCount) => [
     ]
   },
   {
-    id: `spatnavazba_${blockId}_zrozumitelnost`,
+    id: `spatna_vazba_${blockId}_zrozumitelnost`,
     text: 'Ktoré otázky a tvrdenia boli menej zrozumiteľné?',
     type: 'number-select',
     isFeedback: true,
@@ -873,13 +848,13 @@ const createFeedbackQuestions = (blockId, questionCount) => [
     instruction: 'Vyberte čísla otázok a tvrdení',
     required: false,
     showIf: {
-      questionId: `spatnavazba_${blockId}_oblasti`,
+      questionId: `spatna_vazba_${blockId}_oblasti`,
       operator: 'includes',
       value: 'zrozumitelnost'
     }
   },
   {
-    id: `spatnavazba_${blockId}_jednoznacnost`,
+    id: `spatna_vazba_${blockId}_jednoznacnost`,
     text: 'Ktoré otázky a tvrdenia boli menej jednoznačné (slová, pojmy, formulácia...)?',
     type: 'number-select',
     isFeedback: true,
@@ -889,14 +864,14 @@ const createFeedbackQuestions = (blockId, questionCount) => [
     instruction: 'Vyberte čísla otázok a tvrdení',
     required: false,
     showIf: {
-      questionId: `spatnavazba_${blockId}_oblasti`,
+      questionId: `spatna_vazba_${blockId}_oblasti`,
       operator: 'includes',
       value: 'jednoznacnost'
     }
   },
   {
-    id: `spatnavazba_${blockId}_stupnica`,
-    text: 'V ktorých otázkach a tvrdeniach ste mali problém vyjadriť svoj skutočný postoj vzhľadom na hodnotiacu stupnicu?',
+    id: `spatna_vazba_${blockId}_stupnica`,
+    text: 'Pri ktorých otázkach a tvrdeniach ste mali problém vyjadriť svoj skutočný postoj vzhľadom na hodnotiacu stupnicu?',
     type: 'number-select',
     isFeedback: true,
     min: 1,
@@ -905,20 +880,20 @@ const createFeedbackQuestions = (blockId, questionCount) => [
     instruction: 'Vyberte čísla otázok a tvrdení',
     required: false,
     showIf: {
-      questionId: `spatnavazba_${blockId}_oblasti`,
+      questionId: `spatna_vazba_${blockId}_oblasti`,
       operator: 'includes',
       value: 'stupnica'
     }
   },
   {
-    id: `spatnavazba_${blockId}_ine`,
+    id: `spatna_vazba_${blockId}_ine`,
     text: 'Popíšte iné problémy, ktoré ste mali s otázkami a tvrdeniami v tejto časti:',
     type: 'textarea',
     isFeedback: true,
     placeholder: 'Popíšte iné problémy...',
     required: false,
     showIf: {
-      questionId: `spatnavazba_${blockId}_oblasti`,
+      questionId: `spatna_vazba_${blockId}_oblasti`,
       operator: 'includes',
       value: 'ine'
     }
@@ -939,13 +914,11 @@ const PAGES = [
   // ==========================================
   {
     id: 'demografia',
-    title: 'Demografia',
-    subtitle: 'Základné informácie o Vás',
-    instruction: 'Nasleduje séria otázok o Vás. Tieto informácie nám pomôžu pochopiť, ako sa líšia názory a skúsenosti medzi rôznymi skupinami ľudí. Všetky vaše odpovede sú anonymné a budú použité výlučne na výskumné účely.',
+    instruction: 'Nasleduje séria otázok o vás. Tieto informácie nám pomôžu pochopiť, ako sa líšia názory a skúsenosti medzi rôznymi skupinami ľudí.',
     questions: [
       {
         id: 'd1_pohlavie',
-        text: 'Vyberte Vaše pohlavie:',
+        text: 'Vyberte vaše pohlavie:',
         type: 'binary',
         required: true,
         options: [
@@ -955,7 +928,7 @@ const PAGES = [
       },
       {
         id: 'd2_vek',
-        text: 'Zadajte Váš vek:',
+        text: 'Zadajte váš vek:',
         type: 'number',
         required: true,
         min: 18,
@@ -964,7 +937,7 @@ const PAGES = [
       },
       {
         id: 'd3_vzdelanie',
-        text: 'Vyberte Vaše najvyššie dosiahnuté vzdelanie:',
+        text: 'Vyberte vaše najvyššie dosiahnuté vzdelanie:',
         type: 'radio',
         required: true,
         options: [
@@ -979,7 +952,7 @@ const PAGES = [
       },
       {
         id: 'd4_pracovna_situacia',
-        text: 'Vyberte Vašu aktuálnu situáciu:',
+        text: 'Vyberte vašu aktuálnu situáciu:',
         type: 'radio',
         required: true,
         hasOther: true,
@@ -987,21 +960,21 @@ const PAGES = [
         options: [
           { value: 'plny_uvazok', label: 'Zamestnaný/á na plný úväzok' },
           { value: 'skrateny_uvazok', label: 'Zamestnaný/á na skrátený úväzok' },
-          { value: 'volna_noha', label: 'Práca na voľnej nohe / podnikateľ' },
+          { value: 'zivnost', label: 'Podnikanie ako SZČO (napr. živnosť)' },
           { value: 'student', label: 'Študent/ka' },
           { value: 'dochodok', label: 'Starobný dôchodok' },
-          { value: 'materska', label: 'Na materskej / otcovskej dovolenke' },
+          { value: 'materska', label: 'Na materskej alebo otcovskej dovolenke' },
           { value: 'nezamestany', label: 'Nezamestnaný/á' }
         ]
       },
       {
         id: 'd5_rodinny_stav',
-        text: 'Vyberte Váš aktuálny rodinný stav:',
+        text: 'Vyberte váš aktuálny rodinný stav:',
         type: 'radio',
         required: true,
         options: [
           { value: 'slobodny', label: 'Slobodný/á bez partnera' },
-          { value: 'manzelstvo', label: 'V manželstve / registrovanom partnerstve' },
+          { value: 'manzelstvo', label: 'V manželstve alebo registrovanom partnerstve' },
           { value: 'partnerstvo', label: 'V partnerskom vzťahu (bez formálneho zväzku)' },
           { value: 'rozvedeny', label: 'Rozvedený/á' },
           { value: 'ovdoveny', label: 'Ovdovený/á' },
@@ -1010,27 +983,32 @@ const PAGES = [
       },
       {
         id: 'd6_miesto_bydliska',
-        text: 'Vyberte región z ktorého pochádzate:',
+        text: 'Vyberte kraj v ktorom žijete:',
         type: 'radio',
         required: true,
         hasOther: true,
         otherLabel: 'Iné (prosím špecifikujte)',
         options: [
-          { value: 'zapadne', label: 'Západné Slovensko (napr. Trnava, Nitra, Trenčín)' },
-          { value: 'stredne', label: 'Stredné Slovensko (napr. Zvolen, Banská Bystrica, Lučenec)' },
-          { value: 'vychodne', label: 'Východné Slovensko (napr. Košice, Prešov)' }
+          { value: 'ba', label: 'Bratislavský kraj' },
+          { value: 'tt', label: 'Trnavský kraj' },
+          { value: 'tn', label: 'Trenčiansky kraj' },
+          { value: 'nr', label: 'Nitriansky kraj' },
+          { value: 'za', label: 'Žilinský kraj' },
+          { value: 'bb', label: 'Banskobystrický kraj' },
+          { value: 'po', label: 'Prešovský kraj' },
+          { value: 'ke', label: 'Košický kraj' }
         ]
       },
       {
         id: 'd7_socialny_rebrik',
-        text: 'Predstavte si, že tento rebrík predstavuje postavenie ľudí na Slovensku. Na úplnom vrchole rebríka sú ľudia, ktorí sú na tom najlepšie. Ľudia ktorí majú najviac peňazí, najlepšie vzdelanie, a najrešpektovanejšiu prácu. Na spodku rebríka sú ľudia, ktorí sú na tom najhoršie. Ľudia, ktorí majú najmenej peňazí, najhoršie vzdelanie, a najmenej rešpektovanú prácu, poprípade žiadnu prácu. Čím vyššie ste v tomto rebríku, tým bližšie ste ľuďom na úplnom vrchole a čím ste nižšie, tým ste bližšie ľuďom na samom spodku. Prosím, vyberte si číslo priečky rebríka, na ktorej si myslíte, že vo svojom živote aktuálne ste, v porovnaní s ostatnými ľuďmi na Slovensku.',
+        text: 'Predstavte si, že tento rebrík predstavuje postavenie ľudí na Slovensku. Na úplnom vrchole rebríka sú ľudia, ktorí sú na tom najlepšie. Ľudia ktorí majú najviac peňazí, najlepšie vzdelanie, a najrešpektovanejšiu prácu. Na spodu rebríka sú ľudia, ktorí sú na tom najhoršie. Ľudia, ktorí majú najmenej peňazí, najhoršie vzdelanie, a najmenej rešpektovanú prácu, poprípade žiadnu prácu. Čím vyššie ste v tomto rebríku, tým bližšie ste ľuďom na úplnom vrchole a čím ste nižšie, tým ste bližšie ľuďom na samom spodku. Prosím, vyberte si číslo priečky rebríka, na ktorej si myslíte, že vo svojom živote aktuálne ste, v porovnaní s ostatnými ľuďmi na Slovensku.',
         type: 'ladder',
         required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        scale: [10, 9, 8, 7, 6, 5, 4, 3, 2, 1],  // ← OTOČENÉ: 10 hore, 1 dole
         hasPreferNotToSay: true,
         scaleLabels: {
-          min: 'Najnižší status',
-          max: 'Najvyšší status'
+          min: 'Najnižší status',  // → pri čísle 1 (dole)
+          max: 'Najvyšší status'   // → pri čísle 10 (hore)
         }
       },
       {
@@ -1053,9 +1031,7 @@ const PAGES = [
   // ==========================================
   {
     id: 'religiozita',
-    title: 'Religiozita',
-    subtitle: 'Koenig & Büssing, 2010',
-    instruction: 'Nasledujúce otázky sa týkajú Vášho vzťahu k náboženstvu. Neexistujú správne alebo nesprávne odpovede. Kliknite na otázku a vyberte odpoveď.',
+    instruction: 'Nasledujúce otázky sa týkajú vášho vzťahu k náboženstvu. Neexistujú správne alebo nesprávne odpovede.',
     questions: [
       {
         id: 'religiozita_accordion',
@@ -1065,7 +1041,7 @@ const PAGES = [
         questions: [
           {
             id: 'ora1',
-            text: 'Ako často navštevujete kostol alebo náboženské stretnutia?',
+            text: 'Ako často navštevujete kostol alebo iné náboženské stretnutia?',
             scale: [1, 2, 3, 4, 5, 6],
             scaleLabels: { min: 'Nikdy', max: 'Viackrát týždenne' },
             scaleValueLabels: ['Nikdy', 'Raz za rok alebo menej', 'Niekoľkokrát za rok', 'Niekoľkokrát za mesiac', 'Raz týždenne', 'Viackrát týždenne']
@@ -1108,8 +1084,7 @@ const PAGES = [
   // ==========================================
   {
     id: 'media',
-    title: 'Frekvencia používania médií',
-    instruction: 'Nasleduje zoznam médií a platforiem. Pri každom médiu označte, ako často ho používate ako zdroj informácií. Kliknite na médium a vyberte frekvenciu.',
+    instruction: 'Nasleduje zoznam rôznych médií a platforiem, z ktorých môžete získavať informácie (napríklad o spoločenskom dianí, politike, zdraví, ekonomike a pod.). Pri každom médiu a platforme označte, ako často ho používate ako zdroj informácií, pomocou škály od 1 do 7. Ak dané médium vôbec nepoznáte alebo ho nepoužívate, označte prosím „1. Nikdy". Neexistujú správne alebo nesprávne odpovede.',
     questions: [
       {
         id: 'media_accordion',
@@ -1154,10 +1129,10 @@ const PAGES = [
       },
       {
         id: 'ost1',
-        text: 'Iné spravodajské weby alebo platformy, ktoré používam často (prosím uveďte):',
+        text: 'Iné spravodajské weby alebo platformy (prosím uveďte):',
         type: 'text',
         required: false,
-        placeholder: 'Napíšte názvy médií...'
+        placeholder: 'Napíšte názvy média alebo platformy...'
       }
     ]
   },
@@ -1170,9 +1145,7 @@ const PAGES = [
   // ==========================================
   {
     id: 'tolerancia',
-    title: 'Tolerancia',
-    subtitle: 'Prošek et al., 2025',
-    instruction: 'Nižšie nájdete sériu tvrdení o rôznych aspektoch spôsobu, ako by ľudia mali žiť a ako sa máme vzájomne brať v ohľade na ich odlišnosti. Kliknite na tvrdenie a vyjadrite svoju úroveň súhlasu.',
+    instruction: 'Nižšie nájdete sériu tvrdení o rôznych aspektoch spôsobu, ako by ľudia mali žiť a ako sa máme vzájomne brať v ohľade na ich odlišnosti. Prosím, vyjadrite svoju úroveň súhlasu s každým tvrdením na škále od 1 do 7. Neexistujú správne alebo nesprávne odpovede.',
     questions: [
       {
         id: 'tolerancia_accordion',
@@ -1204,9 +1177,7 @@ const PAGES = [
   // ==========================================
   {
     id: 'konspiracia_mentalita',
-    title: 'Konšpiračná mentalita',
-    subtitle: 'Mikušková, 2018',
-    instruction: 'Nižšie nájdete sériu tvrdení. Pri každom tvrdení prosím vyjadrite, do akej miery s ním súhlasíte. Kliknite na tvrdenie a vyberte odpoveď.',
+    instruction: 'Nižšie nájdete sériu tvrdení. Pri každom tvrdení prosím vyjadrite, do akej miery s ním súhlasíte, na škále od 1 do 7. Neexistujú správne alebo nesprávne odpovede.',
     questions: [
       {
         id: 'konspiracia_mentalita_accordion',
@@ -1229,9 +1200,7 @@ const PAGES = [
   // ==========================================
   {
     id: 'symbolicke_ohrozenie',
-    title: 'Symbolické ohrozenie a pocit hrozby',
-    subtitle: 'Šrol & Čavojová, 2025',
-    instruction: 'Niektorí ľudia tvrdia, že existujú isté skupiny ľudí či krajiny, ktoré ohrozujú našu vlastnú identitu a hodnoty. Myslíte si vy osobne, že nasledujúce skupiny či krajiny ohrozujú vašu identitu a hodnoty? Kliknite na položku a vyjadrite vašu úroveň vnemu hrozby.',
+    instruction: 'Niektorí ľudia tvrdia, že existujú isté skupiny ľudí či krajiny, ktoré ohrozujú našu vlastnú identitu a hodnoty. Myslíte si vy osobne, že nasledujúce skupiny či krajiny ohrozujú vašu identitu a hodnoty? Pri každej položke vyjadrite vašu úroveň vnemu hrozby na škále od 1 do 5. Neexistujú správne alebo nesprávne odpovede',
     questions: [
       {
         id: 'symbolicke_ohrozenie_accordion',
@@ -1262,9 +1231,7 @@ const PAGES = [
   // ==========================================
   {
     id: 'dovera',
-    title: 'Dôvera',
-    subtitle: 'European Union, 2026',
-    instruction: 'Nižšie nájdete zoznam rôznych inštitúcií a tvrdení o procesoch EÚ. Pri každej položke prosím vyjadrite, do akej miery im dôverujete. Kliknite na položku a vyberte odpoveď.',
+    instruction: 'Nižšie nájdete zoznam rôznych inštitúcií a rôzne tvrdenia o procesoch EÚ. Pri každej inštitúcií a tvrdení prosím vyjadrite, do akej miery im dôverujete, na škále od 1 do 7. Neexistujú správne alebo nesprávne odpovede.',
     questions: [
       {
         id: 'dovera_accordion',
@@ -1272,22 +1239,21 @@ const PAGES = [
         type: 'accordion-likert',
         required: false,
         questions: [
-          // Inštitucionálna dôvera
-          { id: 'id1', text: 'Európsky parlament', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' }, scaleValueLabels: ['Absolútne nedôverujem', 'Väčšinou nedôverujem', 'Skôr nedôverujem', 'Neutrálny postoj', 'Skôr dôverujem', 'Väčšinou dôverujem', 'Absolútne dôverujem'] },
-          { id: 'id2', text: 'Európska rada', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' }, scaleValueLabels: ['Absolútne nedôverujem', 'Väčšinou nedôverujem', 'Skôr nedôverujem', 'Neutrálny postoj', 'Skôr dôverujem', 'Väčšinou dôverujem', 'Absolútne dôverujem'] },
-          { id: 'id3', text: 'Rada Európskej únie', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' }, scaleValueLabels: ['Absolútne nedôverujem', 'Väčšinou nedôverujem', 'Skôr nedôverujem', 'Neutrálny postoj', 'Skôr dôverujem', 'Väčšinou dôverujem', 'Absolútne dôverujem'] },
-          { id: 'id4', text: 'Európska komisia', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' }, scaleValueLabels: ['Absolútne nedôverujem', 'Väčšinou nedôverujem', 'Skôr nedôverujem', 'Neutrálny postoj', 'Skôr dôverujem', 'Väčšinou dôverujem', 'Absolútne dôverujem'] },
-          { id: 'id5', text: 'Súdny dvor Európskej únie', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' }, scaleValueLabels: ['Absolútne nedôverujem', 'Väčšinou nedôverujem', 'Skôr nedôverujem', 'Neutrálny postoj', 'Skôr dôverujem', 'Väčšinou dôverujem', 'Absolútne dôverujem'] },
-          { id: 'id6', text: 'Európska centrálna banka', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' }, scaleValueLabels: ['Absolútne nedôverujem', 'Väčšinou nedôverujem', 'Skôr nedôverujem', 'Neutrálny postoj', 'Skôr dôverujem', 'Väčšinou dôverujem', 'Absolútne dôverujem'] },
-          { id: 'id7', text: 'Európsky dvor audítorov', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' }, scaleValueLabels: ['Absolútne nedôverujem', 'Väčšinou nedôverujem', 'Skôr nedôverujem', 'Neutrálny postoj', 'Skôr dôverujem', 'Väčšinou dôverujem', 'Absolútne dôverujem'] },
-          
+          { id: 'id1', text: 'Európsky parlament', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' }, scaleValueLabels: ['Absolútne nedôverujem', 'Veľmi nedôverujem', 'Skôr nedôverujem', 'Ani nedôverujem, ani dôverujem', 'Skôr dôverujem', 'Veľmi dôverujem', 'Absolútne dôverujem'] },
+          { id: 'id2', text: 'Európska rada', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' }, scaleValueLabels: ['Absolútne nedôverujem', 'Veľmi nedôverujem', 'Skôr nedôverujem', 'Ani nedôverujem, ani dôverujem', 'Skôr dôverujem', 'Veľmi dôverujem', 'Absolútne dôverujem'] },
+          { id: 'id3', text: 'Rada Európskej únie', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' }, scaleValueLabels: ['Absolútne nedôverujem', 'Veľmi nedôverujem', 'Skôr nedôverujem', 'Ani nedôverujem, ani dôverujem', 'Skôr dôverujem', 'Veľmi dôverujem', 'Absolútne dôverujem'] },
+          { id: 'id4', text: 'Európska komisia', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' }, scaleValueLabels: ['Absolútne nedôverujem', 'Veľmi nedôverujem', 'Skôr nedôverujem', 'Ani nedôverujem, ani dôverujem', 'Skôr dôverujem', 'Veľmi dôverujem', 'Absolútne dôverujem'] },
+          { id: 'id5', text: 'Súdny dvor Európskej únie', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' }, scaleValueLabels: ['Absolútne nedôverujem', 'Veľmi nedôverujem', 'Skôr nedôverujem', 'Ani nedôverujem, ani dôverujem', 'Skôr dôverujem', 'Veľmi dôverujem', 'Absolútne dôverujem'] },
+          { id: 'id6', text: 'Európska centrálna banka', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' }, scaleValueLabels: ['Absolútne nedôverujem', 'Veľmi nedôverujem', 'Skôr nedôverujem', 'Ani nedôverujem, ani dôverujem', 'Skôr dôverujem', 'Veľmi dôverujem', 'Absolútne dôverujem'] },
+          { id: 'id7', text: 'Európsky dvor audítorov', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' }, scaleValueLabels: ['Absolútne nedôverujem', 'Veľmi nedôverujem', 'Skôr nedôverujem', 'Ani nedôverujem, ani dôverujem', 'Skôr dôverujem', 'Veľmi dôverujem', 'Absolútne dôverujem'] },
+
           // Systémová dôvera
-          { id: 'sd1', text: 'Procesy rozhodovania v EÚ sú transparentné a demokratické.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' }, scaleValueLabels: ['Absolútne nedôverujem', 'Väčšinou nedôverujem', 'Skôr nedôverujem', 'Neutrálny postoj', 'Skôr dôverujem', 'Väčšinou dôverujem', 'Absolútne dôverujem'] },
-          { id: 'sd2', text: 'Financovanie EÚ (eurofondy, dotácie) sú spravodlivo rozdeľované.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' }, scaleValueLabels: ['Absolútne nedôverujem', 'Väčšinou nedôverujem', 'Skôr nedôverujem', 'Neutrálny postoj', 'Skôr dôverujem', 'Väčšinou dôverujem', 'Absolútne dôverujem'] },
-          { id: 'sd3', text: 'EÚ rešpektuje kultúrne a národné odlišnosti členských štátov.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' }, scaleValueLabels: ['Absolútne nedôverujem', 'Väčšinou nedôverujem', 'Skôr nedôverujem', 'Neutrálny postoj', 'Skôr dôverujem', 'Väčšinou dôverujem', 'Absolútne dôverujem'] },
-          { id: 'sd4', text: 'Rozhodnutia EÚ sú v prospech bežných občanov.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' }, scaleValueLabels: ['Absolútne nedôverujem', 'Väčšinou nedôverujem', 'Skôr nedôverujem', 'Neutrálny postoj', 'Skôr dôverujem', 'Väčšinou dôverujem', 'Absolútne dôverujem'] },
-          { id: 'sd5', text: 'EÚ je schopná efektívne riešiť problémy (klíma, bezpečnosť, ekonomika).', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' }, scaleValueLabels: ['Absolútne nedôverujem', 'Väčšinou nedôverujem', 'Skôr nedôverujem', 'Neutrálny postoj', 'Skôr dôverujem', 'Väčšinou dôverujem', 'Absolútne dôverujem'] },
-          { id: 'sd6', text: 'EÚ plní svoje sľuby a dodržiava pravidlá.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' }, scaleValueLabels: ['Absolútne nedôverujem', 'Väčšinou nedôverujem', 'Skôr nedôverujem', 'Neutrálny postoj', 'Skôr dôverujem', 'Väčšinou dôverujem', 'Absolútne dôverujem'] }
+          { id: 'sd1', text: 'Procesy rozhodovania v EÚ sú transparentné a demokratické.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Veľmi nesúhlasím', 'Skôr nesúhlasím', 'Ani nesúhlasím, ani súhlasím', 'Skôr súhlasím', 'Veľmi súhlasím', 'Rozhodne súhlasím'] },
+          { id: 'sd2', text: 'Financovanie EÚ (eurofondy, dotácie) sú spravodlivo rozdeľované.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Veľmi nesúhlasím', 'Skôr nesúhlasím', 'Ani nesúhlasím, ani súhlasím', 'Skôr súhlasím', 'Veľmi súhlasím', 'Rozhodne súhlasím'] },
+          { id: 'sd3', text: 'EÚ rešpektuje kultúrne a národné odlišnosti členských štátov.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Veľmi nesúhlasím', 'Skôr nesúhlasím', 'Ani nesúhlasím, ani súhlasím', 'Skôr súhlasím', 'Veľmi súhlasím', 'Rozhodne súhlasím'] },
+          { id: 'sd4', text: 'Rozhodnutia EÚ sú v prospech bežných občanov.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Veľmi nesúhlasím', 'Skôr nesúhlasím', 'Ani nesúhlasím, ani súhlasím', 'Skôr súhlasím', 'Veľmi súhlasím', 'Rozhodne súhlasím'] },
+          { id: 'sd5', text: 'EÚ je schopná efektívne riešiť problémy (klíma, bezpečnosť, ekonomika).', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Veľmi nesúhlasím', 'Skôr nesúhlasím', 'Ani nesúhlasím, ani súhlasím', 'Skôr súhlasím', 'Veľmi súhlasím', 'Rozhodne súhlasím'] },
+          { id: 'sd6', text: 'EÚ plní svoje sľuby a dodržiava pravidlá.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Veľmi nesúhlasím', 'Skôr nesúhlasím', 'Ani nesúhlasím, ani súhlasím', 'Skôr súhlasím', 'Veľmi súhlasím', 'Rozhodne súhlasím'] }
         ]
       }
     ]
@@ -1298,9 +1264,7 @@ const PAGES = [
   // ==========================================
   {
     id: 'konspiracia_presvedcenia',
-    title: 'Konšpiračné presvedčenia',
-    subtitle: 'Bojovic, 2021; European Commission',
-    instruction: 'Nižšie nájdete sériu tvrdení. Pri každom tvrdení prosím vyjadrite, do akej miery s ním súhlasíte. Kliknite na tvrdenie a vyberte odpoveď.',
+    instruction: 'Nižšie nájdete sériu tvrdení. Pri každom tvrdení prosím vyjadrite, do akej miery s ním súhlasíte, na škále od 1 do 7. Neexistujú správne alebo nesprávne odpovede.',
     questions: [
       {
         id: 'konspiracia_presvedcenia_accordion',
@@ -1343,9 +1307,7 @@ const PAGES = [
   // ==========================================
   {
     id: 'socialna_ziadostivost',
-    title: 'Sociálna žiadostivosť',
-    subtitle: 'Reynolds, 1982',
-    instruction: 'Nižšie nájdete sériu tvrdení. Prečítajte si každé tvrdenie pozorne a rozhodnite sa, či je pre Vás pravdivé alebo nepravdivé. Nie sú tu správne alebo nesprávne odpovede – ide o to, ako vnímate sami seba. Všetky vaše odpovede zostanú anonymné a budú použité výlučne na výskumné účely.',
+    instruction: 'Nižšie nájdete sériu tvrdení. Prečítajte si každé tvrdenie pozorne a rozhodnite sa, či je pre vás pravdivé alebo nepravdivé. Nie sú tu správne alebo nesprávne odpovede – ide o to, ako vnímate sami seba. Označte vašu odpoveď kliknutím na tlačidlo pravda alebo nepravda vedľa každého tvrdenia.',
     questions: [
       { id: 'sds1', text: 'Niekedy je pre mňa ťažké pokračovať v práci, ak ma nikto nepodporí.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
       { id: 'sds2', text: 'Niekedy sa cítim rozčúlený/rozčúlená, keď si nemôžem dosiahnuť to, čo chcem.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
@@ -1362,11 +1324,10 @@ const PAGES = [
       { id: 'sds13', text: 'Nikdy som úmyselne nepovedal/nepovedala niečo, čo by niekoho zranilo.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] }
     ]
   },
+
   {
     id: 'porovnanie_vyznamov',
-    title: 'Porovnanie významov tvrdení',
-    subtitle: 'Kontrolná úloha',
-    instruction: 'V predchádzajúcom dotazníku ste videli rôzne tvrdenia. Teraz Vás prosíme, aby ste posúdili, či sú nasledujúce páry tvrdení významově zhodné (hovoria o tom istom) alebo nie. Pre každý pár označte, či sú tvrdenia významovo zhodné alebo odlišné.',
+    instruction: 'V dotazníku ste mohli vidieť rôzne tvrdenia o Európskej únii. Teraz vás prosíme posúdiť, či nasledujúce páry tvrdení vyjadrujú **rovnaký postoj** (hovoria to isté) alebo **opačný postoj** (hovoria opak). Pozorne si prečítajte obe tvrdenia a označte prosím vašu odpoveď.',
     questions: [
       {
         id: 'porovnanie_accordion',
@@ -1377,111 +1338,133 @@ const PAGES = [
           // Pár 1: ep1 vs epv1
           {
             id: 'comp_1',
-            text: 'Tvrdenie A: "Európska únia má skrytý plán systematicky zničiť suverenitu členských štátov."\n\nTvrdenie B: "Štáty si zachovávajú svoju suverenitu v rámci EÚ."\n\nSú tieto dve tvrdenia významovo zhodné?',
+            text: '**Tvrdenie A:**\n"Európska únia má skrytý plán systematicky zničiť suverenitu členských štátov."\n\n**Tvrdenie B:**\n"Štáty si zachovávajú svoju suverenitu v rámci EÚ."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
             scale: [1, 2, 3, 4, 5],
-            scaleLabels: { min: 'Úplne odlišné', max: 'Úplne zhodné' },
+            scaleLabels: { 
+              min: 'Úplne opačný postoj', 
+              max: 'Úplne rovnaký postoj' 
+            },
             scaleValueLabels: [
-              'Úplne odlišné významy',
-              'Skôr odlišné významy',
-              'Čiastočne podobné',
-              'Skôr zhodné významy',
-              'Úplne zhodné významy'
+              '1 - Úplne opačný postoj',
+              '2 - Skôr opačný postoj',
+              '3 - Ani rovnaký, ani opačný',
+              '4 - Skôr rovnaký postoj',
+              '5 - Úplne rovnaký postoj'
             ]
           },
           
           // Pár 2: ep2 vs epv2
           {
             id: 'comp_2',
-            text: 'Tvrdenie A: "Rozhodnutia EÚ sú transparentné a robené Európskym parlamentom a zvolenými poslancami."\n\nTvrdenie B: "Rozhodnutia EÚ v skutočnosti nerobí Európsky parlament, ale tajná skupina globálnych elít a veľkých korporácií."\n\nSú tieto dve tvrdenia významovo zhodné?',
+            text: '**Tvrdenie A:**\n"Rozhodnutia EÚ sú transparentné a robené Európskym parlamentom a zvolenými poslancami."\n\n**Tvrdenie B:**\n"Rozhodnutia EÚ v skutočnosti nerobí Európsky parlament, ale tajná skupina globálnych elít a veľkých korporácií."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
             scale: [1, 2, 3, 4, 5],
-            scaleLabels: { min: 'Úplne odlišné', max: 'Úplne zhodné' },
+            scaleLabels: { 
+              min: 'Úplne opačný postoj', 
+              max: 'Úplne rovnaký postoj' 
+            },
             scaleValueLabels: [
-              'Úplne odlišné významy',
-              'Skôr odlišné významy',
-              'Čiastočne podobné',
-              'Skôr zhodné významy',
-              'Úplne zhodné významy'
+              '1 - Úplne opačný postoj',
+              '2 - Skôr opačný postoj',
+              '3 - Ani rovnaký, ani opačný',
+              '4 - Skôr rovnaký postoj',
+              '5 - Úplne rovnaký postoj'
             ]
           },
           
           // Pár 3: ep3 vs epv3
           {
             id: 'comp_3',
-            text: 'Tvrdenie A: "Európske inštitúcie a mainstreamové médiá spolupracujú na tom, aby pred občanmi zatajili skutočné negatívne dôsledky rozhodnutí EÚ."\n\nTvrdenie B: "Európske inštitúcie a mainstreamové médiá transparentne informujú občanov o rozhodnutiach EÚ."\n\nSú tieto dve tvrdenia významovo zhodné?',
+            text: '**Tvrdenie A:**\n"Európske inštitúcie a mainstreamové médiá spolupracujú na tom, aby pred občanmi zatajili skutočné negatívne dôsledky rozhodnutí EÚ."\n\n**Tvrdenie B:**\n"Európske inštitúcie a mainstreamové médiá transparentne informujú občanov o rozhodnutiach EÚ."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
             scale: [1, 2, 3, 4, 5],
-            scaleLabels: { min: 'Úplne odlišné', max: 'Úplne zhodné' },
+            scaleLabels: { 
+              min: 'Úplne opačný postoj', 
+              max: 'Úplne rovnaký postoj' 
+            },
             scaleValueLabels: [
-              'Úplne odlišné významy',
-              'Skôr odlišné významy',
-              'Čiastočne podobné',
-              'Skôr zhodné významy',
-              'Úplne zhodné významy'
+              '1 - Úplne opačný postoj',
+              '2 - Skôr opačný postoj',
+              '3 - Ani rovnaký, ani opačný',
+              '4 - Skôr rovnaký postoj',
+              '5 - Úplne rovnaký postoj'
             ]
           },
           
           // Pár 4: ep4 vs epv4
           {
             id: 'comp_4',
-            text: 'Tvrdenie A: "EÚ rešpektuje a chráni národné kultúry a tradície všetkých členských štátov."\n\nTvrdenie B: "EÚ má skrytý plán na zničenie národných kultúr a tradícií v prospech multikulturalizmu a liberálnych hodnôt."\n\nSú tieto dve tvrdenia významovo zhodné?',
+            text: '**Tvrdenie A:**\n"EÚ rešpektuje a chráni národné kultúry a tradície všetkých členských štátov."\n\n**Tvrdenie B:**\n"EÚ má skrytý plán na zničenie národných kultúr a tradícií v prospech multikulturalizmu a liberálnych hodnôt."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
             scale: [1, 2, 3, 4, 5],
-            scaleLabels: { min: 'Úplne odlišné', max: 'Úplne zhodné' },
+            scaleLabels: { 
+              min: 'Úplne opačný postoj', 
+              max: 'Úplne rovnaký postoj' 
+            },
             scaleValueLabels: [
-              'Úplne odlišné významy',
-              'Skôr odlišné významy',
-              'Čiastočne podobné',
-              'Skôr zhodné významy',
-              'Úplne zhodné významy'
+              '1 - Úplne opačný postoj',
+              '2 - Skôr opačný postoj',
+              '3 - Ani rovnaký, ani opačný',
+              '4 - Skôr rovnaký postoj',
+              '5 - Úplne rovnaký postoj'
             ]
           },
           
           // Pár 5: ep5 vs epv5
           {
             id: 'comp_5',
-            text: 'Tvrdenie A: "EÚ zámerne obchádza demokratické procesy a ignoruje vôľu občanov, pretože sú riadené skrytou agendou globálnych elít."\n\nTvrdenie B: "Všetky rozhodnutia EÚ sú prijaté v plne transparentných procesoch, kde všetci poslanci verejne hlasujú, a žiadna krajina nie je nútená ich nasledovať."\n\nSú tieto dve tvrdenia významovo zhodné?',
+            text: '**Tvrdenie A:**\n"EÚ zámerne obchádza demokratické procesy a ignoruje vôľu občanov, pretože sú riadené skrytou agendou globálnych elít."\n\n**Tvrdenie B:**\n"Všetky rozhodnutia EÚ sú prijaté v plne transparentných procesoch, kde všetci poslanci verejne hlasujú, a žiadna krajina nie je nútená ich nasledovať."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
             scale: [1, 2, 3, 4, 5],
-            scaleLabels: { min: 'Úplne odlišné', max: 'Úplne zhodné' },
+            scaleLabels: { 
+              min: 'Úplne opačný postoj', 
+              max: 'Úplne rovnaký postoj' 
+            },
             scaleValueLabels: [
-              'Úplne odlišné významy',
-              'Skôr odlišné významy',
-              'Čiastočne podobné',
-              'Skôr zhodné významy',
-              'Úplne zhodné významy'
+              '1 - Úplne opačný postoj',
+              '2 - Skôr opačný postoj',
+              '3 - Ani rovnaký, ani opačný',
+              '4 - Skôr rovnaký postoj',
+              '5 - Úplne rovnaký postoj'
             ]
           },
           
           // Pár 6: ep6 vs epv6
           {
             id: 'comp_6',
-            text: 'Tvrdenie A: "Regulácie EÚ sú navrhnuté aby chránili hospodárstvo všetkých členských štátov vrátane Slovenska, nie aby mu ublížili."\n\nTvrdenie B: "EÚ vedome zavádza škodlivé regulácie s cieľom ekonomicky zničiť Slovensko a prinútiť nás byť úplne závislí na Bruseli."\n\nSú tieto dve tvrdenia významovo zhodné?',
+            text: '**Tvrdenie A:**\n"Regulácie EÚ sú navrhnuté aby chránili hospodárstvo všetkých členských štátov vrátane Slovenska, nie aby mu ublížili."\n\n**Tvrdenie B:**\n"EÚ vedome zavádza škodlivé regulácie s cieľom ekonomicky zničiť Slovensko a prinútiť nás byť úplne závislí na Bruseli."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
             scale: [1, 2, 3, 4, 5],
-            scaleLabels: { min: 'Úplne odlišné', max: 'Úplne zhodné' },
+            scaleLabels: { 
+              min: 'Úplne opačný postoj', 
+              max: 'Úplne rovnaký postoj' 
+            },
             scaleValueLabels: [
-              'Úplne odlišné významy',
-              'Skôr odlišné významy',
-              'Čiastočne podobné',
-              'Skôr zhodné významy',
-              'Úplne zhodné významy'
+              '1 - Úplne opačný postoj',
+              '2 - Skôr opačný postoj',
+              '3 - Ani rovnaký, ani opačný',
+              '4 - Skôr rovnaký postoj',
+              '5 - Úplne rovnaký postoj'
             ]
           },
           
           // Pár 7: ep7 vs epv7
           {
             id: 'comp_7',
-            text: 'Tvrdenie A: "Migračná kríza bola naplánovaná autoritami EÚ."\n\nTvrdenie B: "Migračná kríza bola prirodzená udalosť, nie naplánovaná autoritami EÚ."\n\nSú tieto dve tvrdenia významovo zhodné?',
+            text: '**Tvrdenie A:**\n"Migračná kríza bola naplánovaná autoritami EÚ."\n\n**Tvrdenie B:**\n"Migračná kríza bola prirodzená udalosť, nie naplánovaná autoritami EÚ."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
             scale: [1, 2, 3, 4, 5],
-            scaleLabels: { min: 'Úplne odlišné', max: 'Úplne zhodné' },
+            scaleLabels: { 
+              min: 'Úplne opačný postoj', 
+              max: 'Úplne rovnaký postoj' 
+            },
             scaleValueLabels: [
-              'Úplne odlišné významy',
-              'Skôr odlišné významy',
-              'Čiastočne podobné',
-              'Skôr zhodné významy',
-              'Úplne zhodné významy'
+              '1 - Úplne opačný postoj',
+              '2 - Skôr opačný postoj',
+              '3 - Ani rovnaký, ani opačný',
+              '4 - Skôr rovnaký postoj',
+              '5 - Úplne rovnaký postoj'
             ]
           }
         ]
       }
     ]
   }
+
 ].map(page => ({
   ...page,
   questions: [
@@ -1651,12 +1634,12 @@ const Questionnaire0 = () => {
       const answer = answers[question.id];
 
       if (answer === undefined || answer === null || answer === '') {
-        errors[question.id] = 'Táto otázka je povinná';
+        errors[question.id] = 'Táto otázka je povinná.';
         hasError = true;
       }
 
       if (question.type === 'checkbox' && (!Array.isArray(answer) || answer.length === 0)) {
-        errors[question.id] = 'Vyberte aspoň jednu možnosť';
+        errors[question.id] = 'Vyberte aspoň jednu možnosť.';
         hasError = true;
       }
     };
@@ -1669,7 +1652,7 @@ const Questionnaire0 = () => {
           if (!subQuestion.isFeedback) {
             const answer = answers[subQuestion.id];
             if (answer === undefined || answer === null || answer === '') {
-              errors[subQuestion.id] = 'Táto otázka je povinná';
+              errors[subQuestion.id] = 'Táto otázka je povinná.';
               hasError = true;
             }
           }
@@ -1683,7 +1666,7 @@ const Questionnaire0 = () => {
     setQuestionErrors(errors);
 
     if (hasError) {
-      setError('Prosím vyplňte všetky povinné otázky');
+      setError('Prosím vyplňte všetky povinné otázky.');
       const firstErrorId = Object.keys(errors)[0];
       if (firstErrorId && questionRefs.current[firstErrorId]) {
         // Scroll s offsetom aby bola otázka viditeľná
@@ -1742,7 +1725,7 @@ const Questionnaire0 = () => {
       navigate('/mission0/complete');
     } catch (err) {
       console.error('Error submitting questionnaire:', err);
-      setError('Chyba pri odosielaní dotazníka. Skúste to znova.');
+      setError('Chyba pri odosielaní dotazníka. Skúste to znova prosím.');
       setIsSubmitting(false);
     }
   };
@@ -1800,12 +1783,12 @@ const Questionnaire0 = () => {
                       </>
                     )}
                     {!isCompleted && !hasError && (
-                      <span style={{ color: '#ff9800', fontSize: '12px', fontWeight: '500' }}>
+                      <span style={{ color: p => p.theme.WARNING_COLOR, fontSize: '15px', fontWeight: '500' }}>
                         Nevyplnené
                       </span>
                     )}
                     {hasError && (
-                      <span style={{ color: '#f44336', fontSize: '12px', fontWeight: '600' }}>
+                      <span style={{ color: p => p.theme.ERROR_COLOR, fontSize: '15px', fontWeight: '600' }}>
                         ⚠ Povinné
                       </span>
                     )}
@@ -1858,32 +1841,51 @@ const Questionnaire0 = () => {
       );
 
       case 'radio':
-        return (
-          <RadioGroup>
-            {question.options.map(option => (
-              <RadioOption key={option.value}>
+      return (
+        <RadioGroup>
+          {question.options.map(option => (
+            <RadioOption key={option.value}>
+              <input
+                type="radio"
+                name={question.id}
+                value={option.value}
+                checked={value === option.value}
+                onChange={() => handleAnswer(question.id, option.value)}
+              />
+              <span>{option.label}</span>
+            </RadioOption>
+          ))}
+          
+          {/* ✅ PRIDAJ TÚTO ČASŤ - "Iné" možnosť */}
+          {question.hasOther && (
+            <>
+              <RadioOption>
                 <input
                   type="radio"
                   name={question.id}
-                  value={option.value}
-                  checked={value === option.value}
-                  onChange={() => handleAnswer(question.id, option.value)}
+                  value="other"
+                  checked={value && !question.options.find(o => o.value === value)}
+                  onChange={() => handleAnswer(question.id, '')}
                 />
-                <span>{option.label}</span>
+                <span>{question.otherLabel || 'Iné (prosím špecifikujte)'}</span>
               </RadioOption>
-            ))}
-            {question.hasOther && (
-              <div style={{ marginTop: '8px', paddingLeft: '36px' }}>
-                <Input
-                  type="text"
-                  placeholder={question.otherLabel || 'Iné (prosím špecifikujte)'}
-                  value={value && !question.options.find(o => o.value === value) ? value : ''}
-                  onChange={(e) => handleAnswer(question.id, e.target.value)}
-                />
-              </div>
-            )}
-          </RadioGroup>
-        );
+              
+              {/* Input zobrazený len ak je "Iné" vybrané */}
+              {value && !question.options.find(o => o.value === value) && (
+                <div style={{ marginTop: '8px', paddingLeft: '36px' }}>
+                  <Input
+                    type="text"
+                    placeholder="Zadajte text..."
+                    value={value}
+                    onChange={(e) => handleAnswer(question.id, e.target.value)}
+                    autoFocus
+                  />
+                </div>
+              )}
+            </>
+          )}
+        </RadioGroup>
+      );
 
       case 'checkbox':
         return (
@@ -2102,13 +2104,11 @@ const Questionnaire0 = () => {
           <ProgressFill progress={progress} />
         </ProgressBar>
 
-        {page.title && <Title>{page.title}</Title>}
-        {page.subtitle && <Subtitle>{page.subtitle}</Subtitle>}
         
         {page.instruction && (
           <DetectiveTipSmall
             tip={page.instruction}  // ← SPRÁVNY PROP
-            detectiveName="Inšpektor Kritan 📋"  // emoji pridaj sem
+            detectiveName="Inšpektor Kritan"
           />
         )}
 
