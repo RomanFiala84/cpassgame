@@ -16,9 +16,15 @@ import { getResponseManager } from '../../../utils/ResponseManager';
 
 const Container = styled.div`
   padding: 20px;
-  max-width: 600px;
+  max-width: 800px;  /* zväčšené z 600px */
   margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    max-width: 100%;
+    padding: 16px;
+  }
 `;
+
 
 const Card = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
