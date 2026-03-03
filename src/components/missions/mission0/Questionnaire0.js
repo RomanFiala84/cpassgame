@@ -18,7 +18,7 @@ import ReactMarkdown from 'react-markdown';
 const MobileWrapper = styled.div`
   @media (max-width: 768px) {
     * {
-      font-size: 10px !important;
+      font-size: 12px !important;
       line-height: 1.5 !important;
     }
     
@@ -29,7 +29,7 @@ const MobileWrapper = styled.div`
     }
     
     button {
-      font-size: 10px !important;
+      font-size: 12px !important;
     }
   }
 `;
@@ -45,6 +45,21 @@ const Container = styled.div`
   }
 `;
 
+// ==========================================
+// HELPER - Markdown rendering BEZ knižnice
+// ==========================================
+
+const parseMarkdown = (text) => {
+  if (!text) return text;
+  
+  // Náhrada **text** za <strong>
+  let parsed = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  
+  // Náhrada \n za <br>
+  parsed = parsed.replace(/\\n/g, '<br />');
+  
+  return parsed;
+};
 
 
 const Card = styled.div`
@@ -305,6 +320,13 @@ const AccordionScaleButton = styled.button`
   &:active {
     transform: translateY(0);
   }
+  @media (max-width: 768px) {
+  padding: 14px 4px;  /* ✅ Väčší padding */
+  font-size: 12px;    /* ✅ Väčší font pre čísla */
+  min-height: 48px;   /* ✅ Väčšia výška */
+  font-weight: 700;   /* ✅ Tučnejšie čísla */
+}
+
 `;
 
 const AccordionScaleLabels = styled.div`
@@ -329,7 +351,7 @@ const AccordionScaleDescItem = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 15px;
+  font-size: 15px;  /* ✅ ZMENŠENÉ z 15px */
   color: ${p => p.isSelected ? p.theme.ACCENT_COLOR : p.theme.PRIMARY_TEXT_COLOR};
   font-weight: ${p => p.isSelected ? '600' : '400'};
   padding: 4px 8px;
@@ -343,6 +365,7 @@ const AccordionScaleDescItem = styled.div`
   
   .description {
     flex: 1;
+    line-height: 1.4;  /* ✅ PRIDANÉ */
   }
   
   ${p => p.isSelected && `
@@ -352,7 +375,20 @@ const AccordionScaleDescItem = styled.div`
       font-weight: 700;
     }
   `}
+  
+  /* ✅ Mobile */
+  @media (max-width: 768px) {
+    font-size: 12px;
+    gap: 6px;
+    padding: 3px 6px;
+    
+    .number {
+      min-width: 16px;
+      font-size: 12px;
+    }
+  }
 `;
+
 const ComparisonQuestionBox = styled.div`
   background: ${p => p.theme.SURFACE_COLOR};
   border: 2px solid ${p => p.theme.BORDER_COLOR};
@@ -1874,11 +1910,9 @@ const Questionnaire0 = () => {
                   <AccordionQuestionTitle>
                     <AccordionQuestionNumber>{index + 1}.</AccordionQuestionNumber>
                     <AccordionQuestionText hasError={hasError}>
-                      {subQuestion.text.includes('**') || subQuestion.text.includes('\\n') ? (
-                        <ReactMarkdown>{subQuestion.text}</ReactMarkdown>
-                      ) : (
-                        subQuestion.text
-                      )}
+                      <span dangerouslySetInnerHTML={{ 
+                        __html: parseMarkdown(subQuestion.text) 
+                      }} />
                     </AccordionQuestionText>
                   </AccordionQuestionTitle>
 
@@ -1907,6 +1941,23 @@ const Questionnaire0 = () => {
                 
                 {isActive && (
                   <AccordionScaleContainer>
+                    {/* ✅ BOX pre porovnávacie otázky */}
+                    {subQuestion.text.includes('Tvrdenie A') && (
+                      <div style={{
+                        background: 'var(--surface-color)',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: '8px',
+                        padding: '12px',
+                        marginBottom: '16px',
+                        fontSize: '13px',
+                        lineHeight: '1.6'
+                      }}>
+                        <div dangerouslySetInnerHTML={{ 
+                          __html: parseMarkdown(subQuestion.text) 
+                        }} />
+                      </div>
+                    )}
+                    
                     <AccordionScaleButtons>
                       {subQuestion.text.includes('**Tvrdenie A:**') && (
                         <ComparisonQuestionBox>
