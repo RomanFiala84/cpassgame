@@ -1756,10 +1756,17 @@ const Questionnaire0 = () => {
             const hasError = questionErrors[subQuestion.id];
             
             let valueDescription = '';
-            if (isCompleted && subQuestion.scaleValueLabels) {
-              const valueIndex = subQuestion.scale.indexOf(subValue);
-              valueDescription = subQuestion.scaleValueLabels[valueIndex] || '';
+            // ✅ Pre ladder typ zobraz len číslo
+            if (isCompleted) {
+              if (subQuestion.type === 'ladder') {
+                // Len samotná hodnota bez popisu
+                valueDescription = '';
+              } else if (subQuestion.scaleValueLabels) {
+                const valueIndex = subQuestion.scale.indexOf(subValue);
+                valueDescription = subQuestion.scaleValueLabels[valueIndex] || '';
+              }
             }
+
             
             return (
               <AccordionQuestionItem
@@ -1784,7 +1791,7 @@ const Questionnaire0 = () => {
                       <>
                         <CheckIcon>✓</CheckIcon>
                         <AccordionAnswerPreview>
-                          {subValue} - {valueDescription}
+                          {valueDescription ? `${subValue} - ${valueDescription}` : subValue}
                         </AccordionAnswerPreview>
                       </>
                     )}
