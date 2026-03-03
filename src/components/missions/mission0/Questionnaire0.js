@@ -1,5 +1,3 @@
-// src/components/missions/mission0/Questionnaire0.js
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -10,29 +8,37 @@ import { useUserStats } from '../../../contexts/UserStatsContext';
 import { getResponseManager } from '../../../utils/ResponseManager';
 
 // ==========================================
-// STYLED COMPONENTS
+// KOMPAKTNÉ STYLED COMPONENTS
 // ==========================================
 
 const Container = styled.div`
-  padding: 20px;
-  max-width: 600px;
+  padding: 12px;
+  max-width: 700px;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 8px;
+  }
 `;
 
 const Card = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 1px solid ${p => p.theme.BORDER_COLOR};
   border-radius: 8px;
-  padding: 24px;
-  margin-bottom: 20px;
+  padding: 16px;
+  margin-bottom: 12px;
+
+  @media (max-width: 768px) {
+    padding: 12px;
+  }
 `;
 
 const ProgressBar = styled.div`
   width: 100%;
-  height: 8px;
+  height: 6px;
   background: ${p => p.theme.BORDER_COLOR};
-  border-radius: 4px;
-  margin-bottom: 24px;
+  border-radius: 3px;
+  margin-bottom: 12px;
   overflow: hidden;
 `;
 
@@ -45,68 +51,73 @@ const ProgressFill = styled.div`
 
 const ProgressText = styled.div`
   text-align: center;
-  font-size: 15px;
+  font-size: 13px;
   color: ${p => p.theme.ACCENT_COLOR};
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   font-weight: 600;
 `;
 
 const QuestionCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
-  border: 2px solid ${p => p.hasError ? '#ff0000' : p.theme.BORDER_COLOR};
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
+  border-left: 3px solid ${p => p.hasError ? '#ff0000' : p.theme.ACCENT_COLOR};
+  padding: 12px;
+  margin-bottom: 12px;
   scroll-margin-top: 20px;
   transition: all 0.2s ease;
 
   ${p => p.hasError && `
-    box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+    background: rgba(255, 0, 0, 0.05);
     animation: shake 0.3s ease-in-out;
   `}
 
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
   }
 `;
 
 const Question = styled.p`
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
+  line-height: 1.4;
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
 `;
 
 const QuestionError = styled.div`
   color: #ff0000;
-  font-size: 13px;
-  margin-top: 8px;
+  font-size: 12px;
+  margin-top: 6px;
   font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 
   &:before {
     content: '⚠';
+    font-size: 14px;
   }
 `;
 
 const FeedbackSection = styled.div`
-  margin-top: 32px;
-  padding-top: 24px;
+  margin-top: 20px;
+  padding-top: 16px;
   border-top: 2px dashed ${p => p.theme.BORDER_COLOR};
 `;
 
 const FeedbackTitle = styled.h3`
   color: ${p => p.theme.ACCENT_COLOR};
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 
   &:before {
     content: '💬';
@@ -114,37 +125,50 @@ const FeedbackTitle = styled.h3`
 `;
 
 const FeedbackSubtitle = styled.p`
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 13px;
-  margin-bottom: 16px;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 12px;
+  margin-bottom: 12px;
 `;
 
 const PageTitle = styled.h2`
   color: ${p => p.theme.ACCENT_COLOR};
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
+  line-height: 1.3;
 `;
 
 const PageSubtitle = styled.h3`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  font-size: 14px;
+  font-size: 12px;
   font-style: italic;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 `;
 
 const Instruction = styled.p`
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 14px;
-  margin-bottom: 20px;
-  line-height: 1.5;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 13px;
+  margin-bottom: 14px;
+  line-height: 1.4;
+  padding: 8px;
+  background: ${p => p.theme.ACCENT_COLOR}08;
+  border-radius: 4px;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+    padding: 6px;
+  }
 `;
 
 const ScaleContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 4px;
+  margin-bottom: 6px;
+
+  @media (max-width: 768px) {
+    gap: 3px;
+  }
 `;
 
 const ScaleButtonWithLabel = styled.div`
@@ -152,7 +176,7 @@ const ScaleButtonWithLabel = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   min-width: 0;
 `;
 
@@ -161,14 +185,14 @@ const RadioLabel = styled.label`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px 8px;
+  padding: 8px 4px;
   border: 1px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
   background: ${p => p.checked ? p.theme.ACCENT_COLOR : 'transparent'};
   color: ${p => p.checked ? '#FFFFFF' : p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
 
   &:hover {
@@ -178,62 +202,81 @@ const RadioLabel = styled.label`
   input {
     display: none;
   }
+
+  @media (max-width: 768px) {
+    padding: 6px 3px;
+    font-size: 12px;
+  }
 `;
 
 const ScaleValueLabel = styled.span`
-  font-size: 10px;
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  font-size: 9px;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   text-align: center;
   line-height: 1.2;
   word-break: break-word;
   hyphens: auto;
+  max-width: 100%;
 
-  @media (max-width: 480px) {
-    font-size: 9px;
+  @media (max-width: 768px) {
+    font-size: 8px;
   }
 `;
 
 const ScaleLabels = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: 8px;
-  font-size: 11px;
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  margin-top: 6px;
+  font-size: 10px;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  padding: 0 4px;
+
+  @media (max-width: 768px) {
+    font-size: 9px;
+  }
 `;
 
 const RadioGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 `;
 
 const RadioOption = styled.label`
   display: flex;
   align-items: center;
-  padding: 12px;
+  padding: 10px;
   border: 1px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
   background: ${p => p.checked ? p.theme.ACCENT_COLOR : 'transparent'};
   color: ${p => p.checked ? '#FFFFFF' : p.theme.PRIMARY_TEXT_COLOR};
+  font-size: 13px;
+  line-height: 1.3;
 
   &:hover {
     background: ${p => p.checked ? p.theme.ACCENT_COLOR : `${p.theme.ACCENT_COLOR}15`};
   }
 
   input {
-    margin-right: 12px;
+    margin-right: 10px;
     accent-color: ${p => p.theme.ACCENT_COLOR};
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 768px) {
+    padding: 8px;
+    font-size: 12px;
   }
 `;
 
 const Input = styled.input`
   width: 100%;
-  padding: 10px;
+  padding: 8px;
   border: 1px solid ${p => p.theme.BORDER_COLOR};
   border-radius: 4px;
-  font-size: 15px;
+  font-size: 13px;
   background: ${p => p.theme.CARD_BACKGROUND};
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
 
@@ -241,25 +284,30 @@ const Input = styled.input`
     outline: none;
     border-color: ${p => p.theme.ACCENT_COLOR};
   }
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
 `;
 
 const Textarea = styled.textarea`
   width: 100%;
-  padding: 12px;
-  border: 2px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 10px;
+  border: 1px solid ${p => p.theme.BORDER_COLOR};
+  border-radius: 6px;
+  font-size: 13px;
   font-family: inherit;
   background: ${p => p.theme.INPUT_BACKGROUND};
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   resize: vertical;
-  min-height: 80px;
+  min-height: 60px;
   transition: all 0.2s ease;
+  line-height: 1.4;
 
   &:focus {
     outline: none;
     border-color: ${p => p.theme.ACCENT_COLOR};
-    box-shadow: 0 0 0 3px ${p => p.theme.ACCENT_COLOR}22;
+    box-shadow: 0 0 0 2px ${p => p.theme.ACCENT_COLOR}22;
   }
 
   &::placeholder {
@@ -267,100 +315,102 @@ const Textarea = styled.textarea`
     opacity: 0.6;
   }
 
-  @media (max-width: 480px) {
-    font-size: 14px;
-    padding: 10px;
+  @media (max-width: 768px) {
+    font-size: 12px;
+    padding: 8px;
   }
 `;
 
 const CheckboxGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 `;
 
 const CheckboxOption = styled.label`
   display: flex;
   align-items: center;
-  padding: 12px;
+  padding: 10px;
   border: 1px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
   background: ${p => p.checked ? `${p.theme.ACCENT_COLOR}15` : 'transparent'};
+  font-size: 13px;
+  line-height: 1.3;
 
   &:hover {
     background: ${p => p.theme.HOVER_OVERLAY};
   }
 
   input {
-    margin-right: 12px;
+    margin-right: 10px;
     accent-color: ${p => p.theme.ACCENT_COLOR};
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 768px) {
+    padding: 8px;
+    font-size: 12px;
   }
 `;
 
 const NumberSelectContainer = styled.div`
-  margin-top: 12px;
+  margin-top: 8px;
 `;
 
 const NumberSelectInstruction = styled.div`
-  font-size: 12px;
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  margin-bottom: 12px;
+  font-size: 11px;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  margin-bottom: 8px;
 `;
 
 const NumberGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  gap: 6px;
   margin-top: 8px;
 
   @media (max-width: 768px) {
-    grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
-    gap: 6px;
-  }
-
-  @media (max-width: 480px) {
-    grid-template-columns: repeat(5, 1fr);
-    gap: 6px;
+    grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+    gap: 4px;
   }
 `;
 
 const NumberButton = styled.button`
-  padding: 12px;
-  border: 2px solid ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.BORDER_COLOR};
-  border-radius: 8px;
+  padding: 8px 4px;
+  border: 1px solid ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.BORDER_COLOR};
+  border-radius: 6px;
   background: ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.CARD_BACKGROUND};
   color: ${p => p.checked ? '#ffffff' : p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 14px;
-  font-weight: ${p => p.checked ? '700' : '600'};
+  font-size: 13px;
+  font-weight: ${p => p.checked ? '700' : '500'};
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: ${p => p.checked ? `0 2px 8px ${p.theme.ACCENT_COLOR}45` : '0 1px 3px rgba(0,0,0,0.1)'};
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     border-color: ${p => p.theme.ACCENT_COLOR};
-    box-shadow: 0 4px 12px ${p => p.theme.ACCENT_COLOR}60;
+    box-shadow: 0 2px 6px ${p => p.theme.ACCENT_COLOR}40;
   }
 
   &:active {
     transform: translateY(0);
   }
 
-  @media (max-width: 480px) {
-    padding: 10px;
-    font-size: 13px;
+  @media (max-width: 768px) {
+    padding: 6px 3px;
+    font-size: 12px;
   }
 `;
 
 const SelectedNumbers = styled.div`
-  margin-top: 12px;
-  padding: 10px 14px;
+  margin-top: 8px;
+  padding: 8px 10px;
   background: ${p => p.theme.ACCENT_COLOR}15;
   border: 1px solid ${p => p.theme.ACCENT_COLOR}60;
-  border-radius: 8px;
-  font-size: 13px;
+  border-radius: 6px;
+  font-size: 12px;
   color: ${p => p.theme.ACCENT_COLOR};
 
   strong {
@@ -372,22 +422,23 @@ const SelectedNumbers = styled.div`
 const LadderContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 12px;
+  gap: 6px;
+  margin-top: 8px;
 `;
 
 const LadderOption = styled.label`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  border: 2px solid ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.BORDER_COLOR};
-  border-radius: 8px;
+  padding: 10px 12px;
+  border: 1px solid ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.BORDER_COLOR};
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
   background: ${p => p.checked ? p.theme.ACCENT_COLOR : 'transparent'};
   color: ${p => p.checked ? '#FFFFFF' : p.theme.PRIMARY_TEXT_COLOR};
-  font-weight: ${p => p.checked ? '700' : '500'};
+  font-weight: ${p => p.checked ? '600' : '500'};
+  font-size: 13px;
 
   &:hover {
     background: ${p => p.checked ? p.theme.ACCENT_COLOR : `${p.theme.ACCENT_COLOR}15`};
@@ -399,35 +450,46 @@ const LadderOption = styled.label`
   }
 
   span {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
+  }
+
+  @media (max-width: 768px) {
+    padding: 8px 10px;
+    font-size: 12px;
   }
 `;
 
 const PreferNotToSayOption = styled.label`
   display: flex;
   align-items: center;
-  padding: 12px;
-  margin-top: 8px;
+  padding: 10px;
+  margin-top: 6px;
   border: 1px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   background: ${p => p.checked ? `${p.theme.ACCENT_COLOR}15` : 'transparent'};
+  font-size: 13px;
 
   &:hover {
     background: ${p => p.theme.HOVER_OVERLAY};
   }
 
   input {
-    margin-right: 12px;
+    margin-right: 10px;
     accent-color: ${p => p.theme.ACCENT_COLOR};
+  }
+
+  @media (max-width: 768px) {
+    padding: 8px;
+    font-size: 12px;
   }
 `;
 
 const BinaryGroup = styled.div`
   display: flex;
-  gap: 12px;
-  margin-top: 12px;
+  gap: 8px;
+  margin-top: 8px;
 `;
 
 const BinaryOption = styled.label`
@@ -435,15 +497,15 @@ const BinaryOption = styled.label`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 14px;
+  padding: 12px;
   border: 2px solid ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.BORDER_COLOR};
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
   background: ${p => p.checked ? p.theme.ACCENT_COLOR : 'transparent'};
   color: ${p => p.checked ? '#FFFFFF' : p.theme.PRIMARY_TEXT_COLOR};
   font-weight: ${p => p.checked ? '700' : '500'};
-  font-size: 15px;
+  font-size: 14px;
 
   &:hover {
     background: ${p => p.checked ? p.theme.ACCENT_COLOR : `${p.theme.ACCENT_COLOR}15`};
@@ -453,65 +515,66 @@ const BinaryOption = styled.label`
   input {
     display: none;
   }
+
+  @media (max-width: 768px) {
+    padding: 10px;
+    font-size: 13px;
+  }
 `;
 
 const ErrorText = styled.div`
   color: #ff0000;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   text-align: center;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  padding: 12px;
+  padding: 10px;
   background: rgba(255, 0, 0, 0.1);
-  border-radius: 8px;
+  border-radius: 6px;
   border: 1px solid rgba(255, 0, 0, 0.3);
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: 24px;
-  gap: 12px;
+  margin-top: 16px;
+  gap: 10px;
 `;
 
 const ProgressIndicator = styled.div`
   text-align: center;
-  font-size: 12px;
-  color: ${p => p.theme.ACCENT_COLOR};
-  margin-top: 16px;
+  font-size: 11px;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  margin-top: 10px;
 `;
 
-
 // ==========================================
-// DEFINÍCIA STRÁNOK - importuj z predošlého kódu
+// HELPER FUNKCIA - FEEDBACK OTÁZKY
 // ==========================================
 
-// src/data/surveyPages.js
-
-// Helper funkcia na vytvorenie feedback otázok
 const createFeedbackQuestions = (blockId, questionCount) => [
   {
     id: `spatnavazba_${blockId}_oblasti`,
-    text: 'V ktorých oblastiach ste mali problémy? (Môžete vybrať viacero možností)',
+    text: 'V ktorých oblastiach ste mali problémy?',
     type: 'checkbox',
     isFeedback: true,
     required: false,
     options: [
-      { value: 'zrozumitelnost', label: 'Zrozumiteľnosť otázok a tvrdení' },
-      { value: 'jednoznacnost', label: 'Jednoznačnosť otázok a tvrdení' },
-      { value: 'stupnica', label: 'Nevhodnosť hodnoti acej stupnice' },
+      { value: 'zrozumitelnost', label: 'Zrozumiteľnosť' },
+      { value: 'jednoznacnost', label: 'Jednoznačnosť' },
+      { value: 'stupnica', label: 'Nevhodnosť stupnice' },
       { value: 'ine', label: 'Iné problémy' }
     ]
   },
   {
     id: `spatnavazba_${blockId}_zrozumitelnost`,
-    text: 'Ktoré otázky a tvrdenia boli menej zrozumiteľné?',
+    text: 'Ktoré otázky boli menej zrozumiteľné?',
     type: 'number-select',
     isFeedback: true,
     min: 1,
     max: questionCount,
     multiple: true,
-    instruction: 'Vyberte čísla otázok a tvrdení',
+    instruction: 'Vyberte čísla otázok',
     required: false,
     showIf: {
       questionId: `spatnavazba_${blockId}_oblasti`,
@@ -521,13 +584,13 @@ const createFeedbackQuestions = (blockId, questionCount) => [
   },
   {
     id: `spatnavazba_${blockId}_jednoznacnost`,
-    text: 'Ktoré otázky a tvrdenia boli menej jednoznačné (slová, pojmy, formulácia...)?',
+    text: 'Ktoré otázky boli menej jednoznačné?',
     type: 'number-select',
     isFeedback: true,
     min: 1,
     max: questionCount,
     multiple: true,
-    instruction: 'Vyberte čísla otázok a tvrdení',
+    instruction: 'Vyberte čísla otázok',
     required: false,
     showIf: {
       questionId: `spatnavazba_${blockId}_oblasti`,
@@ -537,13 +600,13 @@ const createFeedbackQuestions = (blockId, questionCount) => [
   },
   {
     id: `spatnavazba_${blockId}_stupnica`,
-    text: 'V ktorých otázkach a tvrdeniach ste mali problém vyjadriť svoj skutočný postoj vzhľadom na hodnotiacu stupnicu?',
+    text: 'V ktorých otázkach ste mali problém so stupnicou?',
     type: 'number-select',
     isFeedback: true,
     min: 1,
     max: questionCount,
     multiple: true,
-    instruction: 'Vyberte čísla otázok a tvrdení',
+    instruction: 'Vyberte čísla otázok',
     required: false,
     showIf: {
       questionId: `spatnavazba_${blockId}_oblasti`,
@@ -553,10 +616,10 @@ const createFeedbackQuestions = (blockId, questionCount) => [
   },
   {
     id: `spatnavazba_${blockId}_ine`,
-    text: 'Popíšte iné problémy, ktoré ste mali s otázkami a tvrdeniami v tejto časti:',
+    text: 'Popíšte iné problémy:',
     type: 'textarea',
     isFeedback: true,
-    placeholder: 'Popíšte iné problémy...',
+    placeholder: 'Váš komentár...',
     required: false,
     showIf: {
       questionId: `spatnavazba_${blockId}_oblasti`,
@@ -565,7 +628,6 @@ const createFeedbackQuestions = (blockId, questionCount) => [
     }
   }
 ];
-
 // ==========================================
 // DEFINÍCIA 9 STRÁNOK DOTAZNÍKA
 // ==========================================
