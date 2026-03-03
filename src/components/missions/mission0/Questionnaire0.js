@@ -1,5 +1,5 @@
 // src/components/missions/mission0/Questionnaire0.js
-// ČASŤ 1/3: IMPORTS + ZÁKLADNÉ STYLED COMPONENTS
+// ČASŤ 1/3: IMPORTS + STYLED COMPONENTS
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -110,7 +110,183 @@ const QuestionError = styled.div`
 `;
 
 // ==========================================
-// STYLED COMPONENTS - RADIO & CHECKBOX (Google Forms štýl)
+// STYLED COMPONENTS - ACCORDION LIKERT
+// ==========================================
+
+const AccordionQuestionList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const AccordionQuestionItem = styled.div`
+  border: 2px solid ${p => p.isActive ? p.theme.ACCENT_COLOR : p.isCompleted ? '#4CAF50' : p.theme.BORDER_COLOR};
+  border-radius: 8px;
+  background: ${p => p.theme.CARD_BACKGROUND};
+  transition: all 0.3s ease;
+  
+  ${p => p.isActive && `
+    box-shadow: 0 4px 12px ${p.theme.ACCENT_COLOR}40;
+  `}
+`;
+
+const AccordionQuestionHeader = styled.div`
+  padding: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.2s ease;
+  
+  &:hover {
+    background: ${p => p.theme.HOVER_OVERLAY};
+  }
+`;
+
+const AccordionQuestionTitle = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+`;
+
+const AccordionQuestionNumber = styled.span`
+  font-weight: 700;
+  color: ${p => p.theme.ACCENT_COLOR};
+  font-size: 16px;
+  min-width: 30px;
+`;
+
+const AccordionQuestionText = styled.span`
+  font-size: 14px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  font-weight: 500;
+  line-height: 1.5;
+`;
+
+const AccordionQuestionStatus = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+`;
+
+const CheckIcon = styled.span`
+  color: #4CAF50;
+  font-size: 20px;
+  font-weight: 700;
+`;
+
+const AccordionAnswerPreview = styled.div`
+  font-size: 13px;
+  color: ${p => p.theme.ACCENT_COLOR};
+  font-weight: 600;
+  padding: 4px 12px;
+  background: ${p => p.theme.ACCENT_COLOR}15;
+  border-radius: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+`;
+
+const AccordionScaleContainer = styled.div`
+  padding: 20px 16px 16px 16px;
+  border-top: 1px solid ${p => p.theme.BORDER_COLOR};
+  animation: slideDown 0.3s ease;
+  
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`;
+
+const AccordionScaleButtons = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 16px;
+`;
+
+const AccordionScaleButton = styled.button`
+  flex: 1;
+  padding: 12px 8px;
+  border: 2px solid ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.BORDER_COLOR};
+  border-radius: 8px;
+  background: ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.CARD_BACKGROUND};
+  color: ${p => p.checked ? '#ffffff' : p.theme.PRIMARY_TEXT_COLOR};
+  font-size: 16px;
+  font-weight: ${p => p.checked ? '700' : '600'};
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.HOVER_OVERLAY};
+    border-color: ${p => p.theme.ACCENT_COLOR};
+    transform: translateY(-2px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+`;
+
+const AccordionScaleLabels = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-style: italic;
+  margin-bottom: 16px;
+`;
+
+const AccordionScaleDescriptions = styled.div`
+  background: ${p => p.theme.ACCENT_COLOR}08;
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+`;
+
+const AccordionScaleDescItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: ${p => p.isSelected ? p.theme.ACCENT_COLOR : p.theme.SECONDARY_TEXT_COLOR};
+  font-weight: ${p => p.isSelected ? '600' : '400'};
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: ${p => p.isSelected ? p.theme.ACCENT_COLOR + '20' : 'transparent'};
+  
+  .number {
+    font-weight: 700;
+    min-width: 20px;
+  }
+  
+  .description {
+    flex: 1;
+  }
+  
+  ${p => p.isSelected && `
+    &::before {
+      content: '→';
+      color: ${p.theme.ACCENT_COLOR};
+      font-weight: 700;
+    }
+  `}
+`;
+
+// ==========================================
+// STYLED COMPONENTS - RADIO & CHECKBOX
 // ==========================================
 
 const RadioGroup = styled.div`
@@ -360,10 +536,6 @@ const Textarea = styled.textarea`
     opacity: 0.6;
   }
 `;
-// ==========================================
-// STYLED COMPONENTS - BINARY & LADDER
-// ==========================================
-
 const BinaryGroup = styled.div`
   display: flex;
   flex-direction: column;
@@ -649,6 +821,12 @@ const ProgressIndicator = styled.div`
 `;
 
 // ==========================================
+// KONŠTANTY
+// ==========================================
+
+const COMPONENT_ID = 'questionnaire0';
+
+// ==========================================
 // HELPER FUNKCIA - FEEDBACK OTÁZKY
 // ==========================================
 
@@ -728,8 +906,6 @@ const createFeedbackQuestions = (blockId, questionCount) => [
     }
   }
 ];
-
-
 
 // ==========================================
 // DEFINÍCIA 9 STRÁNOK DOTAZNÍKA
@@ -1122,7 +1298,6 @@ const PAGES = [
 export { PAGES, createFeedbackQuestions };
 
 
-const COMPONENT_ID = 'mission0_questionnaire';
 // ==========================================
 // HLAVNÝ KOMPONENT
 // ==========================================
@@ -1138,6 +1313,7 @@ const Questionnaire0 = () => {
   const [questionErrors, setQuestionErrors] = useState({});
   const [startTime] = useState(Date.now());
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeAccordionId, setActiveAccordionId] = useState(null);
 
   const questionRefs = useRef({});
 
@@ -1157,6 +1333,7 @@ const Questionnaire0 = () => {
   useEffect(() => {
     setQuestionErrors({});
     setError('');
+    setActiveAccordionId(null);
   }, [currentPage]);
 
   // Kontrola podmienok zobrazenia otázky
@@ -1196,7 +1373,6 @@ const Questionnaire0 = () => {
       return newErrors;
     });
     
-    // Auto-save
     await responseManager.saveAnswer(userId, COMPONENT_ID, questionId, value);
   };
 
@@ -1223,13 +1399,40 @@ const Questionnaire0 = () => {
     }
   };
 
+  // Accordion handler
+  const handleAccordionClick = (subQuestionId) => {
+    setActiveAccordionId(activeAccordionId === subQuestionId ? null : subQuestionId);
+  };
+
+  const handleAccordionAnswer = async (accordionQuestions, subQuestionId, scaleValue) => {
+    await handleAnswer(subQuestionId, scaleValue);
+    
+    const currentIndex = accordionQuestions.findIndex(q => q.id === subQuestionId);
+    
+    if (currentIndex < accordionQuestions.length - 1) {
+      setTimeout(() => {
+        const nextQuestion = accordionQuestions[currentIndex + 1];
+        setActiveAccordionId(nextQuestion.id);
+        
+        const nextElement = questionRefs.current[nextQuestion.id];
+        if (nextElement) {
+          nextElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 300);
+    } else {
+      setTimeout(() => {
+        setActiveAccordionId(null);
+      }, 300);
+    }
+  };
+
   // Validácia stránky
   const validatePage = () => {
     const page = PAGES[currentPage];
     const errors = {};
     let hasError = false;
 
-    page.questions.forEach(question => {
+    const validateQuestion = (question) => {
       if (!shouldShowQuestion(question, answers)) return;
       if (!question.required) return;
 
@@ -1243,6 +1446,14 @@ const Questionnaire0 = () => {
       if (question.type === 'checkbox' && (!Array.isArray(answer) || answer.length === 0)) {
         errors[question.id] = 'Vyberte aspoň jednu možnosť';
         hasError = true;
+      }
+    };
+
+    page.questions.forEach(question => {
+      if (question.type === 'accordion-likert' && question.questions) {
+        question.questions.forEach(validateQuestion);
+      } else {
+        validateQuestion(question);
       }
     });
 
@@ -1315,6 +1526,97 @@ const Questionnaire0 = () => {
     const value = answers[question.id];
 
     switch (question.type) {
+      case 'accordion-likert':
+        const accordionQuestions = question.questions || [];
+        
+        return (
+          <AccordionQuestionList>
+            {accordionQuestions.map((subQuestion, index) => {
+              const subValue = answers[subQuestion.id];
+              const isActive = activeAccordionId === subQuestion.id;
+              const isCompleted = subValue !== undefined && subValue !== null;
+              
+              let valueDescription = '';
+              if (isCompleted && subQuestion.scaleValueLabels) {
+                const valueIndex = subQuestion.scale.indexOf(subValue);
+                valueDescription = subQuestion.scaleValueLabels[valueIndex] || '';
+              }
+              
+              return (
+                <AccordionQuestionItem
+                  key={subQuestion.id}
+                  ref={el => (questionRefs.current[subQuestion.id] = el)}
+                  isActive={isActive}
+                  isCompleted={isCompleted}
+                >
+                  <AccordionQuestionHeader
+                    onClick={() => handleAccordionClick(subQuestion.id)}
+                  >
+                    <AccordionQuestionTitle>
+                      <AccordionQuestionNumber>{index + 1}.</AccordionQuestionNumber>
+                      <AccordionQuestionText>{subQuestion.text}</AccordionQuestionText>
+                    </AccordionQuestionTitle>
+                    
+                    <AccordionQuestionStatus>
+                      {isCompleted && (
+                        <>
+                          <CheckIcon>✓</CheckIcon>
+                          <AccordionAnswerPreview>
+                            {subValue} - {valueDescription}
+                          </AccordionAnswerPreview>
+                        </>
+                      )}
+                      {!isCompleted && (
+                        <span style={{ color: '#ff9800', fontSize: '12px' }}>Nevyplnené</span>
+                      )}
+                    </AccordionQuestionStatus>
+                  </AccordionQuestionHeader>
+                  
+                  {isActive && (
+                    <AccordionScaleContainer>
+                      <AccordionScaleButtons>
+                        {subQuestion.scale.map(scaleValue => (
+                          <AccordionScaleButton
+                            key={scaleValue}
+                            type="button"
+                            checked={subValue === scaleValue}
+                            onClick={() => handleAccordionAnswer(accordionQuestions, subQuestion.id, scaleValue)}
+                          >
+                            {scaleValue}
+                          </AccordionScaleButton>
+                        ))}
+                      </AccordionScaleButtons>
+                      
+                      {subQuestion.scaleLabels && (
+                        <AccordionScaleLabels>
+                          <span>{subQuestion.scaleLabels.min}</span>
+                          <span>{subQuestion.scaleLabels.max}</span>
+                        </AccordionScaleLabels>
+                      )}
+                      
+                      {subQuestion.scaleValueLabels && (
+                        <AccordionScaleDescriptions>
+                          {subQuestion.scale.map((scaleValue, idx) => (
+                            <AccordionScaleDescItem
+                              key={scaleValue}
+                              isSelected={subValue === scaleValue}
+                            >
+                              <span className="number">{scaleValue}:</span>
+                              <span className="description">
+                                {subQuestion.scaleValueLabels[idx]}
+                              </span>
+                            </AccordionScaleDescItem>
+                          ))}
+                        </AccordionScaleDescriptions>
+                      )}
+                    </AccordionScaleContainer>
+                  )}
+                </AccordionQuestionItem>
+              );
+            })}
+          </AccordionQuestionList>
+        );
+
       case 'radio':
         return (
           <RadioGroup>
@@ -1511,6 +1813,13 @@ const Questionnaire0 = () => {
 
   const renderQuestion = (question, index) => {
     if (!shouldShowQuestion(question, answers)) return null;
+    if (question.type === 'accordion-likert') {
+      return (
+        <div key={question.id}>
+          {renderQuestionInput(question)}
+        </div>
+      );
+    }
 
     const hasError = questionErrors[question.id];
     const isFeedback = question.isFeedback;
@@ -1594,7 +1903,7 @@ const Questionnaire0 = () => {
           </ButtonContainer>
 
           <ProgressIndicator>
-            Vyplnené: {Object.keys(answers).length} / {mainQuestions.length + feedbackQuestions.filter(q => shouldShowQuestion(q, answers)).length}
+            Dokončených strán: {currentPage} / {PAGES.length}
           </ProgressIndicator>
         </Card>
       </Container>
