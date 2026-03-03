@@ -46,16 +46,6 @@ const Subtitle = styled.h3`
   opacity: 0.7;
 `;
 
-const Instruction = styled.div`
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 15px;
-  margin-bottom: 20px;
-  padding: 12px;
-  background: ${p => p.theme.ACCENT_COLOR}10;
-  border-radius: 6px;
-  line-height: 1.5;
-  text-align: center;
-`;
 
 const ProgressBar = styled.div`
   width: 100%;
@@ -2101,27 +2091,29 @@ const Questionnaire0 = () => {
   const mainQuestions = page.questions.filter(q => !q.isFeedback);
   const feedbackQuestions = page.questions.filter(q => q.isFeedback);
 
-  return (
-    <Layout>
-      <Container>
-        <DetectiveTipSmall
-          message="Vyplňte tento dotazník pozorne. Vaše odpovede sú dôležité pre výskum."
-          emoji="📋"
-        />
+ return (
+  <Layout>
+    <Container>
+      <Card>
+        <ProgressText>
+          Strana {currentPage + 1} z {PAGES.length}
+        </ProgressText>
+        <ProgressBar>
+          <ProgressFill progress={progress} />
+        </ProgressBar>
 
-        <Card>
-          <ProgressText>
-            Strana {currentPage + 1} z {PAGES.length}
-          </ProgressText>
-          <ProgressBar>
-            <ProgressFill progress={progress} />
-          </ProgressBar>
+        {page.title && <Title>{page.title}</Title>}
+        {page.subtitle && <Subtitle>{page.subtitle}</Subtitle>}
+        
+        {page.instruction && (
+          <DetectiveTipSmall
+            message={page.instruction}
+            emoji="📋"
+          />
+        )}
 
-          {page.title && <Title>{page.title}</Title>}
-          {page.subtitle && <Subtitle>{page.subtitle}</Subtitle>}
-          {page.instruction && <Instruction>{page.instruction}</Instruction>}
+        {error && <ErrorText>{error}</ErrorText>}
 
-          {error && <ErrorText>{error}</ErrorText>}
 
           {mainQuestions.map((question, index) => renderQuestion(question, index))}
 
