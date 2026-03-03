@@ -1584,48 +1584,52 @@ const Questionnaire0 = () => {
       await handleAnswer(questionId, number);
     }
   };
-
   // Accordion handler
   const handleAccordionClick = (subQuestionId) => {
     setActiveAccordionId(activeAccordionId === subQuestionId ? null : subQuestionId);
   };
 
+  // Accordion handler
   const handleAccordionAnswer = async (accordionQuestions, subQuestionId, scaleValue) => {
-  await handleAnswer(subQuestionId, scaleValue);
-  
-  // Vymaž error pre túto otázku
-  setQuestionErrors(prev => {
-    const newErrors = { ...prev };
-    delete newErrors[subQuestionId];
-    return newErrors;
-  });
-  
-  const currentIndex = accordionQuestions.findIndex(q => q.id === subQuestionId);
-  
-  if (currentIndex < accordionQuestions.length - 1) {
-    setTimeout(() => {
-      const nextQuestion = accordionQuestions[currentIndex + 1];
-      setActiveAccordionId(nextQuestion.id);
-      
-      const nextElement = questionRefs.current[nextQuestion.id];
-      if (nextElement) {
-        // Scroll s lepším offsetom
-        const offset = 120; // väčší offset pre lepšiu viditeľnosť
-        const elementPosition = nextElement.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - offset;
+    await handleAnswer(subQuestionId, scaleValue);
+    
+    setQuestionErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors[subQuestionId];
+      return newErrors;
+    });
+    
+    const currentIndex = accordionQuestions.findIndex(q => q.id === subQuestionId);
+    
+    if (currentIndex < accordionQuestions.length - 1) {
+      setTimeout(() => {
+        const nextQuestion = accordionQuestions[currentIndex + 1];
+        setActiveAccordionId(nextQuestion.id);
+        
+        const nextElement = questionRefs.current[nextQuestion.id];
+        if (nextElement) {
+          // ✅ OPRAVENÉ: väčší offset + centrovaný scroll
+          const isMobile = window.innerWidth <= 768;
+          const offset = isMobile ? 80 : 150; // väčší offset pre desktop
+          
+          setTimeout(() => {
+            const elementPosition = nextElement.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - offset;
 
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
-      }
-    }, 300);
-  } else {
-    setTimeout(() => {
-      setActiveAccordionId(null);
-    }, 300);
-  }
-};
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+          }, 100); // kratší delay pre plynulejší UX
+        }
+      }, 300);
+    } else {
+      setTimeout(() => {
+        setActiveAccordionId(null);
+      }, 300);
+    }
+  };
+
 
   // Validácia stránky
   const validatePage = () => {
@@ -1675,18 +1679,23 @@ const Questionnaire0 = () => {
       setError('Prosím vyplňte všetky povinné otázky.');
       const firstErrorId = Object.keys(errors)[0];
       if (firstErrorId && questionRefs.current[firstErrorId]) {
-        // Scroll s offsetom aby bola otázka viditeľná
+        // ✅ OPRAVENÉ: väčší offset pre chybové otázky
         const element = questionRefs.current[firstErrorId];
-        const offset = 100; // px od vrchu
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - offset;
+        const isMobile = window.innerWidth <= 768;
+        const offset = isMobile ? 100 : 180; // väčší offset pre desktop
+        
+        setTimeout(() => {
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - offset;
 
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }, 100);
       }
     }
+
 
     return !hasError;
   };
