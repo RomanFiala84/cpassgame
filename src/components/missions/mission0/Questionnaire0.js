@@ -79,7 +79,25 @@ const Question = styled.p`
   font-size: 15px;
   font-weight: 500;
   line-height: 1.5;
+  
+  /* ✅ PRIDANÉ: Markdown styling */
+  p {
+    margin: 0;
+    display: inline;
+  }
+  
+  strong {
+    font-weight: 700;
+    color: ${p => p.theme.ACCENT_COLOR};
+  }
+  
+  br {
+    display: block;
+    content: "";
+    margin: 8px 0;
+  }
 `;
+
 
 const QuestionError = styled.div`
   color:${p => p.theme.ERROR_COLOR}; ;
@@ -126,7 +144,25 @@ const AccordionQuestionText = styled.span`
   font-size: 15px;
   line-height: 1.5;
   font-weight: ${p => p.hasError ? '600' : '500'};
+  
+  /* ✅ PRIDANÉ: Markdown styling */
+  p {
+    margin: 0;
+    display: inline;
+  }
+  
+  strong {
+    font-weight: 700;
+    color: ${p => p.theme.ACCENT_COLOR};
+  }
+  
+  br {
+    display: block;
+    content: "";
+    margin: 8px 0;
+  }
 `;
+
 
 const AccordionQuestionHeader = styled.div`
   padding: 16px;
@@ -274,6 +310,27 @@ const AccordionScaleDescItem = styled.div`
       font-weight: 700;
     }
   `}
+`;
+const ComparisonQuestionBox = styled.div`
+  background: ${p => p.theme.SURFACE_COLOR};
+  border: 2px solid ${p => p.theme.BORDER_COLOR};
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  
+  strong {
+    display: block;
+    color: ${p => p.theme.ACCENT_COLOR};
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  
+  p {
+    margin: 8px 0;
+    line-height: 1.6;
+    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  }
 `;
 
 // ==========================================
@@ -1775,9 +1832,14 @@ const Questionnaire0 = () => {
                   <AccordionQuestionTitle>
                     <AccordionQuestionNumber>{index + 1}.</AccordionQuestionNumber>
                     <AccordionQuestionText hasError={hasError}>
-                      {subQuestion.text}
+                      {subQuestion.text.includes('**') || subQuestion.text.includes('\\n') ? (
+                        <ReactMarkdown>{subQuestion.text}</ReactMarkdown>
+                      ) : (
+                        subQuestion.text
+                      )}
                     </AccordionQuestionText>
                   </AccordionQuestionTitle>
+
                   
                   <AccordionQuestionStatus>
                     {isCompleted && !hasError && (
@@ -1804,6 +1866,11 @@ const Questionnaire0 = () => {
                 {isActive && (
                   <AccordionScaleContainer>
                     <AccordionScaleButtons>
+                      {subQuestion.text.includes('**Tvrdenie A:**') && (
+                        <ComparisonQuestionBox>
+                          <ReactMarkdown>{subQuestion.text}</ReactMarkdown>
+                        </ComparisonQuestionBox>
+                      )}
                       {subQuestion.scale.map(scaleValue => (
                         <AccordionScaleButton
                           key={scaleValue}
