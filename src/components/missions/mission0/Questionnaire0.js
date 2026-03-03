@@ -1875,16 +1875,23 @@ const Questionnaire0 = () => {
                 <input
                   type="radio"
                   name={question.id}
-                  value="other"
+                  value="__other__"
                   checked={value && !question.options.find(o => o.value === value)}
-                  onChange={() => handleAnswer(question.id, '')}
+                  onChange={() => {
+                    handleAnswer(question.id, '');
+                    // Focus na input automaticky
+                  }}
                 />
                 <span>{question.otherLabel || 'Iné (prosím špecifikujte)'}</span>
               </RadioOption>
               
               {/* Input zobrazený len ak je "Iné" vybrané */}
               {value && !question.options.find(o => o.value === value) && (
-                <div style={{ marginTop: '8px', paddingLeft: '36px' }}>
+                <div style={{ 
+                  marginTop: '8px', 
+                  paddingLeft: '36px',
+                  width: 'calc(100% - 36px)' 
+                }}>
                   <Input
                     type="text"
                     placeholder="Zadajte text..."
@@ -1896,6 +1903,7 @@ const Questionnaire0 = () => {
               )}
             </>
           )}
+
         </RadioGroup>
       );
 
