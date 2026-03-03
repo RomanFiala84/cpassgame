@@ -601,7 +601,7 @@ const LadderContainer = styled.div`
 const LadderOption = styled.label`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 12px 14px;
   cursor: pointer;
   transition: background 0.2s ease;
@@ -648,7 +648,7 @@ const LadderOption = styled.label`
   .ladder-content {
     display: flex;
     align-items: center;
-    flex: 1;
+    flex: 0;
     color: ${p => p.theme.PRIMARY_TEXT_COLOR};
     font-size: 15px;
   }
@@ -657,7 +657,7 @@ const LadderOption = styled.label`
     font-size: 15px;
     font-weight: 700;
     color: ${p => p.theme.ACCENT_COLOR};
-    margin-left: auto;
+    margin-left: 0;
   }
 `;
 
@@ -1941,42 +1941,52 @@ const Questionnaire0 = () => {
         );
 
       case 'ladder':
-        return (
-          <>
-            <LadderContainer>
-              {question.scale.map(scaleValue => (
-                <LadderOption key={scaleValue}>
-                  <input
-                    type="radio"
-                    name={question.id}
-                    value={scaleValue}
-                    checked={value === scaleValue}
-                    onChange={() => handleAnswer(question.id, scaleValue)}
-                  />
-                  <div className="ladder-content">
-                    <span className="ladder-number">{scaleValue}</span>
-                  </div>
-                </LadderOption>
-              ))}
-            </LadderContainer>
-            {question.hasPreferNotToSay && (
-              <PreferNotToSayOption>
+      return (
+        <>
+          {/* ✅ PRIDAJ LABEL HORE */}
+          {question.scaleLabels && (
+            <ScaleLabels style={{ marginBottom: '8px' }}>
+              <span>{question.scaleLabels.max}</span>
+            </ScaleLabels>
+          )}
+          
+          <LadderContainer>
+            {question.scale.map(scaleValue => (
+              <LadderOption key={scaleValue}>
                 <input
-                  type="checkbox"
-                  checked={value === 'prefer_not_to_say'}
-                  onChange={() => handleAnswer(question.id, 'prefer_not_to_say')}
+                  type="radio"
+                  name={question.id}
+                  value={scaleValue}
+                  checked={value === scaleValue}
+                  onChange={() => handleAnswer(question.id, scaleValue)}
                 />
-                <span>Preferujem neuvádzať</span>
-              </PreferNotToSayOption>
-            )}
-            {question.scaleLabels && (
-              <ScaleLabels style={{ marginTop: '12px' }}>
-                <span>{question.scaleLabels.min}</span>
-                <span>{question.scaleLabels.max}</span>
-              </ScaleLabels>
-            )}
-          </>
-        );
+                <div className="ladder-content">
+                  <span className="ladder-number">{scaleValue}</span>
+                </div>
+              </LadderOption>
+            ))}
+          </LadderContainer>
+          
+          {/* ✅ LABEL DOLE */}
+          {question.scaleLabels && (
+            <ScaleLabels style={{ marginTop: '8px' }}>
+              <span>{question.scaleLabels.min}</span>
+            </ScaleLabels>
+          )}
+          
+          {question.hasPreferNotToSay && (
+            <PreferNotToSayOption>
+              <input
+                type="checkbox"
+                checked={value === 'prefer_not_to_say'}
+                onChange={() => handleAnswer(question.id, 'prefer_not_to_say')}
+              />
+              <span>Preferujem neuvádzať</span>
+            </PreferNotToSayOption>
+          )}
+        </>
+      );
+
 
       case 'binary':
         return (
