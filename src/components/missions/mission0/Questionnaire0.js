@@ -15,16 +15,36 @@ import ReactMarkdown from 'react-markdown';
 // STYLED COMPONENTS - LAYOUT
 // ==========================================
 
+const MobileWrapper = styled.div`
+  @media (max-width: 768px) {
+    * {
+      font-size: 10px !important;
+      line-height: 1.5 !important;
+    }
+    
+    input[type="radio"],
+    input[type="checkbox"] {
+      width: 12px !important;
+      height: 12px !important;
+    }
+    
+    button {
+      font-size: 10px !important;
+    }
+  }
+`;
+
 const Container = styled.div`
   padding: 20px;
-  max-width: 800px;  /* zväčšené z 600px */
+  max-width: 1000px;  /* ✅ ZVÄČŠENÉ z 800px */
   margin: 0 auto;
   
   @media (max-width: 768px) {
     max-width: 100%;
-    padding: 16px;
+    padding: 12px;  /* ✅ ZMENŠENÉ z 16px pre viac priestoru */
   }
 `;
+
 
 
 const Card = styled.div`
@@ -33,7 +53,13 @@ const Card = styled.div`
   border-radius: 8px;
   padding: 24px;
   margin-bottom: 20px;
+  
+  @media (max-width: 768px) {
+    padding: 16px;  /* ✅ ZMENŠENÉ z 24px */
+    border-radius: 6px;
+  }
 `;
+
 
 const ProgressBar = styled.div`
   width: 100%;
@@ -63,7 +89,7 @@ const QuestionCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
   border: 1px solid ${p => p.hasError ? '#ff0000' : p.theme.BORDER_COLOR};
   border-radius: 8px;
-  padding: 16px;
+  padding: 16px;  /* ✅ OK */
   margin-bottom: 16px;
   scroll-margin-top: 20px;
   transition: all 0.2s ease;
@@ -71,7 +97,13 @@ const QuestionCard = styled.div`
   ${p => p.hasError && `
     box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
   `}
+  
+  @media (max-width: 768px) {
+    padding: 12px;  /* ✅ ZMENŠENÉ z 16px */
+    margin-bottom: 12px;
+  }
 `;
+
 
 const Question = styled.p`
   margin-bottom: 12px;
@@ -175,7 +207,12 @@ const AccordionQuestionHeader = styled.div`
   &:hover {
     background: ${p => p.theme.HOVER_OVERLAY};
   }
+  
+  @media (max-width: 768px) {
+    padding: 12px;  /* ✅ PRIDANÉ */
+  }
 `;
+
 
 const AccordionQuestionTitle = styled.div`
   display: flex;
@@ -233,7 +270,12 @@ const AccordionScaleContainer = styled.div`
       transform: translateY(0);
     }
   }
+  
+  @media (max-width: 768px) {
+    padding: 16px 12px 12px 12px;  /* ✅ PRIDANÉ */
+  }
 `;
+
 
 const AccordionScaleButtons = styled.div`
   display: flex;
@@ -2192,60 +2234,62 @@ const Questionnaire0 = () => {
 
  return (
   <Layout>
-    <Container>
-      <Card>
-        <ProgressText>
-          Strana {currentPage + 1} z {PAGES.length}
-        </ProgressText>
-        <ProgressBar>
-          <ProgressFill progress={progress} />
-        </ProgressBar>
+      <MobileWrapper>
+      <Container>
+        <Card>
+          <ProgressText>
+            Strana {currentPage + 1} z {PAGES.length}
+          </ProgressText>
+          <ProgressBar>
+            <ProgressFill progress={progress} />
+          </ProgressBar>
 
-        
-        {page.instruction && (
-          <DetectiveTipSmall
-            tip={page.instruction}  // ← SPRÁVNY PROP
-            detectiveName="Inšpektor Kritan"
-          />
-        )}
-
-        {error && <ErrorText>{error}</ErrorText>}
-
-
-          {mainQuestions.map((question, index) => renderQuestion(question, index))}
-
-          {feedbackQuestions.length > 0 && (
-            <FeedbackSection>
-              <FeedbackTitle>Spätná väzba</FeedbackTitle>
-              <FeedbackSubtitle>
-                Pomôžte nám zlepšiť túto sekciu dotazníka (nepovinné)
-              </FeedbackSubtitle>
-              {feedbackQuestions.map((question) => renderQuestion(question, -1))}
-            </FeedbackSection>
+          
+          {page.instruction && (
+            <DetectiveTipSmall
+              tip={page.instruction}  // ← SPRÁVNY PROP
+              detectiveName="Inšpektor Kritan"
+            />
           )}
 
-          <ButtonContainer>
-            <StyledButton
-              onClick={handleBack}
-              disabled={currentPage === 0}
-              variant="secondary"
-            >
-              ← Späť
-            </StyledButton>
-            <StyledButton
-              onClick={handleNext}
-              disabled={isSubmitting}
-              accent
-            >
-              {isSubmitting ? 'Ukladám...' : (currentPage < PAGES.length - 1 ? 'Ďalej →' : 'Odoslať')}
-            </StyledButton>
-          </ButtonContainer>
+          {error && <ErrorText>{error}</ErrorText>}
 
-          <ProgressIndicator>
-            Dokončených strán: {currentPage} / {PAGES.length}
-          </ProgressIndicator>
-        </Card>
-      </Container>
+
+            {mainQuestions.map((question, index) => renderQuestion(question, index))}
+
+            {feedbackQuestions.length > 0 && (
+              <FeedbackSection>
+                <FeedbackTitle>Spätná väzba</FeedbackTitle>
+                <FeedbackSubtitle>
+                  Pomôžte nám zlepšiť túto sekciu dotazníka (nepovinné)
+                </FeedbackSubtitle>
+                {feedbackQuestions.map((question) => renderQuestion(question, -1))}
+              </FeedbackSection>
+            )}
+
+            <ButtonContainer>
+              <StyledButton
+                onClick={handleBack}
+                disabled={currentPage === 0}
+                variant="secondary"
+              >
+                ← Späť
+              </StyledButton>
+              <StyledButton
+                onClick={handleNext}
+                disabled={isSubmitting}
+                accent
+              >
+                {isSubmitting ? 'Ukladám...' : (currentPage < PAGES.length - 1 ? 'Ďalej →' : 'Odoslať')}
+              </StyledButton>
+            </ButtonContainer>
+
+            <ProgressIndicator>
+              Dokončených strán: {currentPage} / {PAGES.length}
+            </ProgressIndicator>
+          </Card>
+        </Container>
+      </MobileWrapper>
     </Layout>
   );
 };
