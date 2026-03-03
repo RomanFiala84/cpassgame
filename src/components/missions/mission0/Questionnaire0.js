@@ -1941,62 +1941,69 @@ const Questionnaire0 = () => {
                 
                 {isActive && (
                   <AccordionScaleContainer>
-                    {/* ✅ BOX pre porovnávacie otázky */}
-                    {subQuestion.text.includes('Tvrdenie A') && (
-                      <div style={{
-                        background: 'var(--surface-color)',
-                        border: '1px solid var(--border-color)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                        marginBottom: '16px',
-                        fontSize: '13px',
-                        lineHeight: '1.6'
-                      }}>
-                        <div dangerouslySetInnerHTML={{ 
-                          __html: parseMarkdown(subQuestion.text) 
-                        }} />
-                      </div>
-                    )}
-                    
-                    <AccordionScaleButtons>
-                      {subQuestion.text.includes('**Tvrdenie A:**') && (
+                    {/* ✅ RENDERUJ BOX iba raz, VŠE v ňom */}
+                    {subQuestion.text.includes('**Tvrdenie A:**') ? (
+                      <>
+                        {/* Box s textom */}
                         <ComparisonQuestionBox>
-                          <ReactMarkdown>{subQuestion.text}</ReactMarkdown>
+                          <div dangerouslySetInnerHTML={{ 
+                            __html: parseMarkdown(subQuestion.text) 
+                          }} />
                         </ComparisonQuestionBox>
-                      )}
-                      {subQuestion.scale.map(scaleValue => (
-                        <AccordionScaleButton
-                          key={scaleValue}
-                          type="button"
-                          checked={subValue === scaleValue}
-                          onClick={() => handleAccordionAnswer(accordionQuestions, subQuestion.id, scaleValue)}
-                        >
-                          {scaleValue}
-                        </AccordionScaleButton>
-                      ))}
-                    </AccordionScaleButtons>
-                    
-                    {subQuestion.scaleLabels && (
-                      <AccordionScaleLabels>
-                        <span>{subQuestion.scaleLabels.min}</span>
-                        <span>{subQuestion.scaleLabels.max}</span>
-                      </AccordionScaleLabels>
-                    )}
-                    
-                    {subQuestion.scaleValueLabels && (
-                      <AccordionScaleDescriptions>
-                        {subQuestion.scale.map((scaleValue, idx) => (
-                          <AccordionScaleDescItem
-                            key={scaleValue}
-                            isSelected={subValue === scaleValue}
-                          >
-                            <span className="number">{scaleValue}:</span>
-                            <span className="description">
-                              {subQuestion.scaleValueLabels[idx]}
-                            </span>
-                          </AccordionScaleDescItem>
-                        ))}
-                      </AccordionScaleDescriptions>
+                        
+                        {/* Scale buttons */}
+                        <AccordionScaleButtons>
+                          {subQuestion.scale.map(scaleValue => (
+                            <AccordionScaleButton
+                              key={scaleValue}
+                              type="button"
+                              checked={subValue === scaleValue}
+                              onClick={() => handleAccordionAnswer(accordionQuestions, subQuestion.id, scaleValue)}
+                            >
+                              {scaleValue}
+                            </AccordionScaleButton>
+                          ))}
+                        </AccordionScaleButtons>
+                      </>
+                    ) : (
+                      <>
+                        {/* Normálne accordion otázky */}
+                        <AccordionScaleButtons>
+                          {subQuestion.scale.map(scaleValue => (
+                            <AccordionScaleButton
+                              key={scaleValue}
+                              type="button"
+                              checked={subValue === scaleValue}
+                              onClick={() => handleAccordionAnswer(accordionQuestions, subQuestion.id, scaleValue)}
+                            >
+                              {scaleValue}
+                            </AccordionScaleButton>
+                          ))}
+                        </AccordionScaleButtons>
+                        
+                        {subQuestion.scaleLabels && (
+                          <AccordionScaleLabels>
+                            <span>{subQuestion.scaleLabels.min}</span>
+                            <span>{subQuestion.scaleLabels.max}</span>
+                          </AccordionScaleLabels>
+                        )}
+                        
+                        {subQuestion.scaleValueLabels && (
+                          <AccordionScaleDescriptions>
+                            {subQuestion.scale.map((scaleValue, idx) => (
+                              <AccordionScaleDescItem
+                                key={scaleValue}
+                                isSelected={subValue === scaleValue}
+                              >
+                                <span className="number">{scaleValue}:</span>
+                                <span className="description">
+                                  {subQuestion.scaleValueLabels[idx]}
+                                </span>
+                              </AccordionScaleDescItem>
+                            ))}
+                          </AccordionScaleDescriptions>
+                        )}
+                      </>
                     )}
                   </AccordionScaleContainer>
                 )}
