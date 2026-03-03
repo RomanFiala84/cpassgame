@@ -1,3 +1,6 @@
+// src/components/missions/mission0/Questionnaire0.js
+// ČASŤ 1/3: IMPORTS + ZÁKLADNÉ STYLED COMPONENTS
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -8,7 +11,7 @@ import { useUserStats } from '../../../contexts/UserStatsContext';
 import { getResponseManager } from '../../../utils/ResponseManager';
 
 // ==========================================
-// STYLED COMPONENTS - ŠTÝL AKO Questionnaire2A
+// STYLED COMPONENTS - LAYOUT
 // ==========================================
 
 const Container = styled.div`
@@ -106,11 +109,139 @@ const QuestionError = styled.div`
   font-weight: 500;
 `;
 
+// ==========================================
+// STYLED COMPONENTS - RADIO & CHECKBOX (Google Forms štýl)
+// ==========================================
+
+const RadioGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+`;
+
+const RadioOption = styled.label`
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  background: transparent;
+  border-radius: 4px;
+  
+  &:hover {
+    background: ${p => p.theme.HOVER_OVERLAY};
+  }
+  
+  input[type="radio"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid ${p => p.theme.BORDER_COLOR};
+    border-radius: 50%;
+    margin-right: 16px;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    
+    &:checked {
+      border-color: ${p => p.theme.ACCENT_COLOR};
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: ${p => p.theme.ACCENT_COLOR};
+      }
+    }
+    
+    &:hover {
+      border-color: ${p => p.theme.ACCENT_COLOR};
+    }
+  }
+  
+  span {
+    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+    font-size: 14px;
+    line-height: 1.5;
+  }
+`;
+
+const CheckboxGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+`;
+
+const CheckboxOption = styled.label`
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  background: transparent;
+  border-radius: 4px;
+  
+  &:hover {
+    background: ${p => p.theme.HOVER_OVERLAY};
+  }
+  
+  input[type="checkbox"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid ${p => p.theme.BORDER_COLOR};
+    border-radius: 2px;
+    margin-right: 16px;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    
+    &:checked {
+      background: ${p => p.theme.ACCENT_COLOR};
+      border-color: ${p => p.theme.ACCENT_COLOR};
+      
+      &::after {
+        content: '';
+        position: absolute;
+        left: 6px;
+        top: 2px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+    }
+    
+    &:hover {
+      border-color: ${p => p.theme.ACCENT_COLOR};
+    }
+  }
+  
+  span {
+    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+    font-size: 14px;
+    line-height: 1.5;
+  }
+`;
+
+// ==========================================
+// STYLED COMPONENTS - LIKERT SCALE
+// ==========================================
+
 const ScaleContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
+  margin: 16px 0;
 `;
 
 const ScaleButtonWrapper = styled.div`
@@ -118,40 +249,64 @@ const ScaleButtonWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 `;
 
-const RadioLabel = styled.label`
-  width: 100%;
+const ScaleRadioLabel = styled.label`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px 8px;
-  border: 1px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  background: ${p => p.checked ? p.theme.ACCENT_COLOR : 'transparent'};
-  color: ${p => p.checked ? '#FFFFFF' : p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 14px;
-  font-weight: 600;
   
-  &:hover {
-    background: ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.HOVER_OVERLAY};
+  input[type="radio"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid ${p => p.theme.BORDER_COLOR};
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+    margin-bottom: 4px;
+    
+    &:checked {
+      border-color: ${p => p.theme.ACCENT_COLOR};
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: ${p => p.theme.ACCENT_COLOR};
+      }
+    }
+    
+    &:hover {
+      border-color: ${p => p.theme.ACCENT_COLOR};
+      background: ${p => p.theme.ACCENT_COLOR}10;
+    }
   }
   
-  input {
-    display: none;
+  .scale-number {
+    font-size: 13px;
+    font-weight: 600;
+    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+    margin-bottom: 4px;
   }
 `;
 
 const ScaleValueLabel = styled.span`
-  font-size: 11px;
+  font-size: 10px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   text-align: center;
   line-height: 1.3;
   word-break: break-word;
   hyphens: auto;
+  max-width: 100%;
 `;
 
 const ScaleLabels = styled.div`
@@ -160,62 +315,12 @@ const ScaleLabels = styled.div`
   margin-top: 8px;
   font-size: 12px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-style: italic;
 `;
 
-const RadioGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const RadioOption = styled.label`
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  border: 1px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background: ${p => p.checked ? p.theme.ACCENT_COLOR : 'transparent'};
-  color: ${p => p.checked ? '#FFFFFF' : p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 14px;
-  
-  &:hover {
-    background: ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.HOVER_OVERLAY};
-  }
-  
-  input {
-    margin-right: 12px;
-    accent-color: ${p => p.theme.ACCENT_COLOR};
-  }
-`;
-
-const CheckboxGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const CheckboxOption = styled.label`
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  border: 1px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background: ${p => p.checked ? `${p.theme.ACCENT_COLOR}20` : 'transparent'};
-  font-size: 14px;
-  
-  &:hover {
-    background: ${p => p.theme.HOVER_OVERLAY};
-  }
-  
-  input {
-    margin-right: 12px;
-    accent-color: ${p => p.theme.ACCENT_COLOR};
-  }
-`;
+// ==========================================
+// STYLED COMPONENTS - TEXT INPUTS
+// ==========================================
 
 const Input = styled.input`
   width: 100%;
@@ -255,6 +360,195 @@ const Textarea = styled.textarea`
     opacity: 0.6;
   }
 `;
+// ==========================================
+// STYLED COMPONENTS - BINARY & LADDER
+// ==========================================
+
+const BinaryGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+`;
+
+const BinaryOption = styled.label`
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  background: transparent;
+  border-radius: 4px;
+  
+  &:hover {
+    background: ${p => p.theme.HOVER_OVERLAY};
+  }
+  
+  input[type="radio"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid ${p => p.theme.BORDER_COLOR};
+    border-radius: 50%;
+    margin-right: 16px;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    
+    &:checked {
+      border-color: ${p => p.theme.ACCENT_COLOR};
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: ${p => p.theme.ACCENT_COLOR};
+      }
+    }
+    
+    &:hover {
+      border-color: ${p => p.theme.ACCENT_COLOR};
+    }
+  }
+  
+  span {
+    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+    font-size: 14px;
+    font-weight: 500;
+  }
+`;
+
+const LadderContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+`;
+
+const LadderOption = styled.label`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  background: transparent;
+  border-radius: 4px;
+  
+  &:hover {
+    background: ${p => p.theme.HOVER_OVERLAY};
+  }
+  
+  input[type="radio"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid ${p => p.theme.BORDER_COLOR};
+    border-radius: 50%;
+    margin-right: 16px;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    
+    &:checked {
+      border-color: ${p => p.theme.ACCENT_COLOR};
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: ${p => p.theme.ACCENT_COLOR};
+      }
+    }
+    
+    &:hover {
+      border-color: ${p => p.theme.ACCENT_COLOR};
+    }
+  }
+  
+  .ladder-content {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+  
+  .ladder-number {
+    font-size: 16px;
+    font-weight: 700;
+    color: ${p => p.theme.ACCENT_COLOR};
+    margin-left: auto;
+  }
+`;
+
+const PreferNotToSayOption = styled.label`
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  background: transparent;
+  border-radius: 4px;
+  border-top: 1px solid ${p => p.theme.BORDER_COLOR};
+  
+  &:hover {
+    background: ${p => p.theme.HOVER_OVERLAY};
+  }
+  
+  input[type="checkbox"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid ${p => p.theme.BORDER_COLOR};
+    border-radius: 2px;
+    margin-right: 16px;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    
+    &:checked {
+      background: ${p => p.theme.ACCENT_COLOR};
+      border-color: ${p => p.theme.ACCENT_COLOR};
+      
+      &::after {
+        content: '';
+        position: absolute;
+        left: 6px;
+        top: 2px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+    }
+    
+    &:hover {
+      border-color: ${p => p.theme.ACCENT_COLOR};
+    }
+  }
+  
+  span {
+    color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+    font-size: 14px;
+    font-style: italic;
+  }
+`;
+
+// ==========================================
+// STYLED COMPONENTS - NUMBER SELECT
+// ==========================================
 
 const NumberSelectContainer = styled.div`
   margin-top: 12px;
@@ -274,8 +568,8 @@ const NumberGrid = styled.div`
 
 const NumberButton = styled.button`
   padding: 10px;
-  border: 1px solid ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.BORDER_COLOR};
-  border-radius: 8px;
+  border: 2px solid ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.BORDER_COLOR};
+  border-radius: 6px;
   background: ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.CARD_BACKGROUND};
   color: ${p => p.checked ? '#ffffff' : p.theme.PRIMARY_TEXT_COLOR};
   font-size: 14px;
@@ -299,88 +593,9 @@ const SelectedNumbers = styled.div`
   color: ${p => p.theme.ACCENT_COLOR};
 `;
 
-const LadderContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const LadderOption = styled.label`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  border: 1px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background: ${p => p.checked ? p.theme.ACCENT_COLOR : 'transparent'};
-  color: ${p => p.checked ? '#FFFFFF' : p.theme.PRIMARY_TEXT_COLOR};
-  font-weight: ${p => p.checked ? '600' : '500'};
-  
-  &:hover {
-    background: ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.HOVER_OVERLAY};
-  }
-  
-  input {
-    display: none;
-  }
-  
-  span {
-    font-size: 16px;
-    font-weight: 700;
-  }
-`;
-
-const PreferNotToSayOption = styled.label`
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  margin-top: 8px;
-  border: 1px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 8px;
-  cursor: pointer;
-  background: ${p => p.checked ? `${p.theme.ACCENT_COLOR}20` : 'transparent'};
-  font-size: 14px;
-  
-  &:hover {
-    background: ${p => p.theme.HOVER_OVERLAY};
-  }
-  
-  input {
-    margin-right: 12px;
-    accent-color: ${p => p.theme.ACCENT_COLOR};
-  }
-`;
-
-const BinaryGroup = styled.div`
-  display: flex;
-  gap: 12px;
-`;
-
-const BinaryOption = styled.label`
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 14px;
-  border: 2px solid ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.BORDER_COLOR};
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background: ${p => p.checked ? p.theme.ACCENT_COLOR : 'transparent'};
-  color: ${p => p.checked ? '#FFFFFF' : p.theme.PRIMARY_TEXT_COLOR};
-  font-weight: ${p => p.checked ? '700' : '500'};
-  font-size: 15px;
-  
-  &:hover {
-    background: ${p => p.checked ? p.theme.ACCENT_COLOR : p.theme.HOVER_OVERLAY};
-  }
-  
-  input {
-    display: none;
-  }
-`;
+// ==========================================
+// STYLED COMPONENTS - FEEDBACK & UI
+// ==========================================
 
 const FeedbackSection = styled.div`
   margin-top: 32px;
@@ -433,7 +648,6 @@ const ProgressIndicator = styled.div`
   margin-top: 16px;
 `;
 
-
 // ==========================================
 // HELPER FUNKCIA - FEEDBACK OTÁZKY
 // ==========================================
@@ -441,26 +655,26 @@ const ProgressIndicator = styled.div`
 const createFeedbackQuestions = (blockId, questionCount) => [
   {
     id: `spatnavazba_${blockId}_oblasti`,
-    text: 'V ktorých oblastiach ste mali problémy?',
+    text: 'V ktorých oblastiach ste mali problémy? (Môžete vybrať viacero možností)',
     type: 'checkbox',
     isFeedback: true,
     required: false,
     options: [
-      { value: 'zrozumitelnost', label: 'Zrozumiteľnosť' },
-      { value: 'jednoznacnost', label: 'Jednoznačnosť' },
-      { value: 'stupnica', label: 'Nevhodnosť stupnice' },
+      { value: 'zrozumitelnost', label: 'Zrozumiteľnosť otázok a tvrdení' },
+      { value: 'jednoznacnost', label: 'Jednoznačnosť otázok a tvrdení' },
+      { value: 'stupnica', label: 'Nevhodnosť hodnotiacej stupnice' },
       { value: 'ine', label: 'Iné problémy' }
     ]
   },
   {
     id: `spatnavazba_${blockId}_zrozumitelnost`,
-    text: 'Ktoré otázky boli menej zrozumiteľné?',
+    text: 'Ktoré otázky a tvrdenia boli menej zrozumiteľné?',
     type: 'number-select',
     isFeedback: true,
     min: 1,
     max: questionCount,
     multiple: true,
-    instruction: 'Vyberte čísla otázok',
+    instruction: 'Vyberte čísla otázok a tvrdení',
     required: false,
     showIf: {
       questionId: `spatnavazba_${blockId}_oblasti`,
@@ -470,13 +684,13 @@ const createFeedbackQuestions = (blockId, questionCount) => [
   },
   {
     id: `spatnavazba_${blockId}_jednoznacnost`,
-    text: 'Ktoré otázky boli menej jednoznačné?',
+    text: 'Ktoré otázky a tvrdenia boli menej jednoznačné (slová, pojmy, formulácia...)?',
     type: 'number-select',
     isFeedback: true,
     min: 1,
     max: questionCount,
     multiple: true,
-    instruction: 'Vyberte čísla otázok',
+    instruction: 'Vyberte čísla otázok a tvrdení',
     required: false,
     showIf: {
       questionId: `spatnavazba_${blockId}_oblasti`,
@@ -486,13 +700,13 @@ const createFeedbackQuestions = (blockId, questionCount) => [
   },
   {
     id: `spatnavazba_${blockId}_stupnica`,
-    text: 'V ktorých otázkach ste mali problém so stupnicou?',
+    text: 'V ktorých otázkach a tvrdeniach ste mali problém vyjadriť svoj skutočný postoj vzhľadom na hodnotiacu stupnicu?',
     type: 'number-select',
     isFeedback: true,
     min: 1,
     max: questionCount,
     multiple: true,
-    instruction: 'Vyberte čísla otázok',
+    instruction: 'Vyberte čísla otázok a tvrdení',
     required: false,
     showIf: {
       questionId: `spatnavazba_${blockId}_oblasti`,
@@ -502,10 +716,10 @@ const createFeedbackQuestions = (blockId, questionCount) => [
   },
   {
     id: `spatnavazba_${blockId}_ine`,
-    text: 'Popíšte iné problémy:',
+    text: 'Popíšte iné problémy, ktoré ste mali s otázkami a tvrdeniami v tejto časti:',
     type: 'textarea',
     isFeedback: true,
-    placeholder: 'Váš komentár...',
+    placeholder: 'Popíšte iné problémy...',
     required: false,
     showIf: {
       questionId: `spatnavazba_${blockId}_oblasti`,
@@ -514,6 +728,9 @@ const createFeedbackQuestions = (blockId, questionCount) => [
     }
   }
 ];
+
+
+
 // ==========================================
 // DEFINÍCIA 9 STRÁNOK DOTAZNÍKA
 // ==========================================
@@ -2286,11 +2503,10 @@ const PAGES = [
 export { PAGES, createFeedbackQuestions };
 
 
+const COMPONENT_ID = 'mission0_questionnaire';
 // ==========================================
 // HLAVNÝ KOMPONENT
 // ==========================================
-
-const COMPONENT_ID = 'mission0_questionnaire';
 
 const Questionnaire0 = () => {
   const navigate = useNavigate();
@@ -2472,30 +2688,9 @@ const Questionnaire0 = () => {
     }
   };
 
-  // Render otázky
-  const renderQuestion = (question, index) => {
-    if (!shouldShowQuestion(question, answers)) return null;
-
-    const hasError = questionErrors[question.id];
-    const isFeedback = question.isFeedback;
-
-    return (
-      <QuestionCard
-        key={question.id}
-        ref={el => (questionRefs.current[question.id] = el)}
-        hasError={hasError}
-      >
-        <Question>
-          {!isFeedback && `${index + 1}. `}
-          {question.text}
-        </Question>
-
-        {renderQuestionInput(question)}
-
-        {hasError && <QuestionError>{hasError}</QuestionError>}
-      </QuestionCard>
-    );
-  };
+  // ==========================================
+  // RENDER FUNKCIE
+  // ==========================================
 
   const renderQuestionInput = (question) => {
     const value = answers[question.id];
@@ -2505,10 +2700,7 @@ const Questionnaire0 = () => {
         return (
           <RadioGroup>
             {question.options.map(option => (
-              <RadioOption
-                key={option.value}
-                checked={value === option.value}
-              >
+              <RadioOption key={option.value}>
                 <input
                   type="radio"
                   name={question.id}
@@ -2516,11 +2708,11 @@ const Questionnaire0 = () => {
                   checked={value === option.value}
                   onChange={() => handleAnswer(question.id, option.value)}
                 />
-                {option.label}
+                <span>{option.label}</span>
               </RadioOption>
             ))}
             {question.hasOther && (
-              <div style={{ marginTop: '8px' }}>
+              <div style={{ marginTop: '8px', paddingLeft: '36px' }}>
                 <Input
                   type="text"
                   placeholder={question.otherLabel || 'Iné (prosím špecifikujte)'}
@@ -2536,16 +2728,13 @@ const Questionnaire0 = () => {
         return (
           <CheckboxGroup>
             {question.options.map(option => (
-              <CheckboxOption
-                key={option.value}
-                checked={Array.isArray(value) && value.includes(option.value)}
-              >
+              <CheckboxOption key={option.value}>
                 <input
                   type="checkbox"
                   checked={Array.isArray(value) && value.includes(option.value)}
                   onChange={() => handleCheckboxChange(question.id, option.value)}
                 />
-                {option.label}
+                <span>{option.label}</span>
               </CheckboxOption>
             ))}
           </CheckboxGroup>
@@ -2557,7 +2746,7 @@ const Questionnaire0 = () => {
             <ScaleContainer>
               {question.scale.map((scaleValue, idx) => (
                 <ScaleButtonWrapper key={scaleValue}>
-                  <RadioLabel checked={value === scaleValue}>
+                  <ScaleRadioLabel>
                     <input
                       type="radio"
                       name={question.id}
@@ -2565,8 +2754,8 @@ const Questionnaire0 = () => {
                       checked={value === scaleValue}
                       onChange={() => handleAnswer(question.id, scaleValue)}
                     />
-                    {scaleValue}
-                  </RadioLabel>
+                    <div className="scale-number">{scaleValue}</div>
+                  </ScaleRadioLabel>
                   {question.scaleValueLabels && question.scaleValueLabels[idx] && (
                     <ScaleValueLabel>{question.scaleValueLabels[idx]}</ScaleValueLabel>
                   )}
@@ -2587,10 +2776,7 @@ const Questionnaire0 = () => {
           <>
             <LadderContainer>
               {question.scale.map(scaleValue => (
-                <LadderOption
-                  key={scaleValue}
-                  checked={value === scaleValue}
-                >
+                <LadderOption key={scaleValue}>
                   <input
                     type="radio"
                     name={question.id}
@@ -2598,18 +2784,20 @@ const Questionnaire0 = () => {
                     checked={value === scaleValue}
                     onChange={() => handleAnswer(question.id, scaleValue)}
                   />
-                  <span>{scaleValue}</span>
+                  <div className="ladder-content">
+                    <span className="ladder-number">{scaleValue}</span>
+                  </div>
                 </LadderOption>
               ))}
             </LadderContainer>
             {question.hasPreferNotToSay && (
-              <PreferNotToSayOption checked={value === 'prefer_not_to_say'}>
+              <PreferNotToSayOption>
                 <input
                   type="checkbox"
                   checked={value === 'prefer_not_to_say'}
                   onChange={() => handleAnswer(question.id, 'prefer_not_to_say')}
                 />
-                Preferujem neuvádzať
+                <span>Preferujem neuvádzať</span>
               </PreferNotToSayOption>
             )}
             {question.scaleLabels && (
@@ -2619,6 +2807,24 @@ const Questionnaire0 = () => {
               </ScaleLabels>
             )}
           </>
+        );
+
+      case 'binary':
+        return (
+          <BinaryGroup>
+            {question.options.map(option => (
+              <BinaryOption key={option.value}>
+                <input
+                  type="radio"
+                  name={question.id}
+                  value={option.value}
+                  checked={value === option.value}
+                  onChange={() => handleAnswer(question.id, option.value)}
+                />
+                <span>{option.label}</span>
+              </BinaryOption>
+            ))}
+          </BinaryGroup>
         );
 
       case 'number':
@@ -2679,31 +2885,38 @@ const Questionnaire0 = () => {
           </NumberSelectContainer>
         );
 
-      case 'binary':
-        return (
-          <BinaryGroup>
-            {question.options.map(option => (
-              <BinaryOption
-                key={option.value}
-                checked={value === option.value}
-              >
-                <input
-                  type="radio"
-                  name={question.id}
-                  value={option.value}
-                  checked={value === option.value}
-                  onChange={() => handleAnswer(question.id, option.value)}
-                />
-                {option.label}
-              </BinaryOption>
-            ))}
-          </BinaryGroup>
-        );
-
       default:
         return null;
     }
   };
+
+  const renderQuestion = (question, index) => {
+    if (!shouldShowQuestion(question, answers)) return null;
+
+    const hasError = questionErrors[question.id];
+    const isFeedback = question.isFeedback;
+
+    return (
+      <QuestionCard
+        key={question.id}
+        ref={el => (questionRefs.current[question.id] = el)}
+        hasError={hasError}
+      >
+        <Question>
+          {!isFeedback && `${index + 1}. `}
+          {question.text}
+        </Question>
+
+        {renderQuestionInput(question)}
+
+        {hasError && <QuestionError>{hasError}</QuestionError>}
+      </QuestionCard>
+    );
+  };
+
+  // ==========================================
+  // RENDER HLAVNÉHO UI
+  // ==========================================
 
   const page = PAGES[currentPage];
   const progress = ((currentPage + 1) / PAGES.length) * 100;
