@@ -735,6 +735,10 @@ const createFeedbackQuestions = (blockId, questionCount) => [
 // DEFINÍCIA 9 STRÁNOK DOTAZNÍKA
 // ==========================================
 
+// ==========================================
+// DEFINÍCIA PAGES - KOMPLETNÝ DOTAZNÍK
+// ==========================================
+
 const PAGES = [
   // ==========================================
   // STRANA 1: DEMOGRAFIA
@@ -742,12 +746,13 @@ const PAGES = [
   {
     id: 'demografia',
     title: 'Demografia',
+    subtitle: 'Základné informácie o Vás',
     instruction: 'Nasleduje séria otázok o Vás. Tieto informácie nám pomôžu pochopiť, ako sa líšia názory a skúsenosti medzi rôznymi skupinami ľudí. Všetky vaše odpovede sú anonymné a budú použité výlučne na výskumné účely.',
     questions: [
       {
         id: 'd1_pohlavie',
         text: 'Vyberte Vaše pohlavie:',
-        type: 'radio',
+        type: 'binary',
         required: true,
         options: [
           { value: 'muz', label: 'Muž' },
@@ -761,7 +766,7 @@ const PAGES = [
         required: true,
         min: 18,
         max: 120,
-        placeholder: 'Vek'
+        placeholder: 'Váš vek'
       },
       {
         id: 'd3_vzdelanie',
@@ -773,17 +778,18 @@ const PAGES = [
           { value: 'nizsie_stredne', label: 'Nižšie stredné odborné vzdelanie (bez maturity)' },
           { value: 'uplne_stredne', label: 'Úplné stredné vzdelanie (s maturitou)' },
           { value: 'vyssie_odborne', label: 'Vyššie odborné vzdelanie' },
-          { value: 'vs_bc', label: 'Vysokoškolské vzdelanie 1. stupňa (bakalárske)' },
-          { value: 'vs_mgr', label: 'Vysokoškolské vzdelanie 2. stupňa (magisterské, inžinierske, doktorské)' },
-          { value: 'vs_phd', label: 'Vysokoškolské vzdelanie 3. stupňa (doktorandské)' }
+          { value: 'vys_1', label: 'Vysokoškolské vzdelanie 1. stupňa (bakalárske)' },
+          { value: 'vys_2', label: 'Vysokoškolské vzdelanie 2. stupňa (magisterské, inžinierske, doktorské)' },
+          { value: 'vys_3', label: 'Vysokoškolské vzdelanie 3. stupňa (doktorandské)' }
         ]
       },
       {
         id: 'd4_pracovna_situacia',
-        text: 'Vyberte Vašu aktuálnu pracovnú situáciu:',
+        text: 'Vyberte Vašu aktuálnu situáciu:',
         type: 'radio',
         required: true,
         hasOther: true,
+        otherLabel: 'Iné (prosím špecifikujte)',
         options: [
           { value: 'plny_uvazok', label: 'Zamestnaný/á na plný úväzok' },
           { value: 'skrateny_uvazok', label: 'Zamestnaný/á na skrátený úväzok' },
@@ -791,9 +797,8 @@ const PAGES = [
           { value: 'student', label: 'Študent/ka' },
           { value: 'dochodok', label: 'Starobný dôchodok' },
           { value: 'materska', label: 'Na materskej / otcovskej dovolenke' },
-          { value: 'nezamestnany', label: 'Nezamestnaný/á' }
-        ],
-        otherLabel: 'Iné (prosím špecifikujte):'
+          { value: 'nezamestany', label: 'Nezamestnaný/á' }
+        ]
       },
       {
         id: 'd5_rodinny_stav',
@@ -806,7 +811,7 @@ const PAGES = [
           { value: 'partnerstvo', label: 'V partnerskom vzťahu (bez formálneho zväzku)' },
           { value: 'rozvedeny', label: 'Rozvedený/á' },
           { value: 'ovdoveny', label: 'Ovdovený/á' },
-          { value: 'neuvadzat', label: 'Preferujem neuvádzať' }
+          { value: 'prefer_not', label: 'Preferujem neuvádzať' }
         ]
       },
       {
@@ -815,21 +820,24 @@ const PAGES = [
         type: 'radio',
         required: true,
         hasOther: true,
+        otherLabel: 'Iné (prosím špecifikujte)',
         options: [
           { value: 'zapadne', label: 'Západné Slovensko (napr. Trnava, Nitra, Trenčín)' },
           { value: 'stredne', label: 'Stredné Slovensko (napr. Zvolen, Banská Bystrica, Lučenec)' },
           { value: 'vychodne', label: 'Východné Slovensko (napr. Košice, Prešov)' }
-        ],
-        otherLabel: 'Iné (prosím špecifikujte):'
+        ]
       },
       {
         id: 'd7_socialny_rebrik',
-        text: 'Predstavte si, že tento rebrík predstavuje postavenie ľudí na Slovensku. Na úplnom vrchole rebríka sú ľudia, ktorí sú na tom najlepšie. Ľudia ktorí majú najviac peňazí, najlepšie vzdelanie, a najrešpektovanejšiu prácu. Na spodu rebríka sú ľudia, ktorí sú na tom najhoršie. Ľudia, ktorí majú najmenej peňazí, najhoršie vzdelanie, a najmenej rešpektovanú prácu, poprípade žiadnu prácu. Čím vyššie ste v tomto rebríku, tým bližšie ste ľuďom na úplnom vrchole a čím ste nižšie, tým ste bližšie ľuďom na samom spodku. Prosím, vyberte si číslo priečky rebríka, na ktorej si myslíte, že vo svojom živote aktuálne ste, v porovnaní s ostatnými ľuďmi na Slovensku.',
+        text: 'Predstavte si, že tento rebrík predstavuje postavenie ľudí na Slovensku. Na úplnom vrchole rebríka sú ľudia, ktorí sú na tom najlepšie. Ľudia ktorí majú najviac peňazí, najlepšie vzdelanie, a najrešpektovanejšiu prácu. Na spodku rebríka sú ľudia, ktorí sú na tom najhoršie. Ľudia, ktorí majú najmenej peňazí, najhoršie vzdelanie, a najmenej rešpektovanú prácu, poprípade žiadnu prácu. Čím vyššie ste v tomto rebríku, tým bližšie ste ľuďom na úplnom vrchole a čím ste nižšie, tým ste bližšie ľuďom na samom spodku. Prosím, vyberte si číslo priečky rebríka, na ktorej si myslíte, že vo svojom živote aktuálne ste, v porovnaní s ostatnými ľuďmi na Slovensku.',
         type: 'ladder',
         required: true,
         scale: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-        scaleLabels: { min: 'Najnižší status', max: 'Najvyšší status' },
-        hasPreferNotToSay: true
+        hasPreferNotToSay: true,
+        scaleLabels: {
+          min: 'Najnižší status',
+          max: 'Najvyšší status'
+        }
       },
       {
         id: 'd8_politicka_orientacia',
@@ -840,1509 +848,241 @@ const PAGES = [
           { value: 'liberalne', label: 'Liberálne orientovaný/á' },
           { value: 'centralne', label: 'Centrálne orientovaný/á' },
           { value: 'konzervativne', label: 'Konzervatívne orientovaný/á' },
-          { value: 'neuvadzat', label: 'Preferujem neuvádzať' }
+          { value: 'prefer_not', label: 'Preferujem neuvádzať' }
         ]
       }
     ]
   },
 
   // ==========================================
-  // STRANA 2: RELIGIOZITA + MÉDIÁ (TV)
+  // STRANA 2: RELIGIOZITA
   // ==========================================
   {
-    id: 'religiozita_media_tv',
-    title: 'Religiozita a Médiá',
+    id: 'religiozita',
+    title: 'Religiozita',
     subtitle: 'Koenig & Büssing, 2010',
     instruction: 'Nasledujúce otázky sa týkajú Vášho vzťahu k náboženstvu. Neexistujú správne alebo nesprávne odpovede.',
     questions: [
       {
-        id: 'ora1_navsteva_kostola',
-        text: 'Ako často navštevujete kostol alebo iné náboženské stretnutia?',
+        id: 'ora1',
+        text: 'Ako často navštevujete kostol alebo náboženské stretnutia?',
         type: 'likert',
         required: true,
         scale: [1, 2, 3, 4, 5, 6],
-        scaleValueLabels: [
-          'Nikdy',
-          'Raz za rok alebo menej',
-          'Niekoľkokrát za rok',
-          'Niekoľkokrát za mesiac',
-          'Raz týždenne',
-          'Viackrát týždenne'
-        ]
+        scaleValueLabels: ['Nikdy', 'Raz za rok alebo menej', 'Niekoľkokrát za rok', 'Niekoľkokrát za mesiac', 'Raz týždenne', 'Viackrát týždenne']
       },
       {
-        id: 'nora1_sukromne_aktivity',
+        id: 'nora1',
         text: 'Ako často sa venujete súkromným náboženským aktivitám (modlitba, meditácia, čítanie svätých textov)?',
         type: 'likert',
         required: true,
         scale: [1, 2, 3, 4, 5, 6],
-        scaleValueLabels: [
-          'Nikdy',
-          'Raz za rok alebo menej',
-          'Niekoľkokrát za rok',
-          'Niekoľkokrát za mesiac',
-          'Raz týždenne',
-          'Viackrát týždenne'
-        ]
+        scaleValueLabels: ['Nikdy', 'Raz za rok alebo menej', 'Niekoľkokrát za rok', 'Niekoľkokrát za mesiac', 'Raz týždenne', 'Viackrát týždenne']
       },
       {
-        id: 'ir1_pritomnost_boha',
+        id: 'ir1',
         text: 'Vo svojom živote prežívam prítomnosť Boha alebo niečoho vyššieho.',
         type: 'likert',
         required: true,
         scale: [1, 2, 3, 4, 5],
-        scaleValueLabels: [
-          'Rozhodne to o mne neplatí',
-          'Skôr to o mne neplatí',
-          'Nie som si istý/á',
-          'Skôr to o mne platí',
-          'Rozhodne to o mne platí'
-        ]
+        scaleValueLabels: ['Rozhodne to o mne neplatí', 'Skôr to o mne neplatí', 'Nie som si istý/á', 'Skôr to o mne platí', 'Rozhodne to o mne platí']
       },
       {
-        id: 'ir2_zaklad_pristupu',
-        text: 'Moje náboženské presvedčenia sú základom môjho prístupu k životu.',
+        id: 'ir2',
+        text: 'Moje náboženské presvedčenie sú základom môjho prístupu k životu.',
         type: 'likert',
         required: true,
         scale: [1, 2, 3, 4, 5],
-        scaleValueLabels: [
-          'Rozhodne to o mne neplatí',
-          'Skôr to o mne neplatí',
-          'Nie som si istý/á',
-          'Skôr to o mne platí',
-          'Rozhodne to o mne platí'
-        ]
+        scaleValueLabels: ['Rozhodne to o mne neplatí', 'Skôr to o mne neplatí', 'Nie som si istý/á', 'Skôr to o mne platí', 'Rozhodne to o mne platí']
       },
       {
-        id: 'ir3_prenasanie',
+        id: 'ir3',
         text: 'Snažím sa prenášať svoje náboženstvo do všetkých oblastí môjho života.',
         type: 'likert',
         required: true,
         scale: [1, 2, 3, 4, 5],
-        scaleValueLabels: [
-          'Rozhodne to o mne neplatí',
-          'Skôr to o mne neplatí',
-          'Nie som si istý/á',
-          'Skôr to o mne platí',
-          'Rozhodne to o mne platí'
-        ]
-      },
-      // MÉDIÁ - TV spravodajstvo
-      {
-        id: 'ts1_markiza',
-        text: 'Televízne noviny TV Markíza',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'ts2_stvr',
-        text: 'Správy STVR',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'ts3_joj',
-        text: 'Noviny TV JOJ',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'ts4_ta3',
-        text: 'Správy TA3',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
+        scaleValueLabels: ['Rozhodne to o mne neplatí', 'Skôr to o mne neplatí', 'Nie som si istý/á', 'Skôr to o mne platí', 'Rozhodne to o mne platí']
       }
     ]
   },
 
   // ==========================================
-  // STRANA 3: MÉDIÁ (ONLINE + ALTERNATÍVNE)
+  // STRANA 3: FREKVENCIA POUŽÍVANIA MÉDIÍ
   // ==========================================
   {
-    id: 'media_online_alternativne',
-    title: 'Frekvencia používania médií',
-    subtitle: 'Online médiá a alternatívne zdroje',
+    id: 'media',
+    title: 'Frekvencia používania médií ako zdroja informácií',
     instruction: 'Nasleduje zoznam rôznych médií a platforiem, z ktorých môžete získavať informácie (napríklad o spoločenskom dianí, politike, zdraví, ekonomike a pod.). Pri každom médiu označte, ako často ho používate ako zdroj informácií. Ak dané médium vôbec nepoznáte alebo ho nepoužívate, označte prosím "1. Nikdy". Neexistujú správne alebo nesprávne odpovede.',
     questions: [
+      // Televízne spravodajstvo
+      { id: 'ts1', text: 'Televízne noviny TV Markíza', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'ts2', text: 'Správy STVR', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'ts3', text: 'Noviny TV JOJ', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'ts4', text: 'Správy TA3', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      
       // Online a tlač
-      {
-        id: 'ot1_sme',
-        text: 'SME',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'ot2_dennikn',
-        text: 'Denník N',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'ot3_pravda',
-        text: 'Pravda',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'ot4_aktuality',
-        text: 'Aktuality',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'ot5_novycas',
-        text: 'Nový Čas',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'ot6_hn',
-        text: 'Hospodárske noviny',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'ot7_postoj',
-        text: 'Postoj',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'ot8_trend',
-        text: 'Trend',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
+      { id: 'ot1', text: 'SME', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'ot2', text: 'Denník N', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'ot3', text: 'Pravda', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'ot4', text: 'Aktuality', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'ot5', text: 'Nový Čas', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'ot6', text: 'Hospodárske noviny', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'ot7', text: 'Postoj', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'ot8', text: 'Trend', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      
       // Alternatívne médiá
-      {
-        id: 'am1_hlavne_spravy',
-        text: 'Hlavné správy',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'am2_zem_vek',
-        text: 'Zem a vek',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'am3_slobodny',
-        text: 'Slobodný vysielač',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'am4_protiprud',
-        text: 'Protiprúd',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'am5_extraplus',
-        text: 'Extraplus',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'am6_infovojna',
-        text: 'Infovojna',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'am7_parlamentne',
-        text: 'Parlamentné listy',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'am8_vasa_pravda',
-        text: 'Vaša pravda',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      }
-    ]
-  },
-
-  // ==========================================
-  // STRANA 4: MÉDIÁ (SOCIÁLNE) + TOLERANCIA
-  // ==========================================
-  {
-    id: 'media_social_tolerancia',
-    title: 'Sociálne médiá a Tolerancia',
-    instruction: 'Pri každom médiu označte, ako často ho používate ako zdroj informácií.',
-    questions: [
+      { id: 'am1', text: 'Hlavné správy', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'am2', text: 'Zem a vek', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'am3', text: 'Slobodný vysielač', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'am4', text: 'Protiprúd', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'am5', text: 'Extraplus', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'am6', text: 'Infovojna', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'am7', text: 'Parlamentné listy', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'am8', text: 'Vaša pravda', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      
       // Sociálne médiá
-      {
-        id: 'sm1_facebook',
-        text: 'Facebook',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'sm2_youtube',
-        text: 'YouTube',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'sm3_instagram',
-        text: 'Instagram',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'sm4_tiktok',
-        text: 'TikTok',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'sm5_telegram',
-        text: 'Telegram',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'sm6_twitter',
-        text: 'X (Twitter)',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Nikdy',
-          'Menej ako raz mesačne',
-          'Približne raz mesačne',
-          'Niekoľkokrát mesačne',
-          'Približne raz týždenne',
-          'Niekoľkokrát týždenne',
-          'Denne'
-        ]
-      },
-      {
-        id: 'ost1_ine_media',
-        text: 'Iné spravodajské weby alebo platformy, ktoré používam často:',
-        type: 'text',
-        required: false,
-        placeholder: 'Prosím uveďte'
-      },
-      // TOLERANCIA - Autonómia
-      {
-        id: 'ac1',
-        text: 'Ľudia by mali mať právo žiť, ako chcú.',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'ac2',
-        text: 'Je dôležité, aby ľudia mali slobodu žiť svoj život tak, ako si vyberú.',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'ac3',
-        text: 'Ľudia môžu žiť ako chcú, pokiaľ neubližujú iným.',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      // TOLERANCIA - Rešpekt
-      {
-        id: 'r1',
-        text: 'Rešpektujem presvedčenia a názory iných ľudí.',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'r2',
-        text: 'Mám rešpekt voči presvedčeniam a názorom iných ľudí, aj keď s nimi nesúhlasím.',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'r3',
-        text: 'Vadí mi, že niektorí ľudia majú iné tradície a spôsob života.',
-        type: 'likert',
-        required: true,
-        reverse: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      // TOLERANCIA - Aprecácia
-      {
-        id: 'ap1',
-        text: 'Rád/a trávim čas s ľuďmi, ktorí sú iní ako ja.',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'ap2',
-        text: 'Mám rád/a ľudí, ktorí ma podnecujú, aby som rozmýšľal/a o svete iným spôsobom.',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'ap3',
-        text: 'Rozmanitosť tradícií a spôsobov života je prínosom pre našu spoločnosť.',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      }
+      { id: 'sm1', text: 'Facebook', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'sm2', text: 'YouTube', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'sm3', text: 'Instagram', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'sm4', text: 'TikTok', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'sm5', text: 'Telegram', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      { id: 'sm6', text: 'X (Twitter)', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Nikdy', max: 'Denne' } },
+      
+      // Ostatné
+      { id: 'ost1', text: 'Iné spravodajské weby alebo platformy, ktoré používam často (prosím uveďte):', type: 'text', required: false, placeholder: 'Napíšte názvy médií...' }
     ]
   },
 
   // ==========================================
-  // STRANA 5: KONŠPIRAČNÁ MENTALITA + SYMBOLICKÉ OHROZENIE
+  // STRANA 4: TOLERANCIA
   // ==========================================
   {
-    id: 'mentalita_hrozba',
-    title: 'Konšpiračná mentalita a vnímanie hrozby',
-    subtitle: 'Mikušková, 2018; Šrol & Čavojová, 2025',
-    instruction: 'Nižšie nájdete sériu tvrdení. Pri každom tvrdení prosím vyjadrite, do akej miery s ním súhlasíte, na škále od 1 do 7. Neexistujú správne alebo nesprávne odpovede.',
+    id: 'tolerancia',
+    title: 'Tolerancia',
+    subtitle: 'Prošek et al., 2025',
+    instruction: 'Nižšie nájdete sériu tvrdení o rôznych aspektoch spôsobu, ako by ľudia mali žiť a ako sa máme vzájomne brať v ohľade na ich odlišnosti. Prosím, vyjadrite svoju úroveň súhlasu s každým tvrdením. Neexistujú správne alebo nesprávne odpovede.',
     questions: [
-      // KONŠPIRAČNÁ MENTALITA
-      {
-        id: 'km1',
-        text: 'Myslím si, že sa vo svete dejú mnohé veľmi dôležité veci, o ktorých sa verejnosť nikdy nedozvie',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'km2',
-        text: 'Myslím si, že politici zvyčajne nehovoria ľuďom skutočné motívy svojich rozhodnutí',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'km3',
-        text: 'Myslím si, že vládne agentúry úzko monitorujú všetkých občanov',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'km4',
-        text: 'Myslím si, že udalosti, ktoré sa na prvý pohľad zdajú nesúvisiace, sú často výsledkom tajných aktivít',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'km5',
-        text: 'Myslím si, že existujú tajné organizácie, ktoré veľmi vplývajú na politické rozhodnutia',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      // SYMBOLICKÉ OHROZENIE - Medzinárodné
-      {
-        id: 'sh1_zapadne',
-        text: 'Západné spoločnosti a ich spôsob života',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5],
-        scaleValueLabels: [
-          'Vôbec neohrozuje moju identitu a hodnoty',
-          'Skôr neohrozuje moju identitu a hodnoty',
-          'Neutrálny postoj',
-          'Skôr ohrozuje moju identitu a hodnoty',
-          'Veľmi ohrozuje moju identitu a hodnoty'
-        ]
-      },
-      {
-        id: 'sh2_eu',
-        text: 'Európska únia',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5],
-        scaleValueLabels: [
-          'Vôbec neohrozuje moju identitu a hodnoty',
-          'Skôr neohrozuje moju identitu a hodnoty',
-          'Neutrálny postoj',
-          'Skôr ohrozuje moju identitu a hodnoty',
-          'Veľmi ohrozuje moju identitu a hodnoty'
-        ]
-      },
-      {
-        id: 'sh3_usa',
-        text: 'Spojené štáty americké',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5],
-        scaleValueLabels: [
-          'Vôbec neohrozuje moju identitu a hodnoty',
-          'Skôr neohrozuje moju identitu a hodnoty',
-          'Neutrálny postoj',
-          'Skôr ohrozuje moju identitu a hodnoty',
-          'Veľmi ohrozuje moju identitu a hodnoty'
-        ]
-      },
-      {
-        id: 'sh4_rusko',
-        text: 'Ruská federácia',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5],
-        scaleValueLabels: [
-          'Vôbec neohrozuje moju identitu a hodnoty',
-          'Skôr neohrozuje moju identitu a hodnoty',
-          'Neutrálny postoj',
-          'Skôr ohrozuje moju identitu a hodnoty',
-          'Veľmi ohrozuje moju identitu a hodnoty'
-        ]
-      },
-      {
-        id: 'sh5_ukrajina',
-        text: 'Ukrajina',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5],
-        scaleValueLabels: [
-          'Vôbec neohrozuje moju identitu a hodnoty',
-          'Skôr neohrozuje moju identitu a hodnoty',
-          'Neutrálny postoj',
-          'Skôr ohrozuje moju identitu a hodnoty',
-          'Veľmi ohrozuje moju identitu a hodnoty'
-        ]
-      },
-      {
-        id: 'sh6_izrael',
-        text: 'Izrael',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5],
-        scaleValueLabels: [
-          'Vôbec neohrozuje moju identitu a hodnoty',
-          'Skôr neohrozuje moju identitu a hodnoty',
-          'Neutrálny postoj',
-          'Skôr ohrozuje moju identitu a hodnoty',
-          'Veľmi ohrozuje moju identitu a hodnoty'
-        ]
-      },
-      {
-        id: 'sh7_palestina',
-        text: 'Palestína',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5],
-        scaleValueLabels: [
-          'Vôbec neohrozuje moju identitu a hodnoty',
-          'Skôr neohrozuje moju identitu a hodnoty',
-          'Neutrálny postoj',
-          'Skôr ohrozuje moju identitu a hodnoty',
-          'Veľmi ohrozuje moju identitu a hodnoty'
-        ]
-      },
-      // SYMBOLICKÉ OHROZENIE - Domáce
-      {
-        id: 'sh8_vlada',
-        text: 'Vláda Slovenskej Republiky',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5],
-        scaleValueLabels: [
-          'Vôbec neohrozuje moju identitu a hodnoty',
-          'Skôr neohrozuje moju identitu a hodnoty',
-          'Neutrálny postoj',
-          'Skôr ohrozuje moju identitu a hodnoty',
-          'Veľmi ohrozuje moju identitu a hodnoty'
-        ]
-      },
-      {
-        id: 'sh9_zahranicni',
-        text: 'Narastajúce množstvo zahraničných ľudí na Slovensku',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5],
-        scaleValueLabels: [
-          'Vôbec neohrozuje moju identitu a hodnoty',
-          'Skôr neohrozuje moju identitu a hodnoty',
-          'Neutrálny postoj',
-          'Skôr ohrozuje moju identitu a hodnoty',
-          'Veľmi ohrozuje moju identitu a hodnoty'
-        ]
-      },
-      {
-        id: 'sh10_utecenci',
-        text: 'Ukrajinskí utečenci na Slovensku',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5],
-        scaleValueLabels: [
-          'Vôbec neohrozuje moju identitu a hodnoty',
-          'Skôr neohrozuje moju identitu a hodnoty',
-          'Neutrálny postoj',
-          'Skôr ohrozuje moju identitu a hodnoty',
-          'Veľmi ohrozuje moju identitu a hodnoty'
-        ]
-      }
+      // Autonómia
+      { id: 'ac1', text: 'Ľudia by mali mať právo žiť, ako chcú.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'ac2', text: 'Je dôležité, aby ľudia mali slobodu žiť svoj život tak, ako si vyberú.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'ac3', text: 'Ľudia môžu žiť ako chcú, pokiaľ neubližujú iným.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      
+      // Rešpekt
+      { id: 'r1', text: 'Rešpektujem presvedčenia a názory iných ľudí.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'r2', text: 'Mám rešpekt voči presvedčeniam a názorom iných ľudí, aj keď s nimi nesúhlasím.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'r3', text: 'Vadí mi, že niektorí ľudia majú iné tradície a spôsob života.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      
+      // Aprecácia
+      { id: 'ap1', text: 'Rád/a trávim čas s ľuďmi, ktorí sú iní ako ja.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'ap2', text: 'Mám rád/a ľudí, ktorí ma podnecujú, aby som rozmýšľal/a o svete iným spôsobom.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'ap3', text: 'Rozmanitosť tradícií a spôsobov života je prínosom pre našu spoločnosť.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } }
     ]
   },
 
   // ==========================================
-  // STRANA 6: DÔVERA V EÚ
+  // STRANA 5: KONŠPIRAČNÁ MENTALITA
+  // ==========================================
+  {
+    id: 'konspiracia_mentalita',
+    title: 'Konšpiračná mentalita',
+    subtitle: 'Mikušková, 2018',
+    instruction: 'Nižšie nájdete sériu tvrdení. Pri každom tvrdení prosím vyjadrite, do akej miery s ním súhlasíte. Neexistujú správne alebo nesprávne odpovede.',
+    questions: [
+      { id: 'km1', text: 'Myslím si, že sa vo svete dejú mnohé veľmi dôležité veci, o ktorých sa verejnosť nikdy nedozvie.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'km2', text: 'Myslím si, že politici zvyčajne nehovoria ľuďom skutočné motívy svojich rozhodnutí.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'km3', text: 'Myslím si, že vládne agentúry úzko monitorujú všetkých občanov.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'km4', text: 'Myslím si, že udalosti, ktoré sa na prvý pohľad zdajú nesúvisiace, sú často výsledkom tajných aktivít.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'km5', text: 'Myslím si, že existujú tajné organizácie, ktoré veľmi vplývajú na politické rozhodnutia.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } }
+    ]
+  },
+
+  // ==========================================
+  // STRANA 6: SYMBOLICKÉ OHROZENIE
+  // ==========================================
+  {
+    id: 'symbolicke_ohrozenie',
+    title: 'Symbolické ohrozenie a pocit hrozby',
+    subtitle: 'Šrol & Čavojová, 2025',
+    instruction: 'Niektorí ľudia tvrdia, že existujú isté skupiny ľudí či krajiny, ktoré ohrozujú našu vlastnú identitu a hodnoty. Myslíte si vy osobne, že nasledujúce skupiny či krajiny ohrozujú vašu identitu a hodnoty? Pri každej položke vyjadrite vašu úroveň vnemu hrozby. Neexistujú správne alebo nesprávne odpovede.',
+    questions: [
+      // Medzinárodné supermoci a systémy
+      { id: 'sh1', text: 'Západné spoločnosti a ich spôsob života', type: 'likert', required: true, scale: [1, 2, 3, 4, 5], scaleLabels: { min: 'Vôbec neohrozuje', max: 'Veľmi ohrozuje' } },
+      { id: 'sh2', text: 'Európska únia', type: 'likert', required: true, scale: [1, 2, 3, 4, 5], scaleLabels: { min: 'Vôbec neohrozuje', max: 'Veľmi ohrozuje' } },
+      { id: 'sh3', text: 'Spojené štáty americké', type: 'likert', required: true, scale: [1, 2, 3, 4, 5], scaleLabels: { min: 'Vôbec neohrozuje', max: 'Veľmi ohrozuje' } },
+      { id: 'sh4', text: 'Ruská federácia', type: 'likert', required: true, scale: [1, 2, 3, 4, 5], scaleLabels: { min: 'Vôbec neohrozuje', max: 'Veľmi ohrozuje' } },
+      { id: 'sh5', text: 'Ukrajina', type: 'likert', required: true, scale: [1, 2, 3, 4, 5], scaleLabels: { min: 'Vôbec neohrozuje', max: 'Veľmi ohrozuje' } },
+      { id: 'sh6', text: 'Izrael', type: 'likert', required: true, scale: [1, 2, 3, 4, 5], scaleLabels: { min: 'Vôbec neohrozuje', max: 'Veľmi ohrozuje' } },
+      { id: 'sh7', text: 'Palestína', type: 'likert', required: true, scale: [1, 2, 3, 4, 5], scaleLabels: { min: 'Vôbec neohrozuje', max: 'Veľmi ohrozuje' } },
+      
+      // Domáce a migračné faktory
+      { id: 'sh8', text: 'Vláda Slovenskej Republiky', type: 'likert', required: true, scale: [1, 2, 3, 4, 5], scaleLabels: { min: 'Vôbec neohrozuje', max: 'Veľmi ohrozuje' } },
+      { id: 'sh9', text: 'Narastajúce množstvo zahraničných ľudí na Slovensku', type: 'likert', required: true, scale: [1, 2, 3, 4, 5], scaleLabels: { min: 'Vôbec neohrozuje', max: 'Veľmi ohrozuje' } },
+      { id: 'sh10', text: 'Ukrajinskí utečenci na Slovensku', type: 'likert', required: true, scale: [1, 2, 3, 4, 5], scaleLabels: { min: 'Vôbec neohrozuje', max: 'Veľmi ohrozuje' } }
+    ]
+  },
+
+  // ==========================================
+  // STRANA 7: DÔVERA
   // ==========================================
   {
     id: 'dovera',
     title: 'Dôvera',
     subtitle: 'European Union, 2026',
-    instruction: 'Nižšie nájdete zoznam rôznych inštitúcií. Pri každej inštitúcií prosím vyjadrite, do akej miery im dôverujete, na škále od 1 do 7. Neexistujú správne alebo nesprávne odpovede.',
+    instruction: 'Nižšie nájdete zoznam rôznych inštitúcií. Pri každej inštitúcií prosím vyjadrite, do akej miery im dôverujete. Neexistujú správne alebo nesprávne odpovede.',
     questions: [
-      // INŠTITUCIONÁLNA DÔVERA
-      {
-        id: 'id1_parlament',
-        text: 'Európsky parlament',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Absolútne nedôverujem',
-          'Väčšinou nedôverujem',
-          'Skôr nedôverujem',
-          'Neutrálny postoj / neviem',
-          'Skôr dôverujem',
-          'Väčšinou dôverujem',
-          'Absolútne dôverujem'
-        ]
-      },
-      {
-        id: 'id2_europska_rada',
-        text: 'Európska rada',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Absolútne nedôverujem',
-          'Väčšinou nedôverujem',
-          'Skôr nedôverujem',
-          'Neutrálny postoj / neviem',
-          'Skôr dôverujem',
-          'Väčšinou dôverujem',
-          'Absolútne dôverujem'
-        ]
-      },
-      {
-        id: 'id3_rada_eu',
-        text: 'Rada Európskej únie',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Absolútne nedôverujem',
-          'Väčšinou nedôverujem',
-          'Skôr nedôverujem',
-          'Neutrálny postoj / neviem',
-          'Skôr dôverujem',
-          'Väčšinou dôverujem',
-          'Absolútne dôverujem'
-        ]
-      },
-      {
-        id: 'id4_komisia',
-        text: 'Európska komisia',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Absolútne nedôverujem',
-          'Väčšinou nedôverujem',
-          'Skôr nedôverujem',
-          'Neutrálny postoj / neviem',
-          'Skôr dôverujem',
-          'Väčšinou dôverujem',
-          'Absolútne dôverujem'
-        ]
-      },
-      {
-        id: 'id5_sudny_dvor',
-        text: 'Súdny dvor Európskej únie',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Absolútne nedôverujem',
-          'Väčšinou nedôverujem',
-          'Skôr nedôverujem',
-          'Neutrálny postoj / neviem',
-          'Skôr dôverujem',
-          'Väčšinou dôverujem',
-          'Absolútne dôverujem'
-        ]
-      },
-      {
-        id: 'id6_ecb',
-        text: 'Európska centrálna banka',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Absolútne nedôverujem',
-          'Väčšinou nedôverujem',
-          'Skôr nedôverujem',
-          'Neutrálny postoj / neviem',
-          'Skôr dôverujem',
-          'Väčšinou dôverujem',
-          'Absolútne dôverujem'
-        ]
-      },
-      {
-        id: 'id7_dvor_auditorov',
-        text: 'Európsky dvor audítorov',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Absolútne nedôverujem',
-          'Väčšinou nedôverujem',
-          'Skôr nedôverujem',
-          'Neutrálny postoj / neviem',
-          'Skôr dôverujem',
-          'Väčšinou dôverujem',
-          'Absolútne dôverujem'
-        ]
-      },
-      // SYSTÉMOVÁ DÔVERA
-      {
-        id: 'sd1_transparentnost',
-        text: 'Procesy rozhodovania v EÚ sú transparentné a demokratické',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Absolútne nedôverujem',
-          'Väčšinou nedôverujem',
-          'Skôr nedôverujem',
-          'Neutrálny postoj / neviem',
-          'Skôr dôverujem',
-          'Väčšinou dôverujem',
-          'Absolútne dôverujem'
-        ]
-      },
-      {
-        id: 'sd2_financovanie',
-        text: 'Financovanie EÚ (eurofondy, dotácie) sú spravodlivo rozdeľované',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Absolútne nedôverujem',
-          'Väčšinou nedôverujem',
-          'Skôr nedôverujem',
-          'Neutrálny postoj / neviem',
-          'Skôr dôverujem',
-          'Väčšinou dôverujem',
-          'Absolútne dôverujem'
-        ]
-      },
-      {
-        id: 'sd3_respekt',
-        text: 'EÚ rešpektuje kultúrne a národné odlišnosti členských štátov',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Absolútne nedôverujem',
-          'Väčšinou nedôverujem',
-          'Skôr nedôverujem',
-          'Neutrálny postoj / neviem',
-          'Skôr dôverujem',
-          'Väčšinou dôverujem',
-          'Absolútne dôverujem'
-        ]
-      },
-      {
-        id: 'sd4_prospech',
-        text: 'Rozhodnutia EÚ sú v prospech bežných občanov',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Absolútne nedôverujem',
-          'Väčšinou nedôverujem',
-          'Skôr nedôverujem',
-          'Neutrálny postoj / neviem',
-          'Skôr dôverujem',
-          'Väčšinou dôverujem',
-          'Absolútne dôverujem'
-        ]
-      },
-      {
-        id: 'sd5_efektivita',
-        text: 'EÚ je schopná efektívne riešiť problémy (klíma, bezpečnosť, ekonomika)',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Absolútne nedôverujem',
-          'Väčšinou nedôverujem',
-          'Skôr nedôverujem',
-          'Neutrálny postoj / neviem',
-          'Skôr dôverujem',
-          'Väčšinou dôverujem',
-          'Absolútne dôverujem'
-        ]
-      },
-      {
-        id: 'sd6_sluby',
-        text: 'EÚ plní svoje sľuby a dodržiava pravidlá',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Absolútne nedôverujem',
-          'Väčšinou nedôverujem',
-          'Skôr nedôverujem',
-          'Neutrálny postoj / neviem',
-          'Skôr dôverujem',
-          'Väčšinou dôverujem',
-          'Absolútne dôverujem'
-        ]
-      }
+      // Inštitucionálna dôvera
+      { id: 'id1', text: 'Európsky parlament', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' } },
+      { id: 'id2', text: 'Európska rada', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' } },
+      { id: 'id3', text: 'Rada Európskej únie', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' } },
+      { id: 'id4', text: 'Európska komisia', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' } },
+      { id: 'id5', text: 'Súdny dvor Európskej únie', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' } },
+      { id: 'id6', text: 'Európska centrálna banka', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' } },
+      { id: 'id7', text: 'Európsky dvor audítorov', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' } },
+      
+      // Systémová dôvera
+      { id: 'sd1', text: 'Procesy rozhodovania v EÚ sú transparentné a demokratické.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' } },
+      { id: 'sd2', text: 'Financovanie EÚ (eurofondy, dotácie) sú spravodlivo rozdeľované.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' } },
+      { id: 'sd3', text: 'EÚ rešpektuje kultúrne a národné odlišnosti členských štátov.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' } },
+      { id: 'sd4', text: 'Rozhodnutia EÚ sú v prospech bežných občanov.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' } },
+      { id: 'sd5', text: 'EÚ je schopná efektívne riešiť problémy (klíma, bezpečnosť, ekonomika).', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' } },
+      { id: 'sd6', text: 'EÚ plní svoje sľuby a dodržiava pravidlá.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' } }
     ]
   },
 
   // ==========================================
-  // STRANA 7: KONŠPIRAČNÉ PRESVEDČENIA (EP)
+  // STRANA 8: KONŠPIRAČNÉ PRESVEDČENIA
   // ==========================================
   {
-    id: 'konspiracne_presvedcenia_ep',
-    title: 'Konšpiračné presvedčenia o EÚ',
-    subtitle: 'Bojovic, (2021); European Commission Representation in Slovakia',
-    instruction: 'Nižšie nájdete sériu tvrdení. Pri každom tvrdení prosím vyjadrite, do akej miery s ním súhlasíte, na škále od 1 do 7. Neexistujú správne alebo nesprávne odpovede.',
+    id: 'konspiracia_presvedcenia',
+    title: 'Konšpiračné presvedčenia',
+    subtitle: 'Bojovic, 2021; European Commission',
+    instruction: 'Nižšie nájdete sériu tvrdení. Pri každom tvrdení prosím vyjadrite, do akej miery s ním súhlasíte. Neexistujú správne alebo nesprávne odpovede.',
     questions: [
-      {
-        id: 'ep1',
-        text: 'Európska únia má skrytý plán systematicky zničiť suverenitu členských štátov',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'ep2',
-        text: 'Rozhodnutia EÚ sú transparentné a robené Európskym parlamentom a zvolenými poslancami',
-        type: 'likert',
-        required: true,
-        reverse: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'ep3',
-        text: 'Európske inštitúcie a mainstreamové médiá spolupracujú na tom, aby pred občanmi zatajili skutočné negatívne dôsledky rozhodnutí EÚ',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'ep4',
-        text: 'EÚ rešpektuje a chráni národné kultúry a tradície všetkých členských štátov',
-        type: 'likert',
-        required: true,
-        reverse: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'ep5',
-        text: 'EÚ zámerne obchádza demokratické procesy a ignoruje vôľu občanov, pretože sú riadené skrytou agendou globálnych elít',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'ep6',
-        text: 'Regulácie EÚ sú navrhnuté aby chránili hospodárstvo všetkých členských štátov vrátane Slovenska, nie aby mu ublížili',
-        type: 'likert',
-        required: true,
-        reverse: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'ep7',
-        text: 'Migračná kríza bola naplánovaná autoritami EÚ',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      }
-    ]
-  },
-
-  // ==========================================
-  // STRANA 8: KONŠPIRAČNÉ PRESVEDČENIA (EPV) + PLACEBO
-  // ==========================================
-  {
-    id: 'konspiracne_presvedcenia_epv_placebo',
-    title: 'Konšpiračné presvedčenia o EÚ a kontrolné otázky',
-    subtitle: 'Variované položky',
-    instruction: 'Nižšie nájdete sériu tvrdení. Pri každom tvrdení prosím vyjadrite, do akej miery s ním súhlasíte, na škále od 1 do 7. Neexistujú správne alebo nesprávne odpovede.',
-    questions: [
-      // EPV
-      {
-        id: 'epv1',
-        text: 'Štáty si zachovávajú svoju suverenitu v rámci EÚ',
-        type: 'likert',
-        required: true,
-        reverse: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'epv2',
-        text: 'Rozhodnutia EÚ v skutočnosti nerobí Európsky parlament, ale tajná skupina globálnych elít a veľkých korporácií',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'epv3',
-        text: 'Európske inštitúcie a mainstreamové médiá transparentne informujú občanov o rozhodnutiach EÚ',
-        type: 'likert',
-        required: true,
-        reverse: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'epv4',
-        text: 'EÚ má skrytý plán na zničenie národných kultúr a tradícií v prospech multikulturalizmu a liberálnych hodnôt',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'epv5',
-        text: 'Všetky rozhodnutia EÚ sú prijaté v plne transparentných procesoch, kde všetci poslanci verejne hlasujú, a žiadna krajina nie je nútená ich nasledovať.',
-        type: 'likert',
-        required: true,
-        reverse: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'epv6',
-        text: 'EÚ vedome zavádza škodlivé regulácie s cieľom ekonomicky zničiť Slovensko a prinútiť nás byť úplne závislí na Bruseli',
-        type: 'likert',
-        required: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'epv7',
-        text: 'Migračná kríza bola prirodzená udalosť, nie naplánovaná autoritami EÚ',
-        type: 'likert',
-        required: true,
-        reverse: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      // PLACEBO TVRDENIA
-      {
-        id: 'pt1',
-        text: 'Slovensko je členským štátom Európskej únie',
-        type: 'likert',
-        required: true,
-        isPlacebo: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'pt2',
-        text: 'Európska únia je geograficky situovaná na Severnom Americkom kontinente',
-        type: 'likert',
-        required: true,
-        isPlacebo: true,
-        reverse: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'pt3',
-        text: 'Euro (€) je jednotná mena používaná väčšinou členských štátov Európskej únie',
-        type: 'likert',
-        required: true,
-        isPlacebo: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'pt4',
-        text: 'Bratislava je hlavné mesto Slovenska',
-        type: 'likert',
-        required: true,
-        isPlacebo: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'pt5',
-        text: 'Na Slovensku sa aktuálne platí Slovenskou Korunou (SK)',
-        type: 'likert',
-        required: true,
-        isPlacebo: true,
-        reverse: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      },
-      {
-        id: 'pt6',
-        text: 'Poslanci do Európskeho parlamentu sa volia',
-        type: 'likert',
-        required: true,
-        isPlacebo: true,
-        scale: [1, 2, 3, 4, 5, 6, 7],
-        scaleValueLabels: [
-          'Rozhodne nesúhlasím',
-          'Väčšinou nesúhlasím',
-          'Skôr nesúhlasím',
-          'Neutrálny postoj / Neviem',
-          'Skôr súhlasím',
-          'Väčšinou súhlasím',
-          'Rozhodne súhlasím'
-        ]
-      }
+      // EÚ konšpiračné presvedčenia
+      { id: 'ep1', text: 'Európska únia má skrytý plán systematicky zničiť suverenitu členských štátov.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'ep2', text: 'Rozhodnutia EÚ sú transparentné a robené Európskym parlamentom a zvolenými poslancami.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'ep3', text: 'Európske inštitúcie a mainstreamové médiá spolupracujú na tom, aby pred občanmi zatajili skutočné negatívne dôsledky rozhodnutí EÚ.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'ep4', text: 'EÚ rešpektuje a chráni národné kultúry a tradície všetkých členských štátov.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'ep5', text: 'EÚ zámerne obchádza demokratické procesy a ignoruje vôľu občanov, pretože sú riadené skrytou agendou globálnych elít.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'ep6', text: 'Regulácie EÚ sú navrhnuté aby chránili hospodárstvo všetkých členských štátov vrátane Slovenska, nie aby mu ublížili.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'ep7', text: 'Migračná kríza bola naplánovaná autoritami EÚ.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      
+      // EÚ konšpiračné presvedčenia variované
+      { id: 'epv1', text: 'Štáty si zachovávajú svoju suverenitu v rámci EÚ.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'epv2', text: 'Rozhodnutia EÚ v skutočnosti nerobí Európsky parlament, ale tajná skupina globálnych elít a veľkých korporácií.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'epv3', text: 'Európske inštitúcie a mainstreamové médiá transparentne informujú občanov o rozhodnutiach EÚ.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'epv4', text: 'EÚ má skrytý plán na zničenie národných kultúr a tradícií v prospech multikulturalizmu a liberálnych hodnôt.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'epv5', text: 'Všetky rozhodnutia EÚ sú prijaté v plne transparentných procesoch, kde všetci poslanci verejne hlasujú, a žiadna krajina nie je nútená ich nasledovať.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'epv6', text: 'EÚ vedome zavádza škodlivé regulácie s cieľom ekonomicky zničiť Slovensko a prinútiť nás byť úplne závislí na Bruseli.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'epv7', text: 'Migračná kríza bola prirodzená udalosť, nie naplánovaná autoritami EÚ.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      
+      // Placebo tvrdenia
+      { id: 'pt1', text: 'Slovensko je členským štátom Európskej únie.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'pt2', text: 'Európska únia je geograficky situovaná na Severnom Americkom kontinente.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'pt3', text: 'Euro (€) je jednotná mena používaná väčšinou členských štátov Európskej únie.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'pt4', text: 'Bratislava je hlavné mesto Slovenska.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'pt5', text: 'Na Slovensku sa aktuálne platí Slovenskou Korunou (SK).', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } },
+      { id: 'pt6', text: 'Poslanci do Európskeho parlamentu sa volia.', type: 'likert', required: true, scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' } }
     ]
   },
 
@@ -2353,143 +1093,21 @@ const PAGES = [
     id: 'socialna_ziadostivost',
     title: 'Sociálna žiadostivosť',
     subtitle: 'Reynolds, 1982',
-    instruction: 'Nižšie nájdete sériu tvrdení. Prečítajte si každé tvrdenie pozorne a rozhodnite sa, či je pre Vás pravdivé alebo nepravdivé. Nie sú tu správne alebo nesprávne odpovede – ide o to, ako vnímatenasami seba. Označte vašu odpoveď kliknutím na tlačidlo "Pravda" alebo "Nepravda" vedľa každého tvrdenia. Všetky vaše odpovede zostanú anonymné a budú použité výlučne na výskumné účely.',
+    instruction: 'Nižšie nájdete sériu tvrdení. Prečítajte si každé tvrdenie pozorne a rozhodnite sa, či je pre Vás pravdivé alebo nepravdivé. Nie sú tu správne alebo nesprávne odpovede – ide o to, ako vnímate sami seba. Všetky vaše odpovede zostanú anonymné a budú použité výlučne na výskumné účely.',
     questions: [
-      {
-        id: 'sds1',
-        text: 'Niekedy je pre mňa ťažké pokračovať v práci, ak ma nikto nepodporí',
-        type: 'binary',
-        required: true,
-        options: [
-          { value: 'pravda', label: 'Pravda' },
-          { value: 'nepravda', label: 'Nepravda' }
-        ]
-      },
-      {
-        id: 'sds2',
-        text: 'Niekedy sa cítim rozčúlený/rozčúlená, keď si nemôžem dosiahnuť to, čo chcem',
-        type: 'binary',
-        required: true,
-        options: [
-          { value: 'pravda', label: 'Pravda' },
-          { value: 'nepravda', label: 'Nepravda' }
-        ]
-      },
-      {
-        id: 'sds3',
-        text: 'Niekoľkokrát som sa vzdal/vzdala robenia niečoho, pretože som nemal/mala dôveru v svoje schopnosti',
-        type: 'binary',
-        required: true,
-        options: [
-          { value: 'pravda', label: 'Pravda' },
-          { value: 'nepravda', label: 'Nepravda' }
-        ]
-      },
-      {
-        id: 'sds4',
-        text: 'Boli časy, keď som sa chcel/chcela búriť voči ľuďom vo funkcii, aj keď som vedel/vedela, že majú pravdu',
-        type: 'binary',
-        required: true,
-        options: [
-          { value: 'pravda', label: 'Pravda' },
-          { value: 'nepravda', label: 'Nepravda' }
-        ]
-      },
-      {
-        id: 'sds5',
-        text: 'Bez ohľadu na to, s kým som v rozhovore, som vždy dobrý/dobrá poslucháč/poslucháčka',
-        type: 'binary',
-        required: true,
-        reverse: true,
-        options: [
-          { value: 'pravda', label: 'Pravda' },
-          { value: 'nepravda', label: 'Nepravda' }
-        ]
-      },
-      {
-        id: 'sds6',
-        text: 'Boli okamžiky, keď som zneužil/zneužila niekoho',
-        type: 'binary',
-        required: true,
-        options: [
-          { value: 'pravda', label: 'Pravda' },
-          { value: 'nepravda', label: 'Nepravda' }
-        ]
-      },
-      {
-        id: 'sds7',
-        text: 'Vždy som ochotný/ochotná priznať, keď spravím chybu',
-        type: 'binary',
-        required: true,
-        reverse: true,
-        options: [
-          { value: 'pravda', label: 'Pravda' },
-          { value: 'nepravda', label: 'Nepravda' }
-        ]
-      },
-      {
-        id: 'sds8',
-        text: 'Niekedy sa pokúšam pomstiť sa namiesto toho, aby som odpustil/odpustila a zabudol/zabudla',
-        type: 'binary',
-        required: true,
-        options: [
-          { value: 'pravda', label: 'Pravda' },
-          { value: 'nepravda', label: 'Nepravda' }
-        ]
-      },
-      {
-        id: 'sds9',
-        text: 'Som vždy zdvorilostný/zdvorilostná, dokonca aj voči ľuďom, ktorí sú nepriaznivo naladení',
-        type: 'binary',
-        required: true,
-        reverse: true,
-        options: [
-          { value: 'pravda', label: 'Pravda' },
-          { value: 'nepravda', label: 'Nepravda' }
-        ]
-      },
-      {
-        id: 'sds10',
-        text: 'Nikdy som sa nehneval/nenahnevala, keď ľudia vyjadrili nápady veľmi odlišné od tých mojich',
-        type: 'binary',
-        required: true,
-        reverse: true,
-        options: [
-          { value: 'pravda', label: 'Pravda' },
-          { value: 'nepravda', label: 'Nepravda' }
-        ]
-      },
-      {
-        id: 'sds11',
-        text: 'Boli časy, keď som bol/bola dosť žiarlivý/žiarlivá na dobrú náladu druhých',
-        type: 'binary',
-        required: true,
-        options: [
-          { value: 'pravda', label: 'Pravda' },
-          { value: 'nepravda', label: 'Nepravda' }
-        ]
-      },
-      {
-        id: 'sds12',
-        text: 'Niekedy som rozčúlený/rozčúlená, keď ľudia odo mňa niečo chcú',
-        type: 'binary',
-        required: true,
-        options: [
-          { value: 'pravda', label: 'Pravda' },
-          { value: 'nepravda', label: 'Nepravda' }
-        ]
-      },
-      {
-        id: 'sds13',
-        text: 'Nikdy som úmyselne nepovedal/nepovedala niečo, čo by niekoho zranilo',
-        type: 'binary',
-        required: true,
-        reverse: true,
-        options: [
-          { value: 'pravda', label: 'Pravda' },
-          { value: 'nepravda', label: 'Nepravda' }
-        ]
-      }
+      { id: 'sds1', text: 'Niekedy je pre mňa ťažké pokračovať v práci, ak ma nikto nepodporí.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
+      { id: 'sds2', text: 'Niekedy sa cítim rozčúlený/rozčúlená, keď si nemôžem dosiahnuť to, čo chcem.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
+      { id: 'sds3', text: 'Niekoľkokrát som sa vzdal/vzdala robenia niečoho, pretože som nemal/mala dôveru v svoje schopnosti.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
+      { id: 'sds4', text: 'Boli časy, keď som sa chcel/chcela búriť voči ľuďom vo funkcii, aj keď som vedel/vedela, že majú pravdu.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
+      { id: 'sds5', text: 'Bez ohľadu na to, s kým som v rozhovore, som vždy dobrý/dobrá poslucháč/poslucháčka.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
+      { id: 'sds6', text: 'Boli okamžiky, keď som zneužil/zneužila niekoho.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
+      { id: 'sds7', text: 'Vždy som ochotný/ochotná priznať, keď spravím chybu.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
+      { id: 'sds8', text: 'Niekedy sa pokúšam pomstiť sa namiesto toho, aby som odpustil/odpustila a zabudol/zabudla.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
+      { id: 'sds9', text: 'Som vždy zdvorilostný/zdvorilostná, dokonca aj voči ľuďom, ktorí sú nepriaznivo naladení.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
+      { id: 'sds10', text: 'Nikdy som sa nehneval/nenahnevala, keď ľudia vyjadrili nápady veľmi odlišné od tých mojich.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
+      { id: 'sds11', text: 'Boli časy, keď som bol/bola dosť žiarlivý/žiarlivá na dobrú náladu druhých.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
+      { id: 'sds12', text: 'Niekedy som rozčúlený/rozčúlená, keď ľudia odo mňa niečo chcú.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
+      { id: 'sds13', text: 'Nikdy som úmyselne nepovedal/nepovedala niečo, čo by niekoho zranilo.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] }
     ]
   }
 ].map(page => ({
@@ -2499,6 +1117,7 @@ const PAGES = [
     ...createFeedbackQuestions(page.id, page.questions.filter(q => !q.isFeedback).length)
   ]
 }));
+
 
 export { PAGES, createFeedbackQuestions };
 
