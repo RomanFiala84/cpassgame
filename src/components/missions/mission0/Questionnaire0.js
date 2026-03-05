@@ -965,82 +965,109 @@ const COMPONENT_ID = 'questionnaire0';
 // HELPER FUNKCIA - FEEDBACK OTÁZKY
 // ==========================================
 
-const createFeedbackQuestions = (blockId, questionCount) => [
-  {
-    id: `spatna_vazba_${blockId}_oblasti`,
-    text: 'V ktorých oblastiach ste mali problémy? (Môžete vybrať viacero možností)',
-    type: 'checkbox',
-    isFeedback: true,
-    required: false,
-    options: [
-      { value: 'zrozumitelnost', label: 'Zrozumiteľnosť otázok a tvrdení' },
-      { value: 'jednoznacnost', label: 'Jednoznačnosť otázok a tvrdení' },
-      { value: 'stupnica', label: 'Nevhodnosť hodnotiacej stupnice' },
-      { value: 'ine', label: 'Iné problémy' }
-    ]
-  },
-  {
-    id: `spatna_vazba_${blockId}_zrozumitelnost`,
-    text: 'Ktoré otázky a tvrdenia boli menej zrozumiteľné?',
-    type: 'number-select',
-    isFeedback: true,
-    min: 1,
-    max: questionCount,
-    multiple: true,
-    instruction: 'Vyberte čísla otázok a tvrdení',
-    required: false,
-    showIf: {
-      questionId: `spatna_vazba_${blockId}_oblasti`,
-      operator: 'includes',
-      value: 'zrozumitelnost'
-    }
-  },
-  {
-    id: `spatna_vazba_${blockId}_jednoznacnost`,
-    text: 'Ktoré otázky a tvrdenia boli menej jednoznačné (slová, pojmy, formulácia...)?',
-    type: 'number-select',
-    isFeedback: true,
-    min: 1,
-    max: questionCount,
-    multiple: true,
-    instruction: 'Vyberte čísla otázok a tvrdení',
-    required: false,
-    showIf: {
-      questionId: `spatna_vazba_${blockId}_oblasti`,
-      operator: 'includes',
-      value: 'jednoznacnost'
-    }
-  },
-  {
-    id: `spatna_vazba_${blockId}_stupnica`,
-    text: 'Pri ktorých otázkach a tvrdeniach ste mali problém vyjadriť svoj skutočný postoj vzhľadom na hodnotiacu stupnicu?',
-    type: 'number-select',
-    isFeedback: true,
-    min: 1,
-    max: questionCount,
-    multiple: true,
-    instruction: 'Vyberte čísla otázok a tvrdení',
-    required: false,
-    showIf: {
-      questionId: `spatna_vazba_${blockId}_oblasti`,
-      operator: 'includes',
-      value: 'stupnica'
-    }
-  },
-  {
-    id: `spatna_vazba_${blockId}_ine`,
-    text: 'Popíšte iné problémy, ktoré ste mali s otázkami a tvrdeniami v tejto časti:',
-    type: 'textarea',
-    isFeedback: true,
-    placeholder: 'Popíšte iné problémy...',
-    required: false,
-    showIf: {
-      questionId: `spatna_vazba_${blockId}_oblasti`,
-      operator: 'includes',
-      value: 'ine'
+// ==========================================
+// HELPER FUNKCIA - FEEDBACK OTÁZKY
+// ==========================================
+
+const createFeedbackQuestions = (blockId, questionCount) => {
+  // ✅ OPRAVENÉ: Ak je questionCount 0, skús získať z accordion questions
+  let actualCount = questionCount;
+  
+  // Pre stránky s accordion-likert, spočítaj sub-questions
+  if (questionCount === 0) {
+    const page = PAGES.find(p => p.id === blockId);
+    if (page) {
+      const accordionQuestion = page.questions.find(q => q.type === 'accordion-likert');
+      if (accordionQuestion && accordionQuestion.questions) {
+        actualCount = accordionQuestion.questions.length;
+      }
     }
   }
-];
+  
+  // Ak stále nemáme count, vráť prázdne pole
+  if (actualCount === 0) {
+    console.warn(`⚠️ No questions found for feedback in block: ${blockId}`);
+    return [];
+  }
+  
+  return [
+    {
+      id: `spatna_vazba_${blockId}_oblasti`,
+      text: 'V ktorých oblastiach ste mali problémy? (Môžete vybrať viacero možností)',
+      type: 'checkbox',
+      isFeedback: true,
+      required: false,
+      options: [
+        { value: 'zrozumitelnost', label: 'Zrozumiteľnosť otázok a tvrdení' },
+        { value: 'jednoznacnost', label: 'Jednoznačnosť otázok a tvrdení' },
+        { value: 'stupnica', label: 'Nevhodnosť hodnotiacej stupnice' },
+        { value: 'ine', label: 'Iné problémy' }
+      ]
+    },
+    {
+      id: `spatna_vazba_${blockId}_zrozumitelnost`,
+      text: 'Ktoré otázky a tvrdenia boli menej zrozumiteľné?',
+      type: 'number-select',
+      isFeedback: true,
+      min: 1,
+      max: actualCount, // ✅ POUŽIJE SPRÁVNY POČET
+      multiple: true,
+      instruction: 'Vyberte čísla otázok a tvrdení',
+      required: false,
+      showIf: {
+        questionId: `spatna_vazba_${blockId}_oblasti`,
+        operator: 'includes',
+        value: 'zrozumitelnost'
+      }
+    },
+    {
+      id: `spatna_vazba_${blockId}_jednoznacnost`,
+      text: 'Ktoré otázky a tvrdenia boli menej jednoznačné (slová, pojmy, formulácia...)?',
+      type: 'number-select',
+      isFeedback: true,
+      min: 1,
+      max: actualCount, // ✅ POUŽIJE SPRÁVNY POČET
+      multiple: true,
+      instruction: 'Vyberte čísla otázok a tvrdení',
+      required: false,
+      showIf: {
+        questionId: `spatna_vazba_${blockId}_oblasti`,
+        operator: 'includes',
+        value: 'jednoznacnost'
+      }
+    },
+    {
+      id: `spatna_vazba_${blockId}_stupnica`,
+      text: 'Pri ktorých otázkach a tvrdeniach ste mali problém vyjadriť svoj skutočný postoj vzhľadom na hodnotiacu stupnicu?',
+      type: 'number-select',
+      isFeedback: true,
+      min: 1,
+      max: actualCount, // ✅ POUŽIJE SPRÁVNY POČET
+      multiple: true,
+      instruction: 'Vyberte čísla otázok a tvrdení',
+      required: false,
+      showIf: {
+        questionId: `spatna_vazba_${blockId}_oblasti`,
+        operator: 'includes',
+        value: 'stupnica'
+      }
+    },
+    {
+      id: `spatna_vazba_${blockId}_ine`,
+      text: 'Popíšte iné problémy, ktoré ste mali s otázkami a tvrdeniami v tejto časti:',
+      type: 'textarea',
+      isFeedback: true,
+      placeholder: 'Popíšte iné problémy...',
+      required: false,
+      showIf: {
+        questionId: `spatna_vazba_${blockId}_oblasti`,
+        operator: 'includes',
+        value: 'ine'
+      }
+    }
+  ];
+};
+
 
 // ==========================================
 // DEFINÍCIA 9 STRÁNOK DOTAZNÍKA
@@ -1600,13 +1627,26 @@ const PAGES = [
     ]
   }
 
-].map(page => ({
-  ...page,
-  questions: [
-    ...page.questions,
-    ...createFeedbackQuestions(page.id, page.questions.filter(q => !q.isFeedback && q.type !== 'accordion-likert').length)
-  ]
-}));
+].map(page => {
+  // ✅ OPRAVENÉ: Počítaj všetky otázky vrátane accordion sub-questions
+  let questionCount = 0;
+  
+  page.questions.forEach(q => {
+    if (q.type === 'accordion-likert' && q.questions) {
+      questionCount += q.questions.length;
+    } else if (!q.isFeedback) {
+      questionCount += 1;
+    }
+  });
+  
+  return {
+    ...page,
+    questions: [
+      ...page.questions,
+      ...createFeedbackQuestions(page.id, questionCount)
+    ]
+  };
+});
 
 export { PAGES, createFeedbackQuestions };
 
@@ -1850,6 +1890,7 @@ const Questionnaire0 = () => {
   };
 
   // Odoslanie dotazníka
+  // Odoslanie dotazníka
   const handleSubmit = async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
@@ -1857,22 +1898,26 @@ const Questionnaire0 = () => {
     try {
       const timeSpent = Math.floor((Date.now() - startTime) / 1000);
       
-      await responseManager.submitResponses(userId, COMPONENT_ID, {
-        answers,
-        metadata: {
-          timeSpent,
-          completedAt: new Date().toISOString()
-        }
+      // ✅ OPRAVENÉ: Použitie existujúcej funkcie saveMultipleAnswers
+      await responseManager.saveMultipleAnswers(userId, COMPONENT_ID, answers, {
+        timeSpent,
+        completedAt: new Date().toISOString(),
+        device: window.innerWidth <= 768 ? 'mobile' : 'desktop'
       });
 
+      // ✅ Označ komponent ako dokončený
       await dataManager.markComponentComplete(userId, COMPONENT_ID);
+      
+      console.log('✅ Questionnaire0 submitted successfully');
       navigate('/mission0/complete');
+      
     } catch (err) {
-      console.error('Error submitting questionnaire:', err);
+      console.error('❌ Error submitting questionnaire:', err);
       setError('Chyba pri odosielaní dotazníka. Skúste to znova prosím.');
       setIsSubmitting(false);
     }
   };
+
 
   // ==========================================
   // RENDER FUNKCIE
@@ -1941,7 +1986,7 @@ const Questionnaire0 = () => {
                 
                 {isActive && (
                   <AccordionScaleContainer>
-                    {/* ✅ RENDERUJ BOX iba raz, VŠE v ňom */}
+                    {/* ✅ POROVNÁVACIE OTÁZKY - s boxom a labelmi */}
                     {subQuestion.text.includes('**Tvrdenie A:**') ? (
                       <>
                         {/* Box s textom */}
@@ -1964,6 +2009,31 @@ const Questionnaire0 = () => {
                             </AccordionScaleButton>
                           ))}
                         </AccordionScaleButtons>
+                        
+                        {/* ✅ PRIDANÉ: Labely aj pre porovnávacie otázky */}
+                        {subQuestion.scaleLabels && (
+                          <AccordionScaleLabels>
+                            <span>{subQuestion.scaleLabels.min}</span>
+                            <span>{subQuestion.scaleLabels.max}</span>
+                          </AccordionScaleLabels>
+                        )}
+                        
+                        {/* ✅ PRIDANÉ: Value labels ak existujú */}
+                        {subQuestion.scaleValueLabels && (
+                          <AccordionScaleDescriptions>
+                            {subQuestion.scale.map((scaleValue, idx) => (
+                              <AccordionScaleDescItem
+                                key={scaleValue}
+                                isSelected={subValue === scaleValue}
+                              >
+                                <span className="number">{scaleValue}:</span>
+                                <span className="description">
+                                  {subQuestion.scaleValueLabels[idx]}
+                                </span>
+                              </AccordionScaleDescItem>
+                            ))}
+                          </AccordionScaleDescriptions>
+                        )}
                       </>
                     ) : (
                       <>
