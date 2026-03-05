@@ -1507,11 +1507,11 @@ const PAGES = [
               max: 'Úplne rovnaký postoj' 
             },
             scaleValueLabels: [
-              '1 - Úplne opačný postoj',
-              '2 - Skôr opačný postoj',
-              '3 - Ani rovnaký, ani opačný',
-              '4 - Skôr rovnaký postoj',
-              '5 - Úplne rovnaký postoj'
+              'Úplne opačný postoj',
+              'Skôr opačný postoj',
+              'Ani rovnaký, ani opačný',
+              'Skôr rovnaký postoj',
+              'Úplne rovnaký postoj'
             ]
           },
           
@@ -1525,11 +1525,11 @@ const PAGES = [
               max: 'Úplne rovnaký postoj' 
             },
             scaleValueLabels: [
-              '1 - Úplne opačný postoj',
-              '2 - Skôr opačný postoj',
-              '3 - Ani rovnaký, ani opačný',
-              '4 - Skôr rovnaký postoj',
-              '5 - Úplne rovnaký postoj'
+              'Úplne opačný postoj',
+              'Skôr opačný postoj',
+              'Ani rovnaký, ani opačný',
+              'Skôr rovnaký postoj',
+              'Úplne rovnaký postoj'
             ]
           },
           
@@ -1543,11 +1543,11 @@ const PAGES = [
               max: 'Úplne rovnaký postoj' 
             },
             scaleValueLabels: [
-              '1 - Úplne opačný postoj',
-              '2 - Skôr opačný postoj',
-              '3 - Ani rovnaký, ani opačný',
-              '4 - Skôr rovnaký postoj',
-              '5 - Úplne rovnaký postoj'
+              'Úplne opačný postoj',
+              'Skôr opačný postoj',
+              'Ani rovnaký, ani opačný',
+              'Skôr rovnaký postoj',
+              'Úplne rovnaký postoj'
             ]
           },
           
@@ -1561,11 +1561,11 @@ const PAGES = [
               max: 'Úplne rovnaký postoj' 
             },
             scaleValueLabels: [
-              '1 - Úplne opačný postoj',
-              '2 - Skôr opačný postoj',
-              '3 - Ani rovnaký, ani opačný',
-              '4 - Skôr rovnaký postoj',
-              '5 - Úplne rovnaký postoj'
+              'Úplne opačný postoj',
+              'Skôr opačný postoj',
+              'Ani rovnaký, ani opačný',
+              'Skôr rovnaký postoj',
+              'Úplne rovnaký postoj'
             ]
           },
           
@@ -1579,11 +1579,11 @@ const PAGES = [
               max: 'Úplne rovnaký postoj' 
             },
             scaleValueLabels: [
-              '1 - Úplne opačný postoj',
-              '2 - Skôr opačný postoj',
-              '3 - Ani rovnaký, ani opačný',
-              '4 - Skôr rovnaký postoj',
-              '5 - Úplne rovnaký postoj'
+              'Úplne opačný postoj',
+              'Skôr opačný postoj',
+              'Ani rovnaký, ani opačný',
+              'Skôr rovnaký postoj',
+              'Úplne rovnaký postoj'
             ]
           },
           
@@ -1597,11 +1597,11 @@ const PAGES = [
               max: 'Úplne rovnaký postoj' 
             },
             scaleValueLabels: [
-              '1 - Úplne opačný postoj',
-              '2 - Skôr opačný postoj',
-              '3 - Ani rovnaký, ani opačný',
-              '4 - Skôr rovnaký postoj',
-              '5 - Úplne rovnaký postoj'
+              'Úplne opačný postoj',
+              'Skôr opačný postoj',
+              'Ani rovnaký, ani opačný',
+              'Skôr rovnaký postoj',
+              'Úplne rovnaký postoj'
             ]
           },
           
@@ -1615,11 +1615,11 @@ const PAGES = [
               max: 'Úplne rovnaký postoj' 
             },
             scaleValueLabels: [
-              '1 - Úplne opačný postoj',
-              '2 - Skôr opačný postoj',
-              '3 - Ani rovnaký, ani opačný',
-              '4 - Skôr rovnaký postoj',
-              '5 - Úplne rovnaký postoj'
+              'Úplne opačný postoj',
+              'Skôr opačný postoj',
+              'Ani rovnaký, ani opačný',
+              'Skôr rovnaký postoj',
+              'Úplne rovnaký postoj'
             ]
           }
         ]
@@ -1891,6 +1891,7 @@ const Questionnaire0 = () => {
 
   // Odoslanie dotazníka
   // Odoslanie dotazníka
+  // Odoslanie dotazníka
   const handleSubmit = async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
@@ -1898,15 +1899,17 @@ const Questionnaire0 = () => {
     try {
       const timeSpent = Math.floor((Date.now() - startTime) / 1000);
       
-      // ✅ OPRAVENÉ: Použitie existujúcej funkcie saveMultipleAnswers
+      // ✅ Ulož všetky odpovede s metadata
       await responseManager.saveMultipleAnswers(userId, COMPONENT_ID, answers, {
-        timeSpent,
-        completedAt: new Date().toISOString(),
+        time_spent_seconds: timeSpent,
+        completed_at: new Date().toISOString(),
         device: window.innerWidth <= 768 ? 'mobile' : 'desktop'
       });
 
-      // ✅ Označ komponent ako dokončený
-      await dataManager.markComponentComplete(userId, COMPONENT_ID);
+      // ✅ OPRAVENÉ: Označ misi ako completed priamo v progress
+      const progress = await dataManager.loadUserProgress(userId);
+      progress.mission0_completed = true; // ← SPRÁVNE
+      await dataManager.saveProgress(userId, progress);
       
       console.log('✅ Questionnaire0 submitted successfully');
       navigate('/mission0/complete');
