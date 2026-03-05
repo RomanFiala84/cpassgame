@@ -429,7 +429,7 @@ const DetectiveTipLarge = ({
   autoClose = false,
   autoCloseDelay = 8000,
   position = 'right',
-  minReadTime = 10000,
+  minReadTime = 5000,
   onOpen,
   onClose
 }) => {

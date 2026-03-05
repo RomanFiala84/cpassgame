@@ -1489,7 +1489,7 @@ const PAGES = [
 
   {
     id: 'porovnanie_vyznamov',
-    instruction: 'V dotazníku ste mohli vidieť rôzne tvrdenia o Európskej únii. Teraz vás prosíme posúdiť, či nasledujúce páry tvrdení vyjadrujú **rovnaký postoj** (hovoria to isté) alebo **opačný postoj** (hovoria opak). Pozorne si prečítajte obe tvrdenia a označte prosím vašu odpoveď.',
+    instruction: 'V dotazníku ste mohli vidieť rôzne tvrdenia o Európskej únii. Teraz prosím posúdte, či nasledujúce páry tvrdení vyjadrujú **rovnaký postoj** (hovoria to isté) alebo **opačný postoj** (hovoria opak). Pozorne si prečítajte obe tvrdenia a označte prosím vašu odpoveď.',
     questions: [
       {
         id: 'porovnanie_accordion',
