@@ -1777,7 +1777,41 @@ const Questionnaire1 = () => {
     });
     
     await responseManager.saveAnswer(userId, COMPONENT_ID, questionId, value);
+
+    // Scroll len pre radio, binary, likert — a nie keď je vybrané "Iné"
+    const page = PAGES[currentPage];
+    const question = page.questions.find(q => q.id === questionId);
+    const scrollTypes = ['radio', 'binary', 'likert'];
+    
+    const shouldScroll = 
+      question &&
+      scrollTypes.includes(question.type) &&
+      !question.isFeedback &&
+      value !== '__custom__' &&          // ← nie keď je "Iné" vybrané
+      !String(value).startsWith('__custom__'); // ← ani keď sa píše do "Iné"
+
+    if (shouldScroll) {
+      const allQuestions = page.questions.filter(q => !q.isFeedback && q.type !== 'accordion-likert');
+      const currentIndex = allQuestions.findIndex(q => q.id === questionId);
+
+      if (currentIndex !== -1 && currentIndex < allQuestions.length - 1) {
+        const nextQuestion = allQuestions[currentIndex + 1];
+        const nextElement = questionRefs.current[nextQuestion.id];
+
+        if (nextElement) {
+          const isMobile = window.innerWidth <= 768;
+          const offset = isMobile ? 180 : 150;
+
+          setTimeout(() => {
+            const elementPosition = nextElement.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - offset;
+            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+          }, 150);
+        }
+      }
+    }
   };
+
 
   // Checkbox handler
   const handleCheckboxChange = async (questionId, optionValue) => {
@@ -1828,19 +1862,14 @@ const Questionnaire1 = () => {
         
         const nextElement = questionRefs.current[nextQuestion.id];
         if (nextElement) {
-          // ✅ OPRAVENÉ: väčší offset + centrovaný scroll
           const isMobile = window.innerWidth <= 768;
-          const offset = isMobile ? 80 : 150; // väčší offset pre desktop
+          const offset = isMobile ? 180 : 150; // ← zvýšený mobile offset
           
           setTimeout(() => {
             const elementPosition = nextElement.getBoundingClientRect().top;
             const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-            window.scrollTo({
-              top: offsetPosition,
-              behavior: 'smooth'
-            });
-          }, 100); // kratší delay pre plynulejší UX
+            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+          }, 150); // ← väčší delay pre plynulejší scroll
         }
       }, 300);
     } else {
@@ -1849,6 +1878,7 @@ const Questionnaire1 = () => {
       }, 300);
     }
   };
+
 
 
   // Validácia stránky

@@ -1449,70 +1449,126 @@ const PAGES = [
             text: 'Európsky parlament',
             scale: [1,2,3,4,5,6,7,8,9,10],
             scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-            anchorLabels: {
-              5: 'Skôr nedôverujem',
-              6: 'Skôr dôverujem',
-            }
+            scaleValueLabels: [
+              'Absolútne nedôverujem',  // 1
+              'Takmer vôbec nedôverujem', // 2
+              'Prevažne nedôverujem',   // 3
+              'Skôr nedôverujem',       // 4
+              'Mierne nedôverujem',     // 5
+              'Mierne dôverujem',       // 6
+              'Skôr dôverujem',         // 7
+              'Prevažne dôverujem',     // 8
+              'Takmer úplne dôverujem', // 9
+              'Absolútne dôverujem'     // 10
+            ]
           },
           {
             id: 'id2',
             text: 'Európska rada',
             scale: [1,2,3,4,5,6,7,8,9,10],
             scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-            anchorLabels: {
-              5: 'Skôr nedôverujem',
-              6: 'Skôr dôverujem',
-            }
+            scaleValueLabels: [
+              'Absolútne nedôverujem',  // 1
+              'Takmer vôbec nedôverujem', // 2
+              'Prevažne nedôverujem',   // 3
+              'Skôr nedôverujem',       // 4
+              'Mierne nedôverujem',     // 5
+              'Mierne dôverujem',       // 6
+              'Skôr dôverujem',         // 7
+              'Prevažne dôverujem',     // 8
+              'Takmer úplne dôverujem', // 9
+              'Absolútne dôverujem'     // 10
+            ]
           },
           {
             id: 'id3',
             text: 'Rada Európskej únie',
             scale: [1,2,3,4,5,6,7,8,9,10],
             scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-            anchorLabels: {
-              5: 'Skôr nedôverujem',
-              6: 'Skôr dôverujem',
-            }
+            scaleValueLabels: [
+              'Absolútne nedôverujem',  // 1
+              'Takmer vôbec nedôverujem', // 2
+              'Prevažne nedôverujem',   // 3
+              'Skôr nedôverujem',       // 4
+              'Mierne nedôverujem',     // 5
+              'Mierne dôverujem',       // 6
+              'Skôr dôverujem',         // 7
+              'Prevažne dôverujem',     // 8
+              'Takmer úplne dôverujem', // 9
+              'Absolútne dôverujem'     // 10
+            ]
           },
           {
             id: 'id4',
             text: 'Európska komisia',
             scale: [1,2,3,4,5,6,7,8,9,10],
             scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-            anchorLabels: {
-              5: 'Skôr nedôverujem',
-              6: 'Skôr dôverujem',
-            }
+            scaleValueLabels: [
+              'Absolútne nedôverujem',  // 1
+              'Takmer vôbec nedôverujem', // 2
+              'Prevažne nedôverujem',   // 3
+              'Skôr nedôverujem',       // 4
+              'Mierne nedôverujem',     // 5
+              'Mierne dôverujem',       // 6
+              'Skôr dôverujem',         // 7
+              'Prevažne dôverujem',     // 8
+              'Takmer úplne dôverujem', // 9
+              'Absolútne dôverujem'     // 10
+            ]
           },
           {
             id: 'id5',
             text: 'Súdny dvor Európskej únie',
             scale: [1,2,3,4,5,6,7,8,9,10],
             scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-            anchorLabels: {
-              5: 'Skôr nedôverujem',
-              6: 'Skôr dôverujem',
-            }
+            scaleValueLabels: [
+              'Absolútne nedôverujem',  // 1
+              'Takmer vôbec nedôverujem', // 2
+              'Prevažne nedôverujem',   // 3
+              'Skôr nedôverujem',       // 4
+              'Mierne nedôverujem',     // 5
+              'Mierne dôverujem',       // 6
+              'Skôr dôverujem',         // 7
+              'Prevažne dôverujem',     // 8
+              'Takmer úplne dôverujem', // 9
+              'Absolútne dôverujem'     // 10
+            ]
           },
           {
             id: 'id6',
             text: 'Európska centrálna banka',
             scale: [1,2,3,4,5,6,7,8,9,10],
             scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-            anchorLabels: {
-              5: 'Skôr nedôverujem',
-              6: 'Skôr dôverujem',
-            }
+            scaleValueLabels: [
+              'Absolútne nedôverujem',  // 1
+              'Takmer vôbec nedôverujem', // 2
+              'Prevažne nedôverujem',   // 3
+              'Skôr nedôverujem',       // 4
+              'Mierne nedôverujem',     // 5
+              'Mierne dôverujem',       // 6
+              'Skôr dôverujem',         // 7
+              'Prevažne dôverujem',     // 8
+              'Takmer úplne dôverujem', // 9
+              'Absolútne dôverujem'     // 10
+            ]
           },
           {
             id: 'id7',
             text: 'Európsky dvor audítorov',
             scale: [1,2,3,4,5,6,7,8,9,10],
             scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-            anchorLabels: {
-              5: 'Skôr nedôverujem',
-              6: 'Skôr dôverujem',
-            }
+            scaleValueLabels: [
+              'Absolútne nedôverujem',  // 1
+              'Takmer vôbec nedôverujem', // 2
+              'Prevažne nedôverujem',   // 3
+              'Skôr nedôverujem',       // 4
+              'Mierne nedôverujem',     // 5
+              'Mierne dôverujem',       // 6
+              'Skôr dôverujem',         // 7
+              'Prevažne dôverujem',     // 8
+              'Takmer úplne dôverujem', // 9
+              'Absolútne dôverujem'     // 10
+            ]
           }
         ]
       }
@@ -1564,7 +1620,7 @@ const PAGES = [
     randomize: true,
     instruction: 'Nižšie nájdete sériu tvrdení. Prečítajte si každé tvrdenie pozorne a rozhodnite sa, či je pre vás pravdivé alebo nepravdivé. Nie sú tu správne alebo nesprávne odpovede – ide o to, ako vnímate sami seba. Označte vašu odpoveď kliknutím na tlačidlo pravda alebo nepravda vedľa každého tvrdenia.',
     questions: [
-      { id: 'sds1', text: 'Niekedy je pre mňa ťažké pokračovať v práci, ak ma nikto nepodporí.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
+      { id: 'sds1', text: 'Niekedy je pre mňa ťažké pokračovať v práci, ak ma nikto nepodporí.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravdivé' }, { value: 'nepravda', label: 'Nepravda' }] },
       { id: 'sds2', text: 'Niekedy sa cítim rozčúlený/rozčúlená, keď si nemôžem dosiahnuť to, čo chcem.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
       { id: 'sds3', text: 'Niekoľkokrát som sa vzdal/vzdala robenia niečoho, pretože som nemal/mala dôveru v svoje schopnosti.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
       { id: 'sds4', text: 'Boli časy, keď som sa chcel/chcela búriť voči ľuďom vo funkcii, aj keď som vedel/vedela, že majú pravdu.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
@@ -1779,7 +1835,41 @@ const Questionnaire0 = () => {
     });
     
     await responseManager.saveAnswer(userId, COMPONENT_ID, questionId, value);
+
+    // Scroll len pre radio, binary, likert — a nie keď je vybrané "Iné"
+    const page = PAGES[currentPage];
+    const question = page.questions.find(q => q.id === questionId);
+    const scrollTypes = ['radio', 'binary', 'likert'];
+    
+    const shouldScroll = 
+      question &&
+      scrollTypes.includes(question.type) &&
+      !question.isFeedback &&
+      value !== '__custom__' &&          // ← nie keď je "Iné" vybrané
+      !String(value).startsWith('__custom__'); // ← ani keď sa píše do "Iné"
+
+    if (shouldScroll) {
+      const allQuestions = page.questions.filter(q => !q.isFeedback && q.type !== 'accordion-likert');
+      const currentIndex = allQuestions.findIndex(q => q.id === questionId);
+
+      if (currentIndex !== -1 && currentIndex < allQuestions.length - 1) {
+        const nextQuestion = allQuestions[currentIndex + 1];
+        const nextElement = questionRefs.current[nextQuestion.id];
+
+        if (nextElement) {
+          const isMobile = window.innerWidth <= 768;
+          const offset = isMobile ? 180 : 150;
+
+          setTimeout(() => {
+            const elementPosition = nextElement.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - offset;
+            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+          }, 150);
+        }
+      }
+    }
   };
+
 
   // Checkbox handler
   const handleCheckboxChange = async (questionId, optionValue) => {
@@ -1808,11 +1898,11 @@ const Questionnaire0 = () => {
   };
   // Accordion handler
   const handleAccordionClick = (subQuestionId) => {
-    setActiveAccordionId(activeAccordionId === subQuestionId ? null : subQuestionId);
-  };
+      setActiveAccordionId(activeAccordionId === subQuestionId ? null : subQuestionId);
+    };
 
-  // Accordion handler
-  const handleAccordionAnswer = async (accordionQuestions, subQuestionId, scaleValue) => {
+    // Accordion handler
+    const handleAccordionAnswer = async (accordionQuestions, subQuestionId, scaleValue) => {
     await handleAnswer(subQuestionId, scaleValue);
     
     setQuestionErrors(prev => {
@@ -1830,19 +1920,14 @@ const Questionnaire0 = () => {
         
         const nextElement = questionRefs.current[nextQuestion.id];
         if (nextElement) {
-          // ✅ OPRAVENÉ: väčší offset + centrovaný scroll
           const isMobile = window.innerWidth <= 768;
-          const offset = isMobile ? 80 : 150; // väčší offset pre desktop
+          const offset = isMobile ? 180 : 150; // ← zvýšený mobile offset
           
           setTimeout(() => {
             const elementPosition = nextElement.getBoundingClientRect().top;
             const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-            window.scrollTo({
-              top: offsetPosition,
-              behavior: 'smooth'
-            });
-          }, 100); // kratší delay pre plynulejší UX
+            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+          }, 150); // ← väčší delay pre plynulejší scroll
         }
       }, 300);
     } else {
@@ -1851,6 +1936,7 @@ const Questionnaire0 = () => {
       }, 300);
     }
   };
+
 
 
   // Validácia stránky
