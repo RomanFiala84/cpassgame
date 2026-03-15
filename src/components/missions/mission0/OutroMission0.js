@@ -558,7 +558,7 @@ const OutroMission0 = () => {
             <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
                 <strong>Výborne! Úspešne ste dokončili predvýskum. Vaše odpovede a spätná väzba nám pomôžu vylepšiť hlavný výskum.</strong>
             <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                <strong>V blízkej dobe bude odmknutý hlavný výskum. Ak máte záujem, môžete sa zúčastniť.</strong>
+                <strong>V blízkej dobe bude odomknutý hlavný výskum. Ak máte záujem, môžete sa zúčastniť.</strong>
             <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
                 <strong>Ak sa rozhodnete zúčastniť, nižšie môžete potvrdiť účasť a zvoliť si, či chcete byť jednorázovo upozornený/á e-mailom.</strong>
             <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">

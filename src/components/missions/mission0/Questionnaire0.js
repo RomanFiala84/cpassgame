@@ -1075,7 +1075,7 @@ const PAGES = [
   // STRANA 1: DEMOGRAFIA (bez zmeny)
   // ==========================================
   {
-    id: 'demografia',
+    id: 'demografia0',
     instruction: 'Nasleduje séria otázok o vás. Tieto informácie nám pomôžu pochopiť, ako sa líšia názory a skúsenosti medzi rôznymi skupinami ľudí.',
     questions: [
       {
@@ -1195,7 +1195,7 @@ const PAGES = [
   // STRANA 2: RELIGIOZITA (ACCORDION)
   // ==========================================
   {
-    id: 'religiozita',
+    id: 'religiozita0',
     randomize: true,
     instruction: 'Nasledujúce otázky sa týkajú vášho vzťahu k náboženstvu. Neexistujú správne alebo nesprávne odpovede.',
     questions: [
@@ -1499,7 +1499,7 @@ const PAGES = [
             scale: [1,2,3,4,5,6,7,8,9,10],
             scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
             anchorLabels: {
-              5: '5kôr nedôverujem',
+              5: 'Skôr nedôverujem',
               6: 'Skôr dôverujem',
             }
           },
@@ -1592,7 +1592,7 @@ const PAGES = [
           {
             id: 'comp_1',
             text: 'Porovnanie tvrdení',
-            content: '**Tvrdenie A:**\n"Európska únia má skrytý plán systematicky zničiť suverenitu členských štátov."\n\n**Tvrdenie B:**\n"Štáty si zachovávajú svoju suverenitu v rámci EÚ."\n\n Tieto dve tvrdenia vyjadrujú...',
+            content: '**Tvrdenie A:**\n"Európska únia má skrytý plán systematicky zničiť suverenitu členských štátov."\n\n**Tvrdenie B:**\n"Štáty si zachovávajú svoju suverenitu v rámci EÚ."\n**Tieto dve tvrdenia vyjadrujú...**',
             scale: [1, 2, 3, 4],
             scaleLabels: { min: 'Úplne opačný postoj', max: 'Úplne rovnaký postoj' },
             scaleValueLabels: ['Úplne opačný postoj', 'Skôr opačný postoj', 'Skôr rovnaký postoj', 'Úplne rovnaký postoj']
@@ -1600,7 +1600,7 @@ const PAGES = [
           {
             id: 'comp_2',
             text: 'Porovnanie tvrdení',
-            content: '**Tvrdenie A:**\n"Rozhodnutia EÚ sú transparentné a robené Európskym parlamentom a zvolenými poslancami."\n\n**Tvrdenie B:**\n"Rozhodnutia EÚ v skutočnosti nerobí Európsky parlament, ale tajná skupina globálnych elít a veľkých korporácií."\n\n Tieto dve tvrdenia vyjadrujú...',
+            content: '**Tvrdenie A:**\n"Rozhodnutia EÚ sú transparentné a robené Európskym parlamentom a zvolenými poslancami."\n\n**Tvrdenie B:**\n"Rozhodnutia EÚ v skutočnosti nerobí Európsky parlament, ale tajná skupina globálnych elít a veľkých korporácií."\n**Tieto dve tvrdenia vyjadrujú...**',
             scale: [1, 2, 3, 4],
             scaleLabels: { min: 'Úplne opačný postoj', max: 'Úplne rovnaký postoj' },
             scaleValueLabels: ['Úplne opačný postoj', 'Skôr opačný postoj', 'Skôr rovnaký postoj', 'Úplne rovnaký postoj']
@@ -1608,7 +1608,7 @@ const PAGES = [
           {
             id: 'comp_3',
             text: 'Porovnanie tvrdení',
-            content: '**Tvrdenie A:**\n"Európske inštitúcie a mainstreamové médiá spolupracujú na tom, aby pred občanmi zatajili skutočné negatívne dôsledky rozhodnutí EÚ."\n\n**Tvrdenie B:**\n"Európske inštitúcie a mainstreamové médiá transparentne informujú občanov o rozhodnutiach EÚ."\n\n Tieto dve tvrdenia vyjadrujú...',
+            content: '**Tvrdenie A:**\n"Európske inštitúcie a mainstreamové médiá spolupracujú na tom, aby pred občanmi zatajili skutočné negatívne dôsledky rozhodnutí EÚ."\n\n**Tvrdenie B:**\n"Európske inštitúcie a mainstreamové médiá transparentne informujú občanov o rozhodnutiach EÚ."\n**Tieto dve tvrdenia vyjadrujú...**',
             scale: [1, 2, 3, 4],
             scaleLabels: { min: 'Úplne opačný postoj', max: 'Úplne rovnaký postoj' },
             scaleValueLabels: ['Úplne opačný postoj', 'Skôr opačný postoj', 'Skôr rovnaký postoj', 'Úplne rovnaký postoj']
@@ -1616,7 +1616,7 @@ const PAGES = [
           {
             id: 'comp_4',
             text: 'Porovnanie tvrdení',
-            content: '**Tvrdenie A:**\n"EÚ rešpektuje a chráni národné kultúry a tradície všetkých členských štátov."\n\n**Tvrdenie B:**\n"EÚ má skrytý plán na zničenie národných kultúr a tradícií v prospech multikulturalizmu a liberálnych hodnôt."\n\n Tieto dve tvrdenia vyjadrujú...',
+            content: '**Tvrdenie A:**\n"EÚ rešpektuje a chráni národné kultúry a tradície všetkých členských štátov."\n\n**Tvrdenie B:**\n"EÚ má skrytý plán na zničenie národných kultúr a tradícií v prospech multikulturalizmu a liberálnych hodnôt."\n**Tieto dve tvrdenia vyjadrujú...**',
             scale: [1, 2, 3, 4],
             scaleLabels: { min: 'Úplne opačný postoj', max: 'Úplne rovnaký postoj' },
             scaleValueLabels: ['Úplne opačný postoj', 'Skôr opačný postoj', 'Skôr rovnaký postoj', 'Úplne rovnaký postoj']
@@ -1624,7 +1624,7 @@ const PAGES = [
           {
             id: 'comp_5',
             text: 'Porovnanie tvrdení',
-            content: '**Tvrdenie A:**\n"EÚ zámerne obchádza demokratické procesy a ignoruje vôľu občanov, pretože sú riadené skrytou agendou globálnych elít."\n\n**Tvrdenie B:**\n"Všetky rozhodnutia EÚ sú prijaté v plne transparentných procesoch, kde všetci poslanci verejne hlasujú, a žiadna krajina nie je nútená ich nasledovať."\n\n Tieto dve tvrdenia vyjadrujú...',
+            content: '**Tvrdenie A:**\n"EÚ zámerne obchádza demokratické procesy a ignoruje vôľu občanov, pretože sú riadené skrytou agendou globálnych elít."\n\n**Tvrdenie B:**\n"Všetky rozhodnutia EÚ sú prijaté v plne transparentných procesoch, kde všetci poslanci verejne hlasujú, a žiadna krajina nie je nútená ich nasledovať."\n**Tieto dve tvrdenia vyjadrujú...**',
             scale: [1, 2, 3, 4],
             scaleLabels: { min: 'Úplne opačný postoj', max: 'Úplne rovnaký postoj' },
             scaleValueLabels: ['Úplne opačný postoj', 'Skôr opačný postoj', 'Skôr rovnaký postoj', 'Úplne rovnaký postoj']
@@ -1632,7 +1632,7 @@ const PAGES = [
           {
             id: 'comp_6',
             text: 'Porovnanie tvrdení',
-            content: '**Tvrdenie A:**\n"Regulácie EÚ sú navrhnuté aby chránili hospodárstvo všetkých členských štátov vrátane Slovenska, nie aby mu ublížili."\n\n**Tvrdenie B:**\n"EÚ vedome zavádza škodlivé regulácie s cieľom ekonomicky zničiť Slovensko a prinútiť nás byť úplne závislí na Bruseli."\n\n Tieto dve tvrdenia vyjadrujú...',
+            content: '**Tvrdenie A:**\n"Regulácie EÚ sú navrhnuté aby chránili hospodárstvo všetkých členských štátov vrátane Slovenska, nie aby mu ublížili."\n\n**Tvrdenie B:**\n"EÚ vedome zavádza škodlivé regulácie s cieľom ekonomicky zničiť Slovensko a prinútiť nás byť úplne závislí na Bruseli."\n**Tieto dve tvrdenia vyjadrujú...**',
             scale: [1, 2, 3, 4],
             scaleLabels: { min: 'Úplne opačný postoj', max: 'Úplne rovnaký postoj' },
             scaleValueLabels: ['Úplne opačný postoj', 'Skôr opačný postoj', 'Skôr rovnaký postoj', 'Úplne rovnaký postoj']
