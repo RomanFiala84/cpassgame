@@ -1085,7 +1085,8 @@ const PAGES = [
         required: true,
         options: [
           { value: 'muz', label: 'Muž' },
-          { value: 'zena', label: 'Žena' }
+          { value: 'zena', label: 'Žena' },
+          { value: 'ine', label: 'Iné' }
         ]
       },
       {
