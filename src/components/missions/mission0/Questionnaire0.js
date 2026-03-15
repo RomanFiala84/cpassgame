@@ -1437,145 +1437,103 @@ const PAGES = [
   {
     id: 'dovera',
     instruction: 'Nižšie nájdete zoznam rôznych inštitúcií EÚ. Pri každej inštitúcií prosím vyjadrite, do akej miery im dôverujete, na škále od 1 do 10. Ak inštitúciu nepoznáte zvoľte prosím možnosť neviem. Neexistujú správne alebo nesprávne odpovede.',
-    extraOption: { value: 'dont_know', label: 'Neviem / nepoznám túto inštitúciu' },
     questions: [
-        {
-    id: 'dovera_accordion',
-    text: '',
-    type: 'accordion-likert',
-    required: true,
-    questions: [
-            {
-              id: 'id1',
-              text: 'Európsky parlament',
-              scale: [1,2,3,4,5,6,7,8,9,10],
-              scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-              scaleValueLabels: [
-                '1 Absolútne nedôverujem',
-                '2',
-                '3',
-                '4',
-                '5 Neutrálny postoj',
-                '6',
-                '7',
-                '8',
-                '9',
-                '10 Absolútne dôverujem'
-              ]
-            },
-            {
-              id: 'id2',
-              text: 'Európska rada',
-              scale: [1,2,3,4,5,6,7,8,9,10],
-              scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-              scaleValueLabels: [
-                '1 Absolútne nedôverujem',
-                '2',
-                '3',
-                '4',
-                '5 Neutrálny postoj',
-                '6',
-                '7',
-                '8',
-                '9',
-                '10 Absolútne dôverujem'
-              ]
-            },
-            {
-              id: 'id3',
-              text: 'Rada Európskej únie',
-              scale: [1,2,3,4,5,6,7,8,9,10],
-              scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-              scaleValueLabels: [
-                '1 Absolútne nedôverujem',
-                '2',
-                '3',
-                '4',
-                '5 Neutrálny postoj',
-                '6',
-                '7',
-                '8',
-                '9',
-                '10 Absolútne dôverujem'
-              ]
-            },
-            {
-              id: 'id4',
-              text: 'Európska komisia',
-              scale: [1,2,3,4,5,6,7,8,9,10],
-              scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-              scaleValueLabels: [
-                '1 Absolútne nedôverujem',
-                '2',
-                '3',
-                '4',
-                '5 Neutrálny postoj',
-                '6',
-                '7',
-                '8',
-                '9',
-                '10 Absolútne dôverujem'
-              ]
-            },
-            {
-              id: 'id5',
-              text: 'Súdny dvor Európskej únie',
-              scale: [1,2,3,4,5,6,7,8,9,10],
-              scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-              scaleValueLabels: [
-                '1 Absolútne nedôverujem',
-                '2',
-                '3',
-                '4',
-                '5 Neutrálny postoj',
-                '6',
-                '7',
-                '8',
-                '9',
-                '10 Absolútne dôverujem'
-              ]
-            },
-            {
-              id: 'id6',
-              text: 'Európska centrálna banka',
-              scale: [1,2,3,4,5,6,7,8,9,10],
-              scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-              scaleValueLabels: [
-                '1 Absolútne nedôverujem',
-                '2',
-                '3',
-                '4',
-                '5 Neutrálny postoj',
-                '6',
-                '7',
-                '8',
-                '9',
-                '10 Absolútne dôverujem'
-              ]
-            },
-            {
-              id: 'id7',
-              text: 'Európsky dvor audítorov',
-              scale: [1,2,3,4,5,6,7,8,9,10],
-              scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-              scaleValueLabels: [
-                '1 Absolútne nedôverujem',
-                '2',
-                '3',
-                '4',
-                '5 Neutrálny postoj',
-                '6',
-                '7',
-                '8',
-                '9',
-                '10 Absolútne dôverujem'
-              ]
+      {
+        id: 'dovera_accordion',
+        text: '',
+        type: 'accordion-likert',
+        required: false,
+        extraOption: { value: 'dont_know', label: 'Neviem / nepoznám túto inštitúciu' },
+        questions: [
+          {
+            id: 'id1',
+            text: 'Európsky parlament',
+            scale: [1,2,3,4,5,6,7,8,9,10],
+            scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
+            anchorLabels: {
+              1: '1 – Absolútne nedôverujem',
+              5: '5 – Skôr nedôverujem',
+              6: '6 – Skôr dôverujem',
+              10: '10 – Absolútne dôverujem'
             }
-          ]
-        }
-
+          },
+          {
+            id: 'id2',
+            text: 'Európska rada',
+            scale: [1,2,3,4,5,6,7,8,9,10],
+            scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
+            anchorLabels: {
+              1: '1 – Absolútne nedôverujem',
+              5: '5 – Skôr nedôverujem',
+              6: '6 – Skôr dôverujem',
+              10: '10 – Absolútne dôverujem'
+            }
+          },
+          {
+            id: 'id3',
+            text: 'Rada Európskej únie',
+            scale: [1,2,3,4,5,6,7,8,9,10],
+            scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
+            anchorLabels: {
+              1: '1 – Absolútne nedôverujem',
+              5: '5 – Skôr nedôverujem',
+              6: '6 – Skôr dôverujem',
+              10: '10 – Absolútne dôverujem'
+            }
+          },
+          {
+            id: 'id4',
+            text: 'Európska komisia',
+            scale: [1,2,3,4,5,6,7,8,9,10],
+            scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
+            anchorLabels: {
+              1: '1 – Absolútne nedôverujem',
+              5: '5 – Skôr nedôverujem',
+              6: '6 – Skôr dôverujem',
+              10: '10 – Absolútne dôverujem'
+            }
+          },
+          {
+            id: 'id5',
+            text: 'Súdny dvor Európskej únie',
+            scale: [1,2,3,4,5,6,7,8,9,10],
+            scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
+            anchorLabels: {
+              1: '1 – Absolútne nedôverujem',
+              5: '5 – Skôr nedôverujem',
+              6: '6 – Skôr dôverujem',
+              10: '10 – Absolútne dôverujem'
+            }
+          },
+          {
+            id: 'id6',
+            text: 'Európska centrálna banka',
+            scale: [1,2,3,4,5,6,7,8,9,10],
+            scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
+            anchorLabels: {
+              1: '1 – Absolútne nedôverujem',
+              5: '5 – Skôr nedôverujem',
+              6: '6 – Skôr dôverujem',
+              10: '10 – Absolútne dôverujem'
+            }
+          },
+          {
+            id: 'id7',
+            text: 'Európsky dvor audítorov',
+            scale: [1,2,3,4,5,6,7,8,9,10],
+            scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
+            anchorLabels: {
+              1: '1 – Absolútne nedôverujem',
+              5: '5 – Skôr nedôverujem',
+              6: '6 – Skôr dôverujem',
+              10: '10 – Absolútne dôverujem'
+            }
+          }
+        ]
+      }
     ]
   },
+
 
   // ==========================================
   // STRANA 8: KONŠPIRAČNÉ PRESVEDČENIA (ACCORDION)
@@ -1645,135 +1603,66 @@ const PAGES = [
         type: 'accordion-likert',
         required: true,
         questions: [
-          // Pár 1: ep1 vs epv1
           {
             id: 'comp_1',
-            text: '**Tvrdenie A:**\n"Európska únia má skrytý plán systematicky zničiť suverenitu členských štátov."\n\n**Tvrdenie B:**\n"Štáty si zachovávajú svoju suverenitu v rámci EÚ."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
+            text: 'Porovnanie tvrdení',
+            content: '**Tvrdenie A:**\n"Európska únia má skrytý plán systematicky zničiť suverenitu členských štátov."\n\n**Tvrdenie B:**\n"Štáty si zachovávajú svoju suverenitu v rámci EÚ."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
             scale: [1, 2, 3, 4, 5],
-            scaleLabels: { 
-              min: 'Úplne opačný postoj', 
-              max: 'Úplne rovnaký postoj' 
-            },
-            scaleValueLabels: [
-              'Úplne opačný postoj',
-              'Skôr opačný postoj',
-              'Ani rovnaký, ani opačný',
-              'Skôr rovnaký postoj',
-              'Úplne rovnaký postoj'
-            ]
+            scaleLabels: { min: 'Úplne opačný postoj', max: 'Úplne rovnaký postoj' },
+            scaleValueLabels: ['Úplne opačný postoj', 'Skôr opačný postoj', 'Ani rovnaký, ani opačný', 'Skôr rovnaký postoj', 'Úplne rovnaký postoj']
           },
-          
-          // Pár 2: ep2 vs epv2
           {
             id: 'comp_2',
-            text: '**Tvrdenie A:**\n"Rozhodnutia EÚ sú transparentné a robené Európskym parlamentom a zvolenými poslancami."\n\n**Tvrdenie B:**\n"Rozhodnutia EÚ v skutočnosti nerobí Európsky parlament, ale tajná skupina globálnych elít a veľkých korporácií."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
+            text: 'Porovnanie tvrdení',
+            content: '**Tvrdenie A:**\n"Rozhodnutia EÚ sú transparentné a robené Európskym parlamentom a zvolenými poslancami."\n\n**Tvrdenie B:**\n"Rozhodnutia EÚ v skutočnosti nerobí Európsky parlament, ale tajná skupina globálnych elít a veľkých korporácií."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
             scale: [1, 2, 3, 4, 5],
-            scaleLabels: { 
-              min: 'Úplne opačný postoj', 
-              max: 'Úplne rovnaký postoj' 
-            },
-            scaleValueLabels: [
-              'Úplne opačný postoj',
-              'Skôr opačný postoj',
-              'Ani rovnaký, ani opačný',
-              'Skôr rovnaký postoj',
-              'Úplne rovnaký postoj'
-            ]
+            scaleLabels: { min: 'Úplne opačný postoj', max: 'Úplne rovnaký postoj' },
+            scaleValueLabels: ['Úplne opačný postoj', 'Skôr opačný postoj', 'Ani rovnaký, ani opačný', 'Skôr rovnaký postoj', 'Úplne rovnaký postoj']
           },
-          
-          // Pár 3: ep3 vs epv3
           {
             id: 'comp_3',
-            text: '**Tvrdenie A:**\n"Európske inštitúcie a mainstreamové médiá spolupracujú na tom, aby pred občanmi zatajili skutočné negatívne dôsledky rozhodnutí EÚ."\n\n**Tvrdenie B:**\n"Európske inštitúcie a mainstreamové médiá transparentne informujú občanov o rozhodnutiach EÚ."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
+            text: 'Porovnanie tvrdení',
+            content: '**Tvrdenie A:**\n"Európske inštitúcie a mainstreamové médiá spolupracujú na tom, aby pred občanmi zatajili skutočné negatívne dôsledky rozhodnutí EÚ."\n\n**Tvrdenie B:**\n"Európske inštitúcie a mainstreamové médiá transparentne informujú občanov o rozhodnutiach EÚ."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
             scale: [1, 2, 3, 4, 5],
-            scaleLabels: { 
-              min: 'Úplne opačný postoj', 
-              max: 'Úplne rovnaký postoj' 
-            },
-            scaleValueLabels: [
-              'Úplne opačný postoj',
-              'Skôr opačný postoj',
-              'Ani rovnaký, ani opačný',
-              'Skôr rovnaký postoj',
-              'Úplne rovnaký postoj'
-            ]
+            scaleLabels: { min: 'Úplne opačný postoj', max: 'Úplne rovnaký postoj' },
+            scaleValueLabels: ['Úplne opačný postoj', 'Skôr opačný postoj', 'Ani rovnaký, ani opačný', 'Skôr rovnaký postoj', 'Úplne rovnaký postoj']
           },
-          
-          // Pár 4: ep4 vs epv4
           {
             id: 'comp_4',
-            text: '**Tvrdenie A:**\n"EÚ rešpektuje a chráni národné kultúry a tradície všetkých členských štátov."\n\n**Tvrdenie B:**\n"EÚ má skrytý plán na zničenie národných kultúr a tradícií v prospech multikulturalizmu a liberálnych hodnôt."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
+            text: 'Porovnanie tvrdení',
+            content: '**Tvrdenie A:**\n"EÚ rešpektuje a chráni národné kultúry a tradície všetkých členských štátov."\n\n**Tvrdenie B:**\n"EÚ má skrytý plán na zničenie národných kultúr a tradícií v prospech multikulturalizmu a liberálnych hodnôt."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
             scale: [1, 2, 3, 4, 5],
-            scaleLabels: { 
-              min: 'Úplne opačný postoj', 
-              max: 'Úplne rovnaký postoj' 
-            },
-            scaleValueLabels: [
-              'Úplne opačný postoj',
-              'Skôr opačný postoj',
-              'Ani rovnaký, ani opačný',
-              'Skôr rovnaký postoj',
-              'Úplne rovnaký postoj'
-            ]
+            scaleLabels: { min: 'Úplne opačný postoj', max: 'Úplne rovnaký postoj' },
+            scaleValueLabels: ['Úplne opačný postoj', 'Skôr opačný postoj', 'Ani rovnaký, ani opačný', 'Skôr rovnaký postoj', 'Úplne rovnaký postoj']
           },
-          
-          // Pár 5: ep5 vs epv5
           {
             id: 'comp_5',
-            text: '**Tvrdenie A:**\n"EÚ zámerne obchádza demokratické procesy a ignoruje vôľu občanov, pretože sú riadené skrytou agendou globálnych elít."\n\n**Tvrdenie B:**\n"Všetky rozhodnutia EÚ sú prijaté v plne transparentných procesoch, kde všetci poslanci verejne hlasujú, a žiadna krajina nie je nútená ich nasledovať."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
+            text: 'Porovnanie tvrdení',
+            content: '**Tvrdenie A:**\n"EÚ zámerne obchádza demokratické procesy a ignoruje vôľu občanov, pretože sú riadené skrytou agendou globálnych elít."\n\n**Tvrdenie B:**\n"Všetky rozhodnutia EÚ sú prijaté v plne transparentných procesoch, kde všetci poslanci verejne hlasujú, a žiadna krajina nie je nútená ich nasledovať."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
             scale: [1, 2, 3, 4, 5],
-            scaleLabels: { 
-              min: 'Úplne opačný postoj', 
-              max: 'Úplne rovnaký postoj' 
-            },
-            scaleValueLabels: [
-              'Úplne opačný postoj',
-              'Skôr opačný postoj',
-              'Ani rovnaký, ani opačný',
-              'Skôr rovnaký postoj',
-              'Úplne rovnaký postoj'
-            ]
+            scaleLabels: { min: 'Úplne opačný postoj', max: 'Úplne rovnaký postoj' },
+            scaleValueLabels: ['Úplne opačný postoj', 'Skôr opačný postoj', 'Ani rovnaký, ani opačný', 'Skôr rovnaký postoj', 'Úplne rovnaký postoj']
           },
-          
-          // Pár 6: ep6 vs epv6
           {
             id: 'comp_6',
-            text: '**Tvrdenie A:**\n"Regulácie EÚ sú navrhnuté aby chránili hospodárstvo všetkých členských štátov vrátane Slovenska, nie aby mu ublížili."\n\n**Tvrdenie B:**\n"EÚ vedome zavádza škodlivé regulácie s cieľom ekonomicky zničiť Slovensko a prinútiť nás byť úplne závislí na Bruseli."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
+            text: 'Porovnanie tvrdení',
+            content: '**Tvrdenie A:**\n"Regulácie EÚ sú navrhnuté aby chránili hospodárstvo všetkých členských štátov vrátane Slovenska, nie aby mu ublížili."\n\n**Tvrdenie B:**\n"EÚ vedome zavádza škodlivé regulácie s cieľom ekonomicky zničiť Slovensko a prinútiť nás byť úplne závislí na Bruseli."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
             scale: [1, 2, 3, 4, 5],
-            scaleLabels: { 
-              min: 'Úplne opačný postoj', 
-              max: 'Úplne rovnaký postoj' 
-            },
-            scaleValueLabels: [
-              'Úplne opačný postoj',
-              'Skôr opačný postoj',
-              'Ani rovnaký, ani opačný',
-              'Skôr rovnaký postoj',
-              'Úplne rovnaký postoj'
-            ]
+            scaleLabels: { min: 'Úplne opačný postoj', max: 'Úplne rovnaký postoj' },
+            scaleValueLabels: ['Úplne opačný postoj', 'Skôr opačný postoj', 'Ani rovnaký, ani opačný', 'Skôr rovnaký postoj', 'Úplne rovnaký postoj']
           },
-          
-          // Pár 7: ep7 vs epv7
           {
             id: 'comp_7',
-            text: '**Tvrdenie A:**\n"Migračná kríza bola naplánovaná autoritami EÚ."\n\n**Tvrdenie B:**\n"Migračná kríza bola prirodzená udalosť, nie naplánovaná autoritami EÚ."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
+            text: 'Porovnanie tvrdení',
+            content: '**Tvrdenie A:**\n"Migračná kríza bola naplánovaná autoritami EÚ."\n\n**Tvrdenie B:**\n"Migračná kríza bola prirodzená udalosť, nie naplánovaná autoritami EÚ."\n\n**Otázka:** Tieto dve tvrdenia vyjadrujú...',
             scale: [1, 2, 3, 4, 5],
-            scaleLabels: { 
-              min: 'Úplne opačný postoj', 
-              max: 'Úplne rovnaký postoj' 
-            },
-            scaleValueLabels: [
-              'Úplne opačný postoj',
-              'Skôr opačný postoj',
-              'Ani rovnaký, ani opačný',
-              'Skôr rovnaký postoj',
-              'Úplne rovnaký postoj'
-            ]
+            scaleLabels: { min: 'Úplne opačný postoj', max: 'Úplne rovnaký postoj' },
+            scaleValueLabels: ['Úplne opačný postoj', 'Skôr opačný postoj', 'Ani rovnaký, ani opačný', 'Skôr rovnaký postoj', 'Úplne rovnaký postoj']
           }
         ]
       }
     ]
-  }
+  },
 
 ].map(page => {
   // ✅ OPRAVENÉ: Počítaj všetky otázky vrátane accordion sub-questions
@@ -2137,13 +2026,13 @@ const Questionnaire0 = () => {
                 
                 {isActive && (
                   <AccordionScaleContainer>
-                    {/* ✅ POROVNÁVACIE OTÁZKY - s boxom a labelmi */}
-                    {subQuestion.text.includes('**Tvrdenie A:**') ? (
+                    {/* POROVNÁVACIE OTÁZKY - s boxom a labelmi */}
+                    {subQuestion.content ? (
                       <>
-                        {/* Box s textom */}
+                        {/* Box s contentom */}
                         <ComparisonQuestionBox>
                           <div dangerouslySetInnerHTML={{ 
-                            __html: parseMarkdown(subQuestion.text) 
+                            __html: parseMarkdown(subQuestion.content) 
                           }} />
                         </ComparisonQuestionBox>
                         
@@ -2161,7 +2050,6 @@ const Questionnaire0 = () => {
                           ))}
                         </AccordionScaleButtons>
                         
-                        {/* ✅ PRIDANÉ: Labely aj pre porovnávacie otázky */}
                         {subQuestion.scaleLabels && (
                           <AccordionScaleLabels>
                             <span>{subQuestion.scaleLabels.min}</span>
@@ -2169,7 +2057,6 @@ const Questionnaire0 = () => {
                           </AccordionScaleLabels>
                         )}
                         
-                        {/* ✅ PRIDANÉ: Value labels ak existujú */}
                         {subQuestion.scaleValueLabels && (
                           <AccordionScaleDescriptions>
                             {subQuestion.scale.map((scaleValue, idx) => (
@@ -2226,14 +2113,51 @@ const Questionnaire0 = () => {
                         )}
                       </>
                     )}
+
+                    {/* Stredné kotvy - len pre vybrané hodnoty (dôvera) */}
+                    {subQuestion.anchorLabels && (
+                      <AccordionScaleDescriptions>
+                        {subQuestion.scale
+                          .filter(scaleValue => subQuestion.anchorLabels[scaleValue])
+                          .map(scaleValue => (
+                            <AccordionScaleDescItem
+                              key={scaleValue}
+                              isSelected={subValue === scaleValue}
+                            >
+                              <span className="description">
+                                {subQuestion.anchorLabels[scaleValue]}
+                              </span>
+                            </AccordionScaleDescItem>
+                          ))
+                        }
+                      </AccordionScaleDescriptions>
+                    )}
+
+                    {/* Neviem tlačidlo (dôvera) */}
+                    {question.extraOption && (
+                      <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(0,0,0,0.1)' }}>
+                        <AccordionScaleButton
+                          type="button"
+                          checked={subValue === question.extraOption.value}
+                          onClick={() => handleAccordionAnswer(
+                            accordionQuestions,
+                            subQuestion.id,
+                            question.extraOption.value
+                          )}
+                          style={{ width: '100%', flex: 'none' }}
+                        >
+                          {question.extraOption.label}
+                        </AccordionScaleButton>
+                      </div>
+                    )}
                   </AccordionScaleContainer>
                 )}
-              </AccordionQuestionItem>
-            );
-          })}
-        </AccordionQuestionList>
-      );
-
+                </AccordionQuestionItem>
+                );
+                })}
+                </AccordionQuestionList>
+                );
+                
       case 'radio':
       // ✅ Kontrola, či je vybraté "Iné" (hodnota neexistuje v definovaných options)
       const isOtherSelected = value && !question.options.find(o => o.value === value);
