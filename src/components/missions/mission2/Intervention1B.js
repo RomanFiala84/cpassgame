@@ -1,5 +1,4 @@
-// src/components/missions/mission1/Intervention1.js
-// UPRAVENÁ VERZIA s ResponseManager a time tracking
+// src/components/missions/mission2/Intervention1B.js
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -59,13 +58,13 @@ const ButtonContainer = styled.div`
   margin-top: 24px;
 `;
 
-const COMPONENT_ID = 'mission1_intervention';
+const COMPONENT_ID = 'mission2_intervention_b';
 
-const Intervention1 = () => {
+const Intervention1B = () => {
   const navigate = useNavigate();
   const { dataManager, userId } = useUserStats();
   const responseManager = getResponseManager(dataManager);
-  
+
   const [startTime] = useState(Date.now());
   const [timeSpent, setTimeSpent] = useState(0);
   const [hasScrolled, setHasScrolled] = useState(false);
@@ -78,11 +77,10 @@ const Intervention1 = () => {
     return () => clearInterval(interval);
   }, [startTime]);
 
-  // Guard: prevent access if mission1 locked (unless admin)
   useEffect(() => {
     (async () => {
       const prog = await dataManager.loadUserProgress(userId);
-      if (!prog.mission1_unlocked && !dataManager.isAdmin(userId)) {
+      if (!prog.mission2_unlocked && !dataManager.isAdmin(userId)) {
         return navigate('/mainmenu');
       }
     })();
@@ -100,17 +98,19 @@ const Intervention1 = () => {
   useEffect(() => {
     const autoSave = setInterval(async () => {
       const currentTime = Math.floor((Date.now() - startTime) / 1000);
-      await responseManager.saveAnswer(userId, COMPONENT_ID, 'time_spent_seconds', currentTime, { last_autosave: new Date().toISOString() });
+      await responseManager.saveAnswer(userId, COMPONENT_ID, 'time_spent_seconds', currentTime, {
+        last_autosave: new Date().toISOString()
+      });
     }, 5000);
     return () => clearInterval(autoSave);
   }, [userId, responseManager, startTime]);
 
   const handleContinue = async () => {
     setIsSubmitting(true);
-    
+
     try {
       const finalTime = Math.floor((Date.now() - startTime) / 1000);
-      
+
       await responseManager.saveMultipleAnswers(
         userId,
         COMPONENT_ID,
@@ -118,7 +118,7 @@ const Intervention1 = () => {
           time_spent_seconds: finalTime,
           scrolled_to_bottom: hasScrolled,
           intervention_read: true,
-          intervention_type: 'debunking'
+          intervention_type: 'trust_building'
         },
         {
           started_at: new Date(startTime).toISOString(),
@@ -126,12 +126,11 @@ const Intervention1 = () => {
           device: /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop'
         }
       );
-      
 
-      navigate('/mission1/postsb');
-      
+      navigate('/mission2/postsb');
+
     } catch (error) {
-      console.error('Error saving intervention data:', error);
+      console.error('❌ Error saving intervention data:', error);
       alert('Chyba pri ukladaní. Skús to znova.');
     } finally {
       setIsSubmitting(false);
@@ -142,60 +141,33 @@ const Intervention1 = () => {
     <Layout>
       <Container>
         <Card>
-          <Title>Intervencia: Debunking dezinformácií</Title>
-          
+          <Title>Intervencia B</Title>
+
           <TimeTracker>
             Čas strávený: {Math.floor(timeSpent / 60)}:{(timeSpent % 60).toString().padStart(2, '0')}
           </TimeTracker>
-          
+
           <InterventionContent>
-            <h3>Test</h3>
-            <p>
-              „Každý príspevok stojí na nejakých základoch. Môžeme rozlíšiť dva typy: A) Stabilné základy - Text obsahuje konkrétne mená, dátumy, zdroje alebo odkazy na štúdie. Výhodou je že sa dá presne dohľadať, odkiaľ informácia pochádza, a vieme si tak informáciu sami overiť. B) Nestabilné základy - Text obsahuje len frázy bez špecifikácie, zdrojov a sprostredkovaná informácia je často zavádzajúca a vyvoláva nátlak. Nevýhodou je že sa nemáme čoho chytiť, nevieme si informáciu overiť. Skúsme sa spätne pozrieť na príspevky, ktoré si videl. Boli postavené skôr na stabilných alebo nestabilných základoch?"
-            </p>
-            
+            {/* OBSAH DOPLNÍŠ MANUÁLNE */}
+            <h3>Nadpis sekcie</h3>
+            <p>Text intervencie s budovaním dôvery.</p>
+
             <ExampleBox>
-              <strong>Príklad debunkingu:</strong>
-              <p style={{ marginTop: 8 }}>
-                <strong>Mýtus:</strong> "Vakcíny obsahujú čipy na sledovanie."
-              </p>
-              <p>
-                <strong>Fakt:</strong> Vakcíny obsahujú biologické látky 
-                a nemôžu obsahovať elektronické čipy. Čip by bol viditeľný voľným okom 
-                a vyžadoval by by zdroj energie.
-              </p>
+              <strong>Príklad:</strong>
+              <p style={{ marginTop: 8 }}>Text príkladu.</p>
             </ExampleBox>
-            
-            <h3>Kľúčové princípy debunkingu:</h3>
-            <ul>
-              <li><strong>Začni faktom</strong> – Nie negáciou mýtu</li>
-              <li><strong>Vysvetli prečo</strong> – Logika za pravdou</li>
-              <li><strong>Použi dôkazy</strong> – Overiteľné zdroje</li>
-              <li><strong>Buď jednoduchý</strong> – Komplikované vysvetlenia nefungujú</li>
-            </ul>
-            
-            <h3>Praktické tipy:</h3>
-            <p>
-              Pri stretnutí s dezinformáciou sa najprv opýtaj: "Odkiaľ táto informácia pochádza?" 
-              a "Kto z toho profituje?"
-            </p>
-            
-            <p>
-              Nezabúdaj, že cieľom nie je presvedčiť každého, ale poskytnúť alternatívny 
-              pohľad založený na faktoch.
-            </p>
           </InterventionContent>
-          
+
           <ButtonContainer>
-            <StyledButton 
-              accent 
+            <StyledButton
+              accent
               onClick={handleContinue}
               disabled={isSubmitting || timeSpent < 20}
             >
-              {timeSpent < 20 
-                ? `Prečítaj článok (${20 - timeSpent}s)` 
-                : isSubmitting 
-                  ? 'Ukladám...' 
+              {timeSpent < 20
+                ? `Prečítaj článok (${20 - timeSpent}s)`
+                : isSubmitting
+                  ? 'Ukladám...'
                   : 'Pokračovať'}
             </StyledButton>
           </ButtonContainer>
@@ -205,4 +177,4 @@ const Intervention1 = () => {
   );
 };
 
-export default Intervention1;
+export default Intervention1B;

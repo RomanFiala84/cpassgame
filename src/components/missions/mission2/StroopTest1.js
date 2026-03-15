@@ -1,8 +1,4 @@
-// src/components/missions/mission1/StroopTest1.js
-// ═══════════════════════════════════════════════════════════════════════
-// STROOP TEST MISSION 1 - S DETEKTÍVOM KONÁROM
-// FINÁLNA VERZIA - 48 POLOŽIEK (NÁHODNE PREMIEŠANÉ)
-// ═══════════════════════════════════════════════════════════════════════
+// src/components/missions/mission2/StroopTest1.js
 
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
@@ -10,10 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { useUserStats } from '../../../contexts/UserStatsContext';
 import DetectiveTipLarge from '../../shared/DetectiveTipLarge';
 import PageTransition from '../../shared/PageTransition';
-
-// ═══════════════════════════════════════════════════════════════════════
-// STYLED COMPONENTS
-// ═══════════════════════════════════════════════════════════════════════
 
 const Container = styled.div`
   min-height: 100vh;
@@ -32,23 +24,14 @@ const Wrapper = styled.div`
   max-width: 600px;
   width: 100%;
   box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-
-  @media (max-width: 768px) {
-    padding: 30px 20px;
-  }
-
-  @media (max-width: 480px) {
-    padding: 20px 16px;
-  }
+  @media (max-width: 768px) { padding: 30px 20px; }
+  @media (max-width: 480px) { padding: 20px 16px; }
 `;
 
 const Header = styled.div`
   text-align: center;
   margin-bottom: 40px;
-
-  @media (max-width: 480px) {
-    margin-bottom: 30px;
-  }
+  @media (max-width: 480px) { margin-bottom: 30px; }
 `;
 
 const Title = styled.h1`
@@ -56,10 +39,7 @@ const Title = styled.h1`
   font-weight: 700;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   margin: 0 0 12px 0;
-
-  @media (max-width: 480px) {
-    font-size: 24px;
-  }
+  @media (max-width: 480px) { font-size: 24px; }
 `;
 
 const Subtitle = styled.p`
@@ -67,10 +47,7 @@ const Subtitle = styled.p`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   margin: 0 0 8px 0;
   line-height: 1.6;
-
-  @media (max-width: 480px) {
-    font-size: 14px;
-  }
+  @media (max-width: 480px) { font-size: 14px; }
 `;
 
 const Instructions = styled.p`
@@ -78,10 +55,7 @@ const Instructions = styled.p`
   color: ${p => p.theme.ACCENT_COLOR};
   margin: 0;
   font-weight: 600;
-
-  @media (max-width: 480px) {
-    font-size: 12px;
-  }
+  @media (max-width: 480px) { font-size: 12px; }
 `;
 
 const ProgressContainer = styled.div`
@@ -89,10 +63,7 @@ const ProgressContainer = styled.div`
   align-items: center;
   gap: 12px;
   margin-bottom: 40px;
-
-  @media (max-width: 480px) {
-    margin-bottom: 30px;
-  }
+  @media (max-width: 480px) { margin-bottom: 30px; }
 `;
 
 const ProgressBar = styled.div`
@@ -106,10 +77,7 @@ const ProgressBar = styled.div`
 const ProgressFill = styled.div`
   height: 100%;
   width: ${p => (p.current / p.total) * 100}%;
-  background: linear-gradient(to right, 
-    ${p => p.theme.ACCENT_COLOR}, 
-    ${p => p.theme.ACCENT_COLOR_2}
-  );
+  background: linear-gradient(to right, ${p => p.theme.ACCENT_COLOR}, ${p => p.theme.ACCENT_COLOR_2});
   transition: width 0.3s ease;
 `;
 
@@ -127,11 +95,7 @@ const GameArea = styled.div`
   align-items: center;
   gap: 40px;
   margin-bottom: 40px;
-
-  @media (max-width: 480px) {
-    gap: 30px;
-    margin-bottom: 30px;
-  }
+  @media (max-width: 480px) { gap: 30px; margin-bottom: 30px; }
 `;
 
 const Question = styled.div`
@@ -139,10 +103,7 @@ const Question = styled.div`
   font-weight: 600;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   text-align: center;
-
-  @media (max-width: 480px) {
-    font-size: 16px;
-  }
+  @media (max-width: 480px) { font-size: 16px; }
 `;
 
 const StroopWord = styled.div`
@@ -153,18 +114,9 @@ const StroopWord = styled.div`
   font-family: Arial, sans-serif;
   letter-spacing: 4px;
   transition: transform 0.2s ease;
-
-  &:hover {
-    transform: scale(1.05);
-  }
-
-  @media (max-width: 768px) {
-    font-size: 56px;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 48px;
-  }
+  &:hover { transform: scale(1.05); }
+  @media (max-width: 768px) { font-size: 56px; }
+  @media (max-width: 480px) { font-size: 48px; }
 `;
 
 const ButtonGroup = styled.div`
@@ -173,10 +125,7 @@ const ButtonGroup = styled.div`
   gap: 24px;
   width: 100%;
   justify-items: center;
-
-  @media (max-width: 480px) {
-    gap: 16px;
-  }
+  @media (max-width: 480px) { gap: 16px; }
 `;
 
 const OptionButton = styled.button`
@@ -192,62 +141,25 @@ const OptionButton = styled.button`
   padding: 0;
   background: ${p => p.buttonColor};
   position: relative;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-
-  &:hover:not(:disabled) {
-    transform: scale(1.1);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-  }
-
-  &:active:not(:disabled) {
-    transform: scale(0.95);
-  }
-
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  &:hover:not(:disabled) { transform: scale(1.1); box-shadow: 0 6px 16px rgba(0,0,0,0.3); }
+  &:active:not(:disabled) { transform: scale(0.95); }
+  &:disabled { opacity: 0.7; cursor: not-allowed; }
   &::after {
     content: ${p => p.isSelected ? '"✓"' : '""'};
     position: absolute;
     font-size: 48px;
     font-weight: bold;
     color: white;
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    text-shadow: 0 2px 6px rgba(0,0,0,0.5);
     animation: ${p => p.isSelected ? 'scaleIn 0.3s ease' : 'none'};
   }
-
   @keyframes scaleIn {
-    from {
-      transform: scale(0.5);
-      opacity: 0;
-    }
-    to {
-      transform: scale(1);
-      opacity: 1;
-    }
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
   }
-
-  @media (max-width: 768px) {
-    width: 90px;
-    height: 90px;
-    border-width: 3px;
-
-    &::after {
-      font-size: 40px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    width: 75px;
-    height: 75px;
-    border-width: 2px;
-
-    &::after {
-      font-size: 32px;
-    }
-  }
+  @media (max-width: 768px) { width: 90px; height: 90px; border-width: 3px; &::after { font-size: 40px; } }
+  @media (max-width: 480px) { width: 75px; height: 75px; border-width: 2px; &::after { font-size: 32px; } }
 `;
 
 const Stats = styled.div`
@@ -282,10 +194,7 @@ const StatValue = styled.div`
 const CompletionMessage = styled.div`
   text-align: center;
   padding: 40px 20px;
-
-  @media (max-width: 480px) {
-    padding: 30px 16px;
-  }
+  @media (max-width: 480px) { padding: 30px 16px; }
 `;
 
 const CompletionTitle = styled.h2`
@@ -293,10 +202,7 @@ const CompletionTitle = styled.h2`
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
   margin: 0 0 16px 0;
-
-  @media (max-width: 480px) {
-    font-size: 24px;
-  }
+  @media (max-width: 480px) { font-size: 24px; }
 `;
 
 const CompletionText = styled.p`
@@ -304,44 +210,23 @@ const CompletionText = styled.p`
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   margin: 0 0 24px 0;
   line-height: 1.6;
-
-  @media (max-width: 480px) {
-    font-size: 14px;
-  }
+  @media (max-width: 480px) { font-size: 14px; }
 `;
 
 const ContinueButton = styled.button`
   padding: 12px 32px;
   font-size: 16px;
   font-weight: 600;
-  background: linear-gradient(135deg, 
-    ${p => p.theme.ACCENT_COLOR}, 
-    ${p => p.theme.ACCENT_COLOR_2}
-  );
+  background: linear-gradient(135deg, ${p => p.theme.ACCENT_COLOR}, ${p => p.theme.ACCENT_COLOR_2});
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px ${p => p.theme.ACCENT_COLOR}66;
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-
-  @media (max-width: 480px) {
-    padding: 10px 24px;
-    font-size: 14px;
-  }
+  &:hover { transform: translateY(-2px); box-shadow: 0 4px 12px ${p => p.theme.ACCENT_COLOR}66; }
+  &:active { transform: translateY(0); }
+  @media (max-width: 480px) { padding: 10px 24px; font-size: 14px; }
 `;
-
-// ═══════════════════════════════════════════════════════════════════════
-// HELPER FUNCTION - SHUFFLE ARRAY
-// ═══════════════════════════════════════════════════════════════════════
 
 const shuffleArray = (array) => {
   const shuffled = [...array];
@@ -352,98 +237,82 @@ const shuffleArray = (array) => {
   return shuffled;
 };
 
-// ═══════════════════════════════════════════════════════════════════════
-// COMPONENT - MISSION 1
-// ═══════════════════════════════════════════════════════════════════════
-
 const StroopTest1 = () => {
   const navigate = useNavigate();
   const { dataManager, userId } = useUserStats();
   const [showDetectiveTip, setShowDetectiveTip] = useState(true);
 
   const colors = {
-    RED: { rgb: 'rgba(255, 0, 0, 1)', label: 'Červená' },
-    GREEN: { rgb: 'rgba(9, 255, 0, 1)', label: 'Zelená' },
-    BLUE: { rgb: 'rgb(1, 0, 255)', label: 'Modrá' },
+    RED:    { rgb: 'rgba(255, 0, 0, 1)',   label: 'Červená' },
+    GREEN:  { rgb: 'rgba(9, 255, 0, 1)',   label: 'Zelená' },
+    BLUE:   { rgb: 'rgb(1, 0, 255)',       label: 'Modrá' },
     YELLOW: { rgb: 'rgba(255, 255, 0, 1)', label: 'Žltá' }
   };
 
-  // ✅ FIXED TRIALS - 48 položiek (24 congruent + 24 incongruent)
   const FIXED_TRIALS_UNSORTED = [
-    // ═════════════════════════════════════════════════════
-    // CONGRUENT TRIALS (24 položiek)
-    // ═════════════════════════════════════════════════════
-    { word: 'RED', displayColor: 'RED', congruent: true },
-    { word: 'GREEN', displayColor: 'GREEN', congruent: true },
-    { word: 'BLUE', displayColor: 'BLUE', congruent: true },
+    { word: 'RED',    displayColor: 'RED',    congruent: true },
+    { word: 'GREEN',  displayColor: 'GREEN',  congruent: true },
+    { word: 'BLUE',   displayColor: 'BLUE',   congruent: true },
     { word: 'YELLOW', displayColor: 'YELLOW', congruent: true },
-    { word: 'RED', displayColor: 'RED', congruent: true },
-    { word: 'GREEN', displayColor: 'GREEN', congruent: true },
-    { word: 'BLUE', displayColor: 'BLUE', congruent: true },
+    { word: 'RED',    displayColor: 'RED',    congruent: true },
+    { word: 'GREEN',  displayColor: 'GREEN',  congruent: true },
+    { word: 'BLUE',   displayColor: 'BLUE',   congruent: true },
     { word: 'YELLOW', displayColor: 'YELLOW', congruent: true },
-    { word: 'RED', displayColor: 'RED', congruent: true },
-    { word: 'GREEN', displayColor: 'GREEN', congruent: true },
-    { word: 'BLUE', displayColor: 'BLUE', congruent: true },
+    { word: 'RED',    displayColor: 'RED',    congruent: true },
+    { word: 'GREEN',  displayColor: 'GREEN',  congruent: true },
+    { word: 'BLUE',   displayColor: 'BLUE',   congruent: true },
     { word: 'YELLOW', displayColor: 'YELLOW', congruent: true },
-    { word: 'RED', displayColor: 'RED', congruent: true },
-    { word: 'GREEN', displayColor: 'GREEN', congruent: true },
-    { word: 'BLUE', displayColor: 'BLUE', congruent: true },
+    { word: 'RED',    displayColor: 'RED',    congruent: true },
+    { word: 'GREEN',  displayColor: 'GREEN',  congruent: true },
+    { word: 'BLUE',   displayColor: 'BLUE',   congruent: true },
     { word: 'YELLOW', displayColor: 'YELLOW', congruent: true },
-    { word: 'RED', displayColor: 'RED', congruent: true },
-    { word: 'GREEN', displayColor: 'GREEN', congruent: true },
-    { word: 'BLUE', displayColor: 'BLUE', congruent: true },
+    { word: 'RED',    displayColor: 'RED',    congruent: true },
+    { word: 'GREEN',  displayColor: 'GREEN',  congruent: true },
+    { word: 'BLUE',   displayColor: 'BLUE',   congruent: true },
     { word: 'YELLOW', displayColor: 'YELLOW', congruent: true },
-    { word: 'RED', displayColor: 'RED', congruent: true },
-    { word: 'GREEN', displayColor: 'GREEN', congruent: true },
-    { word: 'BLUE', displayColor: 'BLUE', congruent: true },
+    { word: 'RED',    displayColor: 'RED',    congruent: true },
+    { word: 'GREEN',  displayColor: 'GREEN',  congruent: true },
+    { word: 'BLUE',   displayColor: 'BLUE',   congruent: true },
     { word: 'YELLOW', displayColor: 'YELLOW', congruent: true },
-
-    // ═════════════════════════════════════════════════════
-    // INCONGRUENT TRIALS (24 položiek)
-    // ═════════════════════════════════════════════════════
-    { word: 'RED', displayColor: 'GREEN', congruent: false },
-    { word: 'RED', displayColor: 'BLUE', congruent: false },
-    { word: 'RED', displayColor: 'YELLOW', congruent: false },
-    { word: 'GREEN', displayColor: 'RED', congruent: false },
-    { word: 'GREEN', displayColor: 'BLUE', congruent: false },
-    { word: 'GREEN', displayColor: 'YELLOW', congruent: false },
-    { word: 'BLUE', displayColor: 'RED', congruent: false },
-    { word: 'BLUE', displayColor: 'GREEN', congruent: false },
-    { word: 'BLUE', displayColor: 'YELLOW', congruent: false },
-    { word: 'YELLOW', displayColor: 'RED', congruent: false },
-    { word: 'YELLOW', displayColor: 'GREEN', congruent: false },
-    { word: 'YELLOW', displayColor: 'BLUE', congruent: false },
-    { word: 'RED', displayColor: 'GREEN', congruent: false },
-    { word: 'RED', displayColor: 'BLUE', congruent: false },
-    { word: 'GREEN', displayColor: 'RED', congruent: false },
-    { word: 'GREEN', displayColor: 'YELLOW', congruent: false },
-    { word: 'BLUE', displayColor: 'RED', congruent: false },
-    { word: 'BLUE', displayColor: 'GREEN', congruent: false },
-    { word: 'YELLOW', displayColor: 'RED', congruent: false },
-    { word: 'YELLOW', displayColor: 'BLUE', congruent: false },
-    { word: 'RED', displayColor: 'YELLOW', congruent: false },
-    { word: 'GREEN', displayColor: 'BLUE', congruent: false },
-    { word: 'BLUE', displayColor: 'YELLOW', congruent: false },
-    { word: 'YELLOW', displayColor: 'GREEN', congruent: false }
+    { word: 'RED',    displayColor: 'GREEN',  congruent: false },
+    { word: 'RED',    displayColor: 'BLUE',   congruent: false },
+    { word: 'RED',    displayColor: 'YELLOW', congruent: false },
+    { word: 'GREEN',  displayColor: 'RED',    congruent: false },
+    { word: 'GREEN',  displayColor: 'BLUE',   congruent: false },
+    { word: 'GREEN',  displayColor: 'YELLOW', congruent: false },
+    { word: 'BLUE',   displayColor: 'RED',    congruent: false },
+    { word: 'BLUE',   displayColor: 'GREEN',  congruent: false },
+    { word: 'BLUE',   displayColor: 'YELLOW', congruent: false },
+    { word: 'YELLOW', displayColor: 'RED',    congruent: false },
+    { word: 'YELLOW', displayColor: 'GREEN',  congruent: false },
+    { word: 'YELLOW', displayColor: 'BLUE',   congruent: false },
+    { word: 'RED',    displayColor: 'GREEN',  congruent: false },
+    { word: 'RED',    displayColor: 'BLUE',   congruent: false },
+    { word: 'GREEN',  displayColor: 'RED',    congruent: false },
+    { word: 'GREEN',  displayColor: 'YELLOW', congruent: false },
+    { word: 'BLUE',   displayColor: 'RED',    congruent: false },
+    { word: 'BLUE',   displayColor: 'GREEN',  congruent: false },
+    { word: 'YELLOW', displayColor: 'RED',    congruent: false },
+    { word: 'YELLOW', displayColor: 'BLUE',   congruent: false },
+    { word: 'RED',    displayColor: 'YELLOW', congruent: false },
+    { word: 'GREEN',  displayColor: 'BLUE',   congruent: false },
+    { word: 'BLUE',   displayColor: 'YELLOW', congruent: false },
+    { word: 'YELLOW', displayColor: 'GREEN',  congruent: false },
   ];
 
-  // ✅ SHUFFLE - Premiešaj poradie aby neboli farby za sebou
   const FIXED_TRIALS = shuffleArray(FIXED_TRIALS_UNSORTED);
 
-  // ✅ Konvertuj na trials objekty
-  const initializeTrials = () => {
-    return FIXED_TRIALS.map((trial, i) => ({
-      id: i,
-      word: trial.word,
-      displayColor: colors[trial.displayColor].rgb,
-      correctAnswer: trial.displayColor,
-      response: null,
-      reactionTime: null,
-      isCorrect: null,
-      timestamp: null,
-      congruent: trial.congruent
-    }));
-  };
+  const initializeTrials = () => FIXED_TRIALS.map((trial, i) => ({
+    id: i,
+    word: trial.word,
+    displayColor: colors[trial.displayColor].rgb,
+    correctAnswer: trial.displayColor,
+    response: null,
+    reactionTime: null,
+    isCorrect: null,
+    timestamp: null,
+    congruent: trial.congruent
+  }));
 
   const [trials, setTrials] = useState(() => initializeTrials());
   const [currentTrialIndex, setCurrentTrialIndex] = useState(0);
@@ -456,21 +325,16 @@ const StroopTest1 = () => {
   const correctAnswers = trials.filter(t => t.isCorrect === true).length;
   const accuracy = trials.length > 0 ? Math.round((correctAnswers / trials.length) * 100) : 0;
   const validReactions = trials.filter(t => t.reactionTime !== null);
-  const avgReactionTime = validReactions.length > 0 
-    ? validReactions.reduce((sum, t) => sum + t.reactionTime, 0) / validReactions.length
-    : 0;
+  const avgReactionTime = validReactions.length > 0
+    ? validReactions.reduce((sum, t) => sum + t.reactionTime, 0) / validReactions.length : 0;
 
-  // Congruent vs Incongruent stats
   const congruentTrials = trials.filter(t => t.congruent === true);
   const incongruentTrials = trials.filter(t => t.congruent === false);
-  const congruentAccuracy = congruentTrials.length > 0 
-    ? Math.round((congruentTrials.filter(t => t.isCorrect).length / congruentTrials.length) * 100)
-    : 0;
-  const incongruentAccuracy = incongruentTrials.length > 0 
-    ? Math.round((incongruentTrials.filter(t => t.isCorrect).length / incongruentTrials.length) * 100)
-    : 0;
+  const congruentAccuracy = congruentTrials.length > 0
+    ? Math.round((congruentTrials.filter(t => t.isCorrect).length / congruentTrials.length) * 100) : 0;
+  const incongruentAccuracy = incongruentTrials.length > 0
+    ? Math.round((incongruentTrials.filter(t => t.isCorrect).length / incongruentTrials.length) * 100) : 0;
 
-  // ✅ Detektívov tip
   const detectiveTip = `
     <p>🕵️ <strong>Pozor!</strong> Máme <em>kritickú úlohu</em>!</p>
     <p>Zistili sme, že v správach sa skrýva <strong>tajná šifra</strong>. Aby sme mohli pokračovať v múzeálnej skúsenosti, musíš ju najskôr <strong>vylúštiť</strong>.</p>
@@ -483,24 +347,21 @@ const StroopTest1 = () => {
     <p style="margin-top: 16px; color: #ff5459;"><strong>⚠️ Toto je detekčný test!</strong> Pokúšame sa zistiť, či si dostatočne pozorný. Podvádzanie alebo neopatrnosť budú detegované! 👁️</p>
   `;
 
-  // ✅ saveResults
   const saveResults = useCallback(async (completedTrials) => {
     const correctCount = completedTrials.filter(t => t.isCorrect).length;
     const validRTs = completedTrials.filter(t => t.reactionTime !== null);
-    const avgRT = validRTs.length > 0 ? validRTs.reduce((sum, t) => sum + t.reactionTime, 0) / validRTs.length : 0;
+    const avgRT = validRTs.length > 0
+      ? validRTs.reduce((sum, t) => sum + t.reactionTime, 0) / validRTs.length : 0;
 
-    // Separate congruent and incongruent analysis
     const congTrials = completedTrials.filter(t => t.congruent === true);
     const incongTrials = completedTrials.filter(t => t.congruent === false);
-    const congAccuracy = congTrials.length > 0 
-      ? (congTrials.filter(t => t.isCorrect).length / congTrials.length) * 100
-      : 0;
+    const congAccuracy = congTrials.length > 0
+      ? (congTrials.filter(t => t.isCorrect).length / congTrials.length) * 100 : 0;
     const incongAccuracy = incongTrials.length > 0
-      ? (incongTrials.filter(t => t.isCorrect).length / incongTrials.length) * 100
-      : 0;
+      ? (incongTrials.filter(t => t.isCorrect).length / incongTrials.length) * 100 : 0;
 
     const stroopResults = {
-      mission: 1,
+      mission: 2,
       testType: 'stroop',
       totalTrials: 48,
       correctAnswers: correctCount,
@@ -516,13 +377,12 @@ const StroopTest1 = () => {
     try {
       const participantCode = userId || sessionStorage.getItem('participantCode');
       const progress = await dataManager.loadUserProgress(participantCode);
-      const updatedProgress = {
+      await dataManager.saveProgress(participantCode, {
         ...progress,
-        stroop_test_mission1_results: stroopResults,
-        stroop_test_mission1_completed: true
-      };
-      await dataManager.saveProgress(participantCode, updatedProgress);
-      console.log('✅ Stroop test M1 results saved:', stroopResults);
+        stroop_test_mission2_results: stroopResults,
+        stroop_test_mission2_completed: true
+      });
+      console.log('✅ Stroop test M2 results saved');
     } catch (error) {
       console.error('❌ Error saving stroop results:', error);
     }
@@ -534,26 +394,21 @@ const StroopTest1 = () => {
   }, [currentTrialIndex]);
 
   const handleAnswer = useCallback((answer) => {
-    const endTime = Date.now();
-    const reactionTime = endTime - startTime;
+    const reactionTime = Date.now() - startTime;
     const isCorrect = answer === currentTrial.correctAnswer;
 
-    const updatedTrial = {
+    const updatedTrials = [...trials];
+    updatedTrials[currentTrialIndex] = {
       ...currentTrial,
       response: answer,
       reactionTime,
       isCorrect,
       timestamp: new Date().toISOString()
     };
-
-    const updatedTrials = [...trials];
-    updatedTrials[currentTrialIndex] = updatedTrial;
     setTrials(updatedTrials);
 
     if (currentTrialIndex < 47) {
-      setTimeout(() => {
-        setCurrentTrialIndex(currentTrialIndex + 1);
-      }, 500);
+      setTimeout(() => setCurrentTrialIndex(currentTrialIndex + 1), 500);
     } else {
       setIsCompleted(true);
       saveResults(updatedTrials);
@@ -562,21 +417,9 @@ const StroopTest1 = () => {
     setSelectedAnswer(answer);
   }, [currentTrial, currentTrialIndex, startTime, trials, saveResults]);
 
-  const handleContinue = async () => {
-    try {
-      const participantCode = userId || sessionStorage.getItem('participantCode');
-      const progress = await dataManager.loadUserProgress(participantCode);
-      const group = String(progress.group_assignment);
-
-      if (group === '1') {
-        navigate('/mission1/intervention');
-      } else {
-        navigate('/mission1/postsb');
-      }
-    } catch (error) {
-      console.error('Error navigating:', error);
-      navigate('/mission1/postsb');
-    }
+  // ✅ OPRAVENÉ: vždy na postsb
+  const handleContinue = () => {
+    navigate('/mission2/postsb');
   };
 
   if (isCompleted) {
@@ -648,9 +491,7 @@ const StroopTest1 = () => {
           <Header>
             <Title>Tajná Šifra</Title>
             <Subtitle>🔐 Kritická múzeálna úloha</Subtitle>
-            <Instructions>
-              Klikni na FARBU slova (nie na samotné slovo!)
-            </Instructions>
+            <Instructions>Klikni na FARBU slova (nie na samotné slovo!)</Instructions>
           </Header>
 
           <ProgressContainer>
@@ -667,36 +508,17 @@ const StroopTest1 = () => {
                 {currentTrial.word}
               </StroopWord>
             )}
-
             <ButtonGroup>
-              <OptionButton
-                onClick={() => handleAnswer('RED')}
-                isSelected={selectedAnswer === 'RED'}
-                disabled={selectedAnswer !== null}
-                buttonColor={colors.RED.rgb}
-                title={colors.RED.label}
-              />
-              <OptionButton
-                onClick={() => handleAnswer('GREEN')}
-                isSelected={selectedAnswer === 'GREEN'}
-                disabled={selectedAnswer !== null}
-                buttonColor={colors.GREEN.rgb}
-                title={colors.GREEN.label}
-              />
-              <OptionButton
-                onClick={() => handleAnswer('BLUE')}
-                isSelected={selectedAnswer === 'BLUE'}
-                disabled={selectedAnswer !== null}
-                buttonColor={colors.BLUE.rgb}
-                title={colors.BLUE.label}
-              />
-              <OptionButton
-                onClick={() => handleAnswer('YELLOW')}
-                isSelected={selectedAnswer === 'YELLOW'}
-                disabled={selectedAnswer !== null}
-                buttonColor={colors.YELLOW.rgb}
-                title={colors.YELLOW.label}
-              />
+              {Object.entries(colors).map(([key, val]) => (
+                <OptionButton
+                  key={key}
+                  onClick={() => handleAnswer(key)}
+                  isSelected={selectedAnswer === key}
+                  disabled={selectedAnswer !== null}
+                  buttonColor={val.rgb}
+                  title={val.label}
+                />
+              ))}
             </ButtonGroup>
           </GameArea>
 

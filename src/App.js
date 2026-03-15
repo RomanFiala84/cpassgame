@@ -1,7 +1,4 @@
 // src/App.js
-// ═══════════════════════════════════════════════════════════════════════
-// FINÁLNA OPRAVENÁ VERZIA - S Stroop Testami (SPRÁVNE IMPORT CESTY)
-// ═══════════════════════════════════════════════════════════════════════
 
 import React from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
@@ -28,52 +25,60 @@ import AdminPanel from './components/admin/AdminPanel';
 import TrackingViewer from './components/admin/TrackingViewer';
 
 // ═══════════════════════════════════════════════════════════
-// SPECIAL AGENT MISSION (Mission 0)
+// MISSION 0
 // ═══════════════════════════════════════════════════════════
 import IntroMission0 from './components/missions/mission0/IntroMission0';
 import Questionnaire0 from './components/missions/mission0/Questionnaire0';
 import OutroMission0 from './components/missions/mission0/OutroMission0';
 
 // ═══════════════════════════════════════════════════════════
-// MISSION 1
+// MISSION 1 — súbory: IntroMission1, Questionnaire1, OutroMission1
 // ═══════════════════════════════════════════════════════════
 import IntroMission1 from './components/missions/mission1/IntroMission1';
-import Questionnaire1A from './components/missions/mission1/Questionnaire1A';
-import Prevention1 from './components/missions/mission1/Prevention1';
-import PostsA1 from './components/missions/mission1/PostsA1';
-import StroopTest1 from './components/missions/mission1/StroopTest1'; // ✅ SPRÁVNA CESTA
-import Intervention1 from './components/missions/mission1/Intervention1';
-import PostsB1 from './components/missions/mission1/PostsB1';
-import Questionnaire1B from './components/missions/mission1/Questionnaire1B';
+import Questionnaire1 from './components/missions/mission1/Questionnaire1';
 import OutroMission1 from './components/missions/mission1/OutroMission1';
 
 // ═══════════════════════════════════════════════════════════
-// MISSION 2
+// MISSION 2 — súbory: IntroMission2, Questionnaire2Ajs,
+//   PostsA1, StroopTest1, Intervention1A, Intervention1B,
+//   PostsB1, Questionnaire2B, OutroMission2
+//
+// FLOW:
+//   Kontrolná (0):        QuestA → PostsA → Stroop → PostsB → QuestB
+//   Bez dôvery (1):       QuestA → PostsA → InterventionA → PostsB → QuestB
+//   S budovaním dôvery (2): QuestA → PostsA → InterventionB → PostsB → QuestB
 // ═══════════════════════════════════════════════════════════
 import IntroMission2 from './components/missions/mission2/IntroMission2';
-import Questionnaire2A from './components/missions/mission2/Questionnaire2A';
-import Prevention2 from './components/missions/mission2/Prevention2';
-import PostsA2 from './components/missions/mission2/PostsA2';
-import StroopTest2 from './components/missions/mission2/StroopTest2'; // ✅ SPRÁVNA CESTA
-import Intervention2 from './components/missions/mission2/Intervention2';
-import PostsB2 from './components/missions/mission2/PostsB2';
+import Questionnaire2A from './components/missions/mission2/Questionnaire2Ajs';
+import PostsA1 from './components/missions/mission2/PostsA1';
+import StroopTest1 from './components/missions/mission2/StroopTest1';
+import Intervention1A from './components/missions/mission2/Intervention1A';
+import Intervention1B from './components/missions/mission2/Intervention1B';
+import PostsB1 from './components/missions/mission2/PostsB1';
 import Questionnaire2B from './components/missions/mission2/Questionnaire2B';
 import OutroMission2 from './components/missions/mission2/OutroMission2';
 
 // ═══════════════════════════════════════════════════════════
-// MISSION 3
+// MISSION 3 — súbory: IntroMission3, Questionnaire3Ajs,
+//   PostsA2, StroopTest2, Intervention2A, Intervention2B,
+//   PostsB2, Questionnaire3B, OutroMission3
+//
+// FLOW:
+//   Kontrolná (0):        QuestA → PostsA → Stroop → PostsB → QuestB
+//   Bez dôvery (1):       QuestA → PostsA → InterventionA → PostsB → QuestB
+//   S budovaním dôvery (2): QuestA → PostsA → InterventionB → PostsB → QuestB
 // ═══════════════════════════════════════════════════════════
 import IntroMission3 from './components/missions/mission3/IntroMission3';
-import Questionnaire3A from './components/missions/mission3/Questionnaire3A';
-import Prevention3 from './components/missions/mission3/Prevention3';
-import PostsA3 from './components/missions/mission3/PostsA3';
-import StroopTest3 from './components/missions/mission3/StroopTest3'; // ✅ SPRÁVNA CESTA
-import Intervention3 from './components/missions/mission3/Intervention3';
-import PostsB3 from './components/missions/mission3/PostsB3';
+import Questionnaire3A from './components/missions/mission3/Questionnaire3Ajs';
+import PostsA2 from './components/missions/mission3/PostsA2';
+import StroopTest2 from './components/missions/mission3/StroopTest2';
+import Intervention2A from './components/missions/mission3/Intervention2A';
+import Intervention2B from './components/missions/mission3/Intervention2B';
+import PostsB2 from './components/missions/mission3/PostsB2';
 import Questionnaire3B from './components/missions/mission3/Questionnaire3B';
 import OutroMission3 from './components/missions/mission3/OutroMission3';
 
-// ✅ Error Boundary Component
+
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -138,106 +143,71 @@ class ErrorBoundary extends React.Component {
         </div>
       );
     }
-
     return this.props.children;
   }
 }
 
-// ✅ AppContent - S AnimatePresence pre page transitions
+
 function AppContent() {
   const location = useLocation();
 
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        {/* ═══════════════════════════════════════════════════════════
-            MAIN FLOW
-            ═══════════════════════════════════════════════════════════ */}
+
+        {/* MAIN FLOW */}
         <Route path="/" element={<PageTransition><Instruction /></PageTransition>} />
         <Route path="/instruction" element={<PageTransition><Instruction /></PageTransition>} />
         <Route path="/intro" element={<PageTransition><Intro /></PageTransition>} />
         <Route path="/mainmenu" element={<PageTransition><MainMenu /></PageTransition>} />
-        
-        {/* ═══════════════════════════════════════════════════════════
-            ADMIN
-            ═══════════════════════════════════════════════════════════ */}
+
+        {/* ADMIN */}
         <Route path="/admin" element={<PageTransition><AdminPanel /></PageTransition>} />
         <Route path="/admin/tracking" element={<PageTransition><TrackingViewer /></PageTransition>} />
 
-        {/* ═══════════════════════════════════════════════════════════
-            SPECIAL AGENT MISSION (Mission 0)
-            ═══════════════════════════════════════════════════════════ */}
+        {/* MISSION 0 */}
         <Route path="/mission0/intro" element={<PageTransition><IntroMission0 /></PageTransition>} />
         <Route path="/mission0/questionnaire" element={<PageTransition><Questionnaire0 /></PageTransition>} />
         <Route path="/mission0/outro" element={<PageTransition><OutroMission0 /></PageTransition>} />
 
-        {/* ═══════════════════════════════════════════════════════════
-            MISSION 1 - DETEKTÍVNA ŠIFRA
-            
-            FLOW PRI SKUPINE S INTERVENCIOU (group='1'):
-            PostsA1 → StroopTest1 → Intervention1 → PostsB1
-            
-            FLOW PRI SKUPINÁCH BEZ INTERVENCIE (group='0' | '2'):
-            PostsA1 → StroopTest1 → PostsB1
-            ═══════════════════════════════════════════════════════════ */}
+        {/* MISSION 1 */}
         <Route path="/mission1/intro" element={<PageTransition><IntroMission1 /></PageTransition>} />
-        <Route path="/mission1/questionnaire1a" element={<PageTransition><Questionnaire1A /></PageTransition>} />
-        <Route path="/mission1/prevention" element={<PageTransition><Prevention1 /></PageTransition>} />
-        <Route path="/mission1/postsa" element={<PageTransition><PostsA1 /></PageTransition>} />
-        
-        {/* ✅ STROOP TEST MISSION 1 - Tajná šifra s detektívom */}
-        <Route path="/mission1/stroop-test1" element={<PageTransition><StroopTest1 /></PageTransition>} />
-        
-        <Route path="/mission1/intervention" element={<PageTransition><Intervention1 /></PageTransition>} />
-        <Route path="/mission1/postsb" element={<PageTransition><PostsB1 /></PageTransition>} />
-        <Route path="/mission1/questionnaire1b" element={<PageTransition><Questionnaire1B /></PageTransition>} />
+        <Route path="/mission1/questionnaire" element={<PageTransition><Questionnaire1 /></PageTransition>} />
         <Route path="/mission1/outro" element={<PageTransition><OutroMission1 /></PageTransition>} />
 
         {/* ═══════════════════════════════════════════════════════════
-            MISSION 2 - DETEKTÍVNA ŠIFRA
-            
-            FLOW PRI GRUPPE S INTERVENCIOU (group='1'):
-            PostsA2 → StroopTest2 → Intervention2 → PostsB2
-            
-            FLOW PRI SKUPINÁCH BEZ INTERVENCIE (group='0' | '2'):
-            PostsA2 → StroopTest2 → PostsB2
+            MISSION 2
+            Kontrolná (0):        QuestA → PostsA → Stroop → PostsB → QuestB
+            Bez dôvery (1):       QuestA → PostsA → InterventionA → PostsB → QuestB
+            S budovaním dôvery (2): QuestA → PostsA → InterventionB → PostsB → QuestB
             ═══════════════════════════════════════════════════════════ */}
         <Route path="/mission2/intro" element={<PageTransition><IntroMission2 /></PageTransition>} />
         <Route path="/mission2/questionnaire2a" element={<PageTransition><Questionnaire2A /></PageTransition>} />
-        <Route path="/mission2/prevention" element={<PageTransition><Prevention2 /></PageTransition>} />
-        <Route path="/mission2/postsa" element={<PageTransition><PostsA2 /></PageTransition>} />
-        
-        {/* ✅ STROOP TEST MISSION 2 - Tajná šifra s detektívom */}
-        <Route path="/mission2/stroop-test2" element={<PageTransition><StroopTest2 /></PageTransition>} />
-        
-        <Route path="/mission2/intervention" element={<PageTransition><Intervention2 /></PageTransition>} />
-        <Route path="/mission2/postsb" element={<PageTransition><PostsB2 /></PageTransition>} />
+        <Route path="/mission2/postsa" element={<PageTransition><PostsA1 /></PageTransition>} />
+        <Route path="/mission2/stroop-test" element={<PageTransition><StroopTest1 /></PageTransition>} />
+        <Route path="/mission2/intervention-a" element={<PageTransition><Intervention1A /></PageTransition>} />
+        <Route path="/mission2/intervention-b" element={<PageTransition><Intervention1B /></PageTransition>} />
+        <Route path="/mission2/postsb" element={<PageTransition><PostsB1 /></PageTransition>} />
         <Route path="/mission2/questionnaire2b" element={<PageTransition><Questionnaire2B /></PageTransition>} />
         <Route path="/mission2/outro" element={<PageTransition><OutroMission2 /></PageTransition>} />
 
         {/* ═══════════════════════════════════════════════════════════
-            MISSION 3 - DETEKTÍVNA ŠIFRA
-            
-            FLOW PRI GRUPPE S INTERVENCIOU (group='1'):
-            PostsA3 → StroopTest3 → Intervention3 → PostsB3
-            
-            FLOW PRI SKUPINÁCH BEZ INTERVENCIE (group='0' | '2'):
-            PostsA3 → StroopTest3 → PostsB3
+            MISSION 3
+            Kontrolná (0):        QuestA → PostsA → Stroop → PostsB → QuestB
+            Bez dôvery (1):       QuestA → PostsA → InterventionA → PostsB → QuestB
+            S budovaním dôvery (2): QuestA → PostsA → InterventionB → PostsB → QuestB
             ═══════════════════════════════════════════════════════════ */}
         <Route path="/mission3/intro" element={<PageTransition><IntroMission3 /></PageTransition>} />
         <Route path="/mission3/questionnaire3a" element={<PageTransition><Questionnaire3A /></PageTransition>} />
-        <Route path="/mission3/prevention" element={<PageTransition><Prevention3 /></PageTransition>} />
-        <Route path="/mission3/postsa" element={<PageTransition><PostsA3 /></PageTransition>} />
-        
-        {/* ✅ STROOP TEST MISSION 3 - Tajná šifra s detektívom */}
-        <Route path="/mission3/stroop-test3" element={<PageTransition><StroopTest3 /></PageTransition>} />
-        
-        <Route path="/mission3/intervention" element={<PageTransition><Intervention3 /></PageTransition>} />
-        <Route path="/mission3/postsb" element={<PageTransition><PostsB3 /></PageTransition>} />
+        <Route path="/mission3/postsa" element={<PageTransition><PostsA2 /></PageTransition>} />
+        <Route path="/mission3/stroop-test" element={<PageTransition><StroopTest2 /></PageTransition>} />
+        <Route path="/mission3/intervention-a" element={<PageTransition><Intervention2A /></PageTransition>} />
+        <Route path="/mission3/intervention-b" element={<PageTransition><Intervention2B /></PageTransition>} />
+        <Route path="/mission3/postsb" element={<PageTransition><PostsB2 /></PageTransition>} />
         <Route path="/mission3/questionnaire3b" element={<PageTransition><Questionnaire3B /></PageTransition>} />
         <Route path="/mission3/outro" element={<PageTransition><OutroMission3 /></PageTransition>} />
 
-        {/* ✅ 404 Page */}
+        {/* 404 */}
         <Route path="*" element={
           <PageTransition>
             <div style={{
@@ -273,6 +243,7 @@ function AppContent() {
   );
 }
 
+
 function App() {
   const [themeName, setThemeName] = React.useState(() => {
     try {
@@ -302,18 +273,14 @@ function App() {
           <BrowserRouter>
             <GlobalStyles />
             <ScrollToTop />
-            
-            {/* Theme Toggle */}
-            <div style={{ 
-              position: 'fixed', 
-              top: '16px', 
-              right: '16px', 
-              zIndex: 999 
+            <div style={{
+              position: 'fixed',
+              top: '16px',
+              right: '16px',
+              zIndex: 999
             }}>
               <ThemeToggle themeName={themeName} onToggle={toggleTheme} />
             </div>
-
-            {/* ✅ AppContent je VNÚTRI BrowserRouter - môže použiť useLocation */}
             <AppContent />
           </BrowserRouter>
         </UserStatsProvider>

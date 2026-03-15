@@ -1,4 +1,4 @@
-// src/components/missions/mission2/Questionnaire2b.js
+// src/components/missions/mission1/Questionnaire1.js
 // ČASŤ 1/3: IMPORTS + STYLED COMPONENTS
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -952,7 +952,7 @@ const ButtonContainer = styled.div`
 // KONŠTANTY
 // ==========================================
 
-const COMPONENT_ID = 'questionnaire3b';
+const COMPONENT_ID = 'questionnaire1';
 
 // ==========================================
 // HELPER FUNKCIA - FEEDBACK OTÁZKY
@@ -1680,7 +1680,7 @@ export { PAGES, createFeedbackQuestions };
 // HLAVNÝ KOMPONENT
 // ==========================================
 
-const Questionnaire3B = () => {
+const Questionnaire1 = () => {
   const navigate = useNavigate();
   const { dataManager, userId } = useUserStats();
   const responseManager = getResponseManager(dataManager);
@@ -1952,23 +1952,18 @@ const Questionnaire3B = () => {
       
       // ✅ Ulož všetky odpovede s metadata
       await responseManager.saveMultipleAnswers(userId, COMPONENT_ID, answers, {
-        timespent_seconds: timeSpent,
-        mission: 'mission3',
-        questionnaire: '3b',
+        time_spent_seconds: timeSpent,
         completed_at: new Date().toISOString(),
         device: window.innerWidth <= 768 ? 'mobile' : 'desktop'
       });
 
       // ✅ OPRAVENÉ: Označ misi ako completed priamo v progress
       const progress = await dataManager.loadUserProgress(userId);
-      progress.mission3_questaCompleted = true;
+      progress.mission0_completed = true; // ← SPRÁVNE
       await dataManager.saveProgress(userId, progress);
-
-      // skupinová navigácia:
-      progress.mission3_questbCompleted = true;
-      await dataManager.saveProgress(userId, progress);
-      navigate('/mission3/outro');
-
+      
+      console.log('✅ Questionnaire1 submitted successfully');
+      navigate('/mission1/outro');
       
     } catch (err) {
       console.error('❌ Error submitting questionnaire:', err);
@@ -2509,4 +2504,4 @@ const Questionnaire3B = () => {
   );
 };
 
-export default Questionnaire3B;
+export default Questionnaire1;

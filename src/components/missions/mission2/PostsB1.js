@@ -1,15 +1,12 @@
-// src/components/missions/mission1/PostsA1.js
-// FINÁLNA VERZIA - Pôvodný dizajn + landmarks
+// src/components/missions/mission2/PostsB1.js
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Layout from '../../../styles/Layout';
 import StyledButton from '../../../styles/StyledButton';
 import { useUserStats } from '../../../contexts/UserStatsContext';
 import { getResponseManager } from '../../../utils/ResponseManager';
-import { useHoverTracking } from '../../../hooks/useHoverTracking';
-import { saveTrackingWithVisualization } from '../../../utils/trackingHelpers';
 
 const Container = styled.div`
   padding: 20px;
@@ -38,7 +35,6 @@ const PostsGrid = styled.div`
 
 const PostCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
-  border: 1px solid ${p => p.theme.BORDER_COLOR};
   border-radius: 8px;
   overflow: hidden;
   transition: transform 0.2s ease;
@@ -165,58 +161,37 @@ const ProgressIndicator = styled.div`
 `;
 
 const POSTS = [
-  { id: 'post_a1_1', username: 'user1', content: 'Obsah príspevku A1-1.', image: null },
-  { id: 'post_a1_2', username: 'user2', content: 'Obsah príspevku A1-2.', image: '/img/a1-2.jpg' },
-  { id: 'post_a1_3', username: 'user3', content: 'Obsah príspevku A1-3.', image: '/img/a1-3.jpg' },
-  { id: 'post_a1_3', username: 'user3', content: 'Obsah príspevku A1-3.', image: '/img/a1-3.jpg' },
-  { id: 'post_a1_3', username: 'user3', content: 'Obsah príspevku A1-3.', image: '/img/a1-3.jpg' },
-  { id: 'post_a1_3', username: 'user3', content: 'Obsah príspevku A1-3.', image: '/img/a1-3.jpg' },
-  { id: 'post_a1_3', username: 'user3', content: 'Obsah príspevku A1-3.', image: '/img/a1-3.jpg' },
+  { id: 'post_b2_1', username: 'user1', content: 'Obsah príspevku B2-1.', image: null },
+  { id: 'post_b2_2', username: 'user2', content: 'Obsah príspevku B2-2.', image: '/img/b2-2.jpg' },
+  { id: 'post_b2_3', username: 'user3', content: 'Obsah príspevku B2-3.', image: '/img/b2-3.jpg' },
+  { id: 'post_b2_4', username: 'user4', content: 'Obsah príspevku B2-4.', image: '/img/b2-4.jpg' },
+  { id: 'post_b2_5', username: 'user5', content: 'Obsah príspevku B2-5.', image: '/img/b2-5.jpg' },
+  { id: 'post_b2_6', username: 'user6', content: 'Obsah príspevku B2-6.', image: '/img/b2-6.jpg' },
+  { id: 'post_b2_7', username: 'user7', content: 'Obsah príspevku B2-7.', image: '/img/b2-7.jpg' },
 ];
 
-const COMPONENT_ID = 'mission1_postsa';
+const COMPONENT_ID = 'mission2_postsb';
 
-const PostsA1 = () => {
+const PostsB1 = () => {
   const navigate = useNavigate();
   const { dataManager, userId } = useUserStats();
   const responseManager = getResponseManager(dataManager);
-  
-  const containerRef = useRef(null);
-  const trackingSentRef = useRef(false);
+
   const refs = useRef({});
-  
-  // ✅ Tracking hook s novými landmarks
-  const { startTracking, stopTracking, getFinalData } = useHoverTracking(
-    containerRef,
-    'postsA1_mission1',
-    'post'
-  );
-  
   const [ratings, setRatings] = useState({});
   const [errors, setErrors] = useState({});
   const [startTime] = useState(Date.now());
   const [postStartTimes] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // ✅ Start tracking pri mount
-  useEffect(() => {
-    startTracking();
-    
-    return () => {
-      stopTracking();
-    };
-  }, [startTracking, stopTracking]);
-
   useEffect(() => {
     const loadSaved = async () => {
       if (!userId) return;
-      
       const saved = await responseManager.loadResponses(userId, COMPONENT_ID);
       if (saved.answers && Object.keys(saved.answers).length > 0) {
         setRatings(saved.answers);
       }
     };
-    
     loadSaved();
   }, [userId, responseManager]);
 
@@ -231,118 +206,49 @@ const PostsA1 = () => {
   const handleRating = async (postId, value) => {
     setRatings(prev => ({ ...prev, [postId]: value }));
     setErrors(prev => { const copy = { ...prev }; delete copy[postId]; return copy; });
-    
+
     const timeOnPost = Math.floor((Date.now() - postStartTimes[postId]) / 1000);
-    
-    await responseManager.saveAnswer(
-      userId,
-      COMPONENT_ID,
-      postId,
-      value,
-      { [`time_on_${postId}`]: timeOnPost }
-    );
-  };
-
-  const isComplete = () => {
-    return POSTS.every(post => ratings[post.id] !== undefined && ratings[post.id] !== null);
-  };
-
-  // ✅ UPRAVENÝ tracking flow s landmarks
-  const sendTracking = useCallback(async () => {
-    if (trackingSentRef.current) {
-      console.log('⏭️ Tracking already sent, skipping');
-      return;
-    }
-
-    const finalData = getFinalData();
-    finalData.userId = userId; // Pridaj userId
-
-    if (finalData.isMobile) {
-      console.log('📱 Skipping tracking - mobile device');
-      return;
-    }
-
-    console.log('📊 Tracking check:', {
-      userId: userId,
-      mousePositionsCount: finalData.mousePositions?.length || 0,
-      totalHoverTime: finalData.totalHoverTime,
-      landmarksCount: finalData.landmarks?.length || 0
+    await responseManager.saveAnswer(userId, COMPONENT_ID, postId, value, {
+      [`time_on_${postId}`]: timeOnPost
     });
+  };
 
-    // ✅ ZNÍŽENÝ THRESHOLD (3 pozície, 200ms)
-    if (
-      !userId ||
-      !finalData.mousePositions ||
-      finalData.mousePositions.length < 3 ||
-      finalData.totalHoverTime < 200
-    ) {
-      console.log('⏭️ Skipping tracking - insufficient data');
-      return;
-    }
-
-    try {
-      console.log('📊 Saving tracking with visualization...');
-      
-      await saveTrackingWithVisualization(finalData, containerRef.current);
-      
-      console.log('✅ Tracking saved successfully with Cloudinary heatmap');
-      trackingSentRef.current = true;
-
-    } catch (error) {
-      console.error('❌ Failed to save tracking:', error);
-    }
-  }, [userId, getFinalData, containerRef]);
+  const isComplete = () => POSTS.every(
+    post => ratings[post.id] !== undefined && ratings[post.id] !== null
+  );
 
   const handleContinue = async () => {
     const missing = POSTS.filter(post => !ratings[post.id]);
-    
+
     if (missing.length) {
       const newErrors = {};
-      missing.forEach(post => {
-        newErrors[post.id] = true;
-      });
+      missing.forEach(post => { newErrors[post.id] = true; });
       setErrors(newErrors);
       refs.current[missing[0].id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
       const totalTime = Math.floor((Date.now() - startTime) / 1000);
-      
       const postTimes = {};
       POSTS.forEach(post => {
         postTimes[`time_on_${post.id}`] = Math.floor((Date.now() - postStartTimes[post.id]) / 1000);
       });
-      
-      await responseManager.saveMultipleAnswers(
-        userId,
-        COMPONENT_ID,
-        ratings,
-        {
-          total_time_spent_seconds: totalTime,
-          posts_count: POSTS.length,
-          ...postTimes,
-          device: /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
-          completed_at: new Date().toISOString()
-        }
-      );
-      
-      console.log('📊 Sending final tracking data...');
-      await sendTracking();
-      
-      const progress = await dataManager.loadUserProgress(userId);
-      const group = progress.group_assignment;
-      
-      if (group === '1') {
-        navigate('/mission1/stroop-test1');
-      } else {
-        navigate('/mission1/stroop-test1');
-      }
-      
+
+      await responseManager.saveMultipleAnswers(userId, COMPONENT_ID, ratings, {
+        total_time_spent_seconds: totalTime,
+        posts_count: POSTS.length,
+        ...postTimes,
+        device: /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+        completed_at: new Date().toISOString()
+      });
+
+      navigate('/mission2/questionnaire2b');
+
     } catch (error) {
-      console.error('Error submitting posts:', error);
+      console.error('❌ Error submitting posts:', error);
       alert('Chyba pri ukladaní hodnotení. Skús to znova.');
     } finally {
       setIsSubmitting(false);
@@ -351,17 +257,15 @@ const PostsA1 = () => {
 
   return (
     <Layout>
-      <Container ref={containerRef}>
-        {/* ✅ LANDMARK - Title */}
-        <div data-landmark="header" data-landmark-id="header_postsa1">
-          <Title>Hodnotenie príspevkov A</Title>
+      <Container>
+        <div data-landmark="header" data-landmark-id="header_postsb2">
+          <Title>Hodnotenie príspevkov B</Title>
         </div>
 
         <PostsGrid>
-          {POSTS.map((post, index) => (
-            // ✅ LANDMARK - Post card
-            <PostCard 
-              key={post.id} 
+          {POSTS.map(post => (
+            <PostCard
+              key={post.id}
               ref={el => { refs.current[post.id] = el; }}
               hasError={errors[post.id]}
               data-landmark="post"
@@ -371,12 +275,11 @@ const PostsA1 = () => {
                 <Avatar />
                 <Username>{post.username}</Username>
               </PostHeader>
-              
+
               {post.image && <PostImage src={post.image} alt="" />}
-              
+
               <PostContent>
                 <ContentText>{post.content}</ContentText>
-                
                 <RatingSection>
                   <RatingLabel>Ohodnotiť príspevok</RatingLabel>
                   <RatingScale>
@@ -397,18 +300,17 @@ const PostsA1 = () => {
             </PostCard>
           ))}
         </PostsGrid>
-        
-        {/* ✅ LANDMARK - Button */}
-        <ButtonContainer data-landmark="button" data-landmark-id="button_continue_postsa1">
-          <StyledButton 
-            accent 
+
+        <ButtonContainer data-landmark="button" data-landmark-id="button_continue_postsb2">
+          <StyledButton
+            accent
             onClick={handleContinue}
             disabled={!isComplete() || isSubmitting}
           >
             {isSubmitting ? 'Ukladám...' : 'Pokračovať'}
           </StyledButton>
         </ButtonContainer>
-        
+
         <ProgressIndicator>
           Ohodnotené: {Object.keys(ratings).length} / {POSTS.length}
         </ProgressIndicator>
@@ -417,4 +319,4 @@ const PostsA1 = () => {
   );
 };
 
-export default PostsA1;
+export default PostsB1;

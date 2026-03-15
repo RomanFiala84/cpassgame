@@ -1963,7 +1963,7 @@ const Questionnaire0 = () => {
       await dataManager.saveProgress(userId, progress);
       
       console.log('✅ Questionnaire0 submitted successfully');
-      navigate('/mission0/complete');
+      navigate('/mission0/outro');
       
     } catch (err) {
       console.error('❌ Error submitting questionnaire:', err);

@@ -1,4 +1,4 @@
-// src/components/missions/mission2/Questionnaire2b.js
+// src/components/missions/mission2/Questionnaire2a.js
 // ČASŤ 1/3: IMPORTS + STYLED COMPONENTS
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -952,7 +952,7 @@ const ButtonContainer = styled.div`
 // KONŠTANTY
 // ==========================================
 
-const COMPONENT_ID = 'questionnaire3b';
+const COMPONENT_ID = 'questionnaire2a';
 
 // ==========================================
 // HELPER FUNKCIA - FEEDBACK OTÁZKY
@@ -1680,7 +1680,7 @@ export { PAGES, createFeedbackQuestions };
 // HLAVNÝ KOMPONENT
 // ==========================================
 
-const Questionnaire3B = () => {
+const Questionnaire2A = () => {
   const navigate = useNavigate();
   const { dataManager, userId } = useUserStats();
   const responseManager = getResponseManager(dataManager);
@@ -1953,22 +1953,24 @@ const Questionnaire3B = () => {
       // ✅ Ulož všetky odpovede s metadata
       await responseManager.saveMultipleAnswers(userId, COMPONENT_ID, answers, {
         timespent_seconds: timeSpent,
-        mission: 'mission3',
-        questionnaire: '3b',
+        mission: 'mission2',
+        questionnaire: '2a',
         completed_at: new Date().toISOString(),
         device: window.innerWidth <= 768 ? 'mobile' : 'desktop'
       });
 
       // ✅ OPRAVENÉ: Označ misi ako completed priamo v progress
       const progress = await dataManager.loadUserProgress(userId);
-      progress.mission3_questaCompleted = true;
+      progress.mission2_questaCompleted = true;
       await dataManager.saveProgress(userId, progress);
 
       // skupinová navigácia:
-      progress.mission3_questbCompleted = true;
-      await dataManager.saveProgress(userId, progress);
-      navigate('/mission3/outro');
-
+      const group = progress.group;
+      if (group === '0') navigate('/mission2/postsa');
+      else if (group === '1') navigate('/mission2/postsa');
+      else if (group === '2') navigate('/mission2/postsa');
+      // → všetky skupiny idú na postsa
+      navigate('/mission2/postsa');
       
     } catch (err) {
       console.error('❌ Error submitting questionnaire:', err);
@@ -2509,4 +2511,4 @@ const Questionnaire3B = () => {
   );
 };
 
-export default Questionnaire3B;
+export default Questionnaire2A;
