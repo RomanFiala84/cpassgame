@@ -1196,6 +1196,7 @@ const PAGES = [
   // ==========================================
   {
     id: 'religiozita',
+    randomize: true,
     instruction: 'Nasledujúce otázky sa týkajú vášho vzťahu k náboženstvu. Neexistujú správne alebo nesprávne odpovede.',
     questions: [
       {
@@ -1203,7 +1204,6 @@ const PAGES = [
         text: '',
         type: 'accordion-likert',
         required: true,
-        randomize: true,
         questions: [
           {
             id: 'ora1',
@@ -1305,6 +1305,7 @@ const PAGES = [
   // ==========================================
   {
     id: 'tolerancia',
+    randomize: true,
     instruction: 'Nižšie nájdete sériu tvrdení o rôznych aspektoch spôsobu, ako by ľudia mali žiť a ako sa máme vzájomne brať v ohľade na ich odlišnosti. Prosím, vyjadrite svoju úroveň súhlasu s každým tvrdením na škále od 1 do 7. Neexistujú správne alebo nesprávne odpovede.',
     questions: [
       {
@@ -1312,7 +1313,6 @@ const PAGES = [
         text: '',
         type: 'accordion-likert',
         required: true,
-        randomize: true,
         questions: [
           // Autonómia
           { id: 'ac1', text: 'Ľudia by mali mať právo žiť, ako chcú.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Väčšinou nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Väčšinou súhlasím', 'Rozhodne súhlasím'] },
@@ -1338,6 +1338,7 @@ const PAGES = [
   // ==========================================
   {
     id: 'konspiracia_mentalita',
+    randomize: true,
     instruction: 'Nižšie nájdete sériu tvrdení. Pri každom tvrdení prosím vyjadrite, do akej miery s ním súhlasíte, na škále od 1 do 7. Neexistujú správne alebo nesprávne odpovede.',
     questions: [
       {
@@ -1345,7 +1346,6 @@ const PAGES = [
         text: '',
         type: 'accordion-likert',
         required: true,
-        randomize: true,
         questions: [
           { id: 'km1', text: 'Myslím si, že sa vo svete dejú mnohé veľmi dôležité veci, o ktorých sa verejnosť nikdy nedozvie.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Väčšinou nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Väčšinou súhlasím', 'Rozhodne súhlasím'] },
           { id: 'km2', text: 'Myslím si, že politici zvyčajne nehovoria ľuďom skutočné motívy svojich rozhodnutí.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Väčšinou nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Väčšinou súhlasím', 'Rozhodne súhlasím'] },
@@ -1362,6 +1362,7 @@ const PAGES = [
   // ==========================================
   {
     id: 'symbolicke_ohrozenie',
+    randomize: true,
     instruction: 'Niektorí ľudia tvrdia, že existujú isté skupiny ľudí či krajiny, ktoré ohrozujú ich vlastnú identitu a hodnoty. Do akej miery máte vy osobne pocit, že nasledujúce skupiny alebo krajiny ohrozujú Vašu identitu a hodnoty? Pri každej položke označte svoju odpoveď na škále od 1 do 5. Neexistujú správne alebo nesprávne odpovede.',
     questions: [
         {
@@ -1369,7 +1370,6 @@ const PAGES = [
           text: '',
           type: 'accordion-likert',
           required: true,
-          randomize: true,
           questions: [
           {
             id: 'sh1',
@@ -1433,6 +1433,7 @@ const PAGES = [
   // ==========================================
   {
     id: 'dovera',
+    randomize: true,
     instruction: 'Nižšie nájdete zoznam rôznych inštitúcií EÚ. Pri každej inštitúcií prosím vyjadrite, do akej miery im dôverujete, na škále od 1 do 10. Ak inštitúciu nepoznáte zvoľte prosím možnosť neviem/nepoznám. Neexistujú správne alebo nesprávne odpovede.',
     questions: [
       {
@@ -1440,7 +1441,6 @@ const PAGES = [
         text: '',
         type: 'accordion-likert',
         required: true,
-        randomize: true,
         extraOption: { value: 'Neviem/nepoznám', label: 'Neviem/nepoznám ' },
         questions: [
           {
@@ -1524,6 +1524,7 @@ const PAGES = [
   // ==========================================
   {
     id: 'konspiracia_presvedcenia',
+    randomize: true,
     instruction: 'Nižšie nájdete sériu tvrdení. Pri každom tvrdení prosím vyjadrite, do akej miery s ním súhlasíte, na škále od 1 do 7. Neexistujú správne alebo nesprávne odpovede.',
     questions: [
       {
@@ -1531,7 +1532,6 @@ const PAGES = [
         text: '',
         type: 'accordion-likert',
         required: true,
-        randomize: true,
         questions: [
           // EÚ konšpiračné presvedčenia
           { id: 'ep1', text: 'Európska únia má skrytý plán systematicky zničiť suverenitu členských štátov.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Väčšinou nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Väčšinou súhlasím', 'Rozhodne súhlasím'] },
@@ -1560,8 +1560,8 @@ const PAGES = [
   // ==========================================
   {
     id: 'socialna_ziadostivost',
-    instruction: 'Nižšie nájdete sériu tvrdení. Prečítajte si každé tvrdenie pozorne a rozhodnite sa, či je pre vás pravdivé alebo nepravdivé. Nie sú tu správne alebo nesprávne odpovede – ide o to, ako vnímate sami seba. Označte vašu odpoveď kliknutím na tlačidlo pravda alebo nepravda vedľa každého tvrdenia.',
     randomize: true,
+    instruction: 'Nižšie nájdete sériu tvrdení. Prečítajte si každé tvrdenie pozorne a rozhodnite sa, či je pre vás pravdivé alebo nepravdivé. Nie sú tu správne alebo nesprávne odpovede – ide o to, ako vnímate sami seba. Označte vašu odpoveď kliknutím na tlačidlo pravda alebo nepravda vedľa každého tvrdenia.',
     questions: [
       { id: 'sds1', text: 'Niekedy je pre mňa ťažké pokračovať v práci, ak ma nikto nepodporí.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
       { id: 'sds2', text: 'Niekedy sa cítim rozčúlený/rozčúlená, keď si nemôžem dosiahnuť to, čo chcem.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
