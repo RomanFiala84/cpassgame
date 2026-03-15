@@ -1464,8 +1464,10 @@ export default function Instruction() {
             </LocalNestedItem>
             
             <LocalList>
-              <li><strong>Hlavnou cenou je darčekový poukaz v hodnote 30 € pre jedného výhercu.</strong></li>
-              <li><strong>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10€ pre piatich výhercov.</strong></li>
+              <li><strong>Hlavnou cenou je darčekový poukaz v hodnote 50 € pre jedného výhercu, ktorý získa najviac platných dokončení od nových respondentov prostredníctvom svojho referral kódu (zdieľacieho kódu) a splní podmienky účasti v súťaži.</strong></li>
+              <li><strong>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10 € pre troch výhercov, ktorí získajú minimálne 50 bodov do žrebovania a splnia podmienky účasti v súťaži.</strong></li>
+              <li><strong>Výhercovia si určia, v ktorom obchode si chcú uplatniť darčekový poukaz a na základe toho im bude poukaz poskytnutý.</strong></li>
+              <li><strong>Organizátor si vyhradzuje právo zmeniť typ ceny za inú v rovnakej alebo vyššej hodnote (napr. iný typ poukážky), ak pôvodnú cenu nebude možné zabezpečiť.</strong></li>
               <li><strong>Viac informácií o súťaži nájdete v sekcii Pravidlá a podmienky súťaže.</strong></li>
             </LocalList>
           </CompetitionText>
@@ -1651,9 +1653,9 @@ export default function Instruction() {
 
                 <h4>Výhry:</h4>
                 <LocalList>
-                  <li>Hlavnou cenou je darčekový poukaz v hodnote 30 € pre jedného výhercu.</li>
-                  <li>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10 € pre piatich výhercov.</li>
-                  <li>Výhercovia si určia v ktorom obchode si chcú uplatniť darčekový poukaz a na základe toho im bude poukaz poskytnutý.</li>
+                  <li>Hlavnou cenou je darčekový poukaz v hodnote 50 € pre jedného výhercu, ktorý získa najviac platných dokončení od nových respondentov prostredníctvom svojho referral kódu (zdieľacieho kódu) a splní podmienky účasti v súťaži.</li>
+                  <li>Vedľajšími cenami sú darčekové poukazy, každý v hodnote 10 € pre troch výhercov, ktorí získajú minimálne 50 bodov do žrebovania a splnia podmienky účasti v súťaži.</li>
+                  <li>Výhercovia si určia, v ktorom obchode si chcú uplatniť darčekový poukaz a na základe toho im bude poukaz poskytnutý.</li>
                   <li>Organizátor si vyhradzuje právo zmeniť typ ceny za inú v rovnakej alebo vyššej hodnote (napr. iný typ poukážky), ak pôvodnú cenu nebude možné zabezpečiť.</li>
                 </LocalList>
 

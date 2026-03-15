@@ -946,13 +946,6 @@ const ButtonContainer = styled.div`
   gap: 12px;
 `;
 
-const ProgressIndicator = styled.div`
-  text-align: center;
-  font-size: 15px;
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  margin-top: 16px;
-  opacity: 0.8;
-`;
 
 
 // ==========================================
@@ -1210,6 +1203,7 @@ const PAGES = [
         text: '',
         type: 'accordion-likert',
         required: true,
+        randomize: true,
         questions: [
           {
             id: 'ora1',
@@ -1318,6 +1312,7 @@ const PAGES = [
         text: '',
         type: 'accordion-likert',
         required: true,
+        randomize: true,
         questions: [
           // Autonómia
           { id: 'ac1', text: 'Ľudia by mali mať právo žiť, ako chcú.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Väčšinou nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Väčšinou súhlasím', 'Rozhodne súhlasím'] },
@@ -1350,6 +1345,7 @@ const PAGES = [
         text: '',
         type: 'accordion-likert',
         required: true,
+        randomize: true,
         questions: [
           { id: 'km1', text: 'Myslím si, že sa vo svete dejú mnohé veľmi dôležité veci, o ktorých sa verejnosť nikdy nedozvie.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Väčšinou nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Väčšinou súhlasím', 'Rozhodne súhlasím'] },
           { id: 'km2', text: 'Myslím si, že politici zvyčajne nehovoria ľuďom skutočné motívy svojich rozhodnutí.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Väčšinou nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Väčšinou súhlasím', 'Rozhodne súhlasím'] },
@@ -1373,6 +1369,7 @@ const PAGES = [
           text: '',
           type: 'accordion-likert',
           required: true,
+          randomize: true,
           questions: [
           {
             id: 'sh1',
@@ -1442,7 +1439,8 @@ const PAGES = [
         id: 'dovera_accordion',
         text: '',
         type: 'accordion-likert',
-        required: false,
+        required: true,
+        randomize: true,
         extraOption: { value: 'Neviem/nepoznám', label: 'Neviem/nepoznám ' },
         questions: [
           {
@@ -1533,6 +1531,7 @@ const PAGES = [
         text: '',
         type: 'accordion-likert',
         required: true,
+        randomize: true,
         questions: [
           // EÚ konšpiračné presvedčenia
           { id: 'ep1', text: 'Európska únia má skrytý plán systematicky zničiť suverenitu členských štátov.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Väčšinou nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Väčšinou súhlasím', 'Rozhodne súhlasím'] },
@@ -1562,6 +1561,7 @@ const PAGES = [
   {
     id: 'socialna_ziadostivost',
     instruction: 'Nižšie nájdete sériu tvrdení. Prečítajte si každé tvrdenie pozorne a rozhodnite sa, či je pre vás pravdivé alebo nepravdivé. Nie sú tu správne alebo nesprávne odpovede – ide o to, ako vnímate sami seba. Označte vašu odpoveď kliknutím na tlačidlo pravda alebo nepravda vedľa každého tvrdenia.',
+    randomize: true,
     questions: [
       { id: 'sds1', text: 'Niekedy je pre mňa ťažké pokračovať v práci, ak ma nikto nepodporí.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
       { id: 'sds2', text: 'Niekedy sa cítim rozčúlený/rozčúlená, keď si nemôžem dosiahnuť to, čo chcem.', type: 'binary', required: true, options: [{ value: 'pravda', label: 'Pravda' }, { value: 'nepravda', label: 'Nepravda' }] },
@@ -1581,7 +1581,7 @@ const PAGES = [
 
   {
     id: 'porovnanie_vyznamov',
-    instruction: 'Nižšie uvidíte páry tvrdení, ktoré ste hodnotili skôr. Vašou úlohou je posúdiť, či tvrdenie A a tvrdenie B vyjadrujú rovnaký (tvrdenia hovoria to isté, len sú inak formulované) alebo opačný postoj (tvrdenia si navzájom odporujú, jedno popiera druhé). Pozorne si prečítajte tvrdenia a označte prosím vašu odpoveď bez ohľadu na to, či s tvrdeniami súhlasíte alebo nesúhlasíte.',
+    instruction: 'Nižšie uvidíte páry tvrdení, ktoré ste už hodnotili. Vašou úlohou je teraz posúdiť, či tvrdenie A a tvrdenie B vyjadrujú rovnaký (tvrdenia hovoria to isté, len sú inak formulované) alebo opačný postoj (tvrdenia si navzájom odporujú, jedno popiera druhé). Pozorne si prečítajte tvrdenia a označte prosím vašu odpoveď bez ohľadu na to, či s tvrdeniami súhlasíte alebo nesúhlasíte.',
     questions: [
       {
         id: 'porovnanie_accordion',
@@ -1694,7 +1694,32 @@ const Questionnaire0 = () => {
   const [activeAccordionId, setActiveAccordionId] = useState(null);
 
   const questionRefs = useRef({});
+  const shuffledOrderRef = useRef({});
 
+  // Funkcia pre Fisher-Yates shuffle
+  const shuffleArray = (arr) => {
+    const shuffled = [...arr];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  useEffect(() => {
+    PAGES.forEach(page => {
+      if (!page.randomize) return;
+      page.questions.forEach(q => {
+        if (q.type === 'accordion-likert' && q.questions) {
+          if (!shuffledOrderRef.current[q.id]) {
+            shuffledOrderRef.current[q.id] = shuffleArray(
+              q.questions.map((_, idx) => idx)
+            );
+          }
+        }
+      });
+    });
+  }, []);
   // Načítanie uložených odpovedí
   useEffect(() => {
     const loadSaved = async () => {
@@ -1763,6 +1788,9 @@ const Questionnaire0 = () => {
     
     await handleAnswer(questionId, newValues);
   };
+
+
+  // Pridaj do Questionnaire0 komponentu hore:
 
   // Number select handler
   const handleNumberSelect = async (questionId, number, multiple) => {
@@ -1954,8 +1982,12 @@ const Questionnaire0 = () => {
 
   switch (question.type) {
     case 'accordion-likert':
-      const accordionQuestions = question.questions || [];
-      
+      const rawQuestions = question.questions || [];
+      const order = shuffledOrderRef.current[question.id];
+      const accordionQuestions = order
+        ? order.map(idx => rawQuestions[idx])
+        : rawQuestions;
+
       return (
         <AccordionQuestionList>
           {accordionQuestions.map((subQuestion, index) => {
@@ -2038,20 +2070,18 @@ const Questionnaire0 = () => {
                         
                         {subQuestion.scaleLabels && (
                           <AccordionScaleLabels>
-                            {subQuestion.anchorLabels ? (
-                              subQuestion.scale.map(scaleValue =>
-                                subQuestion.anchorLabels[scaleValue] ? (
-                                  <span key={scaleValue} style={{ textAlign: 'center', fontSize: '11px' }}>
-                                    {subQuestion.anchorLabels[scaleValue]}
-                                  </span>
-                                ) : null
-                              )
-                            ) : (
-                              <>
-                                <span>{subQuestion.scaleLabels.min}</span>
-                                <span>{subQuestion.scaleLabels.max}</span>
-                              </>
-                            )}
+                            <span>{subQuestion.scaleLabels.min}</span>
+                            
+                            {/* Anchor labely uprostred */}
+                            {subQuestion.anchorLabels && 
+                              Object.entries(subQuestion.anchorLabels).map(([key, label]) => (
+                                <span key={key} style={{ fontSize: '15px', textAlign: 'center' }}>
+                                  {label}
+                                </span>
+                              ))
+                            }
+                            
+                            <span>{subQuestion.scaleLabels.max}</span>
                           </AccordionScaleLabels>
                         )}
                         
@@ -2466,9 +2496,7 @@ const Questionnaire0 = () => {
               </StyledButton>
             </ButtonContainer>
 
-            <ProgressIndicator>
-              Dokončených strán: {currentPage} / {PAGES.length}
-            </ProgressIndicator>
+
           </Card>
         </Container>
       </MobileWrapper>

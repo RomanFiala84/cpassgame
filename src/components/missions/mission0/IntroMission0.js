@@ -291,7 +291,7 @@ const IntroMission0 = () => {
               </ul>
 
               <p style="font-size: 15px; font-weight: bold; margin-top: 16px; color: ${theme.ACCENT_COLOR}; line-height: 1.6;">
-                <strong>Pripravený?</strong>
+                <strong>Ste pripravený?</strong>
               </p>
             `}
             buttonText="Poďme na to!"

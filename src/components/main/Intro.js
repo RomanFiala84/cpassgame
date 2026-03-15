@@ -378,7 +378,7 @@ const Intro = () => {
               <InfoList>
                 <InfoItem><strong>4 zaujímavé detektívne misie.</strong></InfoItem>
                 <InfoItem><strong>Zbieranie bodov a levelovanie.</strong></InfoItem>
-                <InfoItem><strong>Možnosť získať ceny v súťaži.</strong></InfoItem>
+                <InfoItem><strong>Možnosť vyhrať ceny v súťaži.</strong></InfoItem>
               </InfoList>
             </InfoSection>
 
