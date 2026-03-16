@@ -16,6 +16,7 @@ export const UserStatsProvider = ({ children }) => {
   const [dataManager] = useState(DataManager);
   const [userId, setUserId] = useState(null);
   const [userStats, setUserStats] = useState({
+    
     level: 1,
     points: 0,
     missionPoints: 0,
@@ -25,7 +26,7 @@ export const UserStatsProvider = ({ children }) => {
     referrals: 0,
     eligibleForRaffle: false
   });
-
+  const [questionVersion, setQuestionVersion] = useState(null);
   const intervalRef = useRef(null);
   const autoRefreshIntervalRef = useRef(null);
   const isLoadingRef = useRef(false);
@@ -222,6 +223,7 @@ export const UserStatsProvider = ({ children }) => {
         const updatedStats = calculatePoints(progress);
         
         setUserStats(updatedStats);
+        setQuestionVersion(progress.question_version || null); 
         lastLoadedUserIdRef.current = userId;
         console.log(`✅ Stats loaded for ${userId}:`, updatedStats);
       }
@@ -392,7 +394,8 @@ export const UserStatsProvider = ({ children }) => {
         userId,
         login,
         logout,
-        clearAllData
+        clearAllData,
+        questionVersion,
       }}
     >
       {children}

@@ -32,6 +32,7 @@ class DataManager {
       'participant_code',
       'blocked',
       'group_assignment',
+      'question_version',  // ← PRIDAJ
       'sharing_code',
       'referral_code',
       'used_referral_code',
@@ -624,6 +625,9 @@ class DataManager {
     if (!['0', '1', '2'].includes(data.group_assignment)) {
       data.group_assignment = Math.random() < 0.33 ? '0' : Math.random() < 0.66 ? '1' : '2';
     }
+    if (!['A', 'B'].includes(data.question_version)) {
+      data.question_version = Math.random() < 0.5 ? 'A' : 'B';
+    }
     
     const defaults = this.getDefaultFields();
     
@@ -632,6 +636,7 @@ class DataManager {
       'blocked_at',
       'competition_email',
       'competition_email_added_at',
+      'question_version',
       'mission0_unlocked',
       'mission1_unlocked',
       'mission2_unlocked',
@@ -681,6 +686,7 @@ class DataManager {
       total_time_spent: 0,
       blocked: false,
       blocked_at: null,
+      question_version: null,  // ← PRIDAJ
       competition_email: null,
       competition_email_added_at: null,
       informed_consent_given: false,
@@ -720,6 +726,7 @@ class DataManager {
     const rec = {
       participant_code: normalizedCode, // ✅ UPPERCASE
       group_assignment: Math.random() < 0.33 ? '0' : Math.random() < 0.66 ? '1' : '2',
+      question_version: Math.random() < 0.5 ? 'A' : 'B',  // ← PRIDAJ
       sharing_code: await this.generateUniqueSharingCode(normalizedCode),
       referral_code: sessionStorage.getItem('referralCode') || null,
       ...defaults
