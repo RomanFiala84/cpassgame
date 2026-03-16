@@ -1409,7 +1409,7 @@ const Questionnaire2A = () => {
       await dataManager.saveProgress(userId, progress);
 
       // skupinová navigácia:
-      const group = progress.group;
+      const group = progress.group_assignment;
       if (group === '0') navigate('/mission2/stroop-test');
       else if (group === '1') navigate('/mission2/intervention-a');
       else if (group === '2') navigate('/mission2/intervention-b');
