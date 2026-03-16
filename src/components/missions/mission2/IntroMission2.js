@@ -1,4 +1,4 @@
-// src/components/mission2/intro/IntroMission2.js
+// src/components/mission1/intro/IntroMission1.js
 // ✅ OPTIMALIZOVANÁ VERZIA - Štýl z hlavného Intro
 
 import React, { useEffect, useState, useContext } from 'react';
@@ -222,14 +222,14 @@ const IntroMission2 = () => {
       <Container>
 
         <MissionCard>
-          <MissionLabel><strong>Misia 0: Predvýskum</strong></MissionLabel>
+          <MissionLabel><strong>Misia 1: Úvodný dotazník</strong></MissionLabel>
         </MissionCard>
 
         <InfoSection>
           <InfoTitle><strong>Čo vás čaká v tejto misii?</strong></InfoTitle>
           <InfoList>
-            <InfoItem><strong>Dotazník (5-10 minút) - séria otázok a tvrdení.</strong></InfoItem>
-            <InfoItem><strong>Získate prvé detektívne body.</strong></InfoItem>
+            <InfoItem><strong>Dotazník (5-10 minút) - séria otázok a tvrdení</strong></InfoItem>
+            <InfoItem><strong>Získate 25 detektívnych bodov</strong></InfoItem>
           </InfoList>
         </InfoSection>
 
@@ -250,22 +250,22 @@ const IntroMission2 = () => {
             iconUrl="/images/detective-icon.png"
             tip={`
               <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                <strong>Ďakujeme, že ste sa rozhodli zúčastniť v predvýskume!</strong>
+                <strong>Ďakujeme, že ste sa rozhodli zúčastniť v hlavnom výskume!</strong>
               </p>
               
               <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                <strong>Čo je cieľom predvýskumu?</strong>
+                <strong>Čo je cieľom hlavného výskumu?</strong>
               </p>
               <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
                 <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
                   <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-                  <strong>Predtým ako spustíme hlavný výskum, potrebujeme overiť, že všetky otázky a tvrdenia v dotazníku sú zrozumiteľné a jednoznačné.</strong>
+                  <strong>Cieľom nášho hlavného výskumu je lepšie porozumieť tomu, ako ľudia na Slovensku vnímajú inštitúcie Európskej únie, ako im dôverujú a aké faktory s tým súvisia. V našom výskume sme sa preto zameriavame na to ako informácie o fungovaní EÚ a jej prínosoch môžu pôsobiť na presvedčenia a mieru dôvery v inštitúcie EÚ.</strong>
                 </li>
               </ul>
 
 
               <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                <strong>Aká je vaša úloha?</strong>
+                <strong>Aká je vaša úloha v tejto časti výskumu?</strong>
               </p>
               <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
                 <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
@@ -275,18 +275,6 @@ const IntroMission2 = () => {
                 <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
                   <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
                   <strong>Veľmi dlho nad otázkami a tvrdeniami nepremýšľajte. Pri jednotlivých položkách nie sú správne alebo nesprávne odpovede.</strong>
-                </li>
-                <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                  <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-                  <strong>Po každom bloku otázok vás požiadame o spätnú väzbu.</strong>
-                </li>
-                <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                  <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-                  <strong>Budeme sa pýtať napríklad na zrozumiteľnosť, jednoznačnosť a významovú zhodu otázok a tvrdení.</strong>
-                </li>
-                <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                  <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-                  <strong>Taktiež budeme zisťovať, či dokážete vybranou hodnotiacou stupnicou vyjadriť svoj skutočný postoj.</strong>
                 </li>
               </ul>
 
