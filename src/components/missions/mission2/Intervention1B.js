@@ -127,7 +127,7 @@ const Intervention1B = () => {
         }
       );
 
-      navigate('/mission2/postsb');
+      navigate('/mission2/questionnaire2b');
 
     } catch (error) {
       console.error('❌ Error saving intervention data:', error);

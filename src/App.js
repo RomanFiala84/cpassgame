@@ -50,11 +50,9 @@ import OutroMission1 from './components/missions/mission1/OutroMission1';
 // ═══════════════════════════════════════════════════════════
 import IntroMission2 from './components/missions/mission2/IntroMission2';
 import Questionnaire2A from './components/missions/mission2/Questionnaire2Ajs';
-import PostsA1 from './components/missions/mission2/PostsA1';
 import StroopTest1 from './components/missions/mission2/StroopTest1';
 import Intervention1A from './components/missions/mission2/Intervention1A';
 import Intervention1B from './components/missions/mission2/Intervention1B';
-import PostsB1 from './components/missions/mission2/PostsB1';
 import Questionnaire2B from './components/missions/mission2/Questionnaire2B';
 import OutroMission2 from './components/missions/mission2/OutroMission2';
 
@@ -70,11 +68,9 @@ import OutroMission2 from './components/missions/mission2/OutroMission2';
 // ═══════════════════════════════════════════════════════════
 import IntroMission3 from './components/missions/mission3/IntroMission3';
 import Questionnaire3A from './components/missions/mission3/Questionnaire3Ajs';
-import PostsA2 from './components/missions/mission3/PostsA2';
 import StroopTest2 from './components/missions/mission3/StroopTest2';
 import Intervention2A from './components/missions/mission3/Intervention2A';
 import Intervention2B from './components/missions/mission3/Intervention2B';
-import PostsB2 from './components/missions/mission3/PostsB2';
 import Questionnaire3B from './components/missions/mission3/Questionnaire3B';
 import OutroMission3 from './components/missions/mission3/OutroMission3';
 
@@ -183,11 +179,9 @@ function AppContent() {
             ═══════════════════════════════════════════════════════════ */}
         <Route path="/mission2/intro" element={<PageTransition><IntroMission2 /></PageTransition>} />
         <Route path="/mission2/questionnaire2a" element={<PageTransition><Questionnaire2A /></PageTransition>} />
-        <Route path="/mission2/postsa" element={<PageTransition><PostsA1 /></PageTransition>} />
         <Route path="/mission2/stroop-test" element={<PageTransition><StroopTest1 /></PageTransition>} />
         <Route path="/mission2/intervention-a" element={<PageTransition><Intervention1A /></PageTransition>} />
         <Route path="/mission2/intervention-b" element={<PageTransition><Intervention1B /></PageTransition>} />
-        <Route path="/mission2/postsb" element={<PageTransition><PostsB1 /></PageTransition>} />
         <Route path="/mission2/questionnaire2b" element={<PageTransition><Questionnaire2B /></PageTransition>} />
         <Route path="/mission2/outro" element={<PageTransition><OutroMission2 /></PageTransition>} />
 
@@ -199,11 +193,9 @@ function AppContent() {
             ═══════════════════════════════════════════════════════════ */}
         <Route path="/mission3/intro" element={<PageTransition><IntroMission3 /></PageTransition>} />
         <Route path="/mission3/questionnaire3a" element={<PageTransition><Questionnaire3A /></PageTransition>} />
-        <Route path="/mission3/postsa" element={<PageTransition><PostsA2 /></PageTransition>} />
         <Route path="/mission3/stroop-test" element={<PageTransition><StroopTest2 /></PageTransition>} />
         <Route path="/mission3/intervention-a" element={<PageTransition><Intervention2A /></PageTransition>} />
         <Route path="/mission3/intervention-b" element={<PageTransition><Intervention2B /></PageTransition>} />
-        <Route path="/mission3/postsb" element={<PageTransition><PostsB2 /></PageTransition>} />
         <Route path="/mission3/questionnaire3b" element={<PageTransition><Questionnaire3B /></PageTransition>} />
         <Route path="/mission3/outro" element={<PageTransition><OutroMission3 /></PageTransition>} />
 

@@ -1407,11 +1407,9 @@ const Questionnaire2A = () => {
 
       // skupinová navigácia:
       const group = progress.group;
-      if (group === '0') navigate('/mission2/postsa');
-      else if (group === '1') navigate('/mission2/postsa');
-      else if (group === '2') navigate('/mission2/postsa');
-      // → všetky skupiny idú na postsa
-      navigate('/mission2/postsa');
+      if (group === '0') navigate('/mission2/stroop-test');
+      else if (group === '1') navigate('/mission2/intervention-a');
+      else if (group === '2') navigate('/mission2/intervention-b');
       
     } catch (err) {
       console.error('❌ Error submitting questionnaire:', err);

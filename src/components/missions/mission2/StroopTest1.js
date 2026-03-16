@@ -419,7 +419,7 @@ const StroopTest1 = () => {
 
   // ✅ OPRAVENÉ: vždy na postsb
   const handleContinue = () => {
-    navigate('/mission2/postsb');
+    navigate('/mission2/questionnaire2b');
   };
 
   if (isCompleted) {
