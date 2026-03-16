@@ -228,8 +228,8 @@ const IntroMission0 = () => {
         <InfoSection>
           <InfoTitle><strong>Čo vás čaká v tejto misii?</strong></InfoTitle>
           <InfoList>
-            <InfoItem><strong>Dotazník (5-10 minút) - séria otázok a tvrdení.</strong></InfoItem>
-            <InfoItem><strong>Získate prvé detektívne body.</strong></InfoItem>
+            <InfoItem><strong>Dotazník (5-10 minút) - séria otázok a tvrdení</strong></InfoItem>
+            <InfoItem><strong>Získate 50 detektívnych bodov</strong></InfoItem>
           </InfoList>
         </InfoSection>
 

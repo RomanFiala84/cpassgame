@@ -1869,21 +1869,21 @@ const Questionnaire0 = () => {
 
       if (currentIndex !== -1 && currentIndex < allQuestions.length - 1) {
         const nextQuestion = allQuestions[currentIndex + 1];
-         setActiveQuestionId(nextQuestion.id);
         const nextElement = questionRefs.current[nextQuestion.id];
 
-        if (nextElement) {
-          const isMobile = window.innerWidth <= 768;
-          const offset = isMobile ? 180 : 150;
-
-          setTimeout(() => {
+        setTimeout(() => {
+          setActiveQuestionId(nextQuestion.id); // ← presunuté sem
+          if (nextElement) {
+            const isMobile = window.innerWidth <= 768;
+            const offset = isMobile ? 180 : 150;
             const elementPosition = nextElement.getBoundingClientRect().top;
             const offsetPosition = elementPosition + window.pageYOffset - offset;
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-          }, 150);
-        }
+          }
+        }, 150);
       }
     }
+
   };
 
 
@@ -2135,7 +2135,7 @@ const Questionnaire0 = () => {
                     )}
                     {!isCompleted && !hasError && (
                       <span style={{ color: p => p.theme.WARNING_COLOR, fontSize: '15px', fontWeight: '500' }}>
-                        Nevyplnené
+                        
                       </span>
                     )}
                     {hasError && (

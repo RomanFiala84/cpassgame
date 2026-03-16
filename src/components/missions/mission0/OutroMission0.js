@@ -548,9 +548,9 @@ const OutroMission0 = () => {
         <InfoSection>
           <InfoTitle><strong>Čo ste dosiahli?</strong></InfoTitle>
           <InfoList>
-            <InfoItem><strong>Úspešne ste dokončili predvýskum.</strong></InfoItem>
-            <InfoItem><strong>Získali ste 50 bodov potrebných pre zapojenie sa do súťaže.</strong></InfoItem>
-            <InfoItem><strong>Pomohli ste nám zlepšiť hlavný výskum.</strong></InfoItem>
+            <InfoItem><strong>Úspešne ste dokončili predvýskum</strong></InfoItem>
+            <InfoItem><strong>Získali ste 50 bodov potrebných pre zapojenie sa do súťaže</strong></InfoItem>
+            <InfoItem><strong>Pomohli ste nám zlepšiť hlavný výskum</strong></InfoItem>
           </InfoList>
 
           <DetectiveTipSmall

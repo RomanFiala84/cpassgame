@@ -914,34 +914,6 @@ const SelectedNumbers = styled.div`
   color: ${p => p.theme.ACCENT_COLOR};
 `;
 
-// ==========================================
-// STYLED COMPONENTS - FEEDBACK & UI
-// ==========================================
-
-const FeedbackSection = styled.div`
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 2px dashed ${p => p.theme.BORDER_COLOR};
-`;
-
-const FeedbackTitle = styled.h3`
-  color: ${p => p.theme.ACCENT_COLOR};
-  font-size: 15px;
-  font-weight: 600;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  
-`;
-
-const FeedbackSubtitle = styled.p`
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  font-size: 15px;
-  margin-bottom: 16px;
-  opacity: 0.8;
-`;
-
 const ErrorText = styled.div`
   color: ${p => p.theme.ACCENT_COLOR_2 || p.theme.ERROR_COLOR};
   margin-bottom: 16px;
@@ -967,113 +939,6 @@ const ButtonContainer = styled.div`
 // ==========================================
 
 const COMPONENT_ID = 'questionnaire1';
-
-// ==========================================
-// HELPER FUNKCIA - FEEDBACK OTÁZKY
-// ==========================================
-
-// ==========================================
-// HELPER FUNKCIA - FEEDBACK OTÁZKY
-// ==========================================
-
-const createFeedbackQuestions = (blockId, questionCount) => {
-  // ✅ OPRAVENÉ: Ak je questionCount 0, skús získať z accordion questions
-  let actualCount = questionCount;
-  
-  // Pre stránky s accordion-likert, spočítaj sub-questions
-  if (questionCount === 0) {
-    const page = PAGES.find(p => p.id === blockId);
-    if (page) {
-      const accordionQuestion = page.questions.find(q => q.type === 'accordion-likert');
-      if (accordionQuestion && accordionQuestion.questions) {
-        actualCount = accordionQuestion.questions.length;
-      }
-    }
-  }
-  
-  // Ak stále nemáme count, vráť prázdne pole
-  if (actualCount === 0) {
-    console.warn(`⚠️ No questions found for feedback in block: ${blockId}`);
-    return [];
-  }
-  
-  return [
-    {
-      id: `spatna_vazba_${blockId}_oblasti`,
-      text: 'V ktorých oblastiach ste mali problémy? (Môžete vybrať viacero možností)',
-      type: 'checkbox',
-      isFeedback: true,
-      required: false,
-      options: [
-        { value: 'zrozumitelnost', label: 'Zrozumiteľnosť otázok a tvrdení' },
-        { value: 'jednoznacnost', label: 'Jednoznačnosť otázok a tvrdení' },
-        { value: 'stupnica', label: 'Nevhodnosť hodnotiacej stupnice' },
-        { value: 'ine', label: 'Iné problémy' }
-      ]
-    },
-    {
-      id: `spatna_vazba_${blockId}_zrozumitelnost`,
-      text: 'Ktoré otázky a tvrdenia boli menej zrozumiteľné?',
-      type: 'number-select',
-      isFeedback: true,
-      min: 1,
-      max: actualCount, // ✅ POUŽIJE SPRÁVNY POČET
-      multiple: true,
-      instruction: 'Vyberte čísla otázok a tvrdení',
-      required: false,
-      showIf: {
-        questionId: `spatna_vazba_${blockId}_oblasti`,
-        operator: 'includes',
-        value: 'zrozumitelnost'
-      }
-    },
-    {
-      id: `spatna_vazba_${blockId}_jednoznacnost`,
-      text: 'Ktoré otázky a tvrdenia boli menej jednoznačné (slová, pojmy, formulácia...)?',
-      type: 'number-select',
-      isFeedback: true,
-      min: 1,
-      max: actualCount, // ✅ POUŽIJE SPRÁVNY POČET
-      multiple: true,
-      instruction: 'Vyberte čísla otázok a tvrdení',
-      required: false,
-      showIf: {
-        questionId: `spatna_vazba_${blockId}_oblasti`,
-        operator: 'includes',
-        value: 'jednoznacnost'
-      }
-    },
-    {
-      id: `spatna_vazba_${blockId}_stupnica`,
-      text: 'Pri ktorých otázkach a tvrdeniach ste mali problém vyjadriť svoj skutočný postoj vzhľadom na hodnotiacu stupnicu?',
-      type: 'number-select',
-      isFeedback: true,
-      min: 1,
-      max: actualCount, // ✅ POUŽIJE SPRÁVNY POČET
-      multiple: true,
-      instruction: 'Vyberte čísla otázok a tvrdení',
-      required: false,
-      showIf: {
-        questionId: `spatna_vazba_${blockId}_oblasti`,
-        operator: 'includes',
-        value: 'stupnica'
-      }
-    },
-    {
-      id: `spatna_vazba_${blockId}_ine`,
-      text: 'Popíšte iné problémy, ktoré ste mali s otázkami a tvrdeniami v tejto časti:',
-      type: 'textarea',
-      isFeedback: true,
-      placeholder: 'Popíšte iné problémy...',
-      required: false,
-      showIf: {
-        questionId: `spatna_vazba_${blockId}_oblasti`,
-        operator: 'includes',
-        value: 'ine'
-      }
-    }
-  ];
-};
 
 
 // ==========================================
@@ -1441,134 +1306,6 @@ const PAGES = [
       }
     ]
   },
-
-  // ==========================================
-  // STRANA 7: DÔVERA (ACCORDION)
-  // ==========================================
-  {
-    id: 'dovera',
-    randomize: true,
-    instruction: 'Nižšie nájdete zoznam rôznych inštitúcií EÚ. Pri každej inštitúcií prosím vyjadrite, do akej miery im dôverujete, na škále od 1 do 10. Ak inštitúciu nepoznáte zvoľte prosím možnosť neviem/nepoznám. Neexistujú správne alebo nesprávne odpovede.',
-    questions: [
-      {
-        id: 'dovera_accordion',
-        text: '',
-        type: 'accordion-likert',
-        required: true,
-        extraOption: { value: 'Neviem/nepoznám', label: 'Neviem/nepoznám ' },
-        questions: [
-          {
-            id: 'id1',
-            text: 'Európsky parlament',
-            scale: [1,2,3,4,5,6,7,8,9,10],
-            scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-            anchorLabels: {
-              5: 'Skôr nedôverujem',
-              6: 'Skôr dôverujem',
-            }
-          },
-          {
-            id: 'id2',
-            text: 'Európska rada',
-            scale: [1,2,3,4,5,6,7,8,9,10],
-            scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-            anchorLabels: {
-              5: 'Skôr nedôverujem',
-              6: 'Skôr dôverujem',
-            }
-          },
-          {
-            id: 'id3',
-            text: 'Rada Európskej únie',
-            scale: [1,2,3,4,5,6,7,8,9,10],
-            scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-            anchorLabels: {
-              5: 'Skôr nedôverujem',
-              6: 'Skôr dôverujem',
-            }
-          },
-          {
-            id: 'id4',
-            text: 'Európska komisia',
-            scale: [1,2,3,4,5,6,7,8,9,10],
-            scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-            anchorLabels: {
-              5: 'Skôr nedôverujem',
-              6: 'Skôr dôverujem',
-            }
-          },
-          {
-            id: 'id5',
-            text: 'Súdny dvor Európskej únie',
-            scale: [1,2,3,4,5,6,7,8,9,10],
-            scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-            anchorLabels: {
-              5: 'Skôr nedôverujem',
-              6: 'Skôr dôverujem',
-            }
-          },
-          {
-            id: 'id6',
-            text: 'Európska centrálna banka',
-            scale: [1,2,3,4,5,6,7,8,9,10],
-            scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-            anchorLabels: {
-              5: '5kôr nedôverujem',
-              6: 'Skôr dôverujem',
-            }
-          },
-          {
-            id: 'id7',
-            text: 'Európsky dvor audítorov',
-            scale: [1,2,3,4,5,6,7,8,9,10],
-            scaleLabels: { min: 'Absolútne nedôverujem', max: 'Absolútne dôverujem' },
-            anchorLabels: {
-              5: 'Skôr nedôverujem',
-              6: 'Skôr dôverujem',
-            }
-          }
-        ]
-      }
-    ]
-  },
-
-
-  // ==========================================
-  // STRANA 8: KONŠPIRAČNÉ PRESVEDČENIA (ACCORDION)
-  // ==========================================
-  {
-    id: 'konspiracia_presvedcenia',
-    randomize: true,
-    instruction: 'Nižšie nájdete sériu tvrdení. Pri každom tvrdení prosím vyjadrite, do akej miery s ním súhlasíte, na škále od 1 do 7. Neexistujú správne alebo nesprávne odpovede.',
-    questions: [
-      {
-        id: 'konspiracia_presvedcenia_accordion',
-        text: '',
-        type: 'accordion-likert',
-        required: true,
-        questions: [
-          // EÚ konšpiračné presvedčenia
-          { id: 'ep1', text: 'Európska únia má skrytý plán systematicky zničiť suverenitu členských štátov.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Takmer úplne nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Takmer úplne súhlasím', 'Rozhodne súhlasím'] },
-          { id: 'ep2', text: 'Rozhodnutia EÚ sú transparentné a robené Európskym parlamentom a zvolenými poslancami.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Takmer úplne nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Takmer úplne súhlasím', 'Rozhodne súhlasím'] },
-          { id: 'ep3', text: 'Európske inštitúcie a mainstreamové médiá spolupracujú na tom, aby pred občanmi zatajili skutočné negatívne dôsledky rozhodnutí EÚ.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Takmer úplne nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Takmer úplne súhlasím', 'Rozhodne súhlasím'] },
-          { id: 'ep4', text: 'EÚ rešpektuje a chráni národné kultúry a tradície všetkých členských štátov.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Takmer úplne nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Takmer úplne súhlasím', 'Rozhodne súhlasím'] },
-          { id: 'ep5', text: 'EÚ zámerne obchádza demokratické procesy a ignoruje vôľu občanov, pretože sú riadené skrytou agendou globálnych elít.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Takmer úplne nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Takmer úplne súhlasím', 'Rozhodne súhlasím'] },
-          { id: 'ep6', text: 'Regulácie EÚ sú navrhnuté aby chránili hospodárstvo všetkých členských štátov vrátane Slovenska, nie aby mu ublížili.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Takmer úplne nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Takmer úplne súhlasím', 'Rozhodne súhlasím'] },
-          { id: 'ep7', text: 'Migračná kríza bola naplánovaná autoritami EÚ.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Takmer úplne nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Takmer úplne súhlasím', 'Rozhodne súhlasím'] },
-          
-          // EÚ konšpiračné presvedčenia variované
-          { id: 'epv1', text: 'Štáty si zachovávajú svoju suverenitu v rámci EÚ.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Takmer úplne nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Takmer úplne súhlasím', 'Rozhodne súhlasím'] },
-          { id: 'epv2', text: 'Rozhodnutia EÚ v skutočnosti nerobí Európsky parlament, ale tajná skupina globálnych elít a veľkých korporácií.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Takmer úplne nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Takmer úplne súhlasím', 'Rozhodne súhlasím'] },
-          { id: 'epv3', text: 'Európske inštitúcie a mainstreamové médiá transparentne informujú občanov o rozhodnutiach EÚ.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Takmer úplne nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Takmer úplne súhlasím', 'Rozhodne súhlasím'] },
-          { id: 'epv4', text: 'EÚ má skrytý plán na zničenie národných kultúr a tradícií v prospech multikulturalizmu a liberálnych hodnôt.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Takmer úplne nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Takmer úplne súhlasím', 'Rozhodne súhlasím'] },
-          { id: 'epv5', text: 'Všetky rozhodnutia EÚ sú prijaté v plne transparentných procesoch, kde všetci poslanci verejne hlasujú, a žiadna krajina nie je nútená ich nasledovať.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Takmer úplne nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Takmer úplne súhlasím', 'Rozhodne súhlasím'] },
-          { id: 'epv6', text: 'EÚ vedome zavádza škodlivé regulácie s cieľom ekonomicky zničiť Slovensko a prinútiť nás byť úplne závislí na Bruseli.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Takmer úplne nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Takmer úplne súhlasím', 'Rozhodne súhlasím'] },
-          { id: 'epv7', text: 'Migračná kríza bola prirodzená udalosť, nie naplánovaná autoritami EÚ.', scale: [1, 2, 3, 4, 5, 6, 7], scaleLabels: { min: 'Rozhodne nesúhlasím', max: 'Rozhodne súhlasím' }, scaleValueLabels: ['Rozhodne nesúhlasím', 'Takmer úplne nesúhlasím', 'Skôr nesúhlasím', 'Neutrálny postoj', 'Skôr súhlasím', 'Takmer úplne súhlasím', 'Rozhodne súhlasím'] },
-        ]
-      }
-    ]
-  },
-
   // ==========================================
   // STRANA 9: SOCIÁLNA ŽIADOSTIVOSŤ (bez zmeny - binary)
   // ==========================================
@@ -1593,99 +1330,11 @@ const PAGES = [
     ]
   },
 
-  {
-    id: 'porovnanie_vyznamov',
-    instruction: 'Nižšie uvidíte páry tvrdení, ktoré ste už hodnotili. Vašou úlohou je teraz posúdiť, či tvrdenie A a tvrdenie B vyjadrujú rovnaký (tvrdenia hovoria to isté, len sú inak formulované) alebo opačný postoj (tvrdenia si navzájom odporujú, jedno popiera druhé). Pozorne si prečítajte tvrdenia a označte prosím vašu odpoveď bez ohľadu na to, či s tvrdeniami súhlasíte alebo nesúhlasíte.',
-    questions: [
-      {
-        id: 'porovnanie_accordion',
-        text: '',
-        type: 'accordion-likert',
-        required: true,
-        questions: [
-          {
-            id: 'comp_1',
-            text: 'Porovnanie tvrdení',
-            content: '**Tvrdenie A:**\n"Európska únia má skrytý plán systematicky zničiť suverenitu členských štátov."\n\n**Tvrdenie B:**\n"Štáty si zachovávajú svoju suverenitu v rámci EÚ."\n\n Tieto dve tvrdenia vyjadrujú...',
-            scale: [1, 2, 3, 4],
-            scaleLabels: { min: 'Úplne opačný postoj', max: 'Úplne rovnaký postoj' },
-            scaleValueLabels: ['Úplne opačný postoj', 'Skôr opačný postoj', 'Skôr rovnaký postoj', 'Úplne rovnaký postoj']
-          },
-          {
-            id: 'comp_2',
-            text: 'Porovnanie tvrdení',
-            content: '**Tvrdenie A:**\n"Rozhodnutia EÚ sú transparentné a robené Európskym parlamentom a zvolenými poslancami."\n\n**Tvrdenie B:**\n"Rozhodnutia EÚ v skutočnosti nerobí Európsky parlament, ale tajná skupina globálnych elít a veľkých korporácií."\n\n Tieto dve tvrdenia vyjadrujú...',
-            scale: [1, 2, 3, 4],
-            scaleLabels: { min: 'Úplne opačný postoj', max: 'Úplne rovnaký postoj' },
-            scaleValueLabels: ['Úplne opačný postoj', 'Skôr opačný postoj', 'Skôr rovnaký postoj', 'Úplne rovnaký postoj']
-          },
-          {
-            id: 'comp_3',
-            text: 'Porovnanie tvrdení',
-            content: '**Tvrdenie A:**\n"Európske inštitúcie a mainstreamové médiá spolupracujú na tom, aby pred občanmi zatajili skutočné negatívne dôsledky rozhodnutí EÚ."\n\n**Tvrdenie B:**\n"Európske inštitúcie a mainstreamové médiá transparentne informujú občanov o rozhodnutiach EÚ."\n\n Tieto dve tvrdenia vyjadrujú...',
-            scale: [1, 2, 3, 4],
-            scaleLabels: { min: 'Úplne opačný postoj', max: 'Úplne rovnaký postoj' },
-            scaleValueLabels: ['Úplne opačný postoj', 'Skôr opačný postoj', 'Skôr rovnaký postoj', 'Úplne rovnaký postoj']
-          },
-          {
-            id: 'comp_4',
-            text: 'Porovnanie tvrdení',
-            content: '**Tvrdenie A:**\n"EÚ rešpektuje a chráni národné kultúry a tradície všetkých členských štátov."\n\n**Tvrdenie B:**\n"EÚ má skrytý plán na zničenie národných kultúr a tradícií v prospech multikulturalizmu a liberálnych hodnôt."\n\n Tieto dve tvrdenia vyjadrujú...',
-            scale: [1, 2, 3, 4],
-            scaleLabels: { min: 'Úplne opačný postoj', max: 'Úplne rovnaký postoj' },
-            scaleValueLabels: ['Úplne opačný postoj', 'Skôr opačný postoj', 'Skôr rovnaký postoj', 'Úplne rovnaký postoj']
-          },
-          {
-            id: 'comp_5',
-            text: 'Porovnanie tvrdení',
-            content: '**Tvrdenie A:**\n"EÚ zámerne obchádza demokratické procesy a ignoruje vôľu občanov, pretože sú riadené skrytou agendou globálnych elít."\n\n**Tvrdenie B:**\n"Všetky rozhodnutia EÚ sú prijaté v plne transparentných procesoch, kde všetci poslanci verejne hlasujú, a žiadna krajina nie je nútená ich nasledovať."\n\n Tieto dve tvrdenia vyjadrujú...',
-            scale: [1, 2, 3, 4],
-            scaleLabels: { min: 'Úplne opačný postoj', max: 'Úplne rovnaký postoj' },
-            scaleValueLabels: ['Úplne opačný postoj', 'Skôr opačný postoj', 'Skôr rovnaký postoj', 'Úplne rovnaký postoj']
-          },
-          {
-            id: 'comp_6',
-            text: 'Porovnanie tvrdení',
-            content: '**Tvrdenie A:**\n"Regulácie EÚ sú navrhnuté aby chránili hospodárstvo všetkých členských štátov vrátane Slovenska, nie aby mu ublížili."\n\n**Tvrdenie B:**\n"EÚ vedome zavádza škodlivé regulácie s cieľom ekonomicky zničiť Slovensko a prinútiť nás byť úplne závislí na Bruseli."\n\n Tieto dve tvrdenia vyjadrujú...',
-            scale: [1, 2, 3, 4],
-            scaleLabels: { min: 'Úplne opačný postoj', max: 'Úplne rovnaký postoj' },
-            scaleValueLabels: ['Úplne opačný postoj', 'Skôr opačný postoj', 'Skôr rovnaký postoj', 'Úplne rovnaký postoj']
-          },
-          {
-            id: 'comp_7',
-            text: 'Porovnanie tvrdení',
-            content: '**Tvrdenie A:**\n"Migračná kríza bola naplánovaná autoritami EÚ."\n\n**Tvrdenie B:**\n"Migračná kríza bola prirodzená udalosť, nie naplánovaná autoritami EÚ."\n\n Tieto dve tvrdenia vyjadrujú...',
-            scale: [1, 2, 3, 4],
-            scaleLabels: { min: 'Úplne opačný postoj', max: 'Úplne rovnaký postoj' },
-            scaleValueLabels: ['Úplne opačný postoj', 'Skôr opačný postoj', 'Skôr rovnaký postoj', 'Úplne rovnaký postoj']
-          }
-        ]
-      }
-    ]
-  },
 
-].map(page => {
-  // ✅ OPRAVENÉ: Počítaj všetky otázky vrátane accordion sub-questions
-  let questionCount = 0;
-  
-  page.questions.forEach(q => {
-    if (q.type === 'accordion-likert' && q.questions) {
-      questionCount += q.questions.length;
-    } else if (!q.isFeedback) {
-      questionCount += 1;
-    }
-  });
-  
-  return {
-    ...page,
-    questions: [
-      ...page.questions,
-      ...createFeedbackQuestions(page.id, questionCount)
-    ]
-  };
-});
 
-export { PAGES, createFeedbackQuestions };
+];
+
+export { PAGES };
 
 
 
@@ -1802,31 +1451,30 @@ const Questionnaire1 = () => {
     const shouldScroll = 
       question &&
       scrollTypes.includes(question.type) &&
-      !question.isFeedback &&
       value !== '__custom__' &&          // ← nie keď je "Iné" vybrané
       !String(value).startsWith('__custom__'); // ← ani keď sa píše do "Iné"
 
     if (shouldScroll) {
-      const allQuestions = page.questions.filter(q => !q.isFeedback && q.type !== 'accordion-likert');
+      const allQuestions = page.questions.filter(q =>  q.type !== 'accordion-likert');
       const currentIndex = allQuestions.findIndex(q => q.id === questionId);
 
       if (currentIndex !== -1 && currentIndex < allQuestions.length - 1) {
         const nextQuestion = allQuestions[currentIndex + 1];
-         setActiveQuestionId(nextQuestion.id);
         const nextElement = questionRefs.current[nextQuestion.id];
 
-        if (nextElement) {
-          const isMobile = window.innerWidth <= 768;
-          const offset = isMobile ? 180 : 150;
-
-          setTimeout(() => {
+        setTimeout(() => {
+          setActiveQuestionId(nextQuestion.id); // ← presunuté sem
+          if (nextElement) {
+            const isMobile = window.innerWidth <= 768;
+            const offset = isMobile ? 180 : 150;
             const elementPosition = nextElement.getBoundingClientRect().top;
             const offsetPosition = elementPosition + window.pageYOffset - offset;
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-          }, 150);
-        }
+          }
+        }, 150);
       }
     }
+
   };
 
 
@@ -1922,23 +1570,19 @@ const Questionnaire1 = () => {
     };
 
     page.questions.forEach(question => {
-      // Pre accordion-likert validuj všetky sub-questions
       if (question.type === 'accordion-likert' && question.questions) {
         question.questions.forEach(subQuestion => {
-          // Sub-questions v accordion sú vždy required (okrem feedback)
-          if (!subQuestion.isFeedback) {
-            const answer = answers[subQuestion.id];
-            if (answer === undefined || answer === null || answer === '') {
-              errors[subQuestion.id] = 'Táto otázka je povinná.';
-              hasError = true;
-            }
+          const answer = answers[subQuestion.id];
+          if (answer === undefined || answer === null || answer === '') {
+            errors[subQuestion.id] = 'Táto otázka je povinná.';
+            hasError = true;
           }
         });
       } else {
-        // Normálne otázky
         validateQuestion(question);
       }
     });
+
 
     setQuestionErrors(errors);
 
@@ -2078,7 +1722,7 @@ const Questionnaire1 = () => {
                     )}
                     {!isCompleted && !hasError && (
                       <span style={{ color: p => p.theme.WARNING_COLOR, fontSize: '15px', fontWeight: '500' }}>
-                        Nevyplnené
+                        
                       </span>
                     )}
                     {hasError && (
@@ -2456,7 +2100,6 @@ const Questionnaire1 = () => {
     }
 
     const hasError = questionErrors[question.id];
-    const isFeedback = question.isFeedback;
 
     return (
       <QuestionCard
@@ -2467,7 +2110,7 @@ const Questionnaire1 = () => {
       >
         {/* ✅ ZMENENÉ: Použitie ReactMarkdown pre text s markdown */}
         <Question>
-          {!isFeedback && `${index + 1}. `}
+          {`${index + 1}. `}
           {question.text.includes('**') || question.text.includes('\\n') ? (
             <ReactMarkdown>{question.text}</ReactMarkdown>
           ) : (
@@ -2489,8 +2132,7 @@ const Questionnaire1 = () => {
 
   const page = PAGES[currentPage];
   const progress = ((currentPage + 1) / PAGES.length) * 100;
-  const mainQuestions = page.questions.filter(q => !q.isFeedback);
-  const feedbackQuestions = page.questions.filter(q => q.isFeedback);
+  const mainQuestions = page.questions;
 
  return (
   <Layout>
@@ -2517,15 +2159,6 @@ const Questionnaire1 = () => {
 
             {mainQuestions.map((question, index) => renderQuestion(question, index))}
 
-            {feedbackQuestions.length > 0 && (
-              <FeedbackSection>
-                <FeedbackTitle>Spätná väzba</FeedbackTitle>
-                <FeedbackSubtitle>
-                  Pomôžte nám zlepšiť túto sekciu dotazníka (nepovinné)
-                </FeedbackSubtitle>
-                {feedbackQuestions.map((question) => renderQuestion(question, -1))}
-              </FeedbackSection>
-            )}
 
             <ButtonContainer>
               <StyledButton
