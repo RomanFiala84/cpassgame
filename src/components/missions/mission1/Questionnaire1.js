@@ -102,9 +102,13 @@ const ProgressText = styled.div`
 
 const QuestionCard = styled.div`
   background: ${p => p.theme.CARD_BACKGROUND};
-  border: 1px solid ${p => p.hasError ? '#ff0000' : p.theme.BORDER_COLOR};
+  border: 1px solid ${p => 
+    p.hasError ? '#ff0000' : 
+    p.isActive ? '#FF9800' :
+    p.theme.BORDER_COLOR
+  };
   border-radius: 8px;
-  padding: 16px;  /* ✅ OK */
+  padding: 16px;
   margin-bottom: 16px;
   scroll-margin-top: 20px;
   transition: all 0.2s ease;
@@ -112,9 +116,13 @@ const QuestionCard = styled.div`
   ${p => p.hasError && `
     box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
   `}
+
+  ${p => p.isActive && !p.hasError && `
+    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.15);
+  `}
   
   @media (max-width: 768px) {
-    padding: 12px;  /* ✅ ZMENŠENÉ z 16px */
+    padding: 12px;
     margin-bottom: 12px;
   }
 `;
@@ -168,7 +176,7 @@ const AccordionQuestionItem = styled.div`
   border: 2px solid ${p => 
     p.hasError ? p.theme.ERROR_COLOR : 
     p.isCompleted ? p.theme.SUCCESS_COLOR : 
-    p.isActive ? p.theme.ACCENT_COLOR : 
+    p.isActive ? p.theme.WARNING_COLOR : 
     p.theme.BORDER_COLOR
   };
   border-radius: 12px;
@@ -408,6 +416,12 @@ const ComparisonQuestionBox = styled.div`
     margin: 8px 0;
     line-height: 1.6;
     color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  }
+
+  br {
+    display: block;
+    content: "";
+    margin: 2px 0; /* ← malá medzera namiesto celého riadku */
   }
 `;
 
@@ -1692,6 +1706,7 @@ const Questionnaire1 = () => {
   const [startTime] = useState(Date.now());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeAccordionId, setActiveAccordionId] = useState(null);
+  const [activeQuestionId, setActiveQuestionId] = useState(null);
 
   const questionRefs = useRef({});
   const shuffledOrderRef = useRef({});
@@ -1737,6 +1752,7 @@ const Questionnaire1 = () => {
     setQuestionErrors({});
     setError('');
     setActiveAccordionId(null);
+    setActiveQuestionId(null);
   }, [currentPage]);
 
   // Kontrola podmienok zobrazenia otázky
@@ -1781,7 +1797,7 @@ const Questionnaire1 = () => {
     // Scroll len pre radio, binary, likert — a nie keď je vybrané "Iné"
     const page = PAGES[currentPage];
     const question = page.questions.find(q => q.id === questionId);
-    const scrollTypes = ['radio', 'binary', 'likert'];
+    const scrollTypes = ['radio', 'binary', 'likert','ladder'];
     
     const shouldScroll = 
       question &&
@@ -1796,6 +1812,7 @@ const Questionnaire1 = () => {
 
       if (currentIndex !== -1 && currentIndex < allQuestions.length - 1) {
         const nextQuestion = allQuestions[currentIndex + 1];
+         setActiveQuestionId(nextQuestion.id);
         const nextElement = questionRefs.current[nextQuestion.id];
 
         if (nextElement) {
@@ -2446,6 +2463,7 @@ const Questionnaire1 = () => {
         key={question.id}
         ref={el => (questionRefs.current[question.id] = el)}
         hasError={hasError}
+        isActive={activeQuestionId === question.id}
       >
         {/* ✅ ZMENENÉ: Použitie ReactMarkdown pre text s markdown */}
         <Question>
