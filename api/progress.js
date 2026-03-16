@@ -280,6 +280,7 @@ export default async function handler(req, res) {
           const group = dataToUpdate.group_assignment || await assignBalancedGroup(col);
           const version = dataToUpdate.question_version || await assignBalancedVersion(col, group);
           const newUser = {
+            ...dataToUpdate,
             participant_code: code,
             group_assignment: group,        // ← použij premennú
             question_version: version,      // ← použij premennú
@@ -323,7 +324,6 @@ export default async function handler(req, res) {
             responses: {},
             
             // ✅ Merge s dataToUpdate (obsahuje mission fieldy!)
-            ...dataToUpdate
           };
           
           await col.insertOne(newUser);
