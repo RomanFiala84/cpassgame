@@ -49,7 +49,7 @@ import OutroMission1 from './components/missions/mission1/OutroMission1';
 //   S budovaním dôvery (2): QuestA → PostsA → InterventionB → PostsB → QuestB
 // ═══════════════════════════════════════════════════════════
 import IntroMission2 from './components/missions/mission2/IntroMission2';
-import Questionnaire2A from './components/missions/mission2/Questionnaire2Ajs';
+import Questionnaire2A from './components/missions/mission2/Questionnaire2A';
 import StroopTest1 from './components/missions/mission2/StroopTest1';
 import Intervention1A from './components/missions/mission2/Intervention1A';
 import Intervention1B from './components/missions/mission2/Intervention1B';
@@ -67,7 +67,7 @@ import OutroMission2 from './components/missions/mission2/OutroMission2';
 //   S budovaním dôvery (2): QuestA → PostsA → InterventionB → PostsB → QuestB
 // ═══════════════════════════════════════════════════════════
 import IntroMission3 from './components/missions/mission3/IntroMission3';
-import Questionnaire3A from './components/missions/mission3/Questionnaire3Ajs';
+import Questionnaire3A from './components/missions/mission3/Questionnaire3A';
 import StroopTest2 from './components/missions/mission3/StroopTest2';
 import Intervention2A from './components/missions/mission3/Intervention2A';
 import Intervention2B from './components/missions/mission3/Intervention2B';
