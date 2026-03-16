@@ -622,13 +622,7 @@ class DataManager {
         console.log(`✅ Sharing code už existuje pre ${normalizedCode}: ${data.sharing_code}`);
       }
     
-    if (!['0', '1', '2'].includes(data.group_assignment)) {
-      data.group_assignment = Math.random() < 0.33 ? '0' : Math.random() < 0.66 ? '1' : '2';
-    }
-    if (!['A', 'B'].includes(data.question_version)) {
-      data.question_version = Math.random() < 0.5 ? 'A' : 'B';
-    }
-    
+  
     const defaults = this.getDefaultFields();
     
     const preserveFields = [
@@ -725,8 +719,6 @@ class DataManager {
     const defaults = this.getDefaultFields();
     const rec = {
       participant_code: normalizedCode, // ✅ UPPERCASE
-      group_assignment: Math.random() < 0.33 ? '0' : Math.random() < 0.66 ? '1' : '2',
-      question_version: Math.random() < 0.5 ? 'A' : 'B',  // ← PRIDAJ
       sharing_code: await this.generateUniqueSharingCode(normalizedCode),
       referral_code: sessionStorage.getItem('referralCode') || null,
       ...defaults

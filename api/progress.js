@@ -54,13 +54,24 @@ const getCorsHeaders = (res) => {
 //
 // 🧩 3️⃣ Helper – náhodné priradenie skupiny
 //
-const assignRandomGroup = () => {
-  const rand = Math.random();
-  if (rand < 1/3) return '0';      // presne 33.333...% 
-  if (rand < 2/3) return '1';      // presne 33.333...%
-  return '2';                       // presne 33.333...%
+const assignBalancedGroup = async (col) => {
+  const count0 = await col.countDocuments({ group_assignment: '0' });
+  const count1 = await col.countDocuments({ group_assignment: '1' });
+  const count2 = await col.countDocuments({ group_assignment: '2' });
+  const minCount = Math.min(count0, count1, count2);
+  const tied = [];
+  if (count0 === minCount) tied.push('0');
+  if (count1 === minCount) tied.push('1');
+  if (count2 === minCount) tied.push('2');
+  return tied[Math.floor(Math.random() * tied.length)];
 };
 
+const assignBalancedVersion = async (col, group) => {  // ← pridaj group parameter
+  const countA = await col.countDocuments({ group_assignment: group, question_version: 'A' });
+  const countB = await col.countDocuments({ group_assignment: group, question_version: 'B' });
+  if (countA <= countB) return 'A';
+  return 'B';
+};
 
 //
 // 🧩 4️⃣ Helper – načítanie globálneho stavu misií
@@ -90,12 +101,15 @@ const getGlobalMissionsState = async (db) => {
 // 🧩 5️⃣ Helper – vytvorenie nového používateľa
 //
 const createNewParticipant = async (code, db) => {
-  const group = assignRandomGroup();
+  const col = db.collection('participants');
+  const group = await assignBalancedGroup(col);
+  const version = await assignBalancedVersion(col, group);
   const globalState = await getGlobalMissionsState(db);
   
   const newUser = {
     participant_code: code,
     group_assignment: group,
+    question_version: version,
     completedSections: [],
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -263,10 +277,12 @@ export default async function handler(req, res) {
           // ✅ Nový používateľ - vytvor s náhodnou skupinou
           console.log(`🆕 Vytváram nového používateľa ${code}`);
           const globalState = await getGlobalMissionsState(db);
-          
+          const group = dataToUpdate.group_assignment || await assignBalancedGroup(col);
+          const version = dataToUpdate.question_version || await assignBalancedVersion(col, group);
           const newUser = {
             participant_code: code,
-            group_assignment: dataToUpdate.group_assignment || assignRandomGroup(),
+            group_assignment: group,        // ← použij premennú
+            question_version: version,      // ← použij premennú
             createdAt: new Date(),
             updatedAt: new Date(),
             
@@ -334,6 +350,8 @@ export default async function handler(req, res) {
         // ✅ FIX: Priprav update data so všetkými fieldmi
         const updateData = {
           ...dataToUpdate,
+          group_assignment: existing.group_assignment,
+          question_version: existing.question_version,
           responses: mergedResponses,
           updatedAt: new Date(),
           timestamp_last_update: new Date().toISOString()
