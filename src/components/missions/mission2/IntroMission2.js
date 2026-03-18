@@ -222,13 +222,14 @@ const IntroMission2 = () => {
       <Container>
 
         <MissionCard>
-          <MissionLabel><strong>Misia 1: Úvodný dotazník</strong></MissionLabel>
+          <MissionLabel><strong>Misia 2: Prvá časť hlavného výskumu</strong></MissionLabel>
         </MissionCard>
 
         <InfoSection>
           <InfoTitle><strong>Čo vás čaká v tejto misii?</strong></InfoTitle>
           <InfoList>
-            <InfoItem><strong>Dotazník (5-10 minút) - séria otázok a tvrdení</strong></InfoItem>
+            <InfoItem><strong>Dotazník (5 minút) - séria otázok a tvrdení</strong></InfoItem>
+            <InfoItem><strong>Prípad: Kukučie hniezdo (5 - 10 minút) - detektívny tréning</strong></InfoItem>
             <InfoItem><strong>Získate 25 detektívnych bodov</strong></InfoItem>
           </InfoList>
         </InfoSection>
@@ -250,7 +251,7 @@ const IntroMission2 = () => {
             iconUrl="/images/detective-icon.png"
             tip={`
               <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                <strong>Ďakujeme, že ste sa rozhodli zúčastniť v hlavnom výskume!</strong>
+                <strong>Výborne, úvodný dotazník ste zvládli! Poďme sa pozrieť na prvú časť hlavného výskumu.</strong>
               </p>
               
               <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
@@ -270,13 +271,21 @@ const IntroMission2 = () => {
               <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
                 <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
                   <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+                  <strong>V tejto časti výskumu sú tri fázy. Na začiatku a na konci tejto časti absolvujete krátku sériu otázok a tvrdení. Medzitým absolvujete krátky detektívny tréning, kde vás čaká špeciálna úloha.</strong>
+                </li>
+                <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                  <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
                   <strong>Pozorne si prečítajte každú otázku a tvrdenie, odpovedajte prosím úprimne.</strong>
                 </li>
                 <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
                   <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
                   <strong>Veľmi dlho nad otázkami a tvrdeniami nepremýšľajte. Pri jednotlivých položkách nie sú správne alebo nesprávne odpovede.</strong>
                 </li>
-              </ul>
+                <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                  <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+                  <strong> V detektívnom tréningu dokončite prosím všetky povinné úlohy. Bonusové úlohy sú dobrovoľné. </strong>
+                </li>
+                </ul>
 
               <p style="font-size: 15px; font-weight: bold; margin-top: 16px; color: ${theme.ACCENT_COLOR}; line-height: 1.6;">
                 <strong>Ste pripravený?</strong>
