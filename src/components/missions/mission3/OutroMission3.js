@@ -164,6 +164,47 @@ const ButtonContainer = styled.div`
   margin-top: 24px;
   @media (max-width: 480px) { flex-direction: column; width: 100%; max-width: 400px; }
 `;
+const DebriefSection = styled.div`
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 2px solid ${p => p.theme.BORDER_COLOR};
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+`;
+
+const DebriefBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const DebriefTitle = styled.h4`
+  font-size: 15px;
+  font-weight: 700;
+  color: ${p => p.theme.ACCENT_COLOR};
+  margin: 0 0 6px 0;
+`;
+
+const DebriefText = styled.p`
+  font-size: 15px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  line-height: 1.7;
+  margin: 0;
+`;
+
+const DebriefLink = styled.a`
+  color: ${p => p.theme.ACCENT_COLOR};
+  text-decoration: underline;
+  font-weight: 600;
+  &:hover { opacity: 0.8; }
+`;
+
+const DebriefDivider = styled.div`
+  height: 1px;
+  background: ${p => p.theme.BORDER_COLOR};
+  margin: 4px 0;
+`;
 
 // ═══════════════════════════════════════════════════════════════════════
 // COMPONENT
@@ -232,12 +273,93 @@ const OutroMission3 = () => {
                 <strong>Výborne! Úspešne ste dokončili celý výskum.</strong>
               </p>
               <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                <strong>Ešte raz ďakujeme za účasť vo výskume, dúfame že sa vám výskum páčil.</strong>
+                <strong>Ďakujeme za účasť vo výskume, dúfame že sa vám výskum páčil.❤️</strong>
               </p>
             `}
             detectiveName="Inšpektor Kritan"
             autoOpen={true}
           />
+          <DebriefSection>
+
+            <DebriefBlock>
+              <DebriefTitle>ℹDôležité informácie k zobrazeným tvrdeniam</DebriefTitle>
+              <DebriefText>Počas výskumu ste hodnotili rôzne tvrdenia o spoločenských a politických témach. Niektoré z nich boli v súlade s dostupnými faktami a vedeckými poznatkami, iné patrili medzi takzvané <strong>konšpiračné presvedčenia</strong> — teda vysvetlenia udalostí, ktoré pripisujú skryté úmysly mocným skupinám alebo jednotlivcom, zvyčajne bez dostatočných dôkazov.</DebriefText>
+              <DebriefText>Konšpiračné presvedčenia môžu byť nebezpečné, pretože vedú k nedôvere voči legitímnym inštitúciám, vede a médiám, môžu podnecovať sociálne napätie a v krajných prípadoch aj k odmietaniu zdravotnej starostlivosti či k preberaniu extrémnych postojov.</DebriefText>
+              <DebriefText>V dotazníku sme zámerne neoznačovali, ktoré tvrdenia sú dôveryhodné a ktoré nie. Cieľom bolo zistiť, ako ľudia prirodzene reagujú na rôzne typy tvrdení – čo znie presvedčivo, kde majú pochybnosti a s čím majú tendenciu súhlasiť.</DebriefText>
+              <DebriefText>V prípade záujmu nás prosím kontaktujte na nižšie uvedenú emailovú adresu, kedy vám následne vieme poskytnúť zoznam jednotlivých tvrdení spolu s informáciou, pri ktorých ide o typické konšpiračné výklady udalostí alebo motívov a pri ktorých nie. <strong>Túto možnosť môžete využiť až po ukončení celého výskumu.</strong></DebriefText>
+            </DebriefBlock>
+
+            <DebriefDivider />
+
+            <DebriefBlock>
+              <DebriefTitle>Čo sme skúmali?</DebriefTitle>
+              <DebriefText>Cieľom štúdie bolo lepšie porozumieť tomu, ako ľudia na Slovensku vnímajú inštitúcie Európskej únie, ako im dôverujú a aké faktory s tým súvisia. V našom výskume sme sa zameriavali na to ako informácie o fungovaní EÚ a jej prínosoch môžu pôsobiť na presvedčenia a mieru dôvery v inštitúcie EÚ.</DebriefText>
+            </DebriefBlock>
+
+            <DebriefDivider />
+
+            <DebriefBlock>
+              <DebriefTitle>Ako budú spracované výsledky a chránené vaše údaje?</DebriefTitle>
+              <DebriefText>Odpovede, ktoré ste nám poskytli vyplnením dotazníkov a absolvovaním interaktívnych častí výskumu, budú použité výhradne na výskumné účely.</DebriefText>
+              <DebriefText>Výsledky budú spracované a zverejňované len v anonymizovanej, súhrnnej forme, takže z nich nebude možné spätne identifikovať konkrétnu osobu.</DebriefText>
+              <DebriefText>V dotazníku ste neuvádzali žiadne osobné identifikačné údaje ani IP adresu a namiesto mena ste si vytvorili jedinečný kód. Všetky údaje sú anonymné, dôverné a uložené v zabezpečenej databáze, ku ktorej má prístup len výskumný tím.</DebriefText>
+              <DebriefText>Ak ste poskytli e‑mailovú adresu kvôli zapojeniu sa do súťaže alebo do ďalšej časti výskumu, bude použitá výhradne na tieto účely a po ukončení súťaže a výskumu bude bezprostredne vymazaná.</DebriefText>
+            </DebriefBlock>
+
+            <DebriefDivider />
+
+            <DebriefBlock>
+              <DebriefTitle>Môžem odstúpiť?</DebriefTitle>
+              <DebriefText>Áno. Účasť je dobrovoľná a môžete kedykoľvek odstúpiť bez udania dôvodu a bez negatívnych dôsledkov. Môžete tiež požiadať o vymazanie údajov do 7 dní po ukončení výskumu.</DebriefText>
+            </DebriefBlock>
+
+            <DebriefDivider />
+
+            <DebriefBlock>
+              <DebriefTitle>Kedy bude vyhodnotená súťaž?</DebriefTitle>
+              <DebriefText>Súťaž bude vyhodnotená na základe stanovených pravidiel (viď podmienky súťaže v hlavnom menu) do 7 dní od ukončenia výskumu.</DebriefText>
+            </DebriefBlock>
+
+            <DebriefDivider />
+
+            <DebriefBlock>
+              <DebriefTitle>Ak sa cítite znepokojení</DebriefTitle>
+              <DebriefText>Je úplne v poriadku mať z niektorých tém alebo tvrdení nepríjemný pocit – dotýkajú sa citlivých spoločenských a politických otázok.</DebriefText>
+              <DebriefText>Odporúčame o svojich pocitoch alebo otázkach hovoriť s niekým, komu dôverujete (priateľ, rodina, odborník).</DebriefText>
+              <DebriefText>Ak máte pocit, že na vás podobné informácie dlhodobo pôsobia stresujúco alebo úzkostne, môže byť užitočné poradiť sa so psychológom alebo iným odborníkom.</DebriefText>
+              <DebriefText>
+                Dostupné sú zdroje pomoci:{' '}
+                <DebriefLink href="mailto:roman.fiala@tvu.sk">Kontakt na výskumníka</DebriefLink>
+                {' · '}
+                <DebriefLink href="https://ipcko.sk" target="_blank" rel="noopener noreferrer">IPčko</DebriefLink>
+                {' · '}
+                <DebriefLink href="https://www.linkanezabudka.sk" target="_blank" rel="noopener noreferrer">Linka dôvery</DebriefLink>
+              </DebriefText>
+            </DebriefBlock>
+
+            <DebriefDivider />
+
+            <DebriefBlock>
+              <DebriefTitle>Kontakt</DebriefTitle>
+              <DebriefText>V prípade, že máte otázky k samotnému výskumu, môžete nás kontaktovať na uvedenom e‑maile – radi vám poskytneme doplňujúce informácie.</DebriefText>
+              <DebriefText>
+                <strong>Výskumník:</strong> Roman Fiala<br />
+                <strong>Email:</strong>{' '}
+                <DebriefLink href="mailto:roman.fiala@tvu.sk">roman.fiala@tvu.sk</DebriefLink>
+              </DebriefText>
+            </DebriefBlock>
+
+            <DebriefDivider />
+
+            <DebriefBlock>
+              <DebriefText style={{ textAlign: 'center', fontWeight: '600' }}>
+                ❤️ Ešte raz ďakujeme za vašu účasť a podporu vedy!
+              </DebriefText>
+            </DebriefBlock>
+
+          </DebriefSection>
+
+        
         </InfoSection>
 
         <ButtonContainer>

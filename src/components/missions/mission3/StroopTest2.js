@@ -37,13 +37,13 @@ const Header = styled.div`
 const Title = styled.h1`
   font-size: 15px;
   font-weight: 700;
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  color: ${p => p.theme.ACCENT_COLOR};
   margin: 0 0 12px 0;
 `;
 
 const Subtitle = styled.p`
   font-size: 15px;
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  color: ${p => p.theme.ACCENT_COLOR};
   margin: 0 0 8px 0;
   line-height: 1.6;
 `;
@@ -52,7 +52,6 @@ const Instructions = styled.p`
   font-size: 15px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   margin: 0;
-  font-weight: 600;
 `;
 
 const ProgressContainer = styled.div`
@@ -327,6 +326,17 @@ const StroopTest2 = () => {
       <PageTransition>
         <Container>
           <Wrapper>
+            {showDetectiveTip && (
+                          <DetectiveTipSmall
+                            tip={detectiveTipEnd}
+                            detectiveName="Inšpektor Kritan"
+                            imageUrl="/images/detective-icon.png"
+                            buttonText="Rozumiem!"
+                            minReadTime={5000}
+                            showBadge={false}
+                            onClose={() => setShowDetectiveTip(false)}
+                          />
+                        )}
             <CompletionMessage>
               <CompletionTitle><strong>Šifra vylúštená!</strong></CompletionTitle>
               <CompletionText><strong>Výborná práca, detektív/ka!</strong></CompletionText>
@@ -336,17 +346,6 @@ const StroopTest2 = () => {
               </ContinueButton>
             </CompletionMessage>
 
-            {showDetectiveTip && (
-              <DetectiveTipSmall
-                tip={detectiveTipEnd}
-                detectiveName="Inšpektor Kritan"
-                imageUrl="/images/detective-icon.png"
-                buttonText="Rozumiem!"
-                minReadTime={5000}
-                showBadge={false}
-                onClose={() => setShowDetectiveTip(false)}
-              />
-            )}
           </Wrapper>
         </Container>
       </PageTransition>
@@ -381,13 +380,6 @@ const StroopTest2 = () => {
             <Instructions><strong>Nájdite symbol, ktorý nepatrí medzi ostatné! Téma príbuzných symbolov je: VEDA.</strong></Instructions>
           </Header>
 
-          <ProgressContainer>
-            <ProgressBar>
-              <ProgressFill current={currentTrialIndex + 1} total={TOTAL_TRIALS} />
-            </ProgressBar>
-            <ProgressText>{currentTrialIndex + 1}/{TOTAL_TRIALS}</ProgressText>
-          </ProgressContainer>
-
           <GameArea>
             <Question>Ktorý symbol je votrelec?</Question>
             {currentTrial && (
@@ -406,7 +398,12 @@ const StroopTest2 = () => {
               </SymbolRow>
             )}
           </GameArea>
-
+           <ProgressContainer>
+            <ProgressBar>
+              <ProgressFill current={currentTrialIndex + 1} total={TOTAL_TRIALS} />
+            </ProgressBar>
+            <ProgressText>{currentTrialIndex + 1}/{TOTAL_TRIALS}</ProgressText>
+          </ProgressContainer>
         </Wrapper>
       </Container>
     </PageTransition>

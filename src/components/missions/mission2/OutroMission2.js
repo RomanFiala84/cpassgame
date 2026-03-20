@@ -486,6 +486,9 @@ const OutroMission2 = () => {
               <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
                 <strong>Teraz sa môžete sa vrátiť do hlavného menu a aplikáciu ukončiť. O päť dní sa vám odomkne druhá časť hlavného výskumu. Nezabudnite svoju účasť potvrdiť nižši a prípadne si zvoliť upozornie na e-mail.</strong>
               </p>
+              <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                <strong>V prípade ak sa druhej časti už nezúčastníte, veľmi vám ďakujem za učásť vo vyskume:❤️</strong>
+              </p>
             `}
             detectiveName="Inšpektor Kritan"
             autoOpen={true}
@@ -503,14 +506,14 @@ const OutroMission2 = () => {
             <DebriefDivider />
 
             <DebriefBlock>
-              <DebriefTitle>🔍 Čo sme skúmali?</DebriefTitle>
+              <DebriefTitle>Čo sme skúmali?</DebriefTitle>
               <DebriefText>Cieľom štúdie bolo lepšie porozumieť tomu, ako ľudia na Slovensku vnímajú inštitúcie Európskej únie, ako im dôverujú a aké faktory s tým súvisia. V našom výskume sme sa zameriavali na to ako informácie o fungovaní EÚ a jej prínosoch môžu pôsobiť na presvedčenia a mieru dôvery v inštitúcie EÚ.</DebriefText>
             </DebriefBlock>
 
             <DebriefDivider />
 
             <DebriefBlock>
-              <DebriefTitle>🔒 Ako budú spracované výsledky a chránené vaše údaje?</DebriefTitle>
+              <DebriefTitle>Ako budú spracované výsledky a chránené vaše údaje?</DebriefTitle>
               <DebriefText>Odpovede, ktoré ste nám poskytli vyplnením dotazníkov a absolvovaním interaktívnych častí výskumu, budú použité výhradne na výskumné účely.</DebriefText>
               <DebriefText>Výsledky budú spracované a zverejňované len v anonymizovanej, súhrnnej forme, takže z nich nebude možné spätne identifikovať konkrétnu osobu.</DebriefText>
               <DebriefText>V dotazníku ste neuvádzali žiadne osobné identifikačné údaje ani IP adresu a namiesto mena ste si vytvorili jedinečný kód. Všetky údaje sú anonymné, dôverné a uložené v zabezpečenej databáze, ku ktorej má prístup len výskumný tím.</DebriefText>
@@ -520,21 +523,21 @@ const OutroMission2 = () => {
             <DebriefDivider />
 
             <DebriefBlock>
-              <DebriefTitle>🚪 Môžem odstúpiť?</DebriefTitle>
+              <DebriefTitle>Môžem odstúpiť?</DebriefTitle>
               <DebriefText>Áno. Účasť je dobrovoľná a môžete kedykoľvek odstúpiť bez udania dôvodu a bez negatívnych dôsledkov. Môžete tiež požiadať o vymazanie údajov do 7 dní po ukončení výskumu.</DebriefText>
             </DebriefBlock>
 
             <DebriefDivider />
 
             <DebriefBlock>
-              <DebriefTitle>🏆 Kedy bude vyhodnotená súťaž?</DebriefTitle>
+              <DebriefTitle>Kedy bude vyhodnotená súťaž?</DebriefTitle>
               <DebriefText>Súťaž bude vyhodnotená na základe stanovených pravidiel (viď podmienky súťaže v hlavnom menu) do 7 dní od ukončenia výskumu.</DebriefText>
             </DebriefBlock>
 
             <DebriefDivider />
 
             <DebriefBlock>
-              <DebriefTitle>💛 Ak sa cítite znepokojení</DebriefTitle>
+              <DebriefTitle>Ak sa cítite znepokojení</DebriefTitle>
               <DebriefText>Je úplne v poriadku mať z niektorých tém alebo tvrdení nepríjemný pocit – dotýkajú sa citlivých spoločenských a politických otázok.</DebriefText>
               <DebriefText>Odporúčame o svojich pocitoch alebo otázkach hovoriť s niekým, komu dôverujete (priateľ, rodina, odborník).</DebriefText>
               <DebriefText>Ak máte pocit, že na vás podobné informácie dlhodobo pôsobia stresujúco alebo úzkostne, môže byť užitočné poradiť sa so psychológom alebo iným odborníkom.</DebriefText>
@@ -551,7 +554,7 @@ const OutroMission2 = () => {
             <DebriefDivider />
 
             <DebriefBlock>
-              <DebriefTitle>✉️ Kontakt</DebriefTitle>
+              <DebriefTitle>Kontakt</DebriefTitle>
               <DebriefText>V prípade, že máte otázky k samotnému výskumu, môžete nás kontaktovať na uvedenom e‑maile – radi vám poskytneme doplňujúce informácie.</DebriefText>
               <DebriefText>
                 <strong>Výskumník:</strong> Roman Fiala<br />
