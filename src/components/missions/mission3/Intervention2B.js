@@ -635,8 +635,8 @@ const Intervention2B = () => {
     const handleMouseMove = (e) => {
       const rect = container.getBoundingClientRect();
       mousePositionsRef.current.push({
-        x: ((e.clientX - rect.left) / container.scrollWidth) * 100,
-        y: ((e.clientY - rect.top + window.scrollY) / container.scrollHeight) * 100,
+        x: e.clientX - rect.left,              // ← surové pixely, BEZ delenia
+        y: e.clientY - rect.top + window.scrollY,  // ← surové pixely, BEZ delenia
         timestamp: Date.now(),
       });
     };

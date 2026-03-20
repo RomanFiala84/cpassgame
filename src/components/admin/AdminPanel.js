@@ -460,27 +460,22 @@ const AdminPanel = () => {
     setTemplateProgress('Pripravujem generovanie templates...');
 
     const components = [
-      // ── Intervencie mission2 ───────────────────────────────────────────────
       { id: 'intervention1A_page0', type: 'intervention', name: 'Intervention1A — strana 1', path: '/mission2/intervention-a' },
       { id: 'intervention1A_page1', type: 'intervention', name: 'Intervention1A — strana 2', path: '/mission2/intervention-a' },
       { id: 'intervention1A_page2', type: 'intervention', name: 'Intervention1A — strana 3', path: '/mission2/intervention-a' },
       { id: 'intervention1B_page0', type: 'intervention', name: 'Intervention1B — strana 1', path: '/mission2/intervention-b' },
       { id: 'intervention1B_page1', type: 'intervention', name: 'Intervention1B — strana 2', path: '/mission2/intervention-b' },
-      { id: 'intervention1B_page2', type: 'intervention', name: 'Intervention1B — strana 3', path: '/mission2/intervention-b' },
-      // ── Intervencie mission3 ───────────────────────────────────────────────
       { id: 'intervention2A_page0', type: 'intervention', name: 'Intervention2A — strana 1', path: '/mission3/intervention-a' },
       { id: 'intervention2A_page1', type: 'intervention', name: 'Intervention2A — strana 2', path: '/mission3/intervention-a' },
       { id: 'intervention2A_page2', type: 'intervention', name: 'Intervention2A — strana 3', path: '/mission3/intervention-a' },
       { id: 'intervention2B_page0', type: 'intervention', name: 'Intervention2B — strana 1', path: '/mission3/intervention-b' },
       { id: 'intervention2B_page1', type: 'intervention', name: 'Intervention2B — strana 2', path: '/mission3/intervention-b' },
-      { id: 'intervention2B_page2', type: 'intervention', name: 'Intervention2B — strana 3', path: '/mission3/intervention-b' },
     ];
 
     let successCount = 0;
     let failCount = 0;
     const results = [];
 
-    // Zoskup podľa path — každú route otvor raz, naviguj cez stránky interne
     const byPath = components.reduce((acc, comp) => {
       if (!acc[comp.path]) acc[comp.path] = [];
       acc[comp.path].push(comp);
@@ -500,40 +495,48 @@ const AdminPanel = () => {
             error: 'Popup zablokované!'
           }));
           results.push(...blocked);
-          failCount += blocked.length;  // ← update mimo callback funkcie
+          failCount += blocked.length;
           continue;
         }
 
+        // Počkaj na plné načítanie stránky + render
+        await new Promise(resolve => setTimeout(resolve, 10000));
 
-        // Počkaj na načítanie stránky
-        await new Promise(resolve => setTimeout(resolve, 8000));
-
-        // Spracuj každú stránku (page0, page1, page2)
         for (let i = 0; i < pageComponents.length; i++) {
           const comp = pageComponents[i];
           setTemplateProgress(`📸 ${comp.name}...`);
 
           try {
-            // Klikni na tlačidlo "Pokračovať" pre i > 0 (prejdi na ďalšiu stránku)
+            // Pre i > 0 klikni na tlačidlo — force disabled odstráň
             if (i > 0) {
               try {
                 const buttons = newWindow.document.querySelectorAll('button');
                 const nextBtn = Array.from(buttons).find(b =>
-                  b.textContent.includes('Pokračovať') || b.textContent.includes('→')
+                  b.textContent.includes('Pokračovať') ||
+                  b.textContent.includes('→') ||
+                  b.textContent.includes('Prečítaj') ||
+                  b.textContent.includes('Dokončiť')
                 );
                 if (nextBtn) {
+                  nextBtn.removeAttribute('disabled');  // ← force odomkni timer
                   nextBtn.click();
-                  await new Promise(resolve => setTimeout(resolve, 3000));
+                  await new Promise(resolve => setTimeout(resolve, 4000)); // ← dlhší delay po kliku
                 }
               } catch (e) {
                 console.warn('⚠️ Nemôžem kliknúť na tlačidlo:', e);
               }
             }
 
-            const container = newWindow.document.querySelector('[class*="Container"]')
-              || newWindow.document.body;
+            // Nájdi container — skús viac selektorov
+            const container =
+              newWindow.document.querySelector('[class*="Container"]') ||
+              newWindow.document.querySelector('main') ||
+              newWindow.document.body;
 
             if (!container) throw new Error('Container not found');
+
+            // Počkaj na reflow po navigácii
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
             const templateUrl = await generateAndUploadComponentTemplate(
               container,
@@ -551,7 +554,7 @@ const AdminPanel = () => {
             });
             successCount++;
 
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            await new Promise(resolve => setTimeout(resolve, 2000));
 
           } catch (error) {
             results.push({ component: comp.name, status: 'failed', error: error.message });
@@ -560,7 +563,7 @@ const AdminPanel = () => {
         }
 
         newWindow.close();
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await new Promise(resolve => setTimeout(resolve, 2000));
       }
 
       let report = `📸 Hotovo!\n\n✅ ${successCount} | ❌ ${failCount}\n\n`;
@@ -578,6 +581,7 @@ const AdminPanel = () => {
       setTemplateProgress('');
     }
   };
+
 
 
   const handleToggleBlock = async (participantCode, currentBlockedState) => {

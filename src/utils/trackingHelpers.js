@@ -361,7 +361,7 @@ export const generateAndUploadComponentTemplate = async (containerElement, conte
 
     const html2canvas = (await import('html2canvas')).default;
     
-    // ✅ OPRAVA - Vypni CSS animácie a transitions
+    // Vypni CSS animácie a transitions
     styleSheet = document.createElement('style');
     styleSheet.id = 'no-animations-for-screenshot';
     styleSheet.textContent = `
@@ -374,30 +374,37 @@ export const generateAndUploadComponentTemplate = async (containerElement, conte
         transition-delay: 0s !important;
       }
     `;
-    document.head.appendChild(styleSheet);
+
+    // Použi document z okna kde je container (nie hlavné okno!)
+    const ownerDocument = containerElement.ownerDocument;
+    ownerDocument.head.appendChild(styleSheet);
     
-    // ✅ Počkaj na reflow
+    // Počkaj na reflow
     await new Promise(resolve => requestAnimationFrame(resolve));
     
     const containerWidth = containerElement.scrollWidth;
     const containerHeight = containerElement.scrollHeight;
     
     const scaleFactor = STANDARD_WIDTH / containerWidth;
+    const highQualityScale = Math.max(scaleFactor, 2);
+
+    // ✅ OPRAVA — rect kompenzácia pre posunutý text
+    const rect = containerElement.getBoundingClientRect();
     
     console.log('📐 Screenshot scale calculation:', {
       containerWidth,
       containerHeight,
       targetWidth: STANDARD_WIDTH,
-      scaleFactor: scaleFactor.toFixed(4)
+      scaleFactor: scaleFactor.toFixed(4),
+      rectTop: rect.top,
+      rectLeft: rect.left,
     });
 
-    const highQualityScale = Math.max(scaleFactor, 2);
-    
     const screenshot = await html2canvas(containerElement, {
       width: containerWidth,
       height: containerHeight,
-      scrollX: 0,
-      scrollY: 0,
+      scrollX: -rect.left,           // ← OPRAVA
+      scrollY: -rect.top,            // ← OPRAVA (kompenzuje pozíciu elementu v DOM)
       windowWidth: containerWidth,
       windowHeight: containerHeight,
       useCORS: true,
@@ -411,9 +418,9 @@ export const generateAndUploadComponentTemplate = async (containerElement, conte
       letterRendering: true,
     });
 
-    // ✅ OPRAVA - Odstráň style sheet
+    // Odstráň stylesheet
     if (styleSheet && styleSheet.parentNode) {
-      document.head.removeChild(styleSheet);
+      ownerDocument.head.removeChild(styleSheet);
     }
 
     const originalBlob = await new Promise((resolve) => {
@@ -431,10 +438,9 @@ export const generateAndUploadComponentTemplate = async (containerElement, conte
       size: `${(originalBlob.size / 1024).toFixed(2)}KB`
     });
 
-    // ✅ Resample späť na 1920px s high-quality interpoláciou
     const resizeResult = await resizeImageToStandardHighQuality(originalBlob, STANDARD_WIDTH);
 
-    console.log('📏 Resampled to 1920px (high quality):', {
+    console.log('📏 Resampled to 1920px:', {
       width: resizeResult.width,
       height: resizeResult.height,
       size: `${(resizeResult.blob.size / 1024).toFixed(2)}KB`
@@ -461,17 +467,17 @@ export const generateAndUploadComponentTemplate = async (containerElement, conte
     }
 
     const result = await response.json();
-    console.log('✅ Component template uploaded (1920px, animations disabled):', result.data?.url);
+    console.log('✅ Component template uploaded:', result.data?.url);
 
     return result.data?.url;
 
   } catch (error) {
     console.error('❌ Failed to generate/upload component template:', error);
     
-    // ✅ OPRAVA - Cleanup - Odstráň style sheet aj v prípade chyby
     if (styleSheet && styleSheet.parentNode) {
       try {
-        document.head.removeChild(styleSheet);
+        const ownerDocument = containerElement?.ownerDocument || document;
+        ownerDocument.head.removeChild(styleSheet);
       } catch (e) {
         console.error('Failed to remove style sheet:', e);
       }
@@ -480,6 +486,7 @@ export const generateAndUploadComponentTemplate = async (containerElement, conte
     return null;
   }
 };
+
 
 /**
  * Odošle tracking dáta na server

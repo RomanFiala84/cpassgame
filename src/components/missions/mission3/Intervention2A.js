@@ -565,7 +565,7 @@ const PAGES = [
 
 const TOTAL_PAGES = PAGES.length;
 const COMPONENT_ID = 'mission3_intervention_a';
-const PAGE_MIN_TIMES = [180, 180, 0];
+const PAGE_MIN_TIMES = [10, 10, 0];
 // ═══════════════════════════════════════════════════════════════════════════════
 // Hlavný komponent
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -635,8 +635,8 @@ const Intervention2A = () => {
     const handleMouseMove = (e) => {
       const rect = container.getBoundingClientRect();
       mousePositionsRef.current.push({
-        x: ((e.clientX - rect.left) / container.scrollWidth) * 100,
-        y: ((e.clientY - rect.top + window.scrollY) / container.scrollHeight) * 100,
+        x: e.clientX - rect.left,              // ← surové pixely, BEZ delenia
+        y: e.clientY - rect.top + window.scrollY,  // ← surové pixely, BEZ delenia
         timestamp: Date.now(),
       });
     };
