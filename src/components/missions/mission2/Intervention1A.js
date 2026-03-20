@@ -800,20 +800,6 @@ const Intervention1A = () => {
   return (
     <Layout>
       <Container>
-
-        {/* Intro DetectiveTip */}
-        <DetectiveTipSmall
-          key={`intro-${currentPage}`}
-          tip={page.detectiveTipIntro}
-          detectiveName="Inšpektor Kritan"
-          imageUrl="/images/detective-icon.png"
-          buttonText="Rozumiem, poďme na to!"
-          autoOpen={true}
-          autoOpenDelay={300}
-          minReadTime={8000}
-          showBadge={true}
-        />
-
         <Card>
           {/* Progress */}
           <ProgressBar>
@@ -830,61 +816,88 @@ const Intervention1A = () => {
             Čas strávený: {Math.floor(timeSpent / 60)}:{(timeSpent % 60).toString().padStart(2, '0')}
           </TimeTracker>
 
-          {/* Moduly */}
-          <ModuleTitle>
-            {currentPage === 0 && '🧠 Konšpiračné presvedčenia'}
-            {currentPage === 1 && '🏛️ Inštitúcie EÚ'}
-            {currentPage === 2 && '🚦 Príspevkový semafor'}
-          </ModuleTitle>
-
-          {page.accordions.map(item => (
-            <AccordionItem
-              key={item.id}
-              item={item}
-              isOpened={!!openedMap[item.id]}
-              onToggle={() => handleToggle(item.id)}
+          {/* ── Intro DetectiveTip — vnútri Card, nad accordionmi ── */}
+          {!showOutroTip && (
+            <DetectiveTipSmall
+              key={`intro-${currentPage}`}
+              tip={page.detectiveTipIntro}
+              detectiveName="Inšpektor Kritan"
+              autoOpen={true}
+              autoOpenDelay={200}
             />
-          ))}
-
-          {!allOpenedOnCurrentPage && (
-            <RequiredNote>
-              ⚠️ Pred pokračovaním rozkliknite všetky sekcie.
-            </RequiredNote>
           )}
 
-          <ButtonContainer>
-            <StyledButton
-              accent
-              onClick={handleNext}
-              disabled={!allOpenedOnCurrentPage || isSubmitting}
-            >
-              {isSubmitting
-                ? 'Ukladám...'
-                : isLastPage
-                  ? 'Dokončiť tréning'
-                  : 'Pokračovať ďalej →'}
-            </StyledButton>
-          </ButtonContainer>
+          {/* ── Accordiony — skryté keď je outro ── */}
+          {!showOutroTip && (
+            <>
+              <ModuleTitle>
+                {currentPage === 0 && '🧠 Konšpiračné presvedčenia'}
+                {currentPage === 1 && '🏛️ Inštitúcie EÚ'}
+                {currentPage === 2 && '🚦 Príspevkový semafor'}
+              </ModuleTitle>
+
+              {page.accordions.map(item => (
+                <AccordionItem
+                  key={item.id}
+                  item={item}
+                  isOpened={!!openedMap[item.id]}
+                  onToggle={() => handleToggle(item.id)}
+                />
+              ))}
+
+              {!allOpenedOnCurrentPage && (
+                <RequiredNote>
+                  ⚠️ Pred pokračovaním rozkliknite všetky sekcie.
+                </RequiredNote>
+              )}
+
+              <ButtonContainer>
+                <StyledButton
+                  accent
+                  onClick={handleNext}
+                  disabled={!allOpenedOnCurrentPage || isSubmitting}
+                >
+                  {isSubmitting
+                    ? 'Ukladám...'
+                    : isLastPage
+                      ? 'Dokončiť tréning'
+                      : 'Pokračovať ďalej →'}
+                </StyledButton>
+              </ButtonContainer>
+            </>
+          )}
+
+          {/* ── Outro DetectiveTip — zobrazí sa po kliknutí, nahrádza obsah ── */}
+          {showOutroTip && (
+            <>
+              <DetectiveTipSmall
+                key={`outro-${currentPage}`}
+                tip={page.detectiveTipOutro}
+                detectiveName="Inšpektor Kritan"
+                autoOpen={true}
+                autoOpenDelay={100}
+              />
+              <ButtonContainer>
+                <StyledButton
+                  accent
+                  onClick={handleOutroClose}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting
+                    ? 'Ukladám...'
+                    : isLastPage
+                      ? '🎓 Dokončiť tréning!'
+                      : 'Pokračovať ďalej →'}
+                </StyledButton>
+              </ButtonContainer>
+            </>
+          )}
+
         </Card>
-
-        {/* Outro DetectiveTip — zobrazí sa po kliknutí Pokračovať */}
-        {showOutroTip && (
-          <DetectiveTipSmall
-            tip={page.detectiveTipOutro}
-            detectiveName="Inšpektor Kritan"
-            imageUrl="/images/detective-icon.png"
-            buttonText={isLastPage ? 'Dokončiť tréning!' : 'Pokračovať ďalej!'}
-            autoOpen={true}
-            autoOpenDelay={100}
-            minReadTime={5000}
-            showBadge={false}
-            onClose={handleOutroClose}
-          />
-        )}
-
       </Container>
     </Layout>
   );
+
 };
 
 export default Intervention1A;
