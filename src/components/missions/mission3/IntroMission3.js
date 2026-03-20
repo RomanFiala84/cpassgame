@@ -1,4 +1,5 @@
-// src/components/missions/mission3/IntroMission3.js
+// src/components/mission1/intro/IntroMission1.js
+// ✅ OPTIMALIZOVANÁ VERZIA - Štýl z hlavného Intro
 
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -17,11 +18,17 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  @media (max-width: 768px) { padding: 20px 12px; }
+  
+  @media (max-width: 768px) {
+    padding: 20px 12px;
+  }
 `;
 
 const MissionCard = styled.div`
-  background: linear-gradient(135deg, ${p => p.theme.ACCENT_COLOR}45, ${p => p.theme.ACCENT_COLOR_2}45);
+  background: linear-gradient(135deg, 
+    ${p => p.theme.ACCENT_COLOR}45, 
+    ${p => p.theme.ACCENT_COLOR_2}45
+  );
   border: 2px solid ${p => p.theme.ACCENT_COLOR};
   border-radius: 16px;
   padding: 24px 40px;
@@ -31,19 +38,33 @@ const MissionCard = styled.div`
   min-width: 280px;
   position: relative;
   overflow: hidden;
+  
   &::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: radial-gradient(circle at top right, ${p => p.theme.ACCENT_COLOR}15 0%, transparent 70%);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+      circle at top right,
+      ${p => p.theme.ACCENT_COLOR}15 0%,
+      transparent 70%
+    );
     pointer-events: none;
   }
+  
   &:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 24px ${p => p.theme.ACCENT_COLOR}45;
     border-color: ${p => p.theme.ACCENT_COLOR_2};
   }
-  @media (max-width: 480px) { padding: 20px 28px; min-width: auto; width: 100%; }
+  
+  @media (max-width: 480px) {
+    padding: 20px 28px;
+    min-width: auto;
+    width: 100%;
+  }
 `;
 
 const MissionLabel = styled.div`
@@ -56,7 +77,10 @@ const MissionLabel = styled.div`
   font-weight: 600;
   position: relative;
   z-index: 1;
-  @media (max-width: 480px) { font-size: 25px; }
+  
+  @media (max-width: 480px) {
+    font-size: 25px;
+  }
 `;
 
 const InfoSection = styled.div`
@@ -68,8 +92,14 @@ const InfoSection = styled.div`
   max-width: 700px;
   width: 100%;
   transition: all 0.2s ease;
-  &:hover { border-color: ${p => p.theme.ACCENT_COLOR}60; }
-  @media (max-width: 480px) { padding: 16px; }
+  
+  &:hover {
+    border-color: ${p => p.theme.ACCENT_COLOR}60;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 16px;
+  }
 `;
 
 const InfoTitle = styled.h3`
@@ -80,7 +110,11 @@ const InfoTitle = styled.h3`
   display: flex;
   align-items: center;
   gap: 8px;
-  @media (max-width: 480px) { font-size: 15px; }
+  
+  
+  @media (max-width: 480px) {
+    font-size: 15px;
+  }
 `;
 
 const InfoList = styled.ul`
@@ -100,6 +134,7 @@ const InfoItem = styled.li`
   background: ${p => p.theme.ACCENT_COLOR}15;
   border-radius: 8px;
   transition: all 0.2s ease;
+  
   &::before {
     content: '✓';
     position: absolute;
@@ -110,24 +145,33 @@ const InfoItem = styled.li`
     font-weight: bold;
     font-size: 15px;
   }
-  &:hover { background: ${p => p.theme.ACCENT_COLOR}15; transform: translateX(4px); }
-  @media (max-width: 480px) { font-size: 15px; padding: 7px 10px 7px 28px; }
+  
+  &:hover {
+    background: ${p => p.theme.ACCENT_COLOR}15;
+    transform: translateX(4px);
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 15px;
+    padding: 7px 10px 7px 28px;
+  }
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
   gap: 12px;
   margin-top: 24px;
-  @media (max-width: 480px) { flex-direction: column; width: 100%; max-width: 400px; }
+  
+  @media (max-width: 480px) {
+    flex-direction: column;
+    width: 100%;
+    max-width: 400px;
+  }
 `;
-
-// ═══════════════════════════════════════════════════════════════════════
-// COMPONENT
-// ═══════════════════════════════════════════════════════════════════════
 
 const IntroMission3 = () => {
   const navigate = useNavigate();
-  const { dataManager } = useUserStats();
+  const { dataManager} = useUserStats();
   const [showTip, setShowTip] = useState(false);
   const theme = useContext(ThemeContext);
 
@@ -153,7 +197,10 @@ const IntroMission3 = () => {
           await dataManager.saveProgress(participantCode, prog);
         }
 
-        setTimeout(() => setShowTip(true), 300);
+        // Zobraz tip po načítaní
+        setTimeout(() => {
+          setShowTip(true);
+        }, 300);
       } catch (error) {
         console.error('❌ Error recording mission start:', error);
       }
@@ -165,28 +212,30 @@ const IntroMission3 = () => {
   const handleContinue = () => navigate('/mission3/questionnaire3a');
 
   return (
-    <Layout
-      showLevelDisplay={true}
+    <Layout 
+      showLevelDisplay={true} 
       showAnimatedBackground={true}
       cubeCount={50}
       animationSpeed="normal"
       complexity="medium"
     >
       <Container>
+
         <MissionCard>
-          <MissionLabel><strong>Misia 3: Hlavný výskum</strong></MissionLabel>
+          <MissionLabel><strong>Misia 3: Druhá časť hlavného výskumu</strong></MissionLabel>
         </MissionCard>
 
         <InfoSection>
           <InfoTitle><strong>Čo vás čaká v tejto misii?</strong></InfoTitle>
           <InfoList>
-            <InfoItem><strong>Dotazník (5-10 minút) - séria otázok a tvrdení.</strong></InfoItem>
-            <InfoItem><strong>Získate ďalšie detektívne body.</strong></InfoItem>
+            <InfoItem><strong>Dotazník (5 minút) - séria otázok a tvrdení</strong></InfoItem>
+            <InfoItem><strong>Prípad: Falošná stopa (5 - 10 minút) - detektívny tréning</strong></InfoItem>
+            <InfoItem><strong>Získate 25 detektívnych bodov</strong></InfoItem>
           </InfoList>
         </InfoSection>
 
         <ButtonContainer>
-          <StyledButton
+          <StyledButton 
             variant="accent"
             size="large"
             onClick={handleContinue}
@@ -202,13 +251,28 @@ const IntroMission3 = () => {
             iconUrl="/images/detective-icon.png"
             tip={`
               <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                <strong>Ďakujeme, že ste sa rozhodli zúčastniť v hlavnom výskume!</strong>
+                <strong>Vítam vás späť v druhej časti hlavného výskumu!</strong>
               </p>
-
+              
               <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                <strong>Aká je vaša úloha?</strong>
+                <strong>Čo je cieľom hlavného výskumu?</strong>
               </p>
               <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
+                <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                  <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+                  <strong>Cieľom nášho hlavného výskumu je lepšie porozumieť tomu, ako ľudia na Slovensku vnímajú inštitúcie Európskej únie, ako im dôverujú a aké faktory s tým súvisia. V našom výskume sme sa preto zameriavame na to ako informácie o fungovaní EÚ a jej prínosoch môžu pôsobiť na presvedčenia a mieru dôvery v inštitúcie EÚ.</strong>
+                </li>
+              </ul>
+
+
+              <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                <strong>Aká je vaša úloha v tejto časti výskumu?</strong>
+              </p>
+              <ul style="list-style: none; padding-left: 20px; padding-right: 20px; margin: 0;">
+                <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
+                  <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
+                  <strong>V tejto časti výskumu sú opäť tri fázy, ale kratšie ako minule. Na začiatku a na konci tejto časti absolvujete krátku sériu otázok a tvrdení. Medzitým absolvujete krátky detektívny tréning, kde vás čaká špeciálna úloha.</strong>
+                </li>
                 <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
                   <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
                   <strong>Pozorne si prečítajte každú otázku a tvrdenie, odpovedajte prosím úprimne.</strong>
@@ -219,9 +283,9 @@ const IntroMission3 = () => {
                 </li>
                 <li style="font-size: 15px; padding-left: 0; position: relative; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
                   <span style="position: absolute; left: -15px; top: 0; color: ${theme.ACCENT_COLOR}; font-weight: bold; font-size: 15px;">•</span>
-                  <strong>Pri jednotlivých položkách nie sú správne alebo nesprávne odpovede.</strong>
+                  <strong> V detektívnom tréningu dokončite prosím všetky povinné úlohy. Bonusové úlohy sú dobrovoľné. </strong>
                 </li>
-              </ul>
+                </ul>
 
               <p style="font-size: 15px; font-weight: bold; margin-top: 16px; color: ${theme.ACCENT_COLOR}; line-height: 1.6;">
                 <strong>Ste pripravený?</strong>

@@ -974,7 +974,7 @@ const getPAGES = (questionVersion) => [
     {
       id: 'konspiracia_presvedcenia',
       randomize: true,
-      instruction: 'Nižšie nájdete sériu tvrdení. Pri každom tvrdení prosím vyjadrite, do akej miery s ním súhlasíte, na škále od 1 do 7. Neexistujú správne alebo nesprávne odpovede.',
+      instruction: 'Pokračujeme ďalej! Nižšie nájdete sériu tvrdení. Pri každom tvrdení prosím vyjadrite, do akej miery s ním súhlasíte, na škále od 1 do 7. Neexistujú správne alebo nesprávne odpovede.',
       questions: [
         {
           id: 'konspiracia_presvedcenia_accordion',

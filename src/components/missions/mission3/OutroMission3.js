@@ -1,6 +1,6 @@
 // src/components/missions/mission2/OutroMission2.js
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Layout from '../../../styles/Layout';
@@ -58,7 +58,6 @@ const MissionLabel = styled.div`
   font-weight: 600;
   position: relative;
   z-index: 1;
-  @media (max-width: 480px) { font-size: 25px; }
 `;
 
 const SuccessBox = styled.div`
@@ -85,7 +84,6 @@ const PointsEarned = styled.div`
     from { transform: scale(0); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
   }
-  @media (max-width: 480px) { font-size: 50px; }
 `;
 
 const PointsLabel = styled.div`
@@ -127,7 +125,6 @@ const InfoTitle = styled.h3`
   display: flex;
   align-items: center;
   gap: 8px;
-  @media (max-width: 480px) { font-size: 15px; }
 `;
 
 const InfoList = styled.ul`
@@ -161,132 +158,6 @@ const InfoItem = styled.li`
   @media (max-width: 480px) { font-size: 15px; padding: 7px 10px 7px 28px; }
 `;
 
-const ParticipationSection = styled.div`
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 2px solid ${p => p.theme.BORDER_COLOR};
-`;
-
-const SectionTitle = styled.h4`
-  font-size: 15px;
-  color: ${p => p.theme.ACCENT_COLOR};
-  margin-bottom: 16px;
-  font-weight: 600;
-`;
-
-const CheckboxLabel = styled.label`
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  cursor: pointer;
-  margin-bottom: 16px;
-  padding: 12px;
-  border-radius: 8px;
-  background: ${p => p.checked ? `${p.theme.ACCENT_COLOR}15` : 'transparent'};
-  transition: all 0.2s ease;
-  &:hover { background: ${p => p.theme.ACCENT_COLOR}15; }
-`;
-
-const Checkbox = styled.input`
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
-  cursor: pointer;
-  accent-color: ${p => p.theme.ACCENT_COLOR};
-  margin-top: 2px;
-`;
-
-const CheckboxText = styled.span`
-  font-size: 15px;
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  line-height: 1.5;
-`;
-
-const EmailInputContainer = styled.div`
-  display: ${p => p.show ? 'block' : 'none'};
-  margin-top: 16px;
-  animation: ${p => p.show ? 'slideDown 0.3s ease' : 'none'};
-  @keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-`;
-
-const EmailLabel = styled.label`
-  display: block;
-  font-size: 15px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  margin-bottom: 8px;
-  font-weight: 500;
-`;
-
-const EmailInput = styled.input`
-  width: 100%;
-  padding: 12px;
-  border: 2px solid ${p => p.theme.BORDER_COLOR};
-  border-radius: 8px;
-  font-size: 15px;
-  font-family: inherit;
-  background: ${p => p.theme.INPUT_BACKGROUND || p.theme.CARD_BACKGROUND};
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  transition: all 0.2s ease;
-  &:focus {
-    outline: none;
-    border-color: ${p => p.theme.ACCENT_COLOR};
-    box-shadow: 0 0 0 3px ${p => p.theme.ACCENT_COLOR}45;
-  }
-  &::placeholder { color: ${p => p.theme.SECONDARY_TEXT_COLOR}; opacity: 0.6; }
-`;
-
-const RadioGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 12px;
-`;
-
-const RadioLabel = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  padding: 10px;
-  border-radius: 8px;
-  background: ${p => p.checked ? `${p.theme.ACCENT_COLOR}15` : 'transparent'};
-  transition: all 0.2s ease;
-  &:hover { background: ${p => p.theme.ACCENT_COLOR}15; }
-`;
-
-const RadioButton = styled.input`
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  accent-color: ${p => p.theme.ACCENT_COLOR};
-`;
-
-const RadioText = styled.span`
-  font-size: 15px;
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
-  line-height: 1.4;
-`;
-
-const SaveMessage = styled.div`
-  margin-top: 12px;
-  padding: 10px 14px;
-  background: ${p => p.success ? `${p.theme.ACCENT_COLOR}15` : '#ff000015'};
-  border: 1px solid ${p => p.success ? `${p.theme.ACCENT_COLOR}33` : '#ff000033'};
-  border-radius: 8px;
-  font-size: 15px;
-  color: ${p => p.success ? p.theme.ACCENT_COLOR : '#ff0000'};
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  animation: fadeIn 0.3s ease;
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  &::before { content: '${p => p.success ? '✓' : '⚠️'}'; }
-`;
-
 const ButtonContainer = styled.div`
   display: flex;
   gap: 12px;
@@ -300,116 +171,27 @@ const ButtonContainer = styled.div`
 
 const OutroMission3 = () => {
   const navigate = useNavigate();
-  const { addMissionPoints, refreshUserStats, dataManager, userId } = useUserStats();
+  const { addMissionPoints, refreshUserStats, userStats } = useUserStats();
   const [isProcessing, setIsProcessing] = useState(false);
-
-  const [wantsParticipate, setWantsParticipate] = useState(false);
-  const [wantsNotification, setWantsNotification] = useState(false);
-  const [emailOption, setEmailOption] = useState('contest');
-  const [newEmail, setNewEmail] = useState('');
-  const [saveMessage, setSaveMessage] = useState(null);
-  const [existingEmail, setExistingEmail] = useState('');
   const theme = useContext(ThemeContext);
-
-  useEffect(() => {
-    const loadExistingEmail = async () => {
-      if (!userId) return;
-      try {
-        const progress = await dataManager.loadUserProgress(userId);
-        if (progress?.contest_email) {
-          setExistingEmail(progress.contest_email);
-          setEmailOption('contest');
-        } else {
-          setExistingEmail('');
-          setEmailOption('new');
-        }
-      } catch (error) {
-        console.error('Error loading existing email:', error);
-      }
-    };
-    loadExistingEmail();
-  }, [userId, dataManager]);
-
-  const savePreferences = async () => {
-    if (!userId) return false;
-    try {
-      const progress = await dataManager.loadUserProgress(userId);
-
-      // ✅ ZMENENÉ: mission4
-      progress.wants_to_participate_mission4 = wantsParticipate;
-      progress.participation_mission4_response_timestamp = new Date().toISOString();
-
-      if (wantsNotification) {
-        const finalEmail = emailOption === 'new' ? newEmail : existingEmail;
-        // ✅ ZMENENÉ: mission4
-        progress.wants_notification_mission4 = true;
-        progress.notification_mission4_email_option = emailOption;
-        progress.notification_mission4_email = finalEmail;
-        progress.notification_mission4_timestamp = new Date().toISOString();
-      } else {
-        // ✅ ZMENENÉ: mission4
-        progress.wants_notification_mission4 = false;
-      }
-
-      await dataManager.saveProgress(userId, progress);
-      setSaveMessage({ success: true, text: 'Nastavenia uložené!' });
-      setTimeout(() => setSaveMessage(null), 3000);
-      return true;
-    } catch (error) {
-      console.error('Error saving preferences:', error);
-      setSaveMessage({ success: false, text: 'Chyba pri ukladaní!' });
-      return false;
-    }
-  };
 
   const handleContinue = async () => {
     if (isProcessing) return;
     setIsProcessing(true);
 
     try {
-      if (wantsNotification) {
-        if (emailOption === 'contest' && !existingEmail) {
-          setSaveMessage({
-            success: false,
-            text: 'Pre súťaž ste nezadali email! Prosím zvoľte možnosť "Inú e-mailovú adresu".'
-          });
-          setIsProcessing(false);
-          return;
-        }
-        if (emailOption === 'new' && !newEmail) {
-          setSaveMessage({ success: false, text: 'Prosím zadajte e-mailovú adresu.' });
-          setIsProcessing(false);
-          return;
-        }
-        if (emailOption === 'new' && !newEmail.includes('@')) {
-          setSaveMessage({ success: false, text: 'Neplatný formát e-mailovej adresy.' });
-          setIsProcessing(false);
-          return;
-        }
-      }
-
-      const saved = await savePreferences();
-      if (!saved) {
-        setIsProcessing(false);
-        return;
-      }
-
-      // ✅ ZMENENÉ: mission3
       console.log('🎯 Completing mission3...');
       const success = await addMissionPoints('mission3');
 
       if (success) {
-        // ✅ ZMENENÉ: mission3
         console.log('✅ Mission3 points added successfully');
         await refreshUserStats();
         setTimeout(() => navigate('/mainmenu'), 500);
       } else {
-        // ✅ ZMENENÉ: mission3
         console.warn('⚠️ Mission3 already completed or error');
         navigate('/mainmenu');
       }
     } catch (error) {
-      // ✅ ZMENENÉ: mission3
       console.error('❌ Error completing mission3:', error);
       navigate('/mainmenu');
     } finally {
@@ -439,128 +221,23 @@ const OutroMission3 = () => {
         <InfoSection>
           <InfoTitle><strong>Čo ste dosiahli?</strong></InfoTitle>
           <InfoList>
-            <InfoItem><strong>Úspešne ste dokončili predvýskum.</strong></InfoItem>
-            <InfoItem><strong>Získali ste 50 bodov potrebných pre zapojenie sa do súťaže.</strong></InfoItem>
-            <InfoItem><strong>Pomohli ste nám zlepšiť hlavný výskum.</strong></InfoItem>
+            <InfoItem><strong>Úspešne ste dokončili celý výskum.</strong></InfoItem>
+            <InfoItem><strong>Získali ste celkový počet bodov: <strong>{userStats.totalPoints}</strong> do súťaže.</strong></InfoItem>
+            <InfoItem><strong>Pomohli ste nám s dokončením výskumu.</strong></InfoItem>
           </InfoList>
 
           <DetectiveTipSmall
             tip={`
               <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                <strong>Výborne! Úspešne ste dokončili predvýskum. Vaše odpovede a spätná väzba nám pomôžu vylepšiť hlavný výskum.</strong>
+                <strong>Výborne! Úspešne ste dokončili celý výskum.</strong>
               </p>
               <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                <strong>V blízkej dobe bude odmknutý hlavný výskum. Ak máte záujem, môžete sa zúčastniť.</strong>
-              </p>
-              <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                <strong>Ak sa rozhodnete zúčastniť, nižšie môžete potvrdiť účasť a zvoliť si, či chcete byť jednorázovo upozornený/á e-mailom.</strong>
-              </p>
-              <p style="font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.6; color: ${theme.PRIMARY_TEXT_COLOR};">
-                <strong>Ešte raz ďakujeme za účasť v predvýskume, dúfame že sa vám predvýskum páčil a snáď sa v blízkej dobe vidíme znova.</strong>
+                <strong>Ešte raz ďakujeme za účasť vo výskume, dúfame že sa vám výskum páčil.</strong>
               </p>
             `}
             detectiveName="Inšpektor Kritan"
             autoOpen={true}
           />
-
-          <ParticipationSection>
-            <SectionTitle><strong>Hlavný výskum</strong></SectionTitle>
-
-            <CheckboxLabel checked={wantsParticipate}>
-              <Checkbox
-                type="checkbox"
-                checked={wantsParticipate}
-                onChange={(e) => setWantsParticipate(e.target.checked)}
-              />
-              <CheckboxText>
-                <strong>Chcem sa zúčastniť ďalšej časti výskumu (hlavný výskum).</strong>
-              </CheckboxText>
-            </CheckboxLabel>
-
-            {wantsParticipate && (
-              <EmailInputContainer show={wantsParticipate}>
-                <CheckboxLabel checked={wantsNotification}>
-                  <Checkbox
-                    type="checkbox"
-                    checked={wantsNotification}
-                    onChange={(e) => setWantsNotification(e.target.checked)}
-                  />
-                  <CheckboxText>
-                    <strong>Chcem byť upozornený/á e-mailom, keď bude hlavný výskum odomknutý.</strong>
-                  </CheckboxText>
-                </CheckboxLabel>
-
-                {wantsNotification && (
-                  <div>
-                    <EmailLabel><strong>Na ktorú e-mailovú adresu chcete aby vám prišlo upozornenie?</strong></EmailLabel>
-
-                    <RadioGroup>
-                      <RadioLabel checked={emailOption === 'contest'}>
-                        <RadioButton
-                          type="radio"
-                          name="emailOption"
-                          value="contest"
-                          checked={emailOption === 'contest'}
-                          onChange={() => setEmailOption('contest')}
-                          disabled={!existingEmail}
-                        />
-                        <RadioText style={{
-                          color: !existingEmail ? '#ff0000' : 'inherit',
-                          opacity: !existingEmail ? 0.7 : 1
-                        }}>
-                          {existingEmail ? (
-                            <>
-                              <strong>E-mailovú adresu zadanú pre zapojenie sa do súťaže: </strong>
-                              <span style={{ color: theme.ACCENT_COLOR }}>{existingEmail}</span>
-                            </>
-                          ) : (
-                            <>
-                              <strong>E-mailovú adresu zadanú pre zapojenie sa do súťaže:</strong>
-                              <br />
-                              <span style={{ fontSize: '15px', fontStyle: 'bold', color: '#ff0000' }}>
-                                <strong>Pre účasť v súťaži ste nezadali žiadny email.</strong>
-                              </span>
-                            </>
-                          )}
-                        </RadioText>
-                      </RadioLabel>
-
-                      <RadioLabel checked={emailOption === 'new'}>
-                        <RadioButton
-                          type="radio"
-                          name="emailOption"
-                          value="new"
-                          checked={emailOption === 'new'}
-                          onChange={() => setEmailOption('new')}
-                        />
-                        <RadioText>
-                          <strong>Inú e-mailovú adresu:</strong>
-                        </RadioText>
-                      </RadioLabel>
-                    </RadioGroup>
-
-                    {emailOption === 'new' && (
-                      <div style={{ marginTop: '12px' }}>
-                        <EmailLabel><strong>Zadajte e-mailovú adresu na ktorú vám pošleme upozornenie:</strong></EmailLabel>
-                        <EmailInput
-                          type="email"
-                          value={newEmail}
-                          onChange={(e) => setNewEmail(e.target.value)}
-                          placeholder="vas.email@priklad.sk"
-                        />
-                      </div>
-                    )}
-                  </div>
-                )}
-              </EmailInputContainer>
-            )}
-
-            {saveMessage && (
-              <SaveMessage success={saveMessage.success}>
-                {saveMessage.text}
-              </SaveMessage>
-            )}
-          </ParticipationSection>
         </InfoSection>
 
         <ButtonContainer>

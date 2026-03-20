@@ -50,7 +50,7 @@ const Subtitle = styled.p`
 
 const Instructions = styled.p`
   font-size: 15px;
-  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   margin: 0;
   font-weight: 600;
 `;
@@ -79,7 +79,7 @@ const ProgressFill = styled.div`
 `;
 
 const ProgressText = styled.span`
-  font-size: 10px;
+  font-size: 15px;
   font-weight: 600;
   color: ${p => p.theme.ACCENT_COLOR};
   min-width: 50px;
@@ -100,10 +100,8 @@ const Question = styled.div`
   font-weight: 600;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   text-align: center;
-  @media (max-width: 480px) { font-size: 15px; }
 `;
 
-// 4 symboly zobrazené vedľa seba
 const SymbolRow = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -186,13 +184,13 @@ const shuffleArray = (array) => {
 // ── Symboly ───────────────────────────────────────────────────────────────────
 
 const SYMBOLS = {
-  BRAIN:     { emoji: '🧠', label: 'Mozog'    },
-  BULB:      { emoji: '💡', label: 'Nápad'    },
-  SCIENTIST: { emoji: '🔬', label: 'Veda'     },
+  BRAIN:     { emoji: '🧠', label: 'Mozog'   },
+  BULB:      { emoji: '💡', label: 'Nápad'   },
+  SCIENTIST: { emoji: '🔬', label: 'Veda'    },
   ALIEN: {
-    emojis: ['🔮','🧿','🌀','👁️','🎱','🪬','☠️','👹',
-             '🛸','🧨','💀','🕷️','🎭','👻','🌙','⭐',
-             '🧙','🃏','🎪','🌫️'],
+    emojis: ['🔮','🧿','🌀','🍕','🎱','🪬','☠️','👹',
+             '🛸','🧨','💀','🕷️','🎭','👻','🎂','👑',
+             '🧙','🃏','🎪','🌽'],
     label: 'Votrelec'
   }
 };
@@ -200,31 +198,24 @@ const SYMBOLS = {
 const TEMATIC_KEYS = ['BRAIN', 'BULB', 'SCIENTIST'];
 const TOTAL_TRIALS = 40;
 
-// Každý trial: 3 tematické + 1 votrelec, náhodne zoradené
-// correctAnswer = index pozície votrelca (0-3)
 const generateTrials = () => {
   const trials = [];
   const alienEmojis = [...SYMBOLS.ALIEN.emojis];
 
   for (let i = 0; i < TOTAL_TRIALS; i++) {
-    // náhodný votrelec
     const alienEmoji = alienEmojis[Math.floor(Math.random() * alienEmojis.length)];
-
-    // 3 tematické — zakaždým shufflované
     const tematicEmojis = shuffleArray(TEMATIC_KEYS).map(k => ({
       key: k,
       emoji: SYMBOLS[k].emoji
     }));
-
-    // vložíme votrelca na náhodnú pozíciu 0-3
     const alienIndex = Math.floor(Math.random() * 4);
     const options = [...tematicEmojis];
     options.splice(alienIndex, 0, { key: 'ALIEN', emoji: alienEmoji });
 
     trials.push({
       id: i,
-      options,           // pole 4 objektov { key, emoji }
-      correctAnswer: alienIndex,  // index votrelca
+      options,
+      correctAnswer: alienIndex,
       response: null,
       isCorrect: null,
       timestamp: null
@@ -258,7 +249,7 @@ const StroopTest1 = () => {
       <li>👁️ Uvidíte <strong>4 symboly</strong>.</li>
       <li>🎯 Tri symboly patria do rovnakej skupiny, ale jeden je <strong>votrelec</strong>.</li>
       <li>🔍 Kliknite na symbol, ktorý <strong>nepatrí</strong> medzi ostatné.</li>
-      <li>✅ Odpovedajte pokojne, ak sa pomýlite vôbec to nevadí.</li>
+      <li>✅ Odpovedajte pokojne, ak sa pomýlite, vôbec to nevadí.</li>
     </ul>
   `;
 
@@ -337,30 +328,26 @@ const StroopTest1 = () => {
         <Container>
           <Wrapper>
             <CompletionMessage>
-              <CompletionTitle>Šifra vylúštená!</CompletionTitle>
-              <CompletionText>
-                Výborná práca, detektív/ka! Zvládli ste rozoznať pravé symboli od falošných.
-              </CompletionText>
-              <CompletionText>
-                Pokračujme v misii ďalej.
-              </CompletionText>
+              <CompletionTitle><strong>Šifra vylúštená!</strong></CompletionTitle>
+              <CompletionText><strong>Výborná práca, detektív/ka!</strong></CompletionText>
+              <CompletionText><strong>Pokračujme v misii ďalej.</strong></CompletionText>
               <ContinueButton onClick={handleContinue}>
                 Pokračovať →
               </ContinueButton>
             </CompletionMessage>
-          </Wrapper>
 
-          {showDetectiveTip && (
-            <DetectiveTipSmall
-              tip={detectiveTipEnd}
-              detectiveName="Inšpektor Kritan"
-              imageUrl="/images/detective-icon.png"
-              buttonText="Chápem!"
-              minReadTime={5000}
-              showBadge={false}
-              onClose={() => setShowDetectiveTip(false)}
-            />
-          )}
+            {showDetectiveTip && (
+              <DetectiveTipSmall
+                tip={detectiveTipEnd}
+                detectiveName="Inšpektor Kritan"
+                imageUrl="/images/detective-icon.png"
+                buttonText="Rozumiem!"
+                minReadTime={5000}
+                showBadge={false}
+                onClose={() => setShowDetectiveTip(false)}
+              />
+            )}
+          </Wrapper>
         </Container>
       </PageTransition>
     );
@@ -372,10 +359,26 @@ const StroopTest1 = () => {
     <PageTransition>
       <Container>
         <Wrapper>
+
+          {/* DetectiveTipSmall NAD úlohou */}
+          {showDetectiveTip && (
+            <DetectiveTipSmall
+              tip={detectiveTipStart}
+              detectiveName="Inšpektor Kritan"
+              imageUrl="/images/detective-icon.png"
+              buttonText="Rozumiem!"
+              autoOpen={true}
+              autoOpenDelay={300}
+              minReadTime={10000}
+              showBadge={true}
+              onClose={() => setShowDetectiveTip(false)}
+            />
+          )}
+
           <Header>
-            <Title>Prípad: Kukučie hniezdo</Title>
-            <Subtitle>Detektívna úloha</Subtitle>
-            <Instructions>Nájdite symbol, ktorý nepatrí medzi ostatné! Tématika príbuzných symbolov je VEDA.</Instructions>
+            <Title><strong>Detektívna úloha</strong></Title>
+            <Subtitle><strong>Prípad: Kukučie hniezdo</strong></Subtitle>
+            <Instructions><strong>Nájdite symbol, ktorý nepatrí medzi ostatné! Téma príbuzných symbolov je: VEDA.</strong></Instructions>
           </Header>
 
           <ProgressContainer>
@@ -403,21 +406,8 @@ const StroopTest1 = () => {
               </SymbolRow>
             )}
           </GameArea>
-        </Wrapper>
 
-        {showDetectiveTip && (
-          <DetectiveTipSmall
-            tip={detectiveTipStart}
-            detectiveName="Inšpektor Kritan"
-            imageUrl="/images/detective-icon.png"
-            buttonText="Rozumiem!"
-            autoOpen={true}
-            autoOpenDelay={300}
-            minReadTime={10000}
-            showBadge={true}
-            onClose={() => setShowDetectiveTip(false)}
-          />
-        )}
+        </Wrapper>
       </Container>
     </PageTransition>
   );

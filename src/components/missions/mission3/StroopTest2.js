@@ -1,10 +1,10 @@
 // src/components/missions/mission3/StroopTest2.js
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useUserStats } from '../../../contexts/UserStatsContext';
-import DetectiveTipLarge from '../../shared/DetectiveTipLarge';
+import DetectiveTipSmall from '../../shared/DetectiveTipSmall';
 import PageTransition from '../../shared/PageTransition';
 
 const Container = styled.div`
@@ -12,7 +12,7 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, ${p => p.theme.ACCENT_COLOR}22, ${p => p.theme.ACCENT_COLOR_2}22);
+  background: linear-gradient(135deg, ${p => p.theme.ACCENT_COLOR}45, ${p => p.theme.ACCENT_COLOR_2}45);
   padding: 20px;
 `;
 
@@ -35,27 +35,24 @@ const Header = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 32px;
+  font-size: 15px;
   font-weight: 700;
   color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   margin: 0 0 12px 0;
-  @media (max-width: 480px) { font-size: 24px; }
 `;
 
 const Subtitle = styled.p`
-  font-size: 16px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 15px;
+  color: ${p => p.theme.PRIMARY_TEXT_COLOR};
   margin: 0 0 8px 0;
   line-height: 1.6;
-  @media (max-width: 480px) { font-size: 14px; }
 `;
 
 const Instructions = styled.p`
-  font-size: 14px;
-  color: ${p => p.theme.ACCENT_COLOR};
+  font-size: 15px;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   margin: 0;
   font-weight: 600;
-  @media (max-width: 480px) { font-size: 12px; }
 `;
 
 const ProgressContainer = styled.div`
@@ -82,7 +79,7 @@ const ProgressFill = styled.div`
 `;
 
 const ProgressText = styled.span`
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: ${p => p.theme.ACCENT_COLOR};
   min-width: 50px;
@@ -93,102 +90,48 @@ const GameArea = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 40px;
+  gap: 32px;
   margin-bottom: 40px;
-  @media (max-width: 480px) { gap: 30px; margin-bottom: 30px; }
+  @media (max-width: 480px) { gap: 24px; margin-bottom: 30px; }
 `;
 
 const Question = styled.div`
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   text-align: center;
-  @media (max-width: 480px) { font-size: 16px; }
 `;
 
-const StroopWord = styled.div`
-  font-size: 72px;
-  font-weight: 700;
-  color: ${p => p.displayColor};
-  text-align: center;
-  font-family: Arial, sans-serif;
-  letter-spacing: 4px;
-  transition: transform 0.2s ease;
-  &:hover { transform: scale(1.05); }
-  @media (max-width: 768px) { font-size: 56px; }
-  @media (max-width: 480px) { font-size: 48px; }
-`;
-
-const ButtonGroup = styled.div`
+const SymbolRow = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
   width: 100%;
   justify-items: center;
-  @media (max-width: 480px) { gap: 16px; }
+  @media (max-width: 480px) { gap: 10px; }
 `;
 
-const OptionButton = styled.button`
+const SymbolButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100px;
-  height: 100px;
-  border: 4px solid ${p => p.isSelected ? p.theme.ACCENT_COLOR : 'transparent'};
-  border-radius: 12px;
+  width: 110px;
+  height: 110px;
+  border: 4px solid ${p => p.isSelected
+    ? p.isCorrect ? '#22c55e' : '#ef4444'
+    : p.theme.BORDER_COLOR};
+  border-radius: 16px;
   cursor: pointer;
   transition: all 0.2s ease;
   padding: 0;
-  background: ${p => p.buttonColor};
-  position: relative;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  &:hover:not(:disabled) { transform: scale(1.1); box-shadow: 0 6px 16px rgba(0,0,0,0.3); }
-  &:active:not(:disabled) { transform: scale(0.95); }
-  &:disabled { opacity: 0.7; cursor: not-allowed; }
-  &::after {
-    content: ${p => p.isSelected ? '"✓"' : '""'};
-    position: absolute;
-    font-size: 48px;
-    font-weight: bold;
-    color: white;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.5);
-    animation: ${p => p.isSelected ? 'scaleIn 0.3s ease' : 'none'};
-  }
-  @keyframes scaleIn {
-    from { transform: scale(0.5); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-  }
-  @media (max-width: 768px) { width: 90px; height: 90px; border-width: 3px; &::after { font-size: 40px; } }
-  @media (max-width: 480px) { width: 75px; height: 75px; border-width: 2px; &::after { font-size: 32px; } }
-`;
-
-const Stats = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding: 20px;
   background: ${p => p.theme.SECONDARY_BACKGROUND};
-  border: 1px solid ${p => p.theme.BORDER_COLOR}44;
-  border-radius: 8px;
-`;
-
-const StatItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-`;
-
-const StatLabel = styled.div`
-  font-size: 12px;
-  font-weight: 600;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  text-transform: uppercase;
-`;
-
-const StatValue = styled.div`
-  font-size: 20px;
-  font-weight: 700;
-  color: ${p => p.$highlight ? p.theme.ACCENT_COLOR : p.theme.PRIMARY_TEXT_COLOR};
+  font-size: 50px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  &:hover:not(:disabled) { transform: scale(1.08); box-shadow: 0 6px 16px rgba(0,0,0,0.3); }
+  &:active:not(:disabled) { transform: scale(0.95); }
+  &:disabled { cursor: not-allowed; }
+  @media (max-width: 768px) { width: 90px; height: 90px; font-size: 40px; }
+  @media (max-width: 480px) { width: 68px; height: 68px; font-size: 30px; border-width: 3px; }
 `;
 
 const CompletionMessage = styled.div`
@@ -198,24 +141,23 @@ const CompletionMessage = styled.div`
 `;
 
 const CompletionTitle = styled.h2`
-  font-size: 32px;
+  font-size: 25px;
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
   margin: 0 0 16px 0;
-  @media (max-width: 480px) { font-size: 24px; }
+  @media (max-width: 480px) { font-size: 20px; }
 `;
 
 const CompletionText = styled.p`
-  font-size: 16px;
+  font-size: 15px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   margin: 0 0 24px 0;
   line-height: 1.6;
-  @media (max-width: 480px) { font-size: 14px; }
 `;
 
 const ContinueButton = styled.button`
   padding: 12px 32px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   background: linear-gradient(135deg, ${p => p.theme.ACCENT_COLOR}, ${p => p.theme.ACCENT_COLOR_2});
   color: white;
@@ -223,10 +165,12 @@ const ContinueButton = styled.button`
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
-  &:hover { transform: translateY(-2px); box-shadow: 0 4px 12px ${p => p.theme.ACCENT_COLOR}66; }
+  &:hover { transform: translateY(-2px); box-shadow: 0 4px 12px ${p => p.theme.ACCENT_COLOR}60; }
   &:active { transform: translateY(0); }
-  @media (max-width: 480px) { padding: 10px 24px; font-size: 14px; }
+  @media (max-width: 480px) { padding: 10px 24px; }
 `;
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 const shuffleArray = (array) => {
   const shuffled = [...array];
@@ -237,140 +181,98 @@ const shuffleArray = (array) => {
   return shuffled;
 };
 
+// ── Symboly ───────────────────────────────────────────────────────────────────
+
+const SYMBOLS = {
+  BRAIN:     { emoji: '🧠', label: 'Mozog'   },
+  BULB:      { emoji: '💡', label: 'Nápad'   },
+  SCIENTIST: { emoji: '🔬', label: 'Veda'    },
+  ALIEN: {
+    emojis: ['🔮','🧿','🌀','🍕','🎱','🪬','☠️','👹',
+             '🛸','🧨','💀','🕷️','🎭','👻','🎂','👑',
+             '🧙','🃏','🎪','🌽'],
+    label: 'Votrelec'
+  }
+};
+
+const TEMATIC_KEYS = ['BRAIN', 'BULB', 'SCIENTIST'];
+const TOTAL_TRIALS = 40;
+
+const generateTrials = () => {
+  const trials = [];
+  const alienEmojis = [...SYMBOLS.ALIEN.emojis];
+
+  for (let i = 0; i < TOTAL_TRIALS; i++) {
+    const alienEmoji = alienEmojis[Math.floor(Math.random() * alienEmojis.length)];
+    const tematicEmojis = shuffleArray(TEMATIC_KEYS).map(k => ({
+      key: k,
+      emoji: SYMBOLS[k].emoji
+    }));
+    const alienIndex = Math.floor(Math.random() * 4);
+    const options = [...tematicEmojis];
+    options.splice(alienIndex, 0, { key: 'ALIEN', emoji: alienEmoji });
+
+    trials.push({
+      id: i,
+      options,
+      correctAnswer: alienIndex,
+      response: null,
+      isCorrect: null,
+      timestamp: null
+    });
+  }
+
+  return shuffleArray(trials);
+};
+
+// ── Komponenta ────────────────────────────────────────────────────────────────
+
 const StroopTest2 = () => {
   const navigate = useNavigate();
   const { dataManager, userId } = useUserStats();
   const [showDetectiveTip, setShowDetectiveTip] = useState(true);
+  const testStartTime = useRef(null);
 
-  const colors = {
-    RED:    { rgb: 'rgba(255, 0, 0, 1)',   label: 'Červená' },
-    GREEN:  { rgb: 'rgba(9, 255, 0, 1)',   label: 'Zelená' },
-    BLUE:   { rgb: 'rgb(1, 0, 255)',       label: 'Modrá' },
-    YELLOW: { rgb: 'rgba(255, 255, 0, 1)', label: 'Žltá' }
-  };
-
-  const FIXED_TRIALS_UNSORTED = [
-    { word: 'RED',    displayColor: 'RED',    congruent: true },
-    { word: 'GREEN',  displayColor: 'GREEN',  congruent: true },
-    { word: 'BLUE',   displayColor: 'BLUE',   congruent: true },
-    { word: 'YELLOW', displayColor: 'YELLOW', congruent: true },
-    { word: 'RED',    displayColor: 'RED',    congruent: true },
-    { word: 'GREEN',  displayColor: 'GREEN',  congruent: true },
-    { word: 'BLUE',   displayColor: 'BLUE',   congruent: true },
-    { word: 'YELLOW', displayColor: 'YELLOW', congruent: true },
-    { word: 'RED',    displayColor: 'RED',    congruent: true },
-    { word: 'GREEN',  displayColor: 'GREEN',  congruent: true },
-    { word: 'BLUE',   displayColor: 'BLUE',   congruent: true },
-    { word: 'YELLOW', displayColor: 'YELLOW', congruent: true },
-    { word: 'RED',    displayColor: 'RED',    congruent: true },
-    { word: 'GREEN',  displayColor: 'GREEN',  congruent: true },
-    { word: 'BLUE',   displayColor: 'BLUE',   congruent: true },
-    { word: 'YELLOW', displayColor: 'YELLOW', congruent: true },
-    { word: 'RED',    displayColor: 'RED',    congruent: true },
-    { word: 'GREEN',  displayColor: 'GREEN',  congruent: true },
-    { word: 'BLUE',   displayColor: 'BLUE',   congruent: true },
-    { word: 'YELLOW', displayColor: 'YELLOW', congruent: true },
-    { word: 'RED',    displayColor: 'RED',    congruent: true },
-    { word: 'GREEN',  displayColor: 'GREEN',  congruent: true },
-    { word: 'BLUE',   displayColor: 'BLUE',   congruent: true },
-    { word: 'YELLOW', displayColor: 'YELLOW', congruent: true },
-    { word: 'RED',    displayColor: 'GREEN',  congruent: false },
-    { word: 'RED',    displayColor: 'BLUE',   congruent: false },
-    { word: 'RED',    displayColor: 'YELLOW', congruent: false },
-    { word: 'GREEN',  displayColor: 'RED',    congruent: false },
-    { word: 'GREEN',  displayColor: 'BLUE',   congruent: false },
-    { word: 'GREEN',  displayColor: 'YELLOW', congruent: false },
-    { word: 'BLUE',   displayColor: 'RED',    congruent: false },
-    { word: 'BLUE',   displayColor: 'GREEN',  congruent: false },
-    { word: 'BLUE',   displayColor: 'YELLOW', congruent: false },
-    { word: 'YELLOW', displayColor: 'RED',    congruent: false },
-    { word: 'YELLOW', displayColor: 'GREEN',  congruent: false },
-    { word: 'YELLOW', displayColor: 'BLUE',   congruent: false },
-    { word: 'RED',    displayColor: 'GREEN',  congruent: false },
-    { word: 'RED',    displayColor: 'BLUE',   congruent: false },
-    { word: 'GREEN',  displayColor: 'RED',    congruent: false },
-    { word: 'GREEN',  displayColor: 'YELLOW', congruent: false },
-    { word: 'BLUE',   displayColor: 'RED',    congruent: false },
-    { word: 'BLUE',   displayColor: 'GREEN',  congruent: false },
-    { word: 'YELLOW', displayColor: 'RED',    congruent: false },
-    { word: 'YELLOW', displayColor: 'BLUE',   congruent: false },
-    { word: 'RED',    displayColor: 'YELLOW', congruent: false },
-    { word: 'GREEN',  displayColor: 'BLUE',   congruent: false },
-    { word: 'BLUE',   displayColor: 'YELLOW', congruent: false },
-    { word: 'YELLOW', displayColor: 'GREEN',  congruent: false },
-  ];
-
-  const FIXED_TRIALS = shuffleArray(FIXED_TRIALS_UNSORTED);
-
-  const initializeTrials = () => FIXED_TRIALS.map((trial, i) => ({
-    id: i,
-    word: trial.word,
-    displayColor: colors[trial.displayColor].rgb,
-    correctAnswer: trial.displayColor,
-    response: null,
-    reactionTime: null,
-    isCorrect: null,
-    timestamp: null,
-    congruent: trial.congruent
-  }));
-
-  const [trials, setTrials] = useState(() => initializeTrials());
+  const [completedTrials, setCompletedTrials] = useState(() => generateTrials());
   const [currentTrialIndex, setCurrentTrialIndex] = useState(0);
-  const [startTime, setStartTime] = useState(null);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(null);
 
-  const currentTrial = trials[currentTrialIndex];
+  const currentTrial = completedTrials[currentTrialIndex];
 
-  const correctAnswers = trials.filter(t => t.isCorrect === true).length;
-  const accuracy = trials.length > 0 ? Math.round((correctAnswers / trials.length) * 100) : 0;
-  const validReactions = trials.filter(t => t.reactionTime !== null);
-  const avgReactionTime = validReactions.length > 0
-    ? validReactions.reduce((sum, t) => sum + t.reactionTime, 0) / validReactions.length : 0;
+  // ── Tip texty ─────────────────────────────────────────────────────────────
 
-  const congruentTrials = trials.filter(t => t.congruent === true);
-  const incongruentTrials = trials.filter(t => t.congruent === false);
-  const congruentAccuracy = congruentTrials.length > 0
-    ? Math.round((congruentTrials.filter(t => t.isCorrect).length / congruentTrials.length) * 100) : 0;
-  const incongruentAccuracy = incongruentTrials.length > 0
-    ? Math.round((incongruentTrials.filter(t => t.isCorrect).length / incongruentTrials.length) * 100) : 0;
-
-  const detectiveTip = `
-    <p>🕵️ <strong>Pozor!</strong> Máme <em>kritickú úlohu</em>!</p>
-    <p>Zistili sme, že v správach sa skrýva <strong>tajná šifra</strong>. Aby sme mohli pokračovať v múzeálnej skúsenosti, musíš ju najskôr <strong>vylúštiť</strong>.</p>
-    <p>Tvoja úloha:</p>
-    <ul style="text-align: left; display: inline-block;">
-      <li><strong>Pozri sa na slovo</strong> - uvidíš anglické slovo</li>
-      <li><strong>Ale ignoruj slovo!</strong> - Klikni na FARBU, ktorou je slovo napísané</li>
-      <li><strong>Buď rýchly a presný</strong> - Čas má vplyv na bezpečnosť 🔐</li>
+  const detectiveTipStart = `
+    <p><strong>Prípad: Falošná stopa</strong></p>
+    <ul style="text-align: left; padding-left: 8px; list-style: none;">
+      <li><strong>Aká je vaša úloha?</strong></li>
+      <li>👁️ Uvidíte <strong>4 symboly</strong>.</li>
+      <li>🎯 Tri symboly patria do rovnakej skupiny, ale jeden je <strong>votrelec</strong>.</li>
+      <li>🔍 Kliknite na symbol, ktorý <strong>nepatrí</strong> medzi ostatné.</li>
+      <li>✅ Odpovedajte pokojne, ak sa pomýlite, vôbec to nevadí.</li>
     </ul>
-    <p style="margin-top: 16px; color: #ff5459;"><strong>⚠️ Toto je detekčný test!</strong> Pokúšame sa zistiť, či si dostatočne pozorný. Podvádzanie alebo neopatrnosť budú detegované! 👁️</p>
   `;
 
-  const saveResults = useCallback(async (completedTrials) => {
-    const correctCount = completedTrials.filter(t => t.isCorrect).length;
-    const validRTs = completedTrials.filter(t => t.reactionTime !== null);
-    const avgRT = validRTs.length > 0
-      ? validRTs.reduce((sum, t) => sum + t.reactionTime, 0) / validRTs.length : 0;
+  const detectiveTipEnd = `
+    <p><strong>Výborne!</strong> Šifru prípadu: Falošná stopa ste úspešne zvládli!</p>
+    <p>Vaša schopnosť rozoznať <strong>pravé symboly od votrelcov</strong> bola kľúčová pre tento prípad.</p>
+    <p><strong>Teraz môžete pokračovať do ďalšej fázy misie!</strong></p>
+  `;
 
-    const congTrials = completedTrials.filter(t => t.congruent === true);
-    const incongTrials = completedTrials.filter(t => t.congruent === false);
-    const congAccuracy = congTrials.length > 0
-      ? (congTrials.filter(t => t.isCorrect).length / congTrials.length) * 100 : 0;
-    const incongAccuracy = incongTrials.length > 0
-      ? (incongTrials.filter(t => t.isCorrect).length / incongTrials.length) * 100 : 0;
+  // ── Uloženie výsledkov ────────────────────────────────────────────────────
 
-    const stroopResults = {
+  const saveResults = useCallback(async (finalTrials) => {
+    const totalTimeMs = testStartTime.current ? Date.now() - testStartTime.current : null;
+    const correctCount = finalTrials.filter(t => t.isCorrect).length;
+
+    const results = {
       mission: 3,
-      testType: 'stroop',
-      totalTrials: 48,
+      testType: 'oddball_symbol',
+      totalTrials: TOTAL_TRIALS,
       correctAnswers: correctCount,
-      accuracy: (correctCount / 48) * 100,
-      avgReactionTime: Math.round(avgRT),
-      congruentAccuracy: Math.round(congAccuracy),
-      incongruentAccuracy: Math.round(incongAccuracy),
-      stroopEffect: Math.round(incongAccuracy) - Math.round(congAccuracy),
-      trials: completedTrials,
+      accuracy: (correctCount / TOTAL_TRIALS) * 100,
+      totalTimeMs,
+      trials: finalTrials,
       completedAt: new Date().toISOString()
     };
 
@@ -379,48 +281,46 @@ const StroopTest2 = () => {
       const progress = await dataManager.loadUserProgress(participantCode);
       await dataManager.saveProgress(participantCode, {
         ...progress,
-        stroop_test_mission3_results: stroopResults,
+        stroop_test_mission3_results: results,
         stroop_test_mission3_completed: true
       });
-      console.log('✅ Stroop test M3 results saved');
+      console.log('✅ Oddball Symbol M3 results saved');
     } catch (error) {
-      console.error('❌ Error saving stroop results:', error);
+      console.error('❌ Error saving results:', error);
     }
   }, [userId, dataManager]);
 
-  useEffect(() => {
-    setStartTime(Date.now());
-    setSelectedAnswer(null);
-  }, [currentTrialIndex]);
+  // ── Handler ───────────────────────────────────────────────────────────────
 
-  const handleAnswer = useCallback((answer) => {
-    const reactionTime = Date.now() - startTime;
-    const isCorrect = answer === currentTrial.correctAnswer;
+  const handleAnswer = useCallback((clickedIndex) => {
+    if (selectedIndex !== null) return;
+    if (!testStartTime.current) testStartTime.current = Date.now();
 
-    const updatedTrials = [...trials];
-    updatedTrials[currentTrialIndex] = {
+    const isCorrect = clickedIndex === currentTrial.correctAnswer;
+    const updated = [...completedTrials];
+    updated[currentTrialIndex] = {
       ...currentTrial,
-      response: answer,
-      reactionTime,
+      response: clickedIndex,
       isCorrect,
       timestamp: new Date().toISOString()
     };
-    setTrials(updatedTrials);
+    setCompletedTrials(updated);
+    setSelectedIndex(clickedIndex);
 
-    if (currentTrialIndex < 47) {
-      setTimeout(() => setCurrentTrialIndex(currentTrialIndex + 1), 500);
+    if (currentTrialIndex < TOTAL_TRIALS - 1) {
+      setTimeout(() => {
+        setCurrentTrialIndex(prev => prev + 1);
+        setSelectedIndex(null);
+      }, 600);
     } else {
       setIsCompleted(true);
-      saveResults(updatedTrials);
+      saveResults(updated);
     }
+  }, [currentTrial, currentTrialIndex, completedTrials, selectedIndex, saveResults]);
 
-    setSelectedAnswer(answer);
-  }, [currentTrial, currentTrialIndex, startTime, trials, saveResults]);
+  const handleContinue = () => navigate('/mission3/questionnaire3b');
 
-  // ✅ OPRAVENÉ: vždy na postsb
-  const handleContinue = () => {
-    navigate('/mission3/questionnaire3b');
-  };
+  // ── Completion ────────────────────────────────────────────────────────────
 
   if (isCompleted) {
     return (
@@ -428,125 +328,86 @@ const StroopTest2 = () => {
         <Container>
           <Wrapper>
             <CompletionMessage>
-              <CompletionTitle>🎉 Šifra vylúštená!</CompletionTitle>
-              <CompletionText>
-                Výborná práca! Tvoja presnosť: <strong>{accuracy}%</strong>
-                <br />
-                Čas reakcie: <strong>{Math.round(avgReactionTime)}ms</strong>
-              </CompletionText>
-
-              <Stats>
-                <StatItem>
-                  <StatLabel>Správne</StatLabel>
-                  <StatValue $highlight>{correctAnswers}/48</StatValue>
-                </StatItem>
-                <StatItem>
-                  <StatLabel>Presnosť</StatLabel>
-                  <StatValue $highlight>{accuracy}%</StatValue>
-                </StatItem>
-                <StatItem>
-                  <StatLabel>Zhodné</StatLabel>
-                  <StatValue>{congruentAccuracy}%</StatValue>
-                </StatItem>
-                <StatItem>
-                  <StatLabel>Nezhodné</StatLabel>
-                  <StatValue $highlight>{incongruentAccuracy}%</StatValue>
-                </StatItem>
-              </Stats>
-
-              <CompletionText style={{ marginTop: '24px' }}>
-                Pokračujme v preskúmaní záveru. 🔍
-              </CompletionText>
-
+              <CompletionTitle><strong>Šifra vylúštená!</strong></CompletionTitle>
+              <CompletionText><strong>Výborná práca, detektív/ka!</strong></CompletionText>
+              <CompletionText><strong>Pokračujme v misii ďalej.</strong></CompletionText>
               <ContinueButton onClick={handleContinue}>
                 Pokračovať →
               </ContinueButton>
             </CompletionMessage>
-          </Wrapper>
 
-          {showDetectiveTip && (
-            <DetectiveTipLarge
-              tip={`
-                <p>🕵️ <strong>Výborně!</strong> Šifru si vylúštil správne!</p>
-                <p>Tvoj čas reakcie a presnosť ukazujú, že si <strong>veľmi pozorný</strong> v skúmaní. 📊</p>
-                <p><strong>Pokračuj ďalej v múzeálnej skúsenosti!</strong> 🎖️</p>
-              `}
-              detectiveName="🕵️ Detektív Konan"
-              imageUrl="/images/detective.png"
-              buttonText="Chápem!"
-              minReadTime={5000}
-              showBadge={false}
-              onClose={() => setShowDetectiveTip(false)}
-            />
-          )}
+            {showDetectiveTip && (
+              <DetectiveTipSmall
+                tip={detectiveTipEnd}
+                detectiveName="Inšpektor Kritan"
+                imageUrl="/images/detective-icon.png"
+                buttonText="Rozumiem!"
+                minReadTime={5000}
+                showBadge={false}
+                onClose={() => setShowDetectiveTip(false)}
+              />
+            )}
+          </Wrapper>
         </Container>
       </PageTransition>
     );
   }
 
+  // ── Hlavná hra ────────────────────────────────────────────────────────────
+
   return (
     <PageTransition>
       <Container>
         <Wrapper>
+
+          {/* DetectiveTipSmall NAD úlohou */}
+          {showDetectiveTip && (
+            <DetectiveTipSmall
+              tip={detectiveTipStart}
+              detectiveName="Inšpektor Kritan"
+              imageUrl="/images/detective-icon.png"
+              buttonText="Rozumiem!"
+              autoOpen={true}
+              autoOpenDelay={300}
+              minReadTime={10000}
+              showBadge={true}
+              onClose={() => setShowDetectiveTip(false)}
+            />
+          )}
+
           <Header>
-            <Title>Tajná Šifra</Title>
-            <Subtitle>🔐 Kritická múzeálna úloha</Subtitle>
-            <Instructions>Klikni na FARBU slova (nie na samotné slovo!)</Instructions>
+            <Title><strong>Detektívna úloha</strong></Title>
+            <Subtitle><strong>Prípad: Falošná stopa</strong></Subtitle>
+            <Instructions><strong>Nájdite symbol, ktorý nepatrí medzi ostatné! Téma príbuzných symbolov je: VEDA.</strong></Instructions>
           </Header>
 
           <ProgressContainer>
             <ProgressBar>
-              <ProgressFill current={currentTrialIndex + 1} total={48} />
+              <ProgressFill current={currentTrialIndex + 1} total={TOTAL_TRIALS} />
             </ProgressBar>
-            <ProgressText>{currentTrialIndex + 1}/48</ProgressText>
+            <ProgressText>{currentTrialIndex + 1}/{TOTAL_TRIALS}</ProgressText>
           </ProgressContainer>
 
           <GameArea>
-            <Question>Aká je FARBA?</Question>
+            <Question>Ktorý symbol je votrelec?</Question>
             {currentTrial && (
-              <StroopWord displayColor={currentTrial.displayColor}>
-                {currentTrial.word}
-              </StroopWord>
+              <SymbolRow>
+                {currentTrial.options.map((opt, idx) => (
+                  <SymbolButton
+                    key={idx}
+                    onClick={() => handleAnswer(idx)}
+                    isSelected={selectedIndex === idx}
+                    isCorrect={idx === currentTrial.correctAnswer}
+                    disabled={selectedIndex !== null}
+                  >
+                    {opt.emoji}
+                  </SymbolButton>
+                ))}
+              </SymbolRow>
             )}
-            <ButtonGroup>
-              {Object.entries(colors).map(([key, val]) => (
-                <OptionButton
-                  key={key}
-                  onClick={() => handleAnswer(key)}
-                  isSelected={selectedAnswer === key}
-                  disabled={selectedAnswer !== null}
-                  buttonColor={val.rgb}
-                  title={val.label}
-                />
-              ))}
-            </ButtonGroup>
           </GameArea>
 
-          <Stats>
-            <StatItem>
-              <StatLabel>Správne: {correctAnswers}/48</StatLabel>
-              <StatValue $highlight>{accuracy}%</StatValue>
-            </StatItem>
-            <StatItem>
-              <StatLabel>Priem. čas</StatLabel>
-              <StatValue>{Math.round(avgReactionTime)}ms</StatValue>
-            </StatItem>
-          </Stats>
         </Wrapper>
-
-        {showDetectiveTip && (
-          <DetectiveTipLarge
-            tip={detectiveTip}
-            detectiveName="🕵️ Detektív Konan"
-            imageUrl="/images/detective.png"
-            buttonText="Rozumiem, vyluštiť šifru!"
-            autoOpen={true}
-            autoOpenDelay={300}
-            minReadTime={10000}
-            showBadge={true}
-            onClose={() => setShowDetectiveTip(false)}
-          />
-        )}
       </Container>
     </PageTransition>
   );
