@@ -11,32 +11,15 @@ export const generateVisualization = async (trackingData, width, height, contain
       return null;
     }
 
-    // ✅ PREPOČET % → px (x je % šírky, y je % výšky celej stránky)
-    // containerDimensions.originalHeight = skutočná výška celej stránky (napr. 2216px)
-    // height parameter = canvas výška (1920 proportional)
-    const origW = trackingData.containerDimensions?.originalWidth || 760;
-    const origH = trackingData.containerDimensions?.originalHeight || height;
-    const scaleX = width / origW;
+    // ✅ Pozície sú už v px (konvertované v trackingHelpers)
+    const convertedPositions = trackingData.mousePositions;
 
-    // ✅ Skutočná výška stránky z max Y percent
-    const maxYPercent = Math.max(...trackingData.mousePositions.map(p => p.y));
-    const fullPageHeight = Math.round((maxYPercent / 100) * origH);
-    const actualHeight = Math.round(fullPageHeight * scaleX) + 200;
-
-    const convertedPositions = trackingData.mousePositions.map(pos => ({
-      ...pos,
-      x: (pos.x / 100) * origW * scaleX,
-      y: (pos.y / 100) * fullPageHeight * scaleX,  // ✅ fullPageHeight nie origH
-    }));
-
-    console.log('🎨 Creating individual heatmap overlay:', {
-      positions: convertedPositions.length,
-      targetSize: `${width}×${actualHeight}`,
-      origDimensions: `${origW}×${origH}`,
-      fullPageHeight,
-      sampleConverted: convertedPositions[0]
-    });
-
+    // ✅ Canvas výška z max Y + buffer
+    const maxYPx = Math.max(...convertedPositions.map(p => p.y));
+    const actualHeight = Math.min(
+      Math.ceil(maxYPx) + 200,
+      32767  // ✅ MAX canvas výška v Chrome!
+    );
 
     const canvas = document.createElement('canvas');
     canvas.width = width;
@@ -46,13 +29,11 @@ export const generateVisualization = async (trackingData, width, height, contain
 
     const gridSize = 10;
     const aggregated = aggregatePositionsToGrid(convertedPositions, gridSize);
-
     await drawHeatmapGradientHighQuality(ctx, aggregated, width, actualHeight);
 
     if (convertedPositions.length > 1) {
       drawTrajectory(ctx, convertedPositions);
     }
-
     drawMarkers(ctx, convertedPositions);
 
     const blob = await new Promise((resolve) => {
@@ -72,6 +53,7 @@ export const generateVisualization = async (trackingData, width, height, contain
     return null;
   }
 };
+
 
 
 /**

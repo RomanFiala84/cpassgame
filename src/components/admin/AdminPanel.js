@@ -599,12 +599,23 @@ const AdminPanel = () => {
         const fullPath = `${window.location.origin}${comp.path}`;
         setTemplateProgress(`📸 Otvaram: ${comp.name}...`);
 
-        const newWindow = window.open(fullPath, '_blank', 'width=1920,height=2500');
+        let newWindow;
+        
+        if (comp === components[0]) {
+          // ✅ Prvé okno — otvor normálne
+          newWindow = window.open(fullPath, 'templateWindow', 'width=1920,height=2500');
+        } else {
+          // ✅ Ďalšie — zmeň URL v tom istom okne
+          newWindow = window.open(fullPath, 'templateWindow', 'width=1920,height=2500');
+          // Chrome reuse okno s rovnakým názvom — nepýta povolenie
+        }
+
         if (!newWindow) {
           results.push({ component: comp.name, status: 'failed', error: 'Popup zablokované!' });
           failCount++;
           continue;
         }
+
 
         await new Promise(resolve => setTimeout(resolve, 10000));
 
