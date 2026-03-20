@@ -10,7 +10,6 @@ import { useUserStats } from '../../../contexts/UserStatsContext';
 import { getResponseManager } from '../../../utils/ResponseManager';
 import {
   saveTrackingWithVisualization,
-  generateAndUploadComponentTemplate,
 } from '../../../utils/trackingHelpers';
 
 // ── Styled Components ─────────────────────────────────────────────────────────
@@ -566,7 +565,7 @@ const PAGES = [
 
 const TOTAL_PAGES = PAGES.length;
 const COMPONENT_ID = 'mission3_intervention_b';
-
+const PAGE_MIN_TIMES = [180, 0];
 // ═══════════════════════════════════════════════════════════════════════════════
 // Hlavný komponent
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -575,10 +574,10 @@ const Intervention2B = () => {
   const navigate = useNavigate();
   const { dataManager, userId } = useUserStats();
   const responseManager = getResponseManager(dataManager);
-
   const [currentPage, setCurrentPage] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [pageTime, setPageTime] = useState(0);
+  const pageTimerRef = useRef(null);
   const containerRef = useRef(null);
   const mousePositionsRef = useRef([]);
   const trackingStartRef = useRef(Date.now());
@@ -593,6 +592,19 @@ const Intervention2B = () => {
       }
     })();
   }, [dataManager, userId, navigate]);
+
+  useEffect(() => {
+    setPageTime(0);
+    clearInterval(pageTimerRef.current);
+
+    if (PAGE_MIN_TIMES[currentPage] === 0) return;
+
+    pageTimerRef.current = setInterval(() => {
+      setPageTime(t => t + 1);
+    }, 1000);
+
+    return () => clearInterval(pageTimerRef.current);
+  }, [currentPage]);
 
   // Autosave času
   useEffect(() => {
@@ -614,13 +626,7 @@ const Intervention2B = () => {
     mousePositionsRef.current = [];
     trackingStartRef.current = Date.now();
 
-    const templateTimer = setTimeout(() => {
-      generateAndUploadComponentTemplate(
-        container,
-        `intervention2B_${PAGES[currentPage].key}`,
-        'intervention'
-      );
-    }, 300);
+
 
     const handleMouseMove = (e) => {
       const rect = container.getBoundingClientRect();
@@ -634,7 +640,6 @@ const Intervention2B = () => {
     container.addEventListener('mousemove', handleMouseMove);
 
     return () => {
-      clearTimeout(templateTimer);
       container.removeEventListener('mousemove', handleMouseMove);
 
       if (mousePositionsRef.current.length > 0) {
@@ -702,7 +707,8 @@ const Intervention2B = () => {
 
   const page = PAGES[currentPage];
   const isLastPage = currentPage === TOTAL_PAGES - 1;
-
+  const minTime = PAGE_MIN_TIMES[currentPage];
+  const canContinue = pageTime >= minTime;
   return (
     <Layout>
       <Container>
@@ -732,13 +738,15 @@ const Intervention2B = () => {
               <StyledButton
                 accent
                 onClick={handleNext}
-                disabled={isSubmitting}
+                disabled={isSubmitting || !canContinue}
               >
-                {isSubmitting
-                  ? 'Ukladám...'
-                  : isLastPage
-                    ? '🎓 Dokončiť tréning!'
-                    : 'Pokračovať ďalej →'}
+                {!canContinue
+                  ? `Prečítaj článok (${Math.floor((minTime - pageTime) / 60)}:${String((minTime - pageTime) % 60).padStart(2, '0')})`
+                  : isSubmitting
+                    ? 'Ukladám...'
+                    : isLastPage
+                      ? '🎓 Dokončiť tréning!'
+                      : 'Pokračovať ďalej →'}
               </StyledButton>
             </ButtonContainer>
           </Card>

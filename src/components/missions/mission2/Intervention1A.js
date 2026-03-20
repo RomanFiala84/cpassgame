@@ -10,7 +10,6 @@ import { useUserStats } from '../../../contexts/UserStatsContext';
 import { getResponseManager } from '../../../utils/ResponseManager';
 import {
   saveTrackingWithVisualization,
-  generateAndUploadComponentTemplate,
 } from '../../../utils/trackingHelpers';
 
 // ── Styled Components ─────────────────────────────────────────────────────────
@@ -570,15 +569,15 @@ const COMPONENT_ID = 'mission2_intervention_a';
 // ═══════════════════════════════════════════════════════════════════════════════
 // Hlavný komponent
 // ═══════════════════════════════════════════════════════════════════════════════
-
+const PAGE_MIN_TIMES = [180, 180, 0];
 const Intervention1A = () => {
   const navigate = useNavigate();
   const { dataManager, userId } = useUserStats();
   const responseManager = getResponseManager(dataManager);
-
   const [currentPage, setCurrentPage] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [pageTime, setPageTime] = useState(0);
+  const pageTimerRef = useRef(null);
   const containerRef = useRef(null);
   const mousePositionsRef = useRef([]);
   const trackingStartRef = useRef(Date.now());
@@ -593,6 +592,19 @@ const Intervention1A = () => {
       }
     })();
   }, [dataManager, userId, navigate]);
+  // ← PRIDAJ SEM (za mission guard useEffect)
+  useEffect(() => {
+    setPageTime(0);
+    clearInterval(pageTimerRef.current);
+
+    if (PAGE_MIN_TIMES[currentPage] === 0) return;
+
+    pageTimerRef.current = setInterval(() => {
+      setPageTime(t => t + 1);
+    }, 1000);
+
+    return () => clearInterval(pageTimerRef.current);
+  }, [currentPage]);
 
   // Autosave času
   useEffect(() => {
@@ -616,13 +628,7 @@ const Intervention1A = () => {
     trackingStartRef.current = Date.now();
 
     // Template screenshot — bez animácií, stačí kratší delay
-    const templateTimer = setTimeout(() => {
-      generateAndUploadComponentTemplate(
-        container,
-        `intervention1A_${PAGES[currentPage].key}`,
-        'intervention'
-      );
-    }, 300);
+
 
     // Mouse move listener
     const handleMouseMove = (e) => {
@@ -638,7 +644,6 @@ const Intervention1A = () => {
 
     // Cleanup = automatické uloženie pri odchode zo stránky
     return () => {
-      clearTimeout(templateTimer);
       container.removeEventListener('mousemove', handleMouseMove);
 
       if (mousePositionsRef.current.length > 0) {
@@ -706,7 +711,8 @@ const Intervention1A = () => {
 
   const page = PAGES[currentPage];
   const isLastPage = currentPage === TOTAL_PAGES - 1;
-
+  const minTime = PAGE_MIN_TIMES[currentPage];
+  const canContinue = pageTime >= minTime;
   return (
     <Layout>
       <Container>
@@ -739,13 +745,15 @@ const Intervention1A = () => {
               <StyledButton
                 accent
                 onClick={handleNext}
-                disabled={isSubmitting}
+                disabled={isSubmitting || !canContinue}
               >
-                {isSubmitting
-                  ? 'Ukladám...'
-                  : isLastPage
-                    ? '🎓 Dokončiť tréning!'
-                    : 'Pokračovať ďalej →'}
+                {!canContinue
+                  ? `Prečítaj článok (${Math.floor((minTime - pageTime) / 60)}:${String((minTime - pageTime) % 60).padStart(2, '0')})`
+                  : isSubmitting
+                    ? 'Ukladám...'
+                    : isLastPage
+                      ? '🎓 Dokončiť tréning!'
+                      : 'Pokračovať ďalej →'}
               </StyledButton>
             </ButtonContainer>
           </Card>
