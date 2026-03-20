@@ -195,12 +195,7 @@ const ProgressLabel = styled.span`
   white-space: nowrap;
 `;
 
-const TimeTracker = styled.div`
-  text-align: center;
-  font-size: 12px;
-  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
-  margin-bottom: 16px;
-`;
+
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -710,20 +705,12 @@ const Intervention1A = () => {
 
   const [currentPage, setCurrentPage] = useState(0);
   const [openedMap, setOpenedMap] = useState({});   // { accordionId: true }
-  const [startTime] = useState(Date.now());
-  const [timeSpent, setTimeSpent] = useState(0);
+  const startTime = React.useRef(Date.now());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showOutroTip, setShowOutroTip] = useState(false);
 
   const page = PAGES[currentPage];
 
-  // Časovač
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTimeSpent(Math.floor((Date.now() - startTime) / 1000));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [startTime]);
 
   // Guard
   useEffect(() => {
@@ -738,7 +725,7 @@ const Intervention1A = () => {
   // Autosave
   useEffect(() => {
     const autoSave = setInterval(async () => {
-      const t = Math.floor((Date.now() - startTime) / 1000);
+      const t = Math.floor((Date.now() - startTime.current) / 1000);
       await responseManager.saveAnswer(userId, COMPONENT_ID, 'time_spent_seconds', t, {
         last_autosave: new Date().toISOString(),
         current_page: currentPage
@@ -769,7 +756,7 @@ const Intervention1A = () => {
       // Posledná stránka — uložiť a pokračovať
       setIsSubmitting(true);
       try {
-        const finalTime = Math.floor((Date.now() - startTime) / 1000);
+        const finalTime = Math.floor((Date.now() - startTime.current) / 1000);
         await responseManager.saveMultipleAnswers(
           userId,
           COMPONENT_ID,
@@ -780,7 +767,7 @@ const Intervention1A = () => {
             pages_completed: TOTAL_PAGES
           },
           {
-            started_at: new Date(startTime).toISOString(),
+            started_at: new Date(startTime.current).toISOString(),
             completed_at: new Date().toISOString(),
             device: /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop'
           }
@@ -812,9 +799,7 @@ const Intervention1A = () => {
           <PageTitle>{page.title}</PageTitle>
           <PageSubtitle>{page.subtitle}</PageSubtitle>
 
-          <TimeTracker>
-            Čas strávený: {Math.floor(timeSpent / 60)}:{(timeSpent % 60).toString().padStart(2, '0')}
-          </TimeTracker>
+
 
           {/* ── Intro DetectiveTip — vnútri Card, nad accordionmi ── */}
           {!showOutroTip && (
