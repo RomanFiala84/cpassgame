@@ -6,46 +6,57 @@
  */
 export const generateVisualization = async (trackingData, width, height, containerElement) => {
   try {
-    console.log('🎨 Creating individual heatmap overlay:', {
-      positions: trackingData.mousePositions?.length || 0,
-      targetSize: `${width}×${height}`
-    });
-
-    // ✅ VALIDÁCIA
     if (!trackingData.mousePositions || trackingData.mousePositions.length === 0) {
       console.warn('⚠️ No mouse positions to visualize');
       return null;
     }
 
-    // ✅ Canvas s CIEĽOVÝMI rozmermi (1920px × proportional height)
+    // ✅ PREPOČET % → px (x je % šírky, y je % výšky celej stránky)
+    // containerDimensions.originalHeight = skutočná výška celej stránky (napr. 2216px)
+    // height parameter = canvas výška (1920 proportional)
+    const origW = trackingData.containerDimensions?.originalWidth || 760;
+    const origH = trackingData.containerDimensions?.originalHeight || height;
+    const scaleX = width / origW;
+
+    // ✅ Skutočná výška stránky z max Y percent
+    const maxYPercent = Math.max(...trackingData.mousePositions.map(p => p.y));
+    const fullPageHeight = Math.round((maxYPercent / 100) * origH);
+    const actualHeight = Math.round(fullPageHeight * scaleX) + 200;
+
+    const convertedPositions = trackingData.mousePositions.map(pos => ({
+      ...pos,
+      x: (pos.x / 100) * origW * scaleX,
+      y: (pos.y / 100) * fullPageHeight * scaleX,  // ✅ fullPageHeight nie origH
+    }));
+
+    console.log('🎨 Creating individual heatmap overlay:', {
+      positions: convertedPositions.length,
+      targetSize: `${width}×${actualHeight}`,
+      origDimensions: `${origW}×${origH}`,
+      fullPageHeight,
+      sampleConverted: convertedPositions[0]
+    });
+
+
     const canvas = document.createElement('canvas');
     canvas.width = width;
-    canvas.height = height;
+    canvas.height = actualHeight;
     const ctx = canvas.getContext('2d', { alpha: true });
+    ctx.clearRect(0, 0, width, actualHeight);
 
-    // ✅ TRANSPARENT pozadie (pre overlay)
-    ctx.clearRect(0, 0, width, height);
-
-    // Agreguj pozície do gridu
     const gridSize = 10;
-    const aggregated = aggregatePositionsToGrid(trackingData.mousePositions, gridSize);
+    const aggregated = aggregatePositionsToGrid(convertedPositions, gridSize);
 
-    console.log(`📊 Aggregated ${trackingData.mousePositions.length} positions into ${aggregated.length} grid points`);
+    await drawHeatmapGradientHighQuality(ctx, aggregated, width, actualHeight);
 
-    // ✅ Vykresli heatmap gradient (HIGH QUALITY)
-    await drawHeatmapGradientHighQuality(ctx, aggregated, width, height);
-
-    // ✅ Vykresli trajectory
-    if (trackingData.mousePositions.length > 1) {
-      drawTrajectory(ctx, trackingData.mousePositions);
+    if (convertedPositions.length > 1) {
+      drawTrajectory(ctx, convertedPositions);
     }
 
-    // ✅ Vykresli start/end markery
-    drawMarkers(ctx, trackingData.mousePositions);
+    drawMarkers(ctx, convertedPositions);
 
-    // Konvertuj canvas na Blob
     const blob = await new Promise((resolve) => {
-      canvas.toBlob((b) => resolve(b), 'image/png', 1);  // ✅ 1.0 kvalita
+      canvas.toBlob((b) => resolve(b), 'image/png', 1);
     });
 
     if (!blob || blob.size === 0) {
@@ -53,25 +64,15 @@ export const generateVisualization = async (trackingData, width, height, contain
       return null;
     }
 
-    console.log('✅ Individual heatmap overlay generated:', {
-      size: `${(blob.size / 1024).toFixed(2)}KB`,
-      dimensions: `${width}×${height}`
-    });
-
     const objectUrl = URL.createObjectURL(blob);
-
-    return {
-      blob,
-      objectUrl,
-      width,
-      height
-    };
+    return { blob, objectUrl, width, height: actualHeight };
 
   } catch (error) {
     console.error('❌ Heatmap generation error:', error);
     return null;
   }
 };
+
 
 /**
  * ✅ Agreguj pozície do gridu (zníženie počtu bodov)

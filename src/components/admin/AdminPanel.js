@@ -8,7 +8,7 @@ import Layout from '../../styles/Layout';
 import StyledButton from '../../styles/StyledButton';
 import { useUserStats } from '../../contexts/UserStatsContext';
 import * as XLSX from 'xlsx';
-import { generateAndUploadComponentTemplate } from '../../utils/trackingHelpers';
+// generateAndUploadComponentTemplate import odstránený — nahradený lokálnou captureAndUpload
 
 // =====================
 // STYLED COMPONENTS - KOMPAKTNÉ
@@ -364,6 +364,124 @@ const Divider = styled.hr`
 `;
 
 // =====================
+// ✅ NOVÁ HELPER FUNKCIA — beží v kontexte hlavného okna, container z newWindow
+// =====================
+
+const captureAndUpload = async (container, compId, compType) => {
+  // Overenie rozmerov
+  if (!container || container.scrollWidth === 0 || container.scrollHeight === 0) {
+    throw new Error(`Container má nulové rozmery (${container?.scrollWidth}×${container?.scrollHeight})`);
+  }
+
+  const html2canvas = (await import('html2canvas')).default;
+
+  // Stylesheet v ownerDocument kontajnera (newWindow.document)
+  const ownerDoc = container.ownerDocument;
+  const styleSheet = ownerDoc.createElement('style');
+  styleSheet.textContent = `
+    * {
+      animation: none !important;
+      animation-duration: 0s !important;
+      transition: none !important;
+      transition-duration: 0s !important;
+    }
+  `;
+  ownerDoc.head.appendChild(styleSheet);
+
+  // Počkaj na reflow
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  const containerWidth = container.scrollWidth;
+  const containerHeight = container.scrollHeight;
+  const rect = container.getBoundingClientRect();
+  const scale = Math.max(1920 / containerWidth, 2);
+
+  console.log('📐 captureAndUpload:', {
+    containerWidth, containerHeight,
+    rectTop: rect.top, rectLeft: rect.left,
+    scale: scale.toFixed(3)
+  });
+
+  let screenshot;
+  try {
+    screenshot = await html2canvas(container, {
+      width: containerWidth,
+      height: containerHeight,
+      scrollX: -rect.left,
+      scrollY: -rect.top,
+      windowWidth: containerWidth,
+      windowHeight: containerHeight,
+      useCORS: true,
+      allowTaint: false,
+      backgroundColor: '#FFFFFF',
+      scale: scale,
+      logging: false,
+      foreignObjectRendering: false,
+      imageTimeout: 0,
+      letterRendering: true,
+    });
+  } finally {
+    if (styleSheet.parentNode) ownerDoc.head.removeChild(styleSheet);
+  }
+
+  // Blob zo screenshotu
+  const originalBlob = await new Promise(resolve =>
+    screenshot.toBlob(b => resolve(b), 'image/png', 0.95)
+  );
+  if (!originalBlob) throw new Error('Screenshot blob je null');
+
+  // Resize na 1920px cez hlavné window canvas
+  const img = new Image();
+  const blobUrl = URL.createObjectURL(originalBlob);
+  const targetHeight = await new Promise((resolve, reject) => {
+    img.onload = () => {
+      resolve(Math.round(img.height * (1920 / img.width)));
+      URL.revokeObjectURL(blobUrl);
+    };
+    img.onerror = () => { URL.revokeObjectURL(blobUrl); reject(new Error('Image load failed')); };
+    img.src = blobUrl;
+  });
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 1920;
+  canvas.height = targetHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, 1920, targetHeight);
+  ctx.drawImage(img, 0, 0, 1920, targetHeight);
+
+  const resizedBlob = await new Promise(resolve =>
+    canvas.toBlob(b => resolve(b), 'image/png', 1)
+  );
+  if (!resizedBlob) throw new Error('Resize blob je null');
+
+  // base64
+  const base64 = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(resizedBlob);
+  });
+
+  // Upload
+  const response = await fetch('/api/upload-component-template', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      imageBase64: base64,
+      contentId: compId,
+      contentType: compType,
+      dimensions: { width: 1920, height: targetHeight }
+    }),
+  });
+
+  if (!response.ok) throw new Error(`Upload failed: ${response.status}`);
+  const result = await response.json();
+  console.log(`✅ Template uploaded: ${compId} (${1920}×${targetHeight})`);
+  return result.data?.url;
+};
+
+// =====================
 // ADMIN PANEL KOMPONENT
 // =====================
 
@@ -444,7 +562,7 @@ const AdminPanel = () => {
     }
   };
 
-  const handleGenerateTemplates = async () => {
+    const handleGenerateTemplates = async () => {
     const confirmed = window.confirm(
       '📸 Vygenerovať component template screenshots?\n\n' +
       'Proces bude plne automatizovaný:\n' +
@@ -460,106 +578,66 @@ const AdminPanel = () => {
     setTemplateProgress('Pripravujem generovanie templates...');
 
     const components = [
-      { id: 'intervention1A_page0', type: 'intervention', name: 'Intervention1A — strana 1', path: '/mission2/intervention-a' },
-      { id: 'intervention1A_page1', type: 'intervention', name: 'Intervention1A — strana 2', path: '/mission2/intervention-a' },
-      { id: 'intervention1A_page2', type: 'intervention', name: 'Intervention1A — strana 3', path: '/mission2/intervention-a' },
-      { id: 'intervention1B_page0', type: 'intervention', name: 'Intervention1B — strana 1', path: '/mission2/intervention-b' },
-      { id: 'intervention1B_page1', type: 'intervention', name: 'Intervention1B — strana 2', path: '/mission2/intervention-b' },
-      { id: 'intervention2A_page0', type: 'intervention', name: 'Intervention2A — strana 1', path: '/mission3/intervention-a' },
-      { id: 'intervention2A_page1', type: 'intervention', name: 'Intervention2A — strana 2', path: '/mission3/intervention-a' },
-      { id: 'intervention2A_page2', type: 'intervention', name: 'Intervention2A — strana 3', path: '/mission3/intervention-a' },
-      { id: 'intervention2B_page0', type: 'intervention', name: 'Intervention2B — strana 1', path: '/mission3/intervention-b' },
-      { id: 'intervention2B_page1', type: 'intervention', name: 'Intervention2B — strana 2', path: '/mission3/intervention-b' },
+      { id: 'intervention1A_page0', type: 'intervention', name: 'Intervention1A — strana 1', path: '/mission2/intervention-a?page=0' },
+      { id: 'intervention1A_page1', type: 'intervention', name: 'Intervention1A — strana 2', path: '/mission2/intervention-a?page=1' },
+      { id: 'intervention1A_page2', type: 'intervention', name: 'Intervention1A — strana 3', path: '/mission2/intervention-a?page=2' },
+      { id: 'intervention1B_page0', type: 'intervention', name: 'Intervention1B — strana 1', path: '/mission2/intervention-b?page=0' },
+      { id: 'intervention1B_page1', type: 'intervention', name: 'Intervention1B — strana 2', path: '/mission2/intervention-b?page=1' },
+      { id: 'intervention2A_page0', type: 'intervention', name: 'Intervention2A — strana 1', path: '/mission3/intervention-a?page=0' },
+      { id: 'intervention2A_page1', type: 'intervention', name: 'Intervention2A — strana 2', path: '/mission3/intervention-a?page=1' },
+      { id: 'intervention2A_page2', type: 'intervention', name: 'Intervention2A — strana 3', path: '/mission3/intervention-a?page=2' },
+      { id: 'intervention2B_page0', type: 'intervention', name: 'Intervention2B — strana 1', path: '/mission3/intervention-b?page=0' },
+      { id: 'intervention2B_page1', type: 'intervention', name: 'Intervention2B — strana 2', path: '/mission3/intervention-b?page=1' },
     ];
 
     let successCount = 0;
     let failCount = 0;
     const results = [];
 
-    const byPath = components.reduce((acc, comp) => {
-      if (!acc[comp.path]) acc[comp.path] = [];
-      acc[comp.path].push(comp);
-      return acc;
-    }, {});
-
     try {
-      for (const [path, pageComponents] of Object.entries(byPath)) {
-        const fullPath = `${window.location.origin}${path}`;
-        setTemplateProgress(`📸 Otvaram: ${path}...`);
+      for (const comp of components) {
+        const fullPath = `${window.location.origin}${comp.path}`;
+        setTemplateProgress(`📸 Otvaram: ${comp.name}...`);
 
         const newWindow = window.open(fullPath, '_blank', 'width=1920,height=2500');
         if (!newWindow) {
-          const blocked = pageComponents.map(c => ({
-            component: c.name,
-            status: 'failed',
-            error: 'Popup zablokované!'
-          }));
-          results.push(...blocked);
-          failCount += blocked.length;
+          results.push({ component: comp.name, status: 'failed', error: 'Popup zablokované!' });
+          failCount++;
           continue;
         }
 
-        // Počkaj na plné načítanie stránky + render
         await new Promise(resolve => setTimeout(resolve, 10000));
 
-        for (let i = 0; i < pageComponents.length; i++) {
-          const comp = pageComponents[i];
-          setTemplateProgress(`📸 ${comp.name}...`);
+        try {
+          const container =
+            newWindow.document.querySelector('[class*="Card"]') ||
+            newWindow.document.querySelector('[class*="Container"]') ||
+            newWindow.document.querySelector('main') ||
+            newWindow.document.body;
 
-          try {
-            // Pre i > 0 klikni na tlačidlo — force disabled odstráň
-            if (i > 0) {
-              try {
-                const buttons = newWindow.document.querySelectorAll('button');
-                const nextBtn = Array.from(buttons).find(b =>
-                  b.textContent.includes('Pokračovať') ||
-                  b.textContent.includes('→') ||
-                  b.textContent.includes('Prečítaj') ||
-                  b.textContent.includes('Dokončiť')
-                );
-                if (nextBtn) {
-                  nextBtn.removeAttribute('disabled');  // ← force odomkni timer
-                  nextBtn.click();
-                  await new Promise(resolve => setTimeout(resolve, 4000)); // ← dlhší delay po kliku
-                }
-              } catch (e) {
-                console.warn('⚠️ Nemôžem kliknúť na tlačidlo:', e);
-              }
-            }
+          console.log('📐 Container check:', {
+            name: comp.name,
+            w: container?.scrollWidth,
+            h: container?.scrollHeight
+          });
 
-            // Nájdi container — skús viac selektorov
-            const container =
-              newWindow.document.querySelector('[class*="Container"]') ||
-              newWindow.document.querySelector('main') ||
-              newWindow.document.body;
+          await new Promise(resolve => setTimeout(resolve, 1000));
 
-            if (!container) throw new Error('Container not found');
+          const templateUrl = await captureAndUpload(container, comp.id, comp.type);
+          if (!templateUrl) throw new Error('Upload vrátil null URL');
 
-            // Počkaj na reflow po navigácii
-            await new Promise(resolve => setTimeout(resolve, 1000));
+          results.push({
+            component: comp.name,
+            status: 'success',
+            url: templateUrl,
+            dimensions: `${container.scrollWidth}×${container.scrollHeight}`
+          });
+          successCount++;
 
-            const templateUrl = await generateAndUploadComponentTemplate(
-              container,
-              comp.id,
-              comp.type
-            );
-
-            if (!templateUrl) throw new Error('Upload failed');
-
-            results.push({
-              component: comp.name,
-              status: 'success',
-              url: templateUrl,
-              dimensions: `${container.scrollWidth}×${container.scrollHeight}`
-            });
-            successCount++;
-
-            await new Promise(resolve => setTimeout(resolve, 2000));
-
-          } catch (error) {
-            results.push({ component: comp.name, status: 'failed', error: error.message });
-            failCount++;
-          }
+        } catch (error) {
+          console.error(`❌ ${comp.name}:`, error);
+          results.push({ component: comp.name, status: 'failed', error: error.message });
+          failCount++;
         }
 
         newWindow.close();
@@ -581,8 +659,6 @@ const AdminPanel = () => {
       setTemplateProgress('');
     }
   };
-
-
 
   const handleToggleBlock = async (participantCode, currentBlockedState) => {
     const action = currentBlockedState ? 'odblokovať' : 'blokovať';
@@ -1044,7 +1120,6 @@ const AdminPanel = () => {
                     <Th>Bon</Th>
                     <Th>∑</Th>
                     <Th>Ref</Th>
-                    {/* ✅ 2 stĺpce pre každú misiu: unlock + completed */}
                     <Th>M0🔓</Th>
                     <Th>M0✅</Th>
                     <Th>M1🔓</Th>
@@ -1074,10 +1149,8 @@ const AdminPanel = () => {
                         <Td blocked={isBlocked}><strong>{totalPoints}</strong></Td>
                         <Td blocked={isBlocked}>{u.referrals_count || 0}</Td>
                         
-                        {/* ✅ Pre každú misiu 2 stĺpce: unlock button + completed status */}
                         {[0, 1, 2, 3].map(missionId => (
                           <React.Fragment key={missionId}>
-                            {/* Unlock/Lock button */}
                             <Td blocked={isBlocked}>
                               <MissionToggleButton
                                 unlocked={u[`mission${missionId}_unlocked`]}
@@ -1097,8 +1170,6 @@ const AdminPanel = () => {
                                 {u[`mission${missionId}_unlocked`] ? '🔓' : '🔒'}
                               </MissionToggleButton>
                             </Td>
-                            
-                            {/* Completed status (read-only) */}
                             <Td blocked={isBlocked}>
                               <span 
                                 style={{ 
@@ -1136,7 +1207,6 @@ const AdminPanel = () => {
             </TableWrapper>
           )}
         </Section>
-
 
         {/* DANGER ZONE */}
         <DangerSection>
