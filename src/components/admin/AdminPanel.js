@@ -461,19 +461,19 @@ const AdminPanel = () => {
 
     const components = [
       // ── Intervencie mission2 ───────────────────────────────────────────────
-      { id: 'intervention1A_page0', type: 'intervention', name: 'Intervention1A — strana 1', path: '/mission2/intervention1a' },
-      { id: 'intervention1A_page1', type: 'intervention', name: 'Intervention1A — strana 2', path: '/mission2/intervention1a' },
-      { id: 'intervention1A_page2', type: 'intervention', name: 'Intervention1A — strana 3', path: '/mission2/intervention1a' },
-      { id: 'intervention1B_page0', type: 'intervention', name: 'Intervention1B — strana 1', path: '/mission2/intervention1b' },
-      { id: 'intervention1B_page1', type: 'intervention', name: 'Intervention1B — strana 2', path: '/mission2/intervention1b' },
-      { id: 'intervention1B_page2', type: 'intervention', name: 'Intervention1B — strana 3', path: '/mission2/intervention1b' },
+      { id: 'intervention1A_page0', type: 'intervention', name: 'Intervention1A — strana 1', path: '/mission2/intervention-a' },
+      { id: 'intervention1A_page1', type: 'intervention', name: 'Intervention1A — strana 2', path: '/mission2/intervention-a' },
+      { id: 'intervention1A_page2', type: 'intervention', name: 'Intervention1A — strana 3', path: '/mission2/intervention-a' },
+      { id: 'intervention1B_page0', type: 'intervention', name: 'Intervention1B — strana 1', path: '/mission2/intervention-b' },
+      { id: 'intervention1B_page1', type: 'intervention', name: 'Intervention1B — strana 2', path: '/mission2/intervention-b' },
+      { id: 'intervention1B_page2', type: 'intervention', name: 'Intervention1B — strana 3', path: '/mission2/intervention-b' },
       // ── Intervencie mission3 ───────────────────────────────────────────────
-      { id: 'intervention2A_page0', type: 'intervention', name: 'Intervention2A — strana 1', path: '/mission3/intervention2a' },
-      { id: 'intervention2A_page1', type: 'intervention', name: 'Intervention2A — strana 2', path: '/mission3/intervention2a' },
-      { id: 'intervention2A_page2', type: 'intervention', name: 'Intervention2A — strana 3', path: '/mission3/intervention2a' },
-      { id: 'intervention2B_page0', type: 'intervention', name: 'Intervention2B — strana 1', path: '/mission3/intervention2b' },
-      { id: 'intervention2B_page1', type: 'intervention', name: 'Intervention2B — strana 2', path: '/mission3/intervention2b' },
-      { id: 'intervention2B_page2', type: 'intervention', name: 'Intervention2B — strana 3', path: '/mission3/intervention2b' },
+      { id: 'intervention2A_page0', type: 'intervention', name: 'Intervention2A — strana 1', path: '/mission3/intervention-a' },
+      { id: 'intervention2A_page1', type: 'intervention', name: 'Intervention2A — strana 2', path: '/mission3/intervention-a' },
+      { id: 'intervention2A_page2', type: 'intervention', name: 'Intervention2A — strana 3', path: '/mission3/intervention-a' },
+      { id: 'intervention2B_page0', type: 'intervention', name: 'Intervention2B — strana 1', path: '/mission3/intervention-b' },
+      { id: 'intervention2B_page1', type: 'intervention', name: 'Intervention2B — strana 2', path: '/mission3/intervention-b' },
+      { id: 'intervention2B_page2', type: 'intervention', name: 'Intervention2B — strana 3', path: '/mission3/intervention-b' },
     ];
 
     let successCount = 0;

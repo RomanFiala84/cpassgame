@@ -605,7 +605,9 @@ const Intervention1A = () => {
 
     return () => clearInterval(pageTimerRef.current);
   }, [currentPage]);
-
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
   // Autosave času
   useEffect(() => {
     const autoSave = setInterval(async () => {
@@ -634,8 +636,8 @@ const Intervention1A = () => {
     const handleMouseMove = (e) => {
       const rect = container.getBoundingClientRect();
       mousePositionsRef.current.push({
-        x: e.clientX - rect.left + window.scrollX,
-        y: e.clientY - rect.top + window.scrollY,
+        x: ((e.clientX - rect.left) / container.scrollWidth) * 100,
+        y: ((e.clientY - rect.top + window.scrollY) / container.scrollHeight) * 100,
         timestamp: Date.now(),
       });
     };
@@ -671,7 +673,6 @@ const Intervention1A = () => {
   const handleNext = async () => {
     if (currentPage < TOTAL_PAGES - 1) {
       setCurrentPage(p => p + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       await handleSubmit();
     }
