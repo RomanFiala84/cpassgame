@@ -592,7 +592,8 @@ const Intervention1B = () => {
       }
     })();
   }, [dataManager, userId, navigate]);
-  // ← PRIDAJ SEM (za mission guard useEffect)
+
+  // Timer pre minimálny čas
   useEffect(() => {
     setPageTime(0);
     clearInterval(pageTimerRef.current);
@@ -605,9 +606,12 @@ const Intervention1B = () => {
 
     return () => clearInterval(pageTimerRef.current);
   }, [currentPage]);
+
+  // Autoscroll hore pri zmene stránky
   useEffect(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, [currentPage]);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
+
   // Autosave času
   useEffect(() => {
     const autoSave = setInterval(async () => {
@@ -620,15 +624,13 @@ const Intervention1B = () => {
     return () => clearInterval(autoSave);
   }, [userId, responseManager, currentPage]);
 
-  // ── Mouse tracking ────────────────────────────────────────────────────────
+  // Mouse tracking — reset pri každej zmene stránky
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     mousePositionsRef.current = [];
     trackingStartRef.current = Date.now();
-
-
 
     const handleMouseMove = (e) => {
       const rect = container.getBoundingClientRect();
@@ -641,32 +643,37 @@ const Intervention1B = () => {
 
     container.addEventListener('mousemove', handleMouseMove);
 
+    // Cleanup — len odstráni listener, ukladanie rieši handleNext/handleSubmit
     return () => {
       container.removeEventListener('mousemove', handleMouseMove);
-
-      if (mousePositionsRef.current.length > 0) {
-        saveTrackingWithVisualization(
-          {
-            userId,
-            contentId: `intervention1B_${PAGES[currentPage].key}`,
-            contentType: 'intervention',
-            mousePositions: mousePositionsRef.current,
-            landmarks: [],
-            containerDimensions: {
-              width: container.scrollWidth,
-              height: container.scrollHeight,
-            },
-            timeSpent: Math.floor((Date.now() - trackingStartRef.current) / 1000),
-          },
-          container
-        ).catch(err => console.warn('⚠️ Tracking save failed:', err));
-      }
     };
   }, [currentPage, userId]);
 
-  // ── Navigácia ─────────────────────────────────────────────────────────────
+  // Pomocná funkcia na uloženie trackingu aktuálnej stránky
+  const saveCurrentPageTracking = async () => {
+    if (mousePositionsRef.current.length === 0 || !containerRef.current) return;
+    const container = containerRef.current;
+    await saveTrackingWithVisualization(
+      {
+        userId,
+        contentId: `intervention1B_${PAGES[currentPage].key}`,
+        contentType: 'intervention',
+        mousePositions: mousePositionsRef.current,
+        landmarks: [],
+        containerDimensions: {
+          width: container.scrollWidth,
+          height: container.scrollHeight,
+        },
+        timeSpent: Math.floor((Date.now() - trackingStartRef.current) / 1000),
+      },
+      container
+    ).catch(err => console.warn('⚠️ Tracking save failed:', err));
+  };
 
+  // Navigácia
   const handleNext = async () => {
+    await saveCurrentPageTracking();
+
     if (currentPage < TOTAL_PAGES - 1) {
       setCurrentPage(p => p + 1);
     } else {
@@ -679,6 +686,8 @@ const Intervention1B = () => {
     setIsSubmitting(true);
 
     try {
+      await saveCurrentPageTracking();
+
       const finalTime = Math.floor((Date.now() - startTime.current) / 1000);
       await responseManager.saveMultipleAnswers(
         userId,
@@ -704,12 +713,12 @@ const Intervention1B = () => {
     }
   };
 
-  // ── Render ────────────────────────────────────────────────────────────────
-
+  // Render
   const page = PAGES[currentPage];
   const isLastPage = currentPage === TOTAL_PAGES - 1;
   const minTime = PAGE_MIN_TIMES[currentPage];
   const canContinue = pageTime >= minTime;
+
   return (
     <Layout>
       <Container>

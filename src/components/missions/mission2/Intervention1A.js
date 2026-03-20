@@ -592,7 +592,8 @@ const Intervention1A = () => {
       }
     })();
   }, [dataManager, userId, navigate]);
-  // ← PRIDAJ SEM (za mission guard useEffect)
+
+  // Timer pre minimálny čas
   useEffect(() => {
     setPageTime(0);
     clearInterval(pageTimerRef.current);
@@ -605,9 +606,12 @@ const Intervention1A = () => {
 
     return () => clearInterval(pageTimerRef.current);
   }, [currentPage]);
+
+  // Autoscroll hore pri zmene stránky
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPage]);
+
   // Autosave času
   useEffect(() => {
     const autoSave = setInterval(async () => {
@@ -620,19 +624,14 @@ const Intervention1A = () => {
     return () => clearInterval(autoSave);
   }, [userId, responseManager, currentPage]);
 
-  // ── Mouse tracking — reset + template pri každej zmene stránky ──
+  // Mouse tracking — reset pri každej zmene stránky
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    // Reset pre novú stránku
     mousePositionsRef.current = [];
     trackingStartRef.current = Date.now();
 
-    // Template screenshot — bez animácií, stačí kratší delay
-
-
-    // Mouse move listener
     const handleMouseMove = (e) => {
       const rect = container.getBoundingClientRect();
       mousePositionsRef.current.push({
@@ -644,33 +643,37 @@ const Intervention1A = () => {
 
     container.addEventListener('mousemove', handleMouseMove);
 
-    // Cleanup = automatické uloženie pri odchode zo stránky
+    // Cleanup — len odstráni listener, ukladanie rieši handleNext/handleSubmit
     return () => {
       container.removeEventListener('mousemove', handleMouseMove);
-
-      if (mousePositionsRef.current.length > 0) {
-        saveTrackingWithVisualization(
-          {
-            userId,
-            contentId: `intervention1A_${PAGES[currentPage].key}`,
-            contentType: 'intervention',
-            mousePositions: mousePositionsRef.current,
-            landmarks: [],
-            containerDimensions: {
-              width: container.scrollWidth,
-              height: container.scrollHeight,
-            },
-            timeSpent: Math.floor((Date.now() - trackingStartRef.current) / 1000),
-          },
-          container
-        ).catch(err => console.warn('⚠️ Tracking save failed:', err));
-      }
     };
   }, [currentPage, userId]);
 
-  // ── Navigácia ─────────────────────────────────────────────────────────────
+  // Pomocná funkcia na uloženie trackingu aktuálnej stránky
+  const saveCurrentPageTracking = async () => {
+    if (mousePositionsRef.current.length === 0 || !containerRef.current) return;
+    const container = containerRef.current;
+    await saveTrackingWithVisualization(
+      {
+        userId,
+        contentId: `intervention1A_${PAGES[currentPage].key}`,
+        contentType: 'intervention',
+        mousePositions: mousePositionsRef.current,
+        landmarks: [],
+        containerDimensions: {
+          width: container.scrollWidth,
+          height: container.scrollHeight,
+        },
+        timeSpent: Math.floor((Date.now() - trackingStartRef.current) / 1000),
+      },
+      container
+    ).catch(err => console.warn('⚠️ Tracking save failed:', err));
+  };
 
+  // Navigácia
   const handleNext = async () => {
+    await saveCurrentPageTracking();
+
     if (currentPage < TOTAL_PAGES - 1) {
       setCurrentPage(p => p + 1);
     } else {
@@ -683,6 +686,8 @@ const Intervention1A = () => {
     setIsSubmitting(true);
 
     try {
+      await saveCurrentPageTracking();
+
       const finalTime = Math.floor((Date.now() - startTime.current) / 1000);
       await responseManager.saveMultipleAnswers(
         userId,
@@ -708,12 +713,12 @@ const Intervention1A = () => {
     }
   };
 
-  // ── Render ────────────────────────────────────────────────────────────────
-
+  // Render
   const page = PAGES[currentPage];
   const isLastPage = currentPage === TOTAL_PAGES - 1;
   const minTime = PAGE_MIN_TIMES[currentPage];
   const canContinue = pageTime >= minTime;
+
   return (
     <Layout>
       <Container>
@@ -765,3 +770,4 @@ const Intervention1A = () => {
 };
 
 export default Intervention1A;
+
