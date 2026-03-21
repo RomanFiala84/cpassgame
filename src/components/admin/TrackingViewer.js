@@ -366,7 +366,6 @@ const TrackingViewer = () => {
       await new Promise(resolve => setTimeout(resolve, 100));
 
       // ── Načítaj template ──
-      // ── Načítaj template ──
       let templateLoaded = false;
       if (data.componentTemplateUrl) {
         templateLoaded = await new Promise((resolve) => {
@@ -377,17 +376,15 @@ const TrackingViewer = () => {
             canvas.height = img.naturalHeight;
             canvasWidth = img.naturalWidth;
             canvasHeight = img.naturalHeight;
-            ctx.drawImage(img, 0, 0); // bez naťahovania
+            ctx.drawImage(img, 0, 0);
             resolve(true);
           };
-
           img.onerror = () => { console.warn('⚠️ Template load error, using placeholder'); resolve(false); };
           img.src = data.componentTemplateUrl;
         });
       } else {
         console.warn('⚠️ No template URL');
       }
-
 
       if (!templateLoaded) {
         ctx.fillStyle = '#f5f5f5';
@@ -402,31 +399,54 @@ const TrackingViewer = () => {
         ctx.fillText('⚠️ Component screenshot not available', canvasWidth / 2, 140);
       }
 
-      // ── FIX: Konvertuj pozície — rozšírená podmienka ─────────────────────
+      // ── ✅ OPRAVENÁ konverzia pozícií ─────────────────────────────────────
       let pixelPositions = data.aggregatedPositions;
       let pixelLandmarks = data.landmarks;
 
       const fmt = data.containerDimensions?.storageFormat;
       const hasOriginalDims = data.containerDimensions?.originalWidth && data.containerDimensions?.originalHeight;
+      const sample = data.aggregatedPositions?.[0];
 
-      if (fmt === 'percent' || (fmt === 'unknown' && hasOriginalDims) || (!fmt && hasOriginalDims)) {
-        // Konvertuj percent → pixely
+      if (fmt === 'percent' || fmt === 'unknown') {
+        // Explicitne uložený formát percent (0–100)
         pixelPositions = convertPercentToPixels(data.aggregatedPositions, canvasWidth, canvasHeight);
         pixelLandmarks = convertLandmarksPercentToPixels(data.landmarks, canvasWidth, canvasHeight);
-        console.log(`✅ Converted to pixels (fmt="${fmt}"): ${pixelPositions?.length} points`);
+        console.log(`✅ fmt="${fmt}" → converted ${pixelPositions?.length} points`);
       } else if (fmt === 'pixels') {
-        // Už sú pixely, použi as-is
-        console.log('✅ Positions already in pixels, using as-is');
-      } else {
-        // Posledná záchrana: auto-detekcia z hodnôt
-        const sample = data.aggregatedPositions?.[0];
-        if (sample && sample.x <= 1.0 && sample.y <= 1.0) {
+        // Už sú pixely
+        console.log('✅ fmt="pixels" → using as-is');
+      } else if (!fmt && hasOriginalDims) {
+        // Chýba fmt ale máme originalDims → predpokladáme percent
+        pixelPositions = convertPercentToPixels(data.aggregatedPositions, canvasWidth, canvasHeight);
+        pixelLandmarks = convertLandmarksPercentToPixels(data.landmarks, canvasWidth, canvasHeight);
+        console.log(`✅ No fmt but has originalDims → converted ${pixelPositions?.length} points`);
+      } else if (sample) {
+        // Posledná záchrana: auto-detekcia podľa hodnôt
+        if (sample.x <= 1.0 && sample.y <= 1.0) {
+          // Formát 0–1 normalized → prepočítaj na 0–100 a konvertuj
+          const rescaled = data.aggregatedPositions.map(p => ({ ...p, x: p.x * 100, y: p.y * 100 }));
+          const rescaledLandmarks = (data.landmarks || []).map(l => ({
+            ...l,
+            position: {
+              top: l.position.top * 100,
+              left: l.position.left * 100,
+              width: l.position.width * 100,
+              height: l.position.height * 100,
+            }
+          }));
+          pixelPositions = convertPercentToPixels(rescaled, canvasWidth, canvasHeight);
+          pixelLandmarks = convertLandmarksPercentToPixels(rescaledLandmarks, canvasWidth, canvasHeight);
+          console.log(`✅ Auto-detected 0-1 normalized → rescaled+converted ${pixelPositions?.length} points`);
+        } else if (sample.x > 1.0 || sample.y > 1.0) {
+          // Formát 0–100 percent
           pixelPositions = convertPercentToPixels(data.aggregatedPositions, canvasWidth, canvasHeight);
           pixelLandmarks = convertLandmarksPercentToPixels(data.landmarks, canvasWidth, canvasHeight);
-          console.log(`✅ Auto-detected percent format, converted: ${pixelPositions?.length} points`);
+          console.log(`✅ Auto-detected 0-100 percent → converted ${pixelPositions?.length} points`);
         } else {
-          console.warn(`⚠️ Unknown format "${fmt}", using positions as-is`);
+          console.warn(`⚠️ Cannot detect format, using as-is`);
         }
+      } else {
+        console.warn('⚠️ No positions and no format info');
       }
       // ─────────────────────────────────────────────────────────────────────
 
@@ -529,7 +549,6 @@ const TrackingViewer = () => {
             <h2 style={{ color: 'inherit', marginBottom: '16px' }}>
               Vyberte komponent na zobrazenie
             </h2>
-
             {components.length === 0 ? (
               <EmptyState>
                 📭 Žiadne tracking dáta zatiaľ neexistujú.<br />
@@ -576,7 +595,6 @@ const TrackingViewer = () => {
                 </StatBox>
                 <StatBox>
                   <StatLabel>Avg Time</StatLabel>
-                  {/* FIX: zobraz avgTimeSpent ak avgHoverTime je 0 */}
                   <StatValue>
                     {trackingData
                       ? ((trackingData.avgHoverTime || trackingData.avgTimeSpent || 0) / 1000).toFixed(1)

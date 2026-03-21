@@ -637,7 +637,7 @@ const Intervention2B = () => {
         setCurrentPage(prev => prev + 1);
         window.scrollTo(0, 0);
       } else {
-        navigate('questionnaire2b'); // ← správna cesta
+        navigate('/questionnaire2b'); // ← správna cesta
       }
     } finally {
       setIsSubmitting(false);
