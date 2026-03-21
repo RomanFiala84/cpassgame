@@ -336,11 +336,29 @@ export const generateAndUploadComponentTemplate = async (containerElement, conte
       imageTimeout:    0,
       letterRendering: true,
       // ✅ FIX 6: onclone — aplikuj fix aj na klonovaný DOM ktorý html2canvas používa
-      onclone: (clonedDoc) => {
+      onclone: (clonedDoc, clonedElement) => {
         const clonedStyle = clonedDoc.createElement('style');
-        clonedStyle.textContent = styleSheet.textContent;
+        clonedStyle.textContent = `
+          ${styleSheet.textContent}
+
+          /* ✅ FIX biely pruh vpravo — skry scrollbar */
+          body {
+            overflow: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          ::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+          }
+          * {
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+          }
+        `;
         clonedDoc.head.appendChild(clonedStyle);
       },
+
     });
 
     if (styleSheet?.parentNode) ownerDocument.head.removeChild(styleSheet);
