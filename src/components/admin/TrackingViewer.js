@@ -219,6 +219,13 @@ const RenderingBadge = styled.div`
   margin-bottom: 12px;
 `;
 
+const EmptyState = styled.div`
+  text-align: center;
+  padding: 60px 20px;
+  color: ${p => p.theme.SECONDARY_TEXT_COLOR};
+  font-size: 16px;
+`;
+
 // =====================================================
 // COMPONENT
 // =====================================================
@@ -240,7 +247,10 @@ const TrackingViewer = () => {
       try {
         const response = await fetch('/api/admin-tracking-components');
         const data = await response.json();
-        if (data.success) setComponents(data.components || []);
+        if (data.success) {
+          // ✅ OPRAVA 1: API vracia "interventions", nie "components"
+          setComponents(data.interventions || []);
+        }
       } catch (error) {
         console.error('Error loading components:', error);
       } finally {
@@ -265,7 +275,6 @@ const TrackingViewer = () => {
     return Array.from(grid.values());
   };
 
-  // ✅ OPRAVENÁ — batch processing, nezamrzne UI
   const drawHeatmapOverlay = async (ctx, positions) => {
     if (!positions || positions.length === 0) return;
 
@@ -288,7 +297,6 @@ const TrackingViewer = () => {
     ctx.save();
     ctx.globalCompositeOperation = 'source-over';
 
-    // ✅ Batch processing — každých 100 bodov uvoľni UI thread
     const BATCH_SIZE = 100;
     for (let i = 0; i < positions.length; i += BATCH_SIZE) {
       const batch = positions.slice(i, i + BATCH_SIZE);
@@ -297,7 +305,6 @@ const TrackingViewer = () => {
         ctx.globalAlpha = Math.min(0.4 + intensity * 0.6, 1);
         ctx.drawImage(gradientCanvas, pos.x - radius, pos.y - radius);
       });
-      // ✅ Yield UI thread medzi dávkami
       await new Promise(resolve => setTimeout(resolve, 0));
     }
 
@@ -338,7 +345,6 @@ const TrackingViewer = () => {
       const startTime = performance.now();
       const ctx = canvas.getContext('2d', { alpha: false });
 
-      // ── Vypočítaj rozmery canvasu ──
       let canvasWidth = STANDARD_WIDTH;
       let canvasHeight = STANDARD_HEIGHT;
 
@@ -358,7 +364,6 @@ const TrackingViewer = () => {
       canvas.width = canvasWidth;
       canvas.height = canvasHeight;
 
-      // ✅ Yield pred canvas operáciou
       await new Promise(resolve => setTimeout(resolve, 100));
 
       // ── Načítaj template ──
@@ -442,14 +447,23 @@ const TrackingViewer = () => {
       try {
         const url = `/api/get-tracking-by-component?contentId=${selectedComponent.contentId}&contentType=${selectedComponent.contentType}`;
         const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         const data = await response.json();
+
+        // ✅ OPRAVA 2: nekontroluj response.ok — API vracia 200 aj pri "no data"
         if (data.success) {
           setTrackingData(data.data);
-          // Počkaj na DOM update
           setTimeout(() => renderCompositeHeatmap(data.data), 100);
         } else {
-          alert(`Chyba: ${data.error}`);
+          // Žiadne dáta — vykresli prázdny canvas s info textom
+          setTrackingData(null);
+          setTimeout(() => renderCompositeHeatmap({
+            contentId: selectedComponent.contentId,
+            aggregatedPositions: [],
+            landmarks: [],
+            containerDimensions: null,
+            componentTemplateUrl: null,
+            usersCount: 0,
+          }), 100);
         }
       } catch (error) {
         console.error('❌ Fetch error:', error);
@@ -496,22 +510,31 @@ const TrackingViewer = () => {
             <h2 style={{ color: 'inherit', marginBottom: '16px' }}>
               Vyberte komponent na zobrazenie
             </h2>
-            <ComponentGrid>
-              {components.map((comp, idx) => (
-                <ComponentCard key={idx} onClick={() => setSelectedComponent(comp)}>
-                  <ComponentTitle>
-                    <Badge type={comp.contentType}>{comp.contentType}</Badge>
-                    {comp.contentId}
-                  </ComponentTitle>
-                  <MetaInfo>
-                    <div>👥 {comp.usersCount} users</div>
-                    <div>📍 {comp.totalPoints?.toLocaleString()} points</div>
-                    <div>⏱️ {(comp.avgHoverTime / 1000).toFixed(1)}s avg</div>
-                    <div>📊 {comp.recordsCount} records</div>
-                  </MetaInfo>
-                </ComponentCard>
-              ))}
-            </ComponentGrid>
+
+            {components.length === 0 ? (
+              <EmptyState>
+                📭 Žiadne tracking dáta zatiaľ neexistujú.<br />
+                <small>Spusti intervenciu a pohni myšou, potom sa tu zobrazia dáta.</small>
+              </EmptyState>
+            ) : (
+              <ComponentGrid>
+                {components.map((comp, idx) => (
+                  <ComponentCard key={idx} onClick={() => setSelectedComponent(comp)}>
+                    <ComponentTitle>
+                      <Badge type={comp.contentType}>{comp.contentType}</Badge>
+                      {comp.contentId}
+                    </ComponentTitle>
+                    <MetaInfo>
+                      <div>👥 {comp.usersCount} users</div>
+                      <div>📍 {comp.totalPoints?.toLocaleString()} points</div>
+                      {/* ✅ OPRAVA 3: API vracia avgTimeSpent, nie avgHoverTime */}
+                      <div>⏱️ {((comp.avgTimeSpent || 0) / 1000).toFixed(1)}s avg</div>
+                      <div>📊 {comp.recordsCount} records</div>
+                    </MetaInfo>
+                  </ComponentCard>
+                ))}
+              </ComponentGrid>
+            )}
           </Section>
         )}
 
@@ -534,7 +557,8 @@ const TrackingViewer = () => {
                   <StatValue>{trackingData?.totalPositions?.toLocaleString() || 0}</StatValue>
                 </StatBox>
                 <StatBox>
-                  <StatLabel>Avg Hover Time</StatLabel>
+                  <StatLabel>Avg Time</StatLabel>
+                  {/* ✅ OPRAVA 3: avgHoverTime → avgHoverTime z get-tracking-by-component */}
                   <StatValue>{trackingData ? (trackingData.avgHoverTime / 1000).toFixed(1) : 0}s</StatValue>
                 </StatBox>
                 <StatBox>
@@ -556,13 +580,11 @@ const TrackingViewer = () => {
                 Component template (šírka 1920px, dynamická výška) s agregovanou heatmap zo všetkých používateľov (rendered client-side)
               </SectionSubtitle>
 
-              {/* Loading / Rendering stavy */}
               {loading && <LoadingText>Načítavam dáta...</LoadingText>}
               {!loading && rendering && (
                 <RenderingBadge>⏳ Renderujem heatmap...</RenderingBadge>
               )}
 
-              {/* ✅ Canvas — vždy v DOM, skrytý počas loading */}
               <HeatmapContainer show={!loading}>
                 <CanvasWrapper>
                   <HeatmapCanvas ref={canvasRef} />
