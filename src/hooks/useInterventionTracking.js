@@ -5,6 +5,7 @@ export const useInterventionTracking = ({ userId, currentPage }) => {
   const landmarkRefs      = useRef({});
   const mousePositionsRef = useRef([]);
   const trackingStartRef  = useRef(Date.now());
+  const lastMoveRef       = useRef(0); // throttle
 
   useEffect(() => {
     mousePositionsRef.current = [];
@@ -14,11 +15,15 @@ export const useInterventionTracking = ({ userId, currentPage }) => {
     if (!container) return;
 
     const handleMouseMove = (e) => {
+      const now = Date.now();
+      if (now - lastMoveRef.current < 32) return; // ~30fps throttle
+      lastMoveRef.current = now;
+
       const rect = container.getBoundingClientRect();
       mousePositionsRef.current.push({
         x: e.clientX - rect.left,
-        y: e.clientY - rect.top + window.scrollY,
-        timestamp: Date.now(),
+        y: e.clientY - rect.top + container.scrollTop,
+        timestamp: now,
       });
     };
 
@@ -37,14 +42,16 @@ export const useInterventionTracking = ({ userId, currentPage }) => {
     const cardWidth  = container.offsetWidth;
     const cardHeight = container.scrollHeight;
 
-    // ✅ 0–100 percent
     const normalizedPositions = mousePositionsRef.current.map(pos => ({
-      x: Number(((pos.x / cardWidth) * 100).toFixed(4)),
-      y: Number(((pos.y / cardHeight) * 100).toFixed(4)),
+      // ✅ clamp: x vždy 0–100, y môže byť >100 pri dlhých stránkach
+      x: Math.max(0, Math.min(100, Number(((pos.x / cardWidth)  * 100).toFixed(4)))),
+      y: Math.max(0,              Number(((pos.y / cardHeight) * 100).toFixed(4))),
       timestamp: pos.timestamp,
     }));
 
+    // ✅ Landmarks: zachytávaj voči scrollHeight, nie voči viewportu
     const contRect = container.getBoundingClientRect();
+    const scrollTop = container.scrollTop;
     const landmarks = Object.entries(landmarkRefs.current)
       .filter(([_, el]) => el)
       .map(([id, el]) => {
@@ -53,16 +60,16 @@ export const useInterventionTracking = ({ userId, currentPage }) => {
           id,
           type: 'section',
           position: {
-            left:   Number(((r.left - contRect.left) / cardWidth * 100).toFixed(4)),
-            top:    Number(((r.top - contRect.top + window.scrollY) / cardHeight * 100).toFixed(4)),
-            width:  Number((r.width / cardWidth * 100).toFixed(4)),
+            left:   Math.max(0, Number(((r.left - contRect.left)                      / cardWidth  * 100).toFixed(4))),
+            top:    Math.max(0, Number(((r.top  - contRect.top  + scrollTop)          / cardHeight * 100).toFixed(4))),
+            width:  Number((r.width  / cardWidth  * 100).toFixed(4)),
             height: Number((r.height / cardHeight * 100).toFixed(4)),
           },
         };
       });
 
     await fetch('/api/save-tracking', {
-      method: 'POST',
+      method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         userId,
@@ -73,7 +80,7 @@ export const useInterventionTracking = ({ userId, currentPage }) => {
         containerDimensions: {
           originalWidth:  cardWidth,
           originalHeight: cardHeight,
-          storageFormat:  'percent', // ✅ skutočne 0–100
+          storageFormat:  'percent',
         },
         timeSpent: Math.floor((Date.now() - trackingStartRef.current) / 1000),
       }),

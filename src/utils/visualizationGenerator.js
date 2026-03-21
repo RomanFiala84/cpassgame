@@ -10,29 +10,26 @@ export const generateVisualization = async (trackingData, width, height, contain
       return null;
     }
 
-    // ✅ Pozície sú už v px (konvertované v trackingHelpers)
     const convertedPositions = trackingData.mousePositions;
 
-    // ✅ Canvas výška z max Y + buffer, max 32767px (Chrome limit)
     const maxYPx = Math.max(...convertedPositions.map(p => p.y));
-    const actualHeight = Math.min(Math.ceil(maxYPx) + 200, 32767);
+    const actualHeight = Math.min(Math.max(Math.ceil(maxYPx) + 200, height), 32767); // ✅ min = height parameter
 
     console.log('🎨 Creating heatmap:', {
-      positions: convertedPositions.length,
+      positions:  convertedPositions.length,
       canvasSize: `${width}×${actualHeight}`,
-      maxY: maxYPx
+      maxY:       maxYPx,
     });
 
-    // ✅ Yield pred ťažkou canvas operáciou — nezamrzne UI
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
+    const canvas  = document.createElement('canvas');
+    canvas.width  = width;
     canvas.height = actualHeight;
-    const ctx = canvas.getContext('2d', { alpha: true });
+    const ctx     = canvas.getContext('2d', { alpha: true });
     ctx.clearRect(0, 0, width, actualHeight);
 
-    const gridSize = 10;
+    const gridSize   = 10;
     const aggregated = aggregatePositionsToGrid(convertedPositions, gridSize);
 
     console.log(`📊 Aggregated ${convertedPositions.length} → ${aggregated.length} grid points`);
@@ -54,8 +51,8 @@ export const generateVisualization = async (trackingData, width, height, contain
     }
 
     console.log('✅ Heatmap generated:', {
-      size: `${(blob.size / 1024).toFixed(2)}KB`,
-      dimensions: `${width}×${actualHeight}`
+      size:       `${(blob.size / 1024).toFixed(2)}KB`,
+      dimensions: `${width}×${actualHeight}`,
     });
 
     const objectUrl = URL.createObjectURL(blob);
@@ -76,13 +73,13 @@ function aggregatePositionsToGrid(positions, gridSize = 10) {
   positions.forEach(pos => {
     const gridX = Math.floor(pos.x / gridSize) * gridSize;
     const gridY = Math.floor(pos.y / gridSize) * gridSize;
-    const key = `${gridX},${gridY}`;
+    const key   = `${gridX},${gridY}`;
 
     if (!grid.has(key)) {
       grid.set(key, {
-        x: gridX + gridSize / 2,
-        y: gridY + gridSize / 2,
-        count: 0
+        x:     gridX + gridSize / 2,
+        y:     gridY + gridSize / 2,
+        count: 0,
       });
     }
     grid.get(key).count++;
@@ -97,41 +94,40 @@ function aggregatePositionsToGrid(positions, gridSize = 10) {
 async function drawHeatmapGradientHighQuality(ctx, positions, width, height) {
   if (!positions || positions.length === 0) return;
 
-  const radius = 50;
+  const radius         = 50;
   const gradientCanvas = document.createElement('canvas');
-  gradientCanvas.width = radius * 2;
+  gradientCanvas.width  = radius * 2;
   gradientCanvas.height = radius * 2;
-  const gradientCtx = gradientCanvas.getContext('2d');
+  const gradientCtx    = gradientCanvas.getContext('2d');
 
   const gradient = gradientCtx.createRadialGradient(radius, radius, 0, radius, radius, radius);
-  gradient.addColorStop(0, 'rgba(255, 0, 0, 1)');
-  gradient.addColorStop(0.25, 'rgba(255, 155, 0, 1)');
-  gradient.addColorStop(0.5, 'rgba(255, 255, 0, 1)');
+  gradient.addColorStop(0,    'rgba(255, 0,   0,   1)');
+  gradient.addColorStop(0.25, 'rgba(255, 155, 0,   1)');
+  gradient.addColorStop(0.5,  'rgba(255, 255, 0,   1)');
   gradient.addColorStop(0.75, 'rgba(255, 255, 100, 1)');
-  gradient.addColorStop(1, 'rgba(255, 255, 0, 0)');
+  gradient.addColorStop(1,    'rgba(255, 255, 0,   0)');
 
   gradientCtx.fillStyle = gradient;
   gradientCtx.fillRect(0, 0, radius * 2, radius * 2);
-  gradientCtx.imageSmoothingEnabled = true;
-  gradientCtx.imageSmoothingQuality = 'high';
+  // ✅ imageSmoothingEnabled patrí na hlavný ctx, nie gradientCtx
 
   const maxCount = Math.max(...positions.map(p => p.count || 1));
 
   ctx.save();
   ctx.globalCompositeOperation = 'lighten';
+  ctx.imageSmoothingEnabled    = true;  // ✅ presunuté sem
+  ctx.imageSmoothingQuality    = 'high';
 
-  // ✅ Batch processing — každých 100 bodov uvoľni UI thread
   const BATCH_SIZE = 100;
   for (let i = 0; i < positions.length; i += BATCH_SIZE) {
     const batch = positions.slice(i, i + BATCH_SIZE);
 
     batch.forEach(pos => {
-      const intensity = (pos.count || 1) / maxCount;
-      ctx.globalAlpha = Math.min(0.4 + intensity * 0.6, 0.95);
+      const intensity  = (pos.count || 1) / maxCount;
+      ctx.globalAlpha  = Math.min(0.4 + intensity * 0.6, 0.95);
       ctx.drawImage(gradientCanvas, pos.x - radius, pos.y - radius);
     });
 
-    // ✅ Yield UI thread medzi dávkami
     await new Promise(resolve => setTimeout(resolve, 0));
   }
 
@@ -147,11 +143,10 @@ function drawTrajectory(ctx, positions) {
 
   ctx.save();
   ctx.strokeStyle = 'rgba(255, 0, 255, 1)';
-  ctx.lineWidth = 2;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
+  ctx.lineWidth   = 2;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
 
-  // Každý 5. bod pre výkon
   const sampled = positions.filter((_, i) => i % 5 === 0);
 
   ctx.beginPath();
@@ -173,24 +168,22 @@ function drawMarkers(ctx, positions) {
 
   ctx.save();
 
-  // Start — zelený
   const start = positions[0];
-  ctx.fillStyle = 'rgba(0, 255, 0, 1)';
+  ctx.fillStyle   = 'rgba(0, 255, 0, 1)';
   ctx.beginPath();
   ctx.arc(start.x, start.y, 8, 0, Math.PI * 2);
   ctx.fill();
   ctx.strokeStyle = 'rgba(255, 255, 255, 1)';
-  ctx.lineWidth = 2;
+  ctx.lineWidth   = 2;
   ctx.stroke();
 
-  // End — červený
   const end = positions[positions.length - 1];
-  ctx.fillStyle = 'rgba(255, 0, 0, 1)';
+  ctx.fillStyle   = 'rgba(255, 0, 0, 1)';
   ctx.beginPath();
   ctx.arc(end.x, end.y, 8, 0, Math.PI * 2);
   ctx.fill();
   ctx.strokeStyle = 'rgba(255, 255, 255, 1)';
-  ctx.lineWidth = 2;
+  ctx.lineWidth   = 2;
   ctx.stroke();
 
   ctx.restore();

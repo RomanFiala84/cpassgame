@@ -6,8 +6,12 @@ let cachedClient = null;
 
 async function connectToDatabase() {
   if (cachedClient) {
-    const db = cachedClient.db('conspiracy');
-    return { client: cachedClient, db };
+    try {
+      await cachedClient.db('admin').command({ ping: 1 }); // ✅ over živosť spojenia
+      return { client: cachedClient, db: cachedClient.db('conspiracy') };
+    } catch {
+      cachedClient = null; // ✅ resetni mŕtve spojenie
+    }
   }
 
   if (!process.env.MONGODB_URI) {
@@ -21,13 +25,12 @@ async function connectToDatabase() {
 
   await client.connect();
   cachedClient = client;
-  const db = client.db('conspiracy');
 
-  return { client, db };
+  return { client, db: client.db('conspiracy') };
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', process.env.ALLOWED_ORIGIN || 'http://localhost:3000'); // ✅ nie wildcard
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
@@ -49,120 +52,111 @@ export default async function handler(req, res) {
         interventions: [],
         total: 0,
         stats: { totalRecords: 0, totalUsers: 0, totalPositions: 0 },
-        _meta: { message: 'No tracking data yet', generatedAt: new Date().toISOString() }
+        _meta: { message: 'No tracking data yet', generatedAt: new Date().toISOString() },
       });
     }
 
-    // ── FIX: contentId filter musí byť SPOLU s contentType v prvom $match ──
-    // Pôvodne: { $match: contentType } potom [...matchStage s contentId]
-    // To je neefektívne a pri niektorých verziách MongoDB môže contentId $match
-    // ignorovať index na contentType. Zlúčime do jedného $match.
     const firstMatch = { contentType: 'intervention' };
     if (contentId) firstMatch.contentId = contentId;
 
     const aggregation = await db.collection('hover_tracking').aggregate([
-      { $match: firstMatch },   // ← jeden $match namiesto dvoch
+      { $match: firstMatch },
       {
         $group: {
           _id: '$contentId',
-          usersCount: { $addToSet: '$userId' },
+          usersCount:   { $addToSet: '$userId' },
           totalPoints: {
             $sum: {
-              $cond: [{ $isArray: '$mousePositions' }, { $size: '$mousePositions' }, 0]
-            }
+              $cond: [{ $isArray: '$mousePositions' }, { $size: '$mousePositions' }, 0],
+            },
           },
           avgTimeSpent: { $avg: { $ifNull: ['$timeSpent', 0] } },
           recordsCount: { $sum: 1 },
-          lastUpdated: { $max: '$timestamp' },
+          lastUpdated:  { $max: '$timestamp' },
           visualizations: {
             $push: {
               $cond: [
                 {
                   $and: [
-                    { $ne: ['$cloudinaryData', null] },
-                    { $ne: ['$cloudinaryData.url', null] }
-                  ]
+                    { $ne: ['$cloudinaryData',      null] },
+                    { $ne: ['$cloudinaryData.url',  null] },
+                  ],
                 },
                 '$cloudinaryData.url',
-                '$$REMOVE'
-              ]
-            }
-          }
-        }
+                '$$REMOVE',
+              ],
+            },
+          },
+        },
       },
       {
         $project: {
-          _id: 0,
-          contentId: '$_id',
-          usersCount: { $size: '$usersCount' },
-          totalPoints: 1,
+          _id:          0,
+          contentId:    '$_id',
+          contentType:  { $literal: 'intervention' },
+          usersCount:   { $size: '$usersCount' },
+          totalPoints:  1,
           avgTimeSpent: { $round: [{ $ifNull: ['$avgTimeSpent', 0] }, 0] },
           recordsCount: 1,
-          lastUpdated: 1,
-          // ── FIX: pridaj contentType do výstupu ──────────────────────────
-          // TrackingViewer.js potrebuje comp.contentType pre Badge komponent
-          // Pôvodne chýbal v $project → comp.contentType bol undefined → Badge nezobrazil typ
-          contentType: { $literal: 'intervention' },
-          // ────────────────────────────────────────────────────────────────
+          lastUpdated:  1,
           visualizationsCount: { $size: { $ifNull: ['$visualizations', []] } },
           latestVisualization: {
-            $arrayElemAt: [{ $ifNull: ['$visualizations', []] }, -1]
-          }
-        }
+            $arrayElemAt: [{ $ifNull: ['$visualizations', []] }, -1],
+          },
+        },
       },
-      { $sort: { contentId: 1 } }
+      { $sort: { contentId: 1 } },
     ]).toArray();
 
-    // ── Celkové štatistiky ─────────────────────────────────────────────────
     const statsResult = await db.collection('hover_tracking').aggregate([
       { $match: { contentType: 'intervention' } },
       {
         $group: {
-          _id: null,
-          totalRecords: { $sum: 1 },
-          totalUsers: { $addToSet: '$userId' },
+          _id:            null,
+          totalRecords:   { $sum: 1 },
+          totalUsers:     { $addToSet: '$userId' },
           totalPositions: {
             $sum: {
-              $cond: [{ $isArray: '$mousePositions' }, { $size: '$mousePositions' }, 0]
-            }
+              $cond: [{ $isArray: '$mousePositions' }, { $size: '$mousePositions' }, 0],
+            },
           },
-          avgTimeSpent: { $avg: { $ifNull: ['$timeSpent', 0] } }
-        }
+          avgTimeSpent: { $avg: { $ifNull: ['$timeSpent', 0] } },
+        },
       },
       {
         $project: {
-          _id: 0,
-          totalRecords: 1,
-          totalUsers: { $size: '$totalUsers' },
+          _id:            0,
+          totalRecords:   1,
+          totalUsers:     { $size: '$totalUsers' },
           totalPositions: 1,
-          avgTimeSpent: { $round: [{ $ifNull: ['$avgTimeSpent', 0] }, 0] }
-        }
-      }
+          avgTimeSpent:   { $round: [{ $ifNull: ['$avgTimeSpent', 0] }, 0] },
+        },
+      },
     ]).toArray();
 
     return res.status(200).json({
-      success: true,
+      success:       true,
       interventions: aggregation,
-      total: aggregation.length,
+      total:         aggregation.length,
       stats: statsResult[0] || {
-        totalRecords: 0,
-        totalUsers: 0,
+        totalRecords:   0,
+        totalUsers:     0,
         totalPositions: 0,
-        avgTimeSpent: 0
+        avgTimeSpent:   0,
       },
       _meta: {
-        generatedAt: new Date().toISOString(),
-        appliedFilter: contentId || null
-      }
+        generatedAt:   new Date().toISOString(),
+        appliedFilter: contentId || null,
+      },
     });
 
   } catch (error) {
     console.error('❌ Admin tracking error:', error);
     return res.status(500).json({
       success: false,
-      error: 'Internal server error',
+      error:   'Internal server error',
       message: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      stack:   process.env.NODE_ENV === 'development' ? error.stack : undefined,
     });
   }
 }
