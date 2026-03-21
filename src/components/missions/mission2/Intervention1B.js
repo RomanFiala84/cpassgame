@@ -657,7 +657,7 @@ const Intervention1B = () => {
     if (mousePositionsRef.current.length === 0 || !containerRef.current) return;
     const container = containerRef.current;
 
-    const width = container.offsetWidth;
+    const width = container.scrollWidth; 
     const height = container.scrollHeight;
 
     const normalizedPositions = mousePositionsRef.current.map(pos => ({
@@ -740,7 +740,7 @@ const Intervention1B = () => {
     <Layout>
       <Container>
       
-        <Card ref={containerRef}>
+        <Card ref={containerRef} className="InterventionWrapper">
             <ProgressBar>
               <ProgressTrack>
                 <ProgressFill pct={((currentPage + 1) / TOTAL_PAGES) * 100} />

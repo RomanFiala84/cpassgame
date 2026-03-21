@@ -373,15 +373,14 @@ const TrackingViewer = () => {
           const img = new Image();
           img.crossOrigin = 'anonymous';
           img.onload = () => {
-            // Prepiš canvas + lokálne premenné na skutočné rozmery template
             canvas.width = img.naturalWidth;
             canvas.height = img.naturalHeight;
             canvasWidth = img.naturalWidth;
             canvasHeight = img.naturalHeight;
-            ctx.drawImage(img, 0, 0);  // bez naťahovania
-            console.log('✅ Template loaded:', img.naturalWidth, img.naturalHeight);
+            ctx.drawImage(img, 0, 0); // bez naťahovania
             resolve(true);
           };
+
           img.onerror = () => { console.warn('⚠️ Template load error, using placeholder'); resolve(false); };
           img.src = data.componentTemplateUrl;
         });

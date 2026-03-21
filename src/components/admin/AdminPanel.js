@@ -379,9 +379,10 @@ const captureAndUpload = async (container, compId, compType) => {
   const ownerDoc = container.ownerDocument;
   const styleSheet = ownerDoc.createElement('style');
   styleSheet.textContent = `
-  * { animation: none !important; transition: none !important; }
-  ol, ul { list-style-position: inside !important; }
+    * { animation: none !important; transition: none !important; }
+    ol, ul { list-style-position: inside !important; }
   `;
+
 
   ownerDoc.head.appendChild(styleSheet);
 
