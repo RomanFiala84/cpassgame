@@ -5,7 +5,7 @@ export const useInterventionTracking = ({ userId, currentPage }) => {
   const landmarkRefs      = useRef({});
   const mousePositionsRef = useRef([]);
   const trackingStartRef  = useRef(Date.now());
-  const lastMoveRef       = useRef(0); // throttle
+  const lastMoveRef       = useRef(0);
 
   useEffect(() => {
     mousePositionsRef.current = [];
@@ -16,19 +16,22 @@ export const useInterventionTracking = ({ userId, currentPage }) => {
 
     const handleMouseMove = (e) => {
       const now = Date.now();
-      if (now - lastMoveRef.current < 32) return; // ~30fps throttle
+      if (now - lastMoveRef.current < 32) return;
       lastMoveRef.current = now;
 
       const rect = container.getBoundingClientRect();
-      mousePositionsRef.current.push({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top + container.scrollTop,
-        timestamp: now,
-      });
+
+      // ✅ FIX 1: window.scrollY namiesto container.scrollTop
+      // Card scrolluje cez window, nie cez seba
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top + window.scrollY;
+
+      mousePositionsRef.current.push({ x, y, timestamp: now });
     };
 
-    container.addEventListener('mousemove', handleMouseMove);
-    return () => container.removeEventListener('mousemove', handleMouseMove);
+    // ✅ Počúvaj na window — zachytí pohyb aj keď myš nie je priamo nad containerom
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [currentPage]);
 
   const setLandmark = useCallback((id) => (el) => {
@@ -40,30 +43,38 @@ export const useInterventionTracking = ({ userId, currentPage }) => {
 
     const container  = containerRef.current;
     const cardWidth  = container.offsetWidth;
-    const cardHeight = container.scrollHeight;
+    const cardHeight = container.scrollHeight; // ✅ celá výška vrátane scrollovaného obsahu
 
-    const normalizedPositions = mousePositionsRef.current.map(pos => ({
-      // ✅ clamp: x vždy 0–100, y môže byť >100 pri dlhých stránkach
-      x: Math.max(0, Math.min(100, Number(((pos.x / cardWidth)  * 100).toFixed(4)))),
-      y: Math.max(0,              Number(((pos.y / cardHeight) * 100).toFixed(4))),
-      timestamp: pos.timestamp,
-    }));
+    const normalizedPositions = mousePositionsRef.current
+      .filter(pos => {
+        // ✅ Vyfiltruj pozície mimo kontajner (x záporné alebo > width)
+        return pos.x >= 0 && pos.x <= cardWidth && pos.y >= 0;
+      })
+      .map(pos => ({
+        x: Math.max(0, Math.min(100, Number(((pos.x / cardWidth)  * 100).toFixed(4)))),
+        y: Math.max(0,              Number(((pos.y / cardHeight) * 100).toFixed(4))),
+        timestamp: pos.timestamp,
+      }));
 
-    // ✅ Landmarks: zachytávaj voči scrollHeight, nie voči viewportu
-    const contRect = container.getBoundingClientRect();
-    const scrollTop = container.scrollTop;
+    // ✅ FIX 2: Landmarks — vypočítaj offsetTop relatívne k containerRef.current
+    // (nie cez getBoundingClientRect ktorý závisí od scroll pozície)
+    const containerTop = container.getBoundingClientRect().top + window.scrollY;
+
     const landmarks = Object.entries(landmarkRefs.current)
       .filter(([_, el]) => el)
       .map(([id, el]) => {
-        const r = el.getBoundingClientRect();
+        const elTop  = el.getBoundingClientRect().top  + window.scrollY;
+        const elLeft = el.getBoundingClientRect().left;
+        const contLeft = container.getBoundingClientRect().left;
+
         return {
           id,
           type: 'section',
           position: {
-            left:   Math.max(0, Number(((r.left - contRect.left)                      / cardWidth  * 100).toFixed(4))),
-            top:    Math.max(0, Number(((r.top  - contRect.top  + scrollTop)          / cardHeight * 100).toFixed(4))),
-            width:  Number((r.width  / cardWidth  * 100).toFixed(4)),
-            height: Number((r.height / cardHeight * 100).toFixed(4)),
+            left:   Math.max(0, Number(((elLeft - contLeft)        / cardWidth  * 100).toFixed(4))),
+            top:    Math.max(0, Number(((elTop  - containerTop)    / cardHeight * 100).toFixed(4))),
+            width:  Number((el.offsetWidth  / cardWidth  * 100).toFixed(4)),
+            height: Number((el.offsetHeight / cardHeight * 100).toFixed(4)),
           },
         };
       });

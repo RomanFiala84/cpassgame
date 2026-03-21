@@ -257,42 +257,103 @@ export const generateAndUploadComponentTemplate = async (containerElement, conte
   if (!containerElement) { console.warn('⚠️ No container element'); return null; }
   let styleSheet = null;
   try {
-    const html2canvas    = (await import('html2canvas')).default;
-    styleSheet           = document.createElement('style');
-    styleSheet.textContent = `* { animation: none !important; transition: none !important; }`;
-    const ownerDocument  = containerElement.ownerDocument;
-    ownerDocument.head.appendChild(styleSheet);
+    const html2canvas   = (await import('html2canvas')).default;
+    const ownerDocument = containerElement.ownerDocument;
+
+    // ✅ FIX 1: Scroll na vrch pred meraním — inak scrollHeight môže byť orezaný
+    window.scrollTo(0, 0);
     await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise(resolve => requestAnimationFrame(resolve));
+
+    // ✅ FIX 2: Inject CSS — animácie + fix čísel v ol pre html2canvas
+    styleSheet = document.createElement('style');
+    styleSheet.textContent = `
+      * { animation: none !important; transition: none !important; }
+
+      ol {
+        list-style: none !important;
+        counter-reset: list-counter !important;
+        padding-left: 20px !important;
+      }
+      ol > li {
+        counter-increment: list-counter !important;
+        position: relative !important;
+        padding-left: 24px !important;
+      }
+      ol > li::before {
+        content: counter(list-counter) "." !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        font-size: inherit !important;
+        line-height: inherit !important;
+        color: inherit !important;
+        font-weight: inherit !important;
+      }
+      ol ol {
+        counter-reset: alpha-counter !important;
+      }
+      ol ol > li {
+        counter-increment: alpha-counter !important;
+      }
+      ol ol > li::before {
+        content: counter(alpha-counter, lower-alpha) "." !important;
+      }
+    `;
+    ownerDocument.head.appendChild(styleSheet);
+
+    // ✅ FIX 3: Počkaj na repaint po CSS injekcii
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise(resolve => requestAnimationFrame(resolve));
+
+    // ✅ FIX 4: scrollHeight po plnom renderi — zachytí aj tlačidlo na spodku
     const containerWidth  = containerElement.scrollWidth;
     const containerHeight = containerElement.scrollHeight;
-    const scaleFactor     = STANDARD_WIDTH / containerWidth;
+
+    console.log(`📐 Template dimensions: ${containerWidth}×${containerHeight}`);
+
+    const scaleFactor      = STANDARD_WIDTH / containerWidth;
     const highQualityScale = Math.max(scaleFactor, 2);
+
+    // ✅ FIX 5: scrollX/scrollY cez window — nie cez getBoundingClientRect
+    // getBoundingClientRect závisí od scroll pozície, pri scrollTo(0,0) je to rect.top
     const rect = containerElement.getBoundingClientRect();
+
     const screenshot = await html2canvas(containerElement, {
-      width:        containerWidth,
-      height:       containerHeight,
-      scrollX:      -rect.left,
-      scrollY:      -rect.top,
-      windowWidth:  containerWidth,
-      windowHeight: containerHeight,
-      useCORS:      true,
-      allowTaint:   false,
+      width:           containerWidth,
+      height:          containerHeight,
+      scrollX:         -rect.left,
+      scrollY:         -rect.top,
+      windowWidth:     containerWidth,
+      windowHeight:    containerHeight,  // ✅ celá výška — nie viewport
+      useCORS:         true,
+      allowTaint:      false,
       backgroundColor: '#FFFFFF',
-      scale:        highQualityScale,
-      logging:      false,
+      scale:           highQualityScale,
+      logging:         false,
       removeContainer: false,
       foreignObjectRendering: false,
-      imageTimeout: 0,
+      imageTimeout:    0,
       letterRendering: true,
+      // ✅ FIX 6: onclone — aplikuj fix aj na klonovaný DOM ktorý html2canvas používa
+      onclone: (clonedDoc) => {
+        const clonedStyle = clonedDoc.createElement('style');
+        clonedStyle.textContent = styleSheet.textContent;
+        clonedDoc.head.appendChild(clonedStyle);
+      },
     });
+
     if (styleSheet?.parentNode) ownerDocument.head.removeChild(styleSheet);
+
     const originalBlob = await new Promise(resolve =>
       screenshot.toBlob(b => resolve(b), 'image/png', 0.95)
     );
     if (!originalBlob) throw new Error('Failed to create blob');
-    const resizeResult  = await resizeImageToStandardHighQuality(originalBlob, STANDARD_WIDTH);
-    const base64Image   = await blobToBase64(resizeResult.blob);
-    const response      = await fetch('/api/upload-component-template', {
+
+    const resizeResult = await resizeImageToStandardHighQuality(originalBlob, STANDARD_WIDTH);
+    const base64Image  = await blobToBase64(resizeResult.blob);
+
+    const response = await fetch('/api/upload-component-template', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -303,8 +364,11 @@ export const generateAndUploadComponentTemplate = async (containerElement, conte
       }),
     });
     if (!response.ok) throw new Error(`Upload failed: ${response.status}`);
+
     const result = await response.json();
+    console.log(`✅ Template uploaded: ${resizeResult.width}×${resizeResult.height}`);
     return result.data?.url;
+
   } catch (error) {
     console.error('❌ Template generation failed:', error);
     if (styleSheet?.parentNode) {
@@ -313,6 +377,7 @@ export const generateAndUploadComponentTemplate = async (containerElement, conte
     return null;
   }
 };
+
 
 export const sendTrackingData = async (trackingData) => {
   try {
