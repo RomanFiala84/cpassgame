@@ -366,14 +366,20 @@ const TrackingViewer = () => {
       await new Promise(resolve => setTimeout(resolve, 100));
 
       // ── Načítaj template ──
+      // ── Načítaj template ──
       let templateLoaded = false;
       if (data.componentTemplateUrl) {
         templateLoaded = await new Promise((resolve) => {
           const img = new Image();
           img.crossOrigin = 'anonymous';
           img.onload = () => {
-            ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
-            console.log('✅ Template loaded');
+            // Prepiš canvas + lokálne premenné na skutočné rozmery template
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            canvasWidth = img.naturalWidth;
+            canvasHeight = img.naturalHeight;
+            ctx.drawImage(img, 0, 0);  // bez naťahovania
+            console.log('✅ Template loaded:', img.naturalWidth, img.naturalHeight);
             resolve(true);
           };
           img.onerror = () => { console.warn('⚠️ Template load error, using placeholder'); resolve(false); };
@@ -382,6 +388,7 @@ const TrackingViewer = () => {
       } else {
         console.warn('⚠️ No template URL');
       }
+
 
       if (!templateLoaded) {
         ctx.fillStyle = '#f5f5f5';

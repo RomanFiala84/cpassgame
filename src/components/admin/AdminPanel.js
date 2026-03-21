@@ -379,13 +379,10 @@ const captureAndUpload = async (container, compId, compType) => {
   const ownerDoc = container.ownerDocument;
   const styleSheet = ownerDoc.createElement('style');
   styleSheet.textContent = `
-    * {
-      animation: none !important;
-      animation-duration: 0s !important;
-      transition: none !important;
-      transition-duration: 0s !important;
-    }
+  * { animation: none !important; transition: none !important; }
+  ol, ul { list-style-position: inside !important; }
   `;
+
   ownerDoc.head.appendChild(styleSheet);
 
   // Počkaj na reflow
