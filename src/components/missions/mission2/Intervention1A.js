@@ -263,7 +263,7 @@ const Page1Content = ({ readSections, markRead, playedAudios, markAudioPlayed })
     >
       {/* ✅ TESTOVACIA NAHRÁVKA */}
       <SectionAudioPlayer
-        src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+        src="/sound/test1.mp3"
         audioId="p1_s1_audio"
         label="Prehrať nahrávku"
         played={!!playedAudios['p1_s1_audio']}
