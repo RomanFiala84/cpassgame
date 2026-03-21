@@ -22,7 +22,6 @@ import MainMenu from './components/main/MainMenu';
 // ADMIN COMPONENTS
 // ═══════════════════════════════════════════════════════════
 import AdminPanel from './components/admin/AdminPanel';
-import TrackingViewer from './components/admin/TrackingViewer';
 
 // ═══════════════════════════════════════════════════════════
 // MISSION 0
@@ -159,7 +158,6 @@ function AppContent() {
 
         {/* ADMIN */}
         <Route path="/admin" element={<PageTransition><AdminPanel /></PageTransition>} />
-        <Route path="/admin/tracking" element={<PageTransition><TrackingViewer /></PageTransition>} />
 
         {/* MISSION 0 */}
         <Route path="/mission0/intro" element={<PageTransition><IntroMission0 /></PageTransition>} />
