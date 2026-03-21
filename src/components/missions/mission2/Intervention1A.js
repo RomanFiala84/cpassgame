@@ -9,9 +9,7 @@ import { useSearchParams } from 'react-router-dom';
 import DetectiveTipSmall from '../../shared/DetectiveTipSmall';
 import { useUserStats } from '../../../contexts/UserStatsContext';
 import { getResponseManager } from '../../../utils/ResponseManager';
-import {
-  saveTrackingWithVisualization,
-} from '../../../utils/trackingHelpers';
+
 
 // ── Styled Components ─────────────────────────────────────────────────────────
 
@@ -654,25 +652,40 @@ const Intervention1A = () => {
   }, [currentPage, userId]);
 
   // Pomocná funkcia na uloženie trackingu aktuálnej stránky
+  // PO:
   const saveCurrentPageTracking = async () => {
     if (mousePositionsRef.current.length === 0 || !containerRef.current) return;
     const container = containerRef.current;
-    await saveTrackingWithVisualization(
-      {
+
+    const width = container.scrollWidth;
+    const height = container.scrollHeight;
+
+    const normalizedPositions = mousePositionsRef.current.map(pos => ({
+      x: (pos.x / width) * 100,
+      y: (pos.y / height) * 100,
+      timestamp: pos.timestamp,
+    }));
+
+    await fetch('/api/save-tracking', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
         userId,
         contentId: `intervention1A_${PAGES[currentPage].key}`,
         contentType: 'intervention',
-        mousePositions: mousePositionsRef.current,
+        mousePositions: normalizedPositions,
         landmarks: [],
         containerDimensions: {
-          width: container.scrollWidth,
-          height: container.scrollHeight,
+          originalWidth: width,
+          originalHeight: height,
+          storageFormat: 'percent',
         },
         timeSpent: Math.floor((Date.now() - trackingStartRef.current) / 1000),
-      },
-      container
-    ).catch(err => console.warn('⚠️ Tracking save failed:', err));
+      }),
+    }).catch(err => console.warn('⚠️ Tracking save failed:', err));
   };
+
+
 
   // Navigácia
   const handleNext = async () => {

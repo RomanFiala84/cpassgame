@@ -1,18 +1,11 @@
 // src/utils/trackingHelpers.js
-// FINÁLNA OPRAVENÁ VERZIA - Správna konverzia percent → pixels + FIX animácií
 
 import { generateVisualization } from './visualizationGenerator';
 
-/**
- * ✅ KONŠTANTY
- */
 const STANDARD_WIDTH = 1920;
 const MAX_HEIGHT = 10000;
 const MIN_HEIGHT = 600;
 
-/**
- * Helper: Konvertuje Blob na base64 string
- */
 function blobToBase64(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -22,78 +15,45 @@ function blobToBase64(blob) {
   });
 }
 
-/**
- * ✅ Vypočítaj proportional výšku
- */
-function calculateProportionalHeight(originalWidth, originalHeight, targetWidth) {
+export function calculateProportionalHeight(originalWidth, originalHeight, targetWidth) {
   const scale = targetWidth / originalWidth;
   const targetHeight = Math.round(originalHeight * scale);
-  
   return Math.max(MIN_HEIGHT, Math.min(MAX_HEIGHT, targetHeight));
 }
 
-/**
- * ✅ OPRAVENÁ FUNKCIA - Vysoká kvalita resize bez posúvania textu
- */
 async function resizeImageToStandardHighQuality(blob, targetWidth = STANDARD_WIDTH) {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(blob);
-    
     img.onload = () => {
       const targetHeight = calculateProportionalHeight(img.width, img.height, targetWidth);
-      
-      console.log('📏 High-quality image resize:', {
-        original: `${img.width}×${img.height}`,
-        target: `${targetWidth}×${targetHeight}`,
-        scale: (targetWidth / img.width).toFixed(4)
-      });
-      
       const canvas = document.createElement('canvas');
       canvas.width = targetWidth;
       canvas.height = targetHeight;
       const ctx = canvas.getContext('2d', { alpha: false });
-      
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, targetWidth, targetHeight);
-      
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
-      
       ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, targetWidth, targetHeight);
-      
       canvas.toBlob((resizedBlob) => {
         URL.revokeObjectURL(url);
-        resolve({ 
-          blob: resizedBlob, 
-          width: targetWidth,
-          height: targetHeight 
-        });
+        resolve({ blob: resizedBlob, width: targetWidth, height: targetHeight });
       }, 'image/png', 1);
     };
-    
-    img.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error('Failed to load image'));
-    };
-    
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Failed to load image')); };
     img.src = url;
   });
 }
 
-/**
- * ✅ Normalizuj tracking pozície ako PERCENTÁ
- */
 function normalizeTrackingPositionsAsPercent(positions, originalWidth, originalHeight) {
   if (!positions || positions.length === 0) return [];
-  
   return positions.map(pos => {
     const normalized = {
       x: Number(((pos.x / originalWidth) * 100).toFixed(4)),
       y: Number(((pos.y / originalHeight) * 100).toFixed(4)),
       timestamp: pos.timestamp
     };
-    
     if (pos.nearestLandmark) {
       normalized.nearestLandmark = {
         id: pos.nearestLandmark.id,
@@ -108,17 +68,12 @@ function normalizeTrackingPositionsAsPercent(positions, originalWidth, originalH
         }
       };
     }
-    
     return normalized;
   });
 }
 
-/**
- * ✅ Normalizuj landmarks ako PERCENTÁ
- */
 function normalizeLandmarksAsPercent(landmarks, originalWidth, originalHeight) {
   if (!landmarks || landmarks.length === 0) return [];
-  
   return landmarks.map(landmark => ({
     id: landmark.id,
     type: landmark.type,
@@ -131,25 +86,14 @@ function normalizeLandmarksAsPercent(landmarks, originalWidth, originalHeight) {
   }));
 }
 
-/**
- * ✅ OPRAVENÁ KONVERZIA - Konvertuj percentá na pixely (používa TEMPLATE rozmery)
- */
 export function convertPercentToPixels(positions, templateWidth, templateHeight) {
   if (!positions || positions.length === 0) return [];
-  
-  console.log('🔄 Converting percent to pixels:', {
-    positionsCount: positions.length,
-    templateSize: `${templateWidth}×${templateHeight}`,
-    sampleBefore: positions[0]
-  });
-  
   const converted = positions.map(pos => {
     const pixel = {
       x: Math.round((pos.x / 100) * templateWidth),
       y: Math.round((pos.y / 100) * templateHeight),
       timestamp: pos.timestamp
     };
-    
     if (pos.nearestLandmark) {
       pixel.nearestLandmark = {
         id: pos.nearestLandmark.id,
@@ -164,30 +108,14 @@ export function convertPercentToPixels(positions, templateWidth, templateHeight)
         }
       };
     }
-    
     return pixel;
   });
-  
-  console.log('✅ Conversion complete:', {
-    sampleAfter: converted[0]
-  });
-  
   return converted;
 }
 
-/**
- * ✅ OPRAVENÁ KONVERZIA - Konvertuj landmarks percentá na pixely
- */
 export function convertLandmarksPercentToPixels(landmarks, templateWidth, templateHeight) {
   if (!landmarks || landmarks.length === 0) return [];
-  
-  console.log('🔄 Converting landmarks percent to pixels:', {
-    landmarksCount: landmarks.length,
-    templateSize: `${templateWidth}×${templateHeight}`,
-    sampleBefore: landmarks[0]
-  });
-  
-  const converted = landmarks.map(landmark => ({
+  return landmarks.map(landmark => ({
     id: landmark.id,
     type: landmark.type,
     position: {
@@ -197,335 +125,203 @@ export function convertLandmarksPercentToPixels(landmarks, templateWidth, templa
       height: Math.round((landmark.position.height / 100) * templateHeight)
     }
   }));
-  
-  console.log('✅ Landmarks conversion complete:', {
-    sampleAfter: converted[0]
-  });
-  
-  return converted;
 }
 
-/**
- * ✅ HLAVNÁ FUNKCIA - Uloží tracking + vygeneruje individuálnu heatmap (1920px)
- */
-export const saveTrackingWithVisualization = async (trackingData, containerElement) => {
+// =====================================================
+// ✅ NOVÁ FUNKCIA — len uloženie dát, bez canvas/heatmap
+// Používa sa v intervention komponentoch
+// =====================================================
+export const saveTrackingOnly = async (trackingData) => {
   try {
-    console.log('💾 Saving tracking data with individual heatmap...');
+    console.log('💾 Saving tracking data (no heatmap)...');
 
     const originalWidth = trackingData.containerDimensions?.width || STANDARD_WIDTH;
     const originalHeight = trackingData.containerDimensions?.height || MIN_HEIGHT;
 
-    console.log('📐 Original dimensions:', { originalWidth, originalHeight });
-
-    // ✅ Normalizuj tracking pozície ako PERCENTÁ
     const normalizedPositions = normalizeTrackingPositionsAsPercent(
-      trackingData.mousePositions,
-      originalWidth,
-      originalHeight
+      trackingData.mousePositions, originalWidth, originalHeight
     );
-
-    // ✅ Normalizuj landmarks ako PERCENTÁ
     const normalizedLandmarks = normalizeLandmarksAsPercent(
-      trackingData.landmarks || [],
-      originalWidth,
-      originalHeight
+      trackingData.landmarks || [], originalWidth, originalHeight
     );
 
-    // Ulož tracking dáta do MongoDB (s percentami)
-    const normalizedTrackingData = {
-      ...trackingData,
-      mousePositions: normalizedPositions,
-      landmarks: normalizedLandmarks,
-      containerDimensions: {
-        originalWidth: originalWidth,
-        originalHeight: originalHeight,
-        storageFormat: 'percent'
-      }
-    };
-
-    const trackingResponse = await fetch('/api/save-tracking', {
+    const response = await fetch('/api/save-tracking', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(normalizedTrackingData),
+      body: JSON.stringify({
+        ...trackingData,
+        mousePositions: normalizedPositions,
+        landmarks: normalizedLandmarks,
+        containerDimensions: {
+          originalWidth,
+          originalHeight,
+          storageFormat: 'percent'
+        }
+      }),
     });
 
-    if (!trackingResponse.ok) {
-      throw new Error(`Failed to save tracking: ${trackingResponse.status}`);
-    }
+    if (!response.ok) throw new Error(`Failed to save tracking: ${response.status}`);
 
-    const trackingResult = await trackingResponse.json();
-    console.log('✅ Tracking data saved (percent format):', trackingResult);
+    const result = await response.json();
+    console.log('✅ Tracking data saved:', result);
+    return { success: true, tracking: result };
 
-    // ✅ Vygeneruj INDIVIDUÁLNU heatmap pre Cloudinary (1920px template)
+  } catch (error) {
+    console.error('❌ Failed to save tracking:', error);
+    throw error;
+  }
+};
+
+// =====================================================
+// ✅ ON-DEMAND FUNKCIA — generuje + uploaduje heatmap
+// Používa sa v AdminTrackingPanel pri zobrazení záznamu
+// =====================================================
+export const generateAndUploadHeatmap = async (trackingRecord) => {
+  try {
+    console.log('🎨 Generating heatmap on-demand for:', trackingRecord._id);
+
+    const { originalWidth, originalHeight } = trackingRecord.containerDimensions;
     const targetWidth = STANDARD_WIDTH;
     const targetHeight = calculateProportionalHeight(originalWidth, originalHeight, targetWidth);
 
-    console.log('📐 Target dimensions for heatmap:', { targetWidth, targetHeight });
-    await new Promise(resolve => setTimeout(resolve, 100));
-    // ✅ Konvertuj percentá na pixely (pre 1920px template)
     const pixelPositions = convertPercentToPixels(
-      normalizedPositions,
-      targetWidth,
-      targetHeight
+      trackingRecord.mousePositions, targetWidth, targetHeight
     );
-
     const pixelLandmarks = convertLandmarksPercentToPixels(
-      normalizedLandmarks,
-      targetWidth,
-      targetHeight
+      trackingRecord.landmarks || [], targetWidth, targetHeight
     );
 
-    // Vygeneruj individuálnu heatmap overlay
+    await new Promise(resolve => setTimeout(resolve, 100));
+
     const visualization = await generateVisualization(
-      {
-        ...trackingData,
-        mousePositions: pixelPositions,
-        landmarks: pixelLandmarks
-      },
+      { mousePositions: pixelPositions, landmarks: pixelLandmarks },
       targetWidth,
-      targetHeight,
-      containerElement
+      targetHeight
     );
 
     if (!visualization || !visualization.blob) {
-      console.warn('⚠️ No visualization generated, skipping Cloudinary upload');
-      return { success: true, tracking: trackingResult };
+      throw new Error('Visualization generation failed');
     }
 
-    console.log('✅ Individual heatmap generated:', {
-      size: `${(visualization.blob.size / 1024).toFixed(2)}KB`,
-      dimensions: `${targetWidth}×${targetHeight}`
-    });
+    console.log('✅ Heatmap generated:', `${(visualization.blob.size / 1024).toFixed(2)}KB`);
 
-    // Konvertuj Blob na base64
     const base64Image = await blobToBase64(visualization.blob);
 
-    // Upload individuálnej heatmap do Cloudinary
     const cloudinaryResponse = await fetch('/api/upload-heatmap', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         imageBase64: base64Image,
-        contentId: trackingData.contentId,
-        contentType: trackingData.contentType,
-        userId: trackingData.userId,
-        trackingId: trackingResult.trackingId || 'unknown',
+        contentId: trackingRecord.contentId,
+        contentType: trackingRecord.contentType,
+        userId: trackingRecord.userId,
+        trackingId: trackingRecord._id,
       }),
     });
 
-    if (!cloudinaryResponse.ok) {
-      console.warn('⚠️ Cloudinary upload failed:', cloudinaryResponse.status);
-      return { success: true, tracking: trackingResult };
-    }
+    if (!cloudinaryResponse.ok) throw new Error(`Cloudinary upload failed: ${cloudinaryResponse.status}`);
 
     const cloudinaryResult = await cloudinaryResponse.json();
-    console.log('✅ Individual heatmap uploaded to Cloudinary:', cloudinaryResult.data?.url);
+    console.log('✅ Heatmap uploaded:', cloudinaryResult.data?.url);
 
-    // Aktualizuj tracking záznam s Cloudinary URL
+    // Ulož URL späť do MongoDB
     await fetch('/api/update-tracking-cloudinary', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        trackingId: trackingResult.trackingId,
+        trackingId: trackingRecord._id,
         cloudinaryData: cloudinaryResult.data,
       }),
     });
 
     URL.revokeObjectURL(visualization.objectUrl);
 
-    return {
-      success: true,
-      tracking: trackingResult,
-      cloudinary: cloudinaryResult.data,
-    };
+    return cloudinaryResult.data?.url;
 
   } catch (error) {
-    console.error('❌ Failed to save tracking with visualization:', error);
+    console.error('❌ Heatmap generation failed:', error);
     throw error;
   }
 };
 
-/**
- * ✅ OPRAVENÁ FUNKCIA - Template generation BEZ animácií a transakcií
- */
+// =====================================================
+// ✅ ZACHOVANÁ — saveTrackingWithVisualization (pre spätnú kompatibilitu)
+// Ak ju niekde ešte voláš, presmeruje na saveTrackingOnly
+// =====================================================
+export const saveTrackingWithVisualization = async (trackingData, containerElement) => {
+  console.warn('⚠️ saveTrackingWithVisualization je deprecated — používaj saveTrackingOnly');
+  return await saveTrackingOnly(trackingData);
+};
+
+// =====================================================
+// ✅ ZACHOVANÁ — generateAndUploadComponentTemplate
+// =====================================================
 export const generateAndUploadComponentTemplate = async (containerElement, contentId, contentType) => {
-  if (!containerElement) {
-    console.warn('⚠️ No container element for template');
-    return null;
-  }
-
+  if (!containerElement) { console.warn('⚠️ No container element'); return null; }
   let styleSheet = null;
-
   try {
-    console.log('📸 Generating component template screenshot (1920px)...');
-
     const html2canvas = (await import('html2canvas')).default;
-    
-    // Vypni CSS animácie a transitions
     styleSheet = document.createElement('style');
-    styleSheet.id = 'no-animations-for-screenshot';
-    styleSheet.textContent = `
-      * {
-        animation: none !important;
-        animation-duration: 0s !important;
-        animation-delay: 0s !important;
-        transition: none !important;
-        transition-duration: 0s !important;
-        transition-delay: 0s !important;
-      }
-    `;
-
-    // Použi document z okna kde je container (nie hlavné okno!)
+    styleSheet.textContent = `* { animation: none !important; transition: none !important; }`;
     const ownerDocument = containerElement.ownerDocument;
     ownerDocument.head.appendChild(styleSheet);
-    
-    // Počkaj na reflow
     await new Promise(resolve => requestAnimationFrame(resolve));
-    
     const containerWidth = containerElement.scrollWidth;
     const containerHeight = containerElement.scrollHeight;
-    
     const scaleFactor = STANDARD_WIDTH / containerWidth;
     const highQualityScale = Math.max(scaleFactor, 2);
-
-    // ✅ OPRAVA — rect kompenzácia pre posunutý text
     const rect = containerElement.getBoundingClientRect();
-    
-    console.log('📐 Screenshot scale calculation:', {
-      containerWidth,
-      containerHeight,
-      targetWidth: STANDARD_WIDTH,
-      scaleFactor: scaleFactor.toFixed(4),
-      rectTop: rect.top,
-      rectLeft: rect.left,
-    });
-
     const screenshot = await html2canvas(containerElement, {
-      width: containerWidth,
-      height: containerHeight,
-      scrollX: -rect.left,           // ← OPRAVA
-      scrollY: -rect.top,            // ← OPRAVA (kompenzuje pozíciu elementu v DOM)
-      windowWidth: containerWidth,
-      windowHeight: containerHeight,
-      useCORS: true,
-      allowTaint: false,
-      backgroundColor: '#FFFFFF',
-      scale: highQualityScale,
-      logging: false,
-      removeContainer: false,
-      foreignObjectRendering: false,
-      imageTimeout: 0,
-      letterRendering: true,
+      width: containerWidth, height: containerHeight,
+      scrollX: -rect.left, scrollY: -rect.top,
+      windowWidth: containerWidth, windowHeight: containerHeight,
+      useCORS: true, allowTaint: false, backgroundColor: '#FFFFFF',
+      scale: highQualityScale, logging: false, removeContainer: false,
+      foreignObjectRendering: false, imageTimeout: 0, letterRendering: true,
     });
-
-    // Odstráň stylesheet
-    if (styleSheet && styleSheet.parentNode) {
-      ownerDocument.head.removeChild(styleSheet);
-    }
-
-    const originalBlob = await new Promise((resolve) => {
-      screenshot.toBlob((blob) => resolve(blob), 'image/png', 0.95);
-    });
-
-    if (!originalBlob) {
-      throw new Error('Failed to create blob from screenshot');
-    }
-
-    console.log('📏 High-quality screenshot generated:', {
-      width: screenshot.width,
-      height: screenshot.height,
-      scale: highQualityScale,
-      size: `${(originalBlob.size / 1024).toFixed(2)}KB`
-    });
-
+    if (styleSheet?.parentNode) ownerDocument.head.removeChild(styleSheet);
+    const originalBlob = await new Promise(resolve => screenshot.toBlob(b => resolve(b), 'image/png', 0.95));
+    if (!originalBlob) throw new Error('Failed to create blob');
     const resizeResult = await resizeImageToStandardHighQuality(originalBlob, STANDARD_WIDTH);
-
-    console.log('📏 Resampled to 1920px:', {
-      width: resizeResult.width,
-      height: resizeResult.height,
-      size: `${(resizeResult.blob.size / 1024).toFixed(2)}KB`
-    });
-
     const base64Image = await blobToBase64(resizeResult.blob);
-
     const response = await fetch('/api/upload-component-template', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        imageBase64: base64Image,
-        contentId: contentId,
-        contentType: contentType,
-        dimensions: {
-          width: resizeResult.width,
-          height: resizeResult.height
-        }
-      }),
+      body: JSON.stringify({ imageBase64: base64Image, contentId, contentType,
+        dimensions: { width: resizeResult.width, height: resizeResult.height } }),
     });
-
-    if (!response.ok) {
-      throw new Error(`Template upload failed: ${response.status}`);
-    }
-
+    if (!response.ok) throw new Error(`Upload failed: ${response.status}`);
     const result = await response.json();
-    console.log('✅ Component template uploaded:', result.data?.url);
-
     return result.data?.url;
-
   } catch (error) {
-    console.error('❌ Failed to generate/upload component template:', error);
-    
-    if (styleSheet && styleSheet.parentNode) {
-      try {
-        const ownerDocument = containerElement?.ownerDocument || document;
-        ownerDocument.head.removeChild(styleSheet);
-      } catch (e) {
-        console.error('Failed to remove style sheet:', e);
-      }
+    console.error('❌ Template generation failed:', error);
+    if (styleSheet?.parentNode) {
+      try { (containerElement?.ownerDocument || document).head.removeChild(styleSheet); } catch(e) {}
     }
-    
     return null;
   }
 };
 
-
-/**
- * Odošle tracking dáta na server
- */
 export const sendTrackingData = async (trackingData) => {
   try {
     const response = await fetch('/api/save-tracking', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(trackingData),
     });
-
-    if (!response.ok) {
-      throw new Error(`Server error: ${response.status}`);
-    }
-
-    const result = await response.json();
-    console.log('✅ Tracking data saved:', result);
-    return result;
+    if (!response.ok) throw new Error(`Server error: ${response.status}`);
+    return await response.json();
   } catch (error) {
     console.error('❌ Failed to send tracking data:', error);
     throw error;
   }
 };
 
-/**
- * Získa tracking dáta z servera
- */
 export const fetchTrackingData = async (filters = {}) => {
   try {
     const queryParams = new URLSearchParams(filters).toString();
     const response = await fetch(`/api/get-tracking?${queryParams}`);
-
-    if (!response.ok) {
-      throw new Error(`Server error: ${response.status}`);
-    }
-
-    const result = await response.json();
-    return result;
+    if (!response.ok) throw new Error(`Server error: ${response.status}`);
+    return await response.json();
   } catch (error) {
     console.error('❌ Failed to fetch tracking data:', error);
     throw error;
