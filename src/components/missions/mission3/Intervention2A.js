@@ -737,8 +737,8 @@ const Intervention2A = () => {
   return (
     <Layout>
       <Container>
-        <div ref={containerRef} className="InterventionWrapper">
-          <Card>
+        
+          <Card ref={containerRef}>
             <ProgressBar>
               <ProgressTrack>
                 <ProgressFill pct={((currentPage + 1) / TOTAL_PAGES) * 100} />
@@ -775,7 +775,7 @@ const Intervention2A = () => {
               </StyledButton>
             </ButtonContainer>
           </Card>
-        </div>
+
       </Container>
     </Layout>
   );
