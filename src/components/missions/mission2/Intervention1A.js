@@ -9,7 +9,7 @@ import { useSearchParams } from 'react-router-dom';
 import DetectiveTipSmall from '../../shared/DetectiveTipSmall';
 import { useUserStats } from '../../../contexts/UserStatsContext';
 import { getResponseManager } from '../../../utils/ResponseManager';
-
+import { useInterventionTracking } from '../../../hooks/useInterventionTracking';
 
 // ── Styled Components ─────────────────────────────────────────────────────────
 
@@ -579,10 +579,11 @@ const Intervention1A = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pageTime, setPageTime] = useState(0);
   const pageTimerRef = useRef(null);
-  const containerRef = useRef(null);
-  const mousePositionsRef = useRef([]);
-  const trackingStartRef = useRef(Date.now());
   const startTime = useRef(Date.now());
+  const { containerRef, setLandmark, saveTracking } = useInterventionTracking({
+    userId,
+    currentPage,
+  });
 
   // Guard
   useEffect(() => {
@@ -625,77 +626,12 @@ const Intervention1A = () => {
     return () => clearInterval(autoSave);
   }, [userId, responseManager, currentPage]);
 
-  // Mouse tracking — reset pri každej zmene stránky
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    mousePositionsRef.current = [];
-    trackingStartRef.current = Date.now();
-
-    const handleMouseMove = (e) => {
-      const rect = container.getBoundingClientRect();
-      mousePositionsRef.current.push({
-        x: e.clientX - rect.left,              // ← surové pixely, BEZ delenia
-        y: e.clientY - rect.top,  // ← surové pixely, BEZ delenia
-        timestamp: Date.now(),
-      });
-    };
-
-
-    container.addEventListener('mousemove', handleMouseMove);
-
-    // Cleanup — len odstráni listener, ukladanie rieši handleNext/handleSubmit
-    return () => {
-      container.removeEventListener('mousemove', handleMouseMove);
-    };
-  }, [currentPage, userId]);
-
-  // Pomocná funkcia na uloženie trackingu aktuálnej stránky
-  // PO:
-  const saveCurrentPageTracking = async () => {
-    if (mousePositionsRef.current.length === 0 || !containerRef.current) return;
-    const container = containerRef.current;
-
-    const width = container.scrollWidth; 
-    const height = container.scrollHeight;
-
-    const normalizedPositions = mousePositionsRef.current.map(pos => ({
-      x: (pos.x / width) * 100,
-      y: (pos.y / height) * 100,
-      timestamp: pos.timestamp,
-    }));
-
-    await fetch('/api/save-tracking', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        userId,
-        contentId: `intervention1A_${PAGES[currentPage].key}`,
-        contentType: 'intervention',
-        mousePositions: normalizedPositions,
-        landmarks: [],
-        containerDimensions: {
-          originalWidth: width,
-          originalHeight: height,
-          storageFormat: 'percent',
-        },
-        timeSpent: Math.floor((Date.now() - trackingStartRef.current) / 1000),
-      }),
-    }).catch(err => console.warn('⚠️ Tracking save failed:', err));
-  };
-
 
 
   // Navigácia
   const handleNext = async () => {
-    await saveCurrentPageTracking();
-
-    if (currentPage < TOTAL_PAGES - 1) {
-      setCurrentPage(p => p + 1);
-    } else {
-      await handleSubmit();
-    }
+    await saveTracking(`intervention1A_${PAGES[currentPage].key}`);
+    // ...
   };
 
   const handleSubmit = async () => {
