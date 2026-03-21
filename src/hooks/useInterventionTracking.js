@@ -1,16 +1,14 @@
-// src/hooks/useInterventionTracking.js
 import { useRef, useEffect, useCallback } from 'react';
 
 export const useInterventionTracking = ({ userId, currentPage }) => {
-  const containerRef     = useRef(null);
-  const landmarkRefs     = useRef({});
+  const containerRef      = useRef(null);
+  const landmarkRefs      = useRef({});
   const mousePositionsRef = useRef([]);
   const trackingStartRef  = useRef(Date.now());
 
-  // Reset pri každej zmene stránky
   useEffect(() => {
-    mousePositionsRef.current  = [];
-    trackingStartRef.current   = Date.now();
+    mousePositionsRef.current = [];
+    trackingStartRef.current  = Date.now();
 
     const container = containerRef.current;
     if (!container) return;
@@ -19,7 +17,7 @@ export const useInterventionTracking = ({ userId, currentPage }) => {
       const rect = container.getBoundingClientRect();
       mousePositionsRef.current.push({
         x: e.clientX - rect.left,
-        y: e.clientY - rect.top + window.scrollY, // ← scroll kompenzácia
+        y: e.clientY - rect.top + window.scrollY,
         timestamp: Date.now(),
       });
     };
@@ -28,12 +26,10 @@ export const useInterventionTracking = ({ userId, currentPage }) => {
     return () => container.removeEventListener('mousemove', handleMouseMove);
   }, [currentPage]);
 
-  // Pomocná funkcia — registruj landmark
   const setLandmark = useCallback((id) => (el) => {
     landmarkRefs.current[id] = el;
   }, []);
 
-  // Uloženie trackingu
   const saveTracking = useCallback(async (contentId) => {
     if (mousePositionsRef.current.length === 0 || !containerRef.current) return;
 
@@ -41,14 +37,13 @@ export const useInterventionTracking = ({ userId, currentPage }) => {
     const cardWidth  = container.offsetWidth;
     const cardHeight = container.scrollHeight;
 
-    // Normalizácia 0.0–1.0
+    // ✅ 0–100 percent
     const normalizedPositions = mousePositionsRef.current.map(pos => ({
-      x: pos.x / cardWidth,
-      y: pos.y / cardHeight,
+      x: Number(((pos.x / cardWidth) * 100).toFixed(4)),
+      y: Number(((pos.y / cardHeight) * 100).toFixed(4)),
       timestamp: pos.timestamp,
     }));
 
-    // Landmarks — pozície sekcií normalizované 0.0–1.0
     const contRect = container.getBoundingClientRect();
     const landmarks = Object.entries(landmarkRefs.current)
       .filter(([_, el]) => el)
@@ -58,10 +53,10 @@ export const useInterventionTracking = ({ userId, currentPage }) => {
           id,
           type: 'section',
           position: {
-            left:   (r.left   - contRect.left)               / cardWidth,
-            top:    (r.top    - contRect.top  + window.scrollY) / cardHeight,
-            width:  r.width   / cardWidth,
-            height: r.height  / cardHeight,
+            left:   Number(((r.left - contRect.left) / cardWidth * 100).toFixed(4)),
+            top:    Number(((r.top - contRect.top + window.scrollY) / cardHeight * 100).toFixed(4)),
+            width:  Number((r.width / cardWidth * 100).toFixed(4)),
+            height: Number((r.height / cardHeight * 100).toFixed(4)),
           },
         };
       });
@@ -78,7 +73,7 @@ export const useInterventionTracking = ({ userId, currentPage }) => {
         containerDimensions: {
           originalWidth:  cardWidth,
           originalHeight: cardHeight,
-          storageFormat:  'percent', // 0.0–1.0
+          storageFormat:  'percent', // ✅ skutočne 0–100
         },
         timeSpent: Math.floor((Date.now() - trackingStartRef.current) / 1000),
       }),
