@@ -150,11 +150,11 @@ const ButtonContainer = styled.div`
 
 // ── Obsah stránok ─────────────────────────────────────────────────────────────
 
-const Page1Content = () => (
+const Page1Content = ({ setLandmark }) => (
   <>
-    <ModuleTitle>🧠 Konšpiračné presvedčenia</ModuleTitle>
+    <ModuleTitle ref={setLandmark('p1_module')}>🧠 Konšpiračné presvedčenia</ModuleTitle>
 
-    <SectionTitle>Čo je to vlastne konšpiračné presvedčenie?</SectionTitle>
+    <SectionTitle ref={setLandmark('p1_s1')}>Čo je to vlastne konšpiračné presvedčenie?</SectionTitle>
     <BodyText>
       Je to presvedčenie o tajnom a úmyselnom konaní mocných jednotlivcov a organizácií.
       Presvedčenie, že nejaká skupina sa snaží manipulovať situácie, udalosti alebo informácie
@@ -163,7 +163,7 @@ const Page1Content = () => (
 
     <Divider />
 
-    <SectionTitle>Aké sú ich spoločné znaky?</SectionTitle>
+    <SectionTitle ref={setLandmark('p1_s2')}>Aké sú ich spoločné znaky?</SectionTitle>
     <BodyText>
       Konšpiračné presvedčenia sa často vyskytujú v rôznych formách, ale majú niekoľko
       spoločných znakov. Keď si ich všimnete, viete, že sa pohybujete v území konšpiračných presvedčení:
@@ -193,7 +193,7 @@ const Page1Content = () => (
 
     <Divider />
 
-    <SectionTitle>Prečo sa im darí?</SectionTitle>
+    <SectionTitle ref={setLandmark('p1_s3')}>Prečo sa im darí?</SectionTitle>
     <BodyText>
       Konšpiračné presvedčenia sa často objavujú ako logické vysvetlenie udalostí alebo
       situácií, ktoré sú ťažko zrozumiteľné, a dodávajú falošný pocit moci a vplyvu:
@@ -215,7 +215,7 @@ const Page1Content = () => (
 
     <Divider />
 
-    <SectionTitle>Ako vznikajú?</SectionTitle>
+    <SectionTitle ref={setLandmark('p1_s4')}>Ako vznikajú?</SectionTitle>
     <BodyText>Konšpiračné presvedčenia nevznikajú v prázdnote. Vznikajú v špecifických podmienkach:</BodyText>
     <ContentList>
       <ContentListItem>
@@ -234,7 +234,7 @@ const Page1Content = () => (
 
     <Divider />
 
-    <SectionTitle>Prečo ich ľudia šíria?</SectionTitle>
+    <SectionTitle ref={setLandmark('p1_s5')}>Prečo ich ľudia šíria?</SectionTitle>
     <BodyText>Ľudia konšpiračné presvedčenia šíria z mnohých dôvodov a väčšinou si toho ani neuvedomujú:</BodyText>
     <ContentList>
       <ContentListItem>
@@ -261,7 +261,7 @@ const Page1Content = () => (
 
     <Divider />
 
-    <SectionTitle>Sebareflexia — otázky, ktoré ti pomôžu</SectionTitle>
+    <SectionTitle ref={setLandmark('p1_s6')}>Sebareflexia — otázky, ktoré ti pomôžu</SectionTitle>
     <BodyText>
       Tieto sebareflektujúce otázky môžu byť užitočným nástrojom nielen pri odhaľovaní
       konšpiračných presvedčení, ale aj v každodennom živote:
@@ -311,11 +311,11 @@ const Page1Content = () => (
   </>
 );
 
-const Page2Content = () => (
+const Page2Content = ({ setLandmark }) => (
   <>
-    <ModuleTitle>🏛️ Inštitúcie EÚ</ModuleTitle>
+    <ModuleTitle ref={setLandmark('p2_module')}>🏛️ Inštitúcie EÚ</ModuleTitle>
 
-    <SectionTitle>Aké sú inštitúcie EÚ a čo robia?</SectionTitle>
+    <SectionTitle ref={setLandmark('p2_s1')}>Aké sú inštitúcie EÚ a čo robia?</SectionTitle>
     <BodyText>Tieto inštitúcie EÚ sú najkľúčovejšie:</BodyText>
     <ContentList>
       <ContentListItem>
@@ -350,7 +350,7 @@ const Page2Content = () => (
 
     <Divider />
 
-    <SectionTitle>Ako EÚ zabezpečuje transparentnosť?</SectionTitle>
+    <SectionTitle ref={setLandmark('p2_s2')}>Ako EÚ zabezpečuje transparentnosť?</SectionTitle>
     <BodyText>
       Základným znakom dôveryhodnej inštitúcie je, ak sú transparentné a zodpovedné.
       EÚ má preto nástroje, ktoré zabezpečujú, že inštitúcie nepracujú v skrytosti.
@@ -380,7 +380,7 @@ const Page2Content = () => (
 
     <Divider />
 
-    <SectionTitle>Čo EÚ robí pre vás?</SectionTitle>
+    <SectionTitle ref={setLandmark('p2_s3')}>Čo EÚ robí pre vás?</SectionTitle>
     <BodyText>
       Dôveryhodné inštitúcie nekonajú len efektívne a transparentne — konajú v záujme ľudí.
       Pozrite sa na konkrétne výhody, ktoré EÚ zabezpečuje:
@@ -414,11 +414,11 @@ const Page2Content = () => (
   </>
 );
 
-const Page3Content = () => (
+const Page3Content = ({ setLandmark }) => (
   <>
-    <ModuleTitle>🚦 Príspevkový semafor</ModuleTitle>
+    <ModuleTitle ref={setLandmark('p3_module')}>🚦 Príspevkový semafor</ModuleTitle>
 
-    <SectionTitle>Základné tri otázky</SectionTitle>
+    <SectionTitle ref={setLandmark('p3_s1')}>Základné tri otázky</SectionTitle>
     <BodyText>
       Poďme začať so základnými troma otázkami, z ktorých sa každá farba semaforu skladá:
     </BodyText>
@@ -443,7 +443,7 @@ const Page3Content = () => (
 
     <Divider />
 
-    <SectionTitle>🔴 Červená — znaky manipulatívneho príspevku</SectionTitle>
+    <SectionTitle ref={setLandmark('p3_s2')}>🔴 Červená — znaky manipulatívneho príspevku</SectionTitle>
     <BodyText>Ak sa tvorca pokúša o manipuláciu, často si môžete všimnúť tieto znaky:</BodyText>
     <ContentList>
       <ContentListItem>
@@ -462,7 +462,7 @@ const Page3Content = () => (
 
     <Divider />
 
-    <SectionTitle>🟠 Oranžová — znaky neistého príspevku</SectionTitle>
+    <SectionTitle ref={setLandmark('p3_s3')}>🟠 Oranžová — znaky neistého príspevku</SectionTitle>
     <BodyText>
       Ako aj na cestách, predtým ako prejdeme na zelenú je dôležité dať si pozor na premávku
       — v takomto prípade môže ísť o manipulatívny príspevok, ale aj o dôveryhodný:
@@ -504,7 +504,7 @@ const Page3Content = () => (
 
     <Divider />
 
-    <SectionTitle>🟢 Zelená — znaky dôveryhodného príspevku</SectionTitle>
+    <SectionTitle ref={setLandmark('p3_s4')}>🟢 Zelená — znaky dôveryhodného príspevku</SectionTitle>
     <BodyText>Ak sa tvorca pokúša informovať o faktoch, často si môžete všimnúť tieto znaky:</BodyText>
     <ContentList>
       <ContentListItem>
@@ -523,6 +523,7 @@ const Page3Content = () => (
   </>
 );
 
+
 // ── Konfigurácia stránok ──────────────────────────────────────────────────────
 
 const PAGES = [
@@ -530,7 +531,7 @@ const PAGES = [
     key: 'page0',
     title: 'Modul 1 — Konšpiračné presvedčenia',
     subtitle: 'Informačné očkovanie',
-    content: <Page1Content />,
+    content: (setLandmark) => <Page1Content setLandmark={setLandmark} />,
     detectiveTipIntro: `
       <p><strong>S tvrdeniami, ktoré ste v predošlej časti mohli vidieť, sa pravdepodobne stretávate v bežnom živote každý deň.</strong></p>
       <p>Často sa vyskytujú na sociálnych sieťach v podobe rôznych príspevkov, komentárov, videí... každý môže mať inú formu. Ale všetky majú jednu vec spoločnú: <strong>chcú vás o niečom presvedčiť.</strong></p>
@@ -542,7 +543,7 @@ const PAGES = [
     key: 'page1',
     title: 'Modul 2 — Inštitúcie EÚ',
     subtitle: 'Budovanie dôvery',
-    content: <Page2Content />,
+    content: (setLandmark) => <Page2Content setLandmark={setLandmark} />,
     detectiveTipIntro: `
       <p><strong>Prvú časť máte za sebou, nezabudnite si dať krátku prestávku a potom môžeme pokračovať.</strong></p>
       <p>V prvej časti sme sa zaoberali konšpiračnými presvedčeniami. Teraz sa poďme spolu pozrieť na <strong>inštitúcie EÚ</strong> — čo robia, ako fungujú a čo nám prinášajú.</p>
@@ -553,7 +554,7 @@ const PAGES = [
     key: 'page2',
     title: 'Modul 3 — Príspevkový semafor',
     subtitle: 'Bonus',
-    content: <Page3Content />,
+    content: (setLandmark) => <Page3Content setLandmark={setLandmark} />,
     detectiveTipIntro: `
       <p><strong>V tomto bonuse sa vrátime kúsok späť.</strong></p>
       <p>Naše mozgy sú prirodzene navrhnuté hľadať vzory. To naším predkom zachraňovalo život. Ale náš mozog sa stal tak dobrým v hľadaní vzorov, že ich niekedy vidí aj tam, kde neexistujú. <strong>Obzvlášť na sociálnych sieťach.</strong></p>
@@ -580,10 +581,7 @@ const Intervention1A = () => {
   const [pageTime, setPageTime] = useState(0);
   const pageTimerRef = useRef(null);
   const startTime = useRef(Date.now());
-  const { containerRef, setLandmark, saveTracking } = useInterventionTracking({
-    userId,
-    currentPage,
-  });
+  const { containerRef, setLandmark, saveTracking } = useInterventionTracking({ userId, currentPage });
 
   // Guard
   useEffect(() => {
@@ -630,41 +628,22 @@ const Intervention1A = () => {
 
   // Navigácia
   const handleNext = async () => {
-    await saveTracking(`intervention1A_${PAGES[currentPage].key}`);
-    // ...
-  };
-
-  const handleSubmit = async () => {
-    if (isSubmitting) return;
     setIsSubmitting(true);
-
     try {
-      await saveCurrentPageTracking();
-
-      const finalTime = Math.floor((Date.now() - startTime.current) / 1000);
-      await responseManager.saveMultipleAnswers(
-        userId,
-        COMPONENT_ID,
-        {
-          time_spent_seconds: finalTime,
-          intervention_read: true,
-          intervention_type: 'trust_building',
-          pages_completed: TOTAL_PAGES,
-        },
-        {
-          started_at: new Date(startTime.current).toISOString(),
-          completed_at: new Date().toISOString(),
-          device: /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
-        }
-      );
-      navigate('/mission2/questionnaire2b');
-    } catch (error) {
-      console.error('❌ Error saving intervention data:', error);
-      alert('Chyba pri ukladaní. Skús to znova.');
+      await saveTracking(`intervention1A_${PAGES[currentPage].key}`);
+      if (currentPage < PAGES.length - 1) {
+        setCurrentPage(prev => prev + 1);
+        window.scrollTo(0, 0);
+      } else {
+        navigate('questionnaire2b'); // ← správna cesta
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
+
+
+
 
   // Render
   const page = PAGES[currentPage];
@@ -696,7 +675,7 @@ const Intervention1A = () => {
             />
 
             {/* Statický obsah stránky */}
-            {page.content}
+            {page.content(setLandmark)}
 
             <ButtonContainer>
               <StyledButton
