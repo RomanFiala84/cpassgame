@@ -12,9 +12,9 @@ export default async function handler(req, res) {
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ 
-      success: false, 
-      error: 'Method not allowed' 
+    return res.status(405).json({
+      success: false,
+      error: 'Method not allowed'
     });
   }
 
@@ -22,9 +22,9 @@ export default async function handler(req, res) {
     const trackingData = req.body;
 
     if (!trackingData.userId || !trackingData.contentId || !trackingData.contentType) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Missing required fields' 
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields'
       });
     }
 
@@ -32,22 +32,46 @@ export default async function handler(req, res) {
 
     const movementAnalysis = analyzeMouseMovement(trackingData.mousePositions || []);
 
+    // ── FIX: containerDimensions vždy so storageFormat ──────────────────────
+    const incomingDims = trackingData.containerDimensions || {};
+
+    // Auto-detekcia ak frontend neposlal storageFormat
+    let detectedFormat = incomingDims.storageFormat;
+    if (!detectedFormat || detectedFormat === 'unknown') {
+      const positions = trackingData.mousePositions || [];
+      if (positions.length > 0) {
+        const sample = positions[0];
+        detectedFormat = (sample.x <= 1.0 && sample.y <= 1.0 && sample.x >= 0 && sample.y >= 0)
+          ? 'percent'
+          : 'pixels';
+      } else {
+        detectedFormat = 'percent'; // default pre nové záznamy
+      }
+    }
+
+    const containerDimensions = {
+      ...incomingDims,
+      storageFormat: detectedFormat,
+      // Garantuj originalWidth/Height ak chýbajú
+      originalWidth: incomingDims.originalWidth || incomingDims.width || null,
+      originalHeight: incomingDims.originalHeight || incomingDims.height || null,
+    };
+    // ────────────────────────────────────────────────────────────────────────
+
     const trackingRecord = {
       userId: trackingData.userId,
       contentId: trackingData.contentId,
       contentType: trackingData.contentType,
       timestamp: new Date(),
-      // ✅ OPRAVA: timeSpent uložený na root úrovni (používa admin-tracking-components agregácia)
       timeSpent: trackingData.timeSpent || 0,
       hoverMetrics: {
-        // ✅ OPRAVA: fallback na timeSpent ak totalHoverTime chýba (intervencie posielajú timeSpent)
         totalHoverTime: trackingData.totalHoverTime || trackingData.timeSpent || 0,
         hoverStartTime: trackingData.hoverStartTime,
       },
       mousePositions: trackingData.mousePositions || [],
       movementAnalysis,
       cloudinaryData: null,
-      containerDimensions: trackingData.containerDimensions || {},
+      containerDimensions,   // ← opravený objekt
       landmarks: trackingData.landmarks || [],
       isMobile: trackingData.isMobile || false,
     };
@@ -61,6 +85,7 @@ export default async function handler(req, res) {
       mousePositions: trackingData.mousePositions?.length || 0,
       landmarks: trackingData.landmarks?.length || 0,
       timeSpent: trackingRecord.timeSpent,
+      storageFormat: containerDimensions.storageFormat,   // ← log pre debug
     });
 
     return res.status(200).json({

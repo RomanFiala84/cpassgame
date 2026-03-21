@@ -31,9 +31,9 @@ export default async function handler(req, res) {
     const { contentId, contentType } = req.query;
 
     if (!contentId || !contentType) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Missing contentId or contentType' 
+      return res.status(400).json({
+        success: false,
+        error: 'Missing contentId or contentType'
       });
     }
 
@@ -44,11 +44,10 @@ export default async function handler(req, res) {
       .find({ contentId, contentType })
       .toArray();
 
-    // ✅ OPRAVA: 404 → 200 so success:false, TrackingViewer to spracuje bez alertu
     if (records.length === 0) {
-      return res.status(200).json({ 
-        success: false, 
-        error: 'No tracking data found for this component' 
+      return res.status(200).json({
+        success: false,
+        error: 'No tracking data found for this component'
       });
     }
 
@@ -69,7 +68,6 @@ export default async function handler(req, res) {
 
       users.add(record.userId);
       totalHoverTime += record.hoverMetrics?.totalHoverTime || 0;
-      // ✅ OPRAVA: zbieraj aj timeSpent z root úrovne
       totalTimeSpent += record.timeSpent || 0;
 
       if (record.landmarks && record.landmarks.length > 0 && aggregatedLandmarks.length === 0) {
@@ -83,16 +81,47 @@ export default async function handler(req, res) {
       }
     });
 
-    try {
+    // ── FIX 1: Auto-detekcia storageFormat ──────────────────────────────────
+    // Ak storageFormat chýba alebo je 'unknown', detekuj podľa hodnôt pozícií
+    // Percent formát: x a y sú v rozsahu 0.0 – 1.0
+    // Pixel formát: x a y sú väčšie hodnoty (napr. 400, 800)
+    let finalContainerDimensions = containerDimensions || {};
+
+    if (!finalContainerDimensions.storageFormat || finalContainerDimensions.storageFormat === 'unknown') {
+      if (aggregatedPositions.length > 0) {
+        const sample = aggregatedPositions[0];
+        const isPercent = sample.x <= 1.0 && sample.y <= 1.0 && sample.x >= 0 && sample.y >= 0;
+        finalContainerDimensions = {
+          ...finalContainerDimensions,
+          storageFormat: isPercent ? 'percent' : 'pixels',
+        };
+        console.log(`🔍 Auto-detected storageFormat: ${finalContainerDimensions.storageFormat} (sample x=${sample.x}, y=${sample.y})`);
+      } else {
+        finalContainerDimensions = {
+          ...finalContainerDimensions,
+          storageFormat: 'percent', // default — nové dáta sú vždy percent
+        };
+      }
+    }
+
+    // Ak originalWidth/Height chýba, dopln default
+    if (!finalContainerDimensions.originalWidth) {
+      finalContainerDimensions.originalWidth = 1920;
+      finalContainerDimensions.originalHeight = finalContainerDimensions.originalHeight || 2000;
+    }
+    // ────────────────────────────────────────────────────────────────────────
+
+    // ── FIX 2: Cloudinary URL len ak CLOUDINARY_CLOUD_NAME existuje ─────────
+    if (process.env.CLOUDINARY_CLOUD_NAME) {
       const templatePublicId = `conspiracy-app/component-templates/template_${contentId}`;
       componentTemplateUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/${templatePublicId}.png`;
       console.log('🎨 Component template URL:', componentTemplateUrl);
-    } catch (error) {
-      console.warn('⚠️ Component template not found:', error.message);
+    } else {
+      console.warn('⚠️ CLOUDINARY_CLOUD_NAME not set, no template URL');
     }
+    // ────────────────────────────────────────────────────────────────────────
 
     const avgHoverTime = records.length > 0 ? totalHoverTime / records.length : 0;
-    // ✅ OPRAVA: avgTimeSpent pre konzistenciu s admin-tracking-components
     const avgTimeSpent = records.length > 0 ? totalTimeSpent / records.length : 0;
 
     console.log('📊 Aggregated data:', {
@@ -100,8 +129,8 @@ export default async function handler(req, res) {
       positions: aggregatedPositions.length,
       users: users.size,
       landmarks: aggregatedLandmarks.length,
-      containerDimensions,
-      storageFormat: containerDimensions?.storageFormat || 'unknown'
+      containerDimensions: finalContainerDimensions,
+      storageFormat: finalContainerDimensions.storageFormat,
     });
 
     return res.status(200).json({
@@ -115,13 +144,9 @@ export default async function handler(req, res) {
         recordsCount: records.length,
         totalHoverTime,
         avgHoverTime,
-        avgTimeSpent,  // ✅ PRIDANÉ
+        avgTimeSpent,
         componentTemplateUrl,
-        containerDimensions: containerDimensions || { 
-          originalWidth: 1920,
-          originalHeight: 2000,
-          storageFormat: 'unknown'
-        },
+        containerDimensions: finalContainerDimensions,
         landmarks: aggregatedLandmarks,
       }
     });

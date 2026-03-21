@@ -39,9 +39,7 @@ export default async function handler(req, res) {
   try {
     const { db } = await connectToDatabase();
 
-    // Voliteľný filter podľa contentId (napr. ?contentId=intervention1A_page0)
     const { contentId } = req.query;
-    const matchStage = contentId ? [{ $match: { contentId } }] : [];
 
     const collections = await db.listCollections({ name: 'hover_tracking' }).toArray();
 
@@ -55,10 +53,15 @@ export default async function handler(req, res) {
       });
     }
 
-    // ── Agregácia per contentId (stránka intervencie) ──────────────────────────
+    // ── FIX: contentId filter musí byť SPOLU s contentType v prvom $match ──
+    // Pôvodne: { $match: contentType } potom [...matchStage s contentId]
+    // To je neefektívne a pri niektorých verziách MongoDB môže contentId $match
+    // ignorovať index na contentType. Zlúčime do jedného $match.
+    const firstMatch = { contentType: 'intervention' };
+    if (contentId) firstMatch.contentId = contentId;
+
     const aggregation = await db.collection('hover_tracking').aggregate([
-      { $match: { contentType: 'intervention' } },
-      ...matchStage,
+      { $match: firstMatch },   // ← jeden $match namiesto dvoch
       {
         $group: {
           _id: '$contentId',
@@ -96,16 +99,21 @@ export default async function handler(req, res) {
           avgTimeSpent: { $round: [{ $ifNull: ['$avgTimeSpent', 0] }, 0] },
           recordsCount: 1,
           lastUpdated: 1,
+          // ── FIX: pridaj contentType do výstupu ──────────────────────────
+          // TrackingViewer.js potrebuje comp.contentType pre Badge komponent
+          // Pôvodne chýbal v $project → comp.contentType bol undefined → Badge nezobrazil typ
+          contentType: { $literal: 'intervention' },
+          // ────────────────────────────────────────────────────────────────
           visualizationsCount: { $size: { $ifNull: ['$visualizations', []] } },
           latestVisualization: {
             $arrayElemAt: [{ $ifNull: ['$visualizations', []] }, -1]
           }
         }
       },
-      { $sort: { contentId: 1 } }  // zoradené: intervention1A_page0, page1, page2...
+      { $sort: { contentId: 1 } }
     ]).toArray();
 
-    // ── Celkové štatistiky ─────────────────────────────────────────────────────
+    // ── Celkové štatistiky ─────────────────────────────────────────────────
     const statsResult = await db.collection('hover_tracking').aggregate([
       { $match: { contentType: 'intervention' } },
       {

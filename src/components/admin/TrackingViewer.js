@@ -248,7 +248,6 @@ const TrackingViewer = () => {
         const response = await fetch('/api/admin-tracking-components');
         const data = await response.json();
         if (data.success) {
-          // ✅ OPRAVA 1: API vracia "interventions", nie "components"
           setComponents(data.interventions || []);
         }
       } catch (error) {
@@ -352,7 +351,7 @@ const TrackingViewer = () => {
         const scale = STANDARD_WIDTH / data.containerDimensions.originalWidth;
         canvasHeight = Math.round(data.containerDimensions.originalHeight * scale);
         canvasHeight = Math.max(600, Math.min(10000, canvasHeight));
-        console.log('✅ NEW format (percent):', { canvasWidth, canvasHeight });
+        console.log('✅ Container dimensions:', { canvasWidth, canvasHeight });
       } else if (data.containerDimensions?.width && data.containerDimensions?.height) {
         canvasWidth = data.containerDimensions.width;
         canvasHeight = data.containerDimensions.height;
@@ -377,7 +376,7 @@ const TrackingViewer = () => {
             console.log('✅ Template loaded');
             resolve(true);
           };
-          img.onerror = () => { console.error('❌ Template load error'); resolve(false); };
+          img.onerror = () => { console.warn('⚠️ Template load error, using placeholder'); resolve(false); };
           img.src = data.componentTemplateUrl;
         });
       } else {
@@ -397,17 +396,33 @@ const TrackingViewer = () => {
         ctx.fillText('⚠️ Component screenshot not available', canvasWidth / 2, 140);
       }
 
-      // ── Konvertuj pozície ──
+      // ── FIX: Konvertuj pozície — rozšírená podmienka ─────────────────────
       let pixelPositions = data.aggregatedPositions;
       let pixelLandmarks = data.landmarks;
 
-      if (data.containerDimensions?.storageFormat === 'percent') {
+      const fmt = data.containerDimensions?.storageFormat;
+      const hasOriginalDims = data.containerDimensions?.originalWidth && data.containerDimensions?.originalHeight;
+
+      if (fmt === 'percent' || (fmt === 'unknown' && hasOriginalDims) || (!fmt && hasOriginalDims)) {
+        // Konvertuj percent → pixely
         pixelPositions = convertPercentToPixels(data.aggregatedPositions, canvasWidth, canvasHeight);
         pixelLandmarks = convertLandmarksPercentToPixels(data.landmarks, canvasWidth, canvasHeight);
-        console.log('✅ Converted to pixels:', pixelPositions?.length, 'points');
+        console.log(`✅ Converted to pixels (fmt="${fmt}"): ${pixelPositions?.length} points`);
+      } else if (fmt === 'pixels') {
+        // Už sú pixely, použi as-is
+        console.log('✅ Positions already in pixels, using as-is');
       } else {
-        console.warn('⚠️ StorageFormat is NOT percent, using positions as-is');
+        // Posledná záchrana: auto-detekcia z hodnôt
+        const sample = data.aggregatedPositions?.[0];
+        if (sample && sample.x <= 1.0 && sample.y <= 1.0) {
+          pixelPositions = convertPercentToPixels(data.aggregatedPositions, canvasWidth, canvasHeight);
+          pixelLandmarks = convertLandmarksPercentToPixels(data.landmarks, canvasWidth, canvasHeight);
+          console.log(`✅ Auto-detected percent format, converted: ${pixelPositions?.length} points`);
+        } else {
+          console.warn(`⚠️ Unknown format "${fmt}", using positions as-is`);
+        }
       }
+      // ─────────────────────────────────────────────────────────────────────
 
       // ── Vykresli heatmap ──
       if (pixelPositions && pixelPositions.length > 0) {
@@ -415,7 +430,7 @@ const TrackingViewer = () => {
         console.log('🎨 Drawing heatmap:', aggregated.length, 'aggregated points');
         await drawHeatmapOverlay(ctx, aggregated);
       } else {
-        console.error('❌ No positions to draw!');
+        console.warn('⚠️ No positions to draw');
         ctx.fillStyle = '#ff9800';
         ctx.font = '16px Arial';
         ctx.textAlign = 'center';
@@ -433,7 +448,7 @@ const TrackingViewer = () => {
         usersCount: data.usersCount || 0,
         landmarksCount: pixelLandmarks?.length || 0,
         canvasSize: `${canvasWidth}×${canvasHeight}`,
-        storageFormat: data.containerDimensions?.storageFormat || 'unknown',
+        storageFormat: fmt || 'auto-detected',
         renderMode: 'client-side'
       });
 
@@ -449,12 +464,10 @@ const TrackingViewer = () => {
         const response = await fetch(url);
         const data = await response.json();
 
-        // ✅ OPRAVA 2: nekontroluj response.ok — API vracia 200 aj pri "no data"
         if (data.success) {
           setTrackingData(data.data);
           setTimeout(() => renderCompositeHeatmap(data.data), 100);
         } else {
-          // Žiadne dáta — vykresli prázdny canvas s info textom
           setTrackingData(null);
           setTimeout(() => renderCompositeHeatmap({
             contentId: selectedComponent.contentId,
@@ -527,7 +540,6 @@ const TrackingViewer = () => {
                     <MetaInfo>
                       <div>👥 {comp.usersCount} users</div>
                       <div>📍 {comp.totalPoints?.toLocaleString()} points</div>
-                      {/* ✅ OPRAVA 3: API vracia avgTimeSpent, nie avgHoverTime */}
                       <div>⏱️ {((comp.avgTimeSpent || 0) / 1000).toFixed(1)}s avg</div>
                       <div>📊 {comp.recordsCount} records</div>
                     </MetaInfo>
@@ -558,8 +570,12 @@ const TrackingViewer = () => {
                 </StatBox>
                 <StatBox>
                   <StatLabel>Avg Time</StatLabel>
-                  {/* ✅ OPRAVA 3: avgHoverTime → avgHoverTime z get-tracking-by-component */}
-                  <StatValue>{trackingData ? (trackingData.avgHoverTime / 1000).toFixed(1) : 0}s</StatValue>
+                  {/* FIX: zobraz avgTimeSpent ak avgHoverTime je 0 */}
+                  <StatValue>
+                    {trackingData
+                      ? ((trackingData.avgHoverTime || trackingData.avgTimeSpent || 0) / 1000).toFixed(1)
+                      : 0}s
+                  </StatValue>
                 </StatBox>
                 <StatBox>
                   <StatLabel>Records</StatLabel>
