@@ -261,7 +261,7 @@ export const saveTrackingWithVisualization = async (trackingData, containerEleme
     const targetHeight = calculateProportionalHeight(originalWidth, originalHeight, targetWidth);
 
     console.log('📐 Target dimensions for heatmap:', { targetWidth, targetHeight });
-
+    await new Promise(resolve => setTimeout(resolve, 100));
     // ✅ Konvertuj percentá na pixely (pre 1920px template)
     const pixelPositions = convertPercentToPixels(
       normalizedPositions,

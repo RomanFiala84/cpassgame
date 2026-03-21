@@ -574,6 +574,13 @@ const AdminPanel = () => {
 
     if (!confirmed) return;
 
+    // ✅ Otvor JEDNO okno priamo z user eventu (pred akýmkoľvek await)
+    const templateWindow = window.open('about:blank', 'templateWindow', 'width=1920,height=2500');
+    if (!templateWindow) {
+      alert('❌ Popup zablokovaný! Povol popupy pre túto stránku v nastaveniach prehliadača.');
+      return;
+    }
+
     setGeneratingTemplates(true);
     setTemplateProgress('Pripravujem generovanie templates...');
 
@@ -597,42 +604,66 @@ const AdminPanel = () => {
     try {
       for (const comp of components) {
         const fullPath = `${window.location.origin}${comp.path}`;
-        setTemplateProgress(`📸 Otvaram: ${comp.name}...`);
+        setTemplateProgress(`📸 Načítavam: ${comp.name}...`);
 
-        let newWindow;
-        
-        if (comp === components[0]) {
-          // ✅ Prvé okno — otvor normálne
-          newWindow = window.open(fullPath, 'templateWindow', 'width=1920,height=2500');
-        } else {
-          // ✅ Ďalšie — zmeň URL v tom istom okne
-          newWindow = window.open(fullPath, 'templateWindow', 'width=1920,height=2500');
-          // Chrome reuse okno s rovnakým názvom — nepýta povolenie
-        }
+        // ✅ Naviguj v existujúcom okne
+        templateWindow.location.href = fullPath;
 
-        if (!newWindow) {
-          results.push({ component: comp.name, status: 'failed', error: 'Popup zablokované!' });
-          failCount++;
-          continue;
-        }
+        // ✅ Krok 1: Počkaj kým prehliadač začne navigáciu
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
+        // ✅ Krok 2: Čakaj na complete + React obsah
+        await new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => reject(new Error('Timeout 30s')), 30000);
 
-        await new Promise(resolve => setTimeout(resolve, 10000));
+          const check = setInterval(() => {
+            try {
+              if (templateWindow.closed) {
+                clearInterval(check); clearTimeout(timeout);
+                reject(new Error('Okno zatvorené'));
+                return;
+              }
+
+              const ready = templateWindow.document.readyState === 'complete';
+              const rootEl = templateWindow.document.querySelector('#root');
+              const hasContent = rootEl && rootEl.children.length > 0;
+
+              if (ready && hasContent) {
+                clearInterval(check);
+                clearTimeout(timeout);
+                resolve();
+              }
+            } catch(e) {
+              // cross-origin počas načítania — čakaj ďalej
+            }
+          }, 500);
+        });
+
+        // ✅ Krok 3: Extra čakanie na React render
+        setTemplateProgress(`⏳ Čakám na render: ${comp.name}...`);
+        await new Promise(resolve => setTimeout(resolve, 5000));
+
+        setTemplateProgress(`📸 Snímam: ${comp.name}...`);
 
         try {
           const container =
-            newWindow.document.querySelector('[class*="Card"]') ||
-            newWindow.document.querySelector('[class*="Container"]') ||
-            newWindow.document.querySelector('main') ||
-            newWindow.document.body;
+            templateWindow.document.querySelector('[class*="InterventionWrapper"]') ||
+            templateWindow.document.querySelector('[class*="PageWrapper"]') ||
+            templateWindow.document.querySelector('[class*="Content"]') ||
+            templateWindow.document.querySelector('main') ||
+            templateWindow.document.body;
 
           console.log('📐 Container check:', {
             name: comp.name,
+            tag: container?.tagName,
             w: container?.scrollWidth,
-            h: container?.scrollHeight
+            h: container?.scrollHeight,
+            classes: container?.className
           });
 
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          if (!container || container.scrollWidth === 0) {
+            throw new Error('Container nenájdený alebo prázdny');
+          }
 
           const templateUrl = await captureAndUpload(container, comp.id, comp.type);
           if (!templateUrl) throw new Error('Upload vrátil null URL');
@@ -651,9 +682,12 @@ const AdminPanel = () => {
           failCount++;
         }
 
-        newWindow.close();
+        // Pauza medzi komponentmi
         await new Promise(resolve => setTimeout(resolve, 2000));
       }
+
+      // ✅ Zatvor až po všetkých
+      if (!templateWindow.closed) templateWindow.close();
 
       let report = `📸 Hotovo!\n\n✅ ${successCount} | ❌ ${failCount}\n\n`;
       results.forEach(r => {
@@ -664,12 +698,14 @@ const AdminPanel = () => {
       alert(report);
 
     } catch (error) {
+      if (!templateWindow.closed) templateWindow.close();
       alert(`❌ Chyba: ${error.message}`);
     } finally {
       setGeneratingTemplates(false);
       setTemplateProgress('');
     }
   };
+
 
   const handleToggleBlock = async (participantCode, currentBlockedState) => {
     const action = currentBlockedState ? 'odblokovať' : 'blokovať';

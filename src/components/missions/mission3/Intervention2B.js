@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Layout from '../../../styles/Layout';
 import StyledButton from '../../../styles/StyledButton';
+import { useSearchParams } from 'react-router-dom';
 import DetectiveTipSmall from '../../shared/DetectiveTipSmall';
 import { useUserStats } from '../../../contexts/UserStatsContext';
 import { getResponseManager } from '../../../utils/ResponseManager';
@@ -574,7 +575,9 @@ const Intervention2B = () => {
   const navigate = useNavigate();
   const { dataManager, userId } = useUserStats();
   const responseManager = getResponseManager(dataManager);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [searchParams] = useSearchParams();
+  const initialPage = parseInt(searchParams.get('page') || '0', 10);
+  const [currentPage, setCurrentPage] = useState(initialPage);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pageTime, setPageTime] = useState(0);
   const pageTimerRef = useRef(null);
