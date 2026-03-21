@@ -637,7 +637,7 @@ const Intervention2B = () => {
       const rect = container.getBoundingClientRect();
       mousePositionsRef.current.push({
         x: e.clientX - rect.left,              // ← surové pixely, BEZ delenia
-        y: e.clientY - rect.top + window.scrollY,  // ← surové pixely, BEZ delenia
+        y: e.clientY - rect.top,  // ← surové pixely, BEZ delenia
         timestamp: Date.now(),
       });
     };
@@ -656,7 +656,7 @@ const Intervention2B = () => {
     if (mousePositionsRef.current.length === 0 || !containerRef.current) return;
     const container = containerRef.current;
 
-    const width = container.scrollWidth;
+    const width = container.offsetWidth;
     const height = container.scrollHeight;
 
     const normalizedPositions = mousePositionsRef.current.map(pos => ({
@@ -738,7 +738,7 @@ const Intervention2B = () => {
   return (
     <Layout>
       <Container>
-        <div ref={containerRef}>
+        <div ref={containerRef} className="InterventionWrapper">
           <Card>
             <ProgressBar>
               <ProgressTrack>
