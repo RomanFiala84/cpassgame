@@ -1,3 +1,5 @@
+// src/hooks/useInterventionTracking.js
+
 import { useRef, useEffect, useCallback } from 'react';
 
 export const useInterventionTracking = ({ userId, currentPage }) => {
@@ -47,31 +49,32 @@ export const useInterventionTracking = ({ userId, currentPage }) => {
 
     const normalizedPositions = mousePositionsRef.current
       .filter(pos => {
-        // ✅ Vyfiltruj pozície mimo kontajner (x záporné alebo > width)
-        return pos.x >= 0 && pos.x <= cardWidth && pos.y >= 0;
+        // ✅ FIX: Vyfiltruj pozície mimo kontajner (x aj y)
+        return pos.x >= 0 && pos.x <= cardWidth
+            && pos.y >= 0 && pos.y <= cardHeight; // ✅ pridané y <= cardHeight
       })
       .map(pos => ({
         x: Math.max(0, Math.min(100, Number(((pos.x / cardWidth)  * 100).toFixed(4)))),
-        y: Math.max(0,              Number(((pos.y / cardHeight) * 100).toFixed(4))),
+        y: Math.max(0, Math.min(100, Number(((pos.y / cardHeight) * 100).toFixed(4)))), // ✅ pridané Math.min(100,...)
         timestamp: pos.timestamp,
       }));
 
     // ✅ FIX 2: Landmarks — vypočítaj offsetTop relatívne k containerRef.current
     // (nie cez getBoundingClientRect ktorý závisí od scroll pozície)
-    const containerTop = container.getBoundingClientRect().top + window.scrollY;
+    const containerTop  = container.getBoundingClientRect().top  + window.scrollY;
+    const containerLeft = container.getBoundingClientRect().left;
 
     const landmarks = Object.entries(landmarkRefs.current)
       .filter(([_, el]) => el)
       .map(([id, el]) => {
         const elTop  = el.getBoundingClientRect().top  + window.scrollY;
         const elLeft = el.getBoundingClientRect().left;
-        const contLeft = container.getBoundingClientRect().left;
 
         return {
           id,
           type: 'section',
           position: {
-            left:   Math.max(0, Number(((elLeft - contLeft)        / cardWidth  * 100).toFixed(4))),
+            left:   Math.max(0, Number(((elLeft - containerLeft)   / cardWidth  * 100).toFixed(4))),
             top:    Math.max(0, Number(((elTop  - containerTop)    / cardHeight * 100).toFixed(4))),
             width:  Number((el.offsetWidth  / cardWidth  * 100).toFixed(4)),
             height: Number((el.offsetHeight / cardHeight * 100).toFixed(4)),
