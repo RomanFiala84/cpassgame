@@ -46,7 +46,7 @@ const TrackInfo = styled.div`
 `;
 
 const TrackLabel = styled.span`
-  font-size: 15px;
+  font-size: 10px;
   font-weight: 600;
   color: ${p => p.theme.ACCENT_COLOR};
   white-space: nowrap;
@@ -56,7 +56,7 @@ const TrackLabel = styled.span`
 `;
 
 const PlayedBadge = styled.span`
-  font-size: 13px;
+  font-size: 10px;
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
   background: ${p => p.theme.ACCENT_COLOR}22;
@@ -103,14 +103,14 @@ const ProgressSlider = styled.input`
 `;
 
 const TimeLabel = styled.span`
-  font-size: 13px;
+  font-size: 10px;
   color: ${p => p.theme.SECONDARY_TEXT_COLOR};
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 `;
 
 const SpeedButton = styled.button`
-  font-size: 13px;
+  font-size: 10px;
   font-weight: 700;
   color: ${p => p.theme.ACCENT_COLOR};
   background: ${p => p.theme.ACCENT_COLOR}18;
@@ -124,7 +124,7 @@ const SpeedButton = styled.button`
 `;
 
 const ErrorText = styled.span`
-  font-size: 15px;
+  font-size: 10px;
   color: #ef4444;
 `;
 
@@ -155,7 +155,7 @@ const LISTEN_MIN_SEC   = 5;
  */
 const SectionAudioPlayer = ({
   src,
-  label     = 'Prehrať nahrávku',
+  label     = 'Prehrať',
   audioId,
   played    = false,
   onPlayed,
@@ -266,8 +266,8 @@ const SectionAudioPlayer = ({
         $playing={isPlaying ? 1 : 0}
         onClick={handlePlayPause}
         disabled={loading || error}
-        title={isPlaying ? 'Pozastaviť' : label}
-        aria-label={isPlaying ? 'Pozastaviť' : label}
+        title={isPlaying ? 'Zastaviť' : label}
+        aria-label={isPlaying ? 'Zastaviť' : label}
       >
         {loading ? '…' : isPlaying ? '⏸' : '▶'}
       </PlayButton>
@@ -276,7 +276,7 @@ const SectionAudioPlayer = ({
         <TrackLabel>
           {error
             ? <ErrorText>Súbor sa nedá načítať</ErrorText>
-            : <>{label}{played && <PlayedBadge>✓ Vypočuté</PlayedBadge>}</>
+            : <>{label}{played && <PlayedBadge>✓ Prehraté</PlayedBadge>}</>
           }
         </TrackLabel>
 

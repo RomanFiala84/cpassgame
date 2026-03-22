@@ -1,8 +1,10 @@
 // ✅ VERZIA BEZ MOŽNOSTI ZATVORENIA
 // Avatar bez okrajov, bez badge, BEZ close button
+// ✅ + SectionAudioPlayer podpora
 
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import SectionAudioPlayer from './SectionAudioPlayer';
 
 // =====================
 // STYLED COMPONENTS - OPTIMALIZOVANÁ VERZIA
@@ -19,7 +21,6 @@ const TipContainer = styled.div`
   animation: slideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   overflow: hidden;
   
-  /* Decentný gradient pozadie */
   &::before {
     content: '';
     position: absolute;
@@ -133,22 +134,15 @@ const TipText = styled.div`
   
   p {
     margin-bottom: 8px;
-    
-    &:last-child {
-      margin-bottom: 0;
-    }
+    &:last-child { margin-bottom: 0; }
   }
   
   ul {
     margin: 6px 0;
     padding-left: 20px;
-    
     li {
       margin-bottom: 6px;
-      
-      &:last-child {
-        margin-bottom: 0;
-      }
+      &:last-child { margin-bottom: 0; }
     }
   }
   
@@ -173,36 +167,52 @@ const TipText = styled.div`
   }
 `;
 
-// ✅ KOMPONENT - ZJEDNODUŠENÝ (bez close logiky)
+// ✅ Oddeľovač medzi textom a playerom
+const AudioDivider = styled.div`
+  height: 1px;
+  background: ${p => p.theme.BORDER_COLOR};
+  margin: 12px 0 8px 0;
+  position: relative;
+  z-index: 1;
+`;
+
+// =====================
+// KOMPONENT
+// =====================
+
 const DetectiveTipSmall = ({ 
   tip, 
   detectiveName = "Inšpektor Kritan",
   autoOpen = true,
   autoOpenDelay = 0,
-  onOpen
+  onOpen,
+  // ✅ NOVÉ — audio props
+  audioSrc,
+  audioId,
+  played,
+  onPlayed,
 }) => {
   const [isVisible, setIsVisible] = useState(autoOpen);
   const [imageError, setImageError] = useState(false);
 
-  // ✅ Auto-open s delay
   useEffect(() => {
     if (autoOpen && autoOpenDelay > 0) {
       const timer = setTimeout(() => {
         setIsVisible(true);
         if (onOpen) onOpen();
       }, autoOpenDelay);
-
       return () => clearTimeout(timer);
     }
   }, [autoOpen, autoOpenDelay, onOpen]);
 
-  // ✅ Fallback pre obrázok
   const handleImageError = () => {
     console.warn('Detective image failed to load, using fallback');
     setImageError(true);
   };
 
   if (!tip || !isVisible) return null;
+
+  const hasAudio = audioSrc && audioId;
 
   return (
     <TipContainer>
@@ -217,9 +227,23 @@ const DetectiveTipSmall = ({
           <DetectiveAvatarFallback>🔍</DetectiveAvatarFallback>
         )}
         <DetectiveName>{detectiveName}</DetectiveName>
-        {/* ✅ CLOSE BUTTON ODSTRÁNENÝ */}
       </TipHeader>
+
       <TipText dangerouslySetInnerHTML={{ __html: tip }} />
+
+      {/* ✅ Audio player — zobrazí sa len ak sú poskytnuté audio props */}
+      {hasAudio && (
+        <>
+          <AudioDivider />
+          <SectionAudioPlayer
+            src={audioSrc}
+            audioId={audioId}
+            label="Prehrať"
+            played={!!played}
+            onPlayed={onPlayed}
+          />
+        </>
+      )}
     </TipContainer>
   );
 };
