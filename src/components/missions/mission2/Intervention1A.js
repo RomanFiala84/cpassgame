@@ -684,9 +684,9 @@ const REQUIRED_SECTIONS = [
 ];
 
 const REQUIRED_AUDIOS = [
-  ['p1_s1_audio', 'p1_s2_audio', 'p1_s3_audio', 'p1_s4_audio', 'p1_s5_audio', 'p1_s6_audio'],
-  ['p2_s1_audio', 'p2_s2_audio', 'p2_s3_audio'],
-  ['p3_s1_audio', 'p3_s2_audio', 'p3_s3_audio', 'p3_s4_audio'],
+  [],
+  [],
+  [],
 ];
 
 const PAGES = [
