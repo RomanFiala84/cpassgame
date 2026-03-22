@@ -683,11 +683,7 @@ const REQUIRED_SECTIONS = [
   ['p3_s1', 'p3_s2', 'p3_s3', 'p3_s4'],
 ];
 
-const REQUIRED_AUDIOS = [
-  [],
-  [],
-  [],
-];
+
 
 const PAGES = [
   {
@@ -807,14 +803,10 @@ const Intervention1A = () => {
   const tipAudio          = page.detectiveTipAudio;
 
   // Všetky povinné audios vrátane tip audia ak existuje
-  const allRequiredAudiosForPage = [
-    ...REQUIRED_AUDIOS[currentPage],
-    ...(tipAudio ? [tipAudio.audioId] : []),
-  ];
+  
 
   const allRequiredRead   = REQUIRED_SECTIONS[currentPage].every(k => readSections[currentPage].has(k));
-  const allRequiredPlayed = allRequiredAudiosForPage.every(id => playedAudios[id]);
-  const canContinue       = allRequiredRead && allRequiredPlayed;
+  const canContinue       = allRequiredRead;
 
   const handleNext = async () => {
     setIsSubmitting(true);
@@ -832,7 +824,7 @@ const Intervention1A = () => {
 
   const isLastPage      = currentPage === TOTAL_PAGES - 1;
   const remainingSect   = REQUIRED_SECTIONS[currentPage].filter(k => !readSections[currentPage].has(k)).length;
-  const remainingAudio  = allRequiredAudiosForPage.filter(id => !playedAudios[id]).length;
+
 
   return (
     <Layout>
@@ -870,8 +862,6 @@ const Intervention1A = () => {
             >
               {!allRequiredRead
                 ? `Otvor všetky sekcie (zostáva: ${remainingSect})`
-                : !allRequiredPlayed
-                  ? `Vypočuj nahrávky (zostáva: ${remainingAudio})`
                   : isSubmitting
                     ? 'Ukladám...'
                     : isLastPage
